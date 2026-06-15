@@ -1,0 +1,5 @@
+Interviewer: Can you tell me about a time you solved a technical problem?
+Candidate: I worked on TodoPlus and had to handle login state and API error states.
+Interviewer: What tradeoff did you make?
+Candidate: I kept auth as a demo flow and documented that it is not production OAuth.
+

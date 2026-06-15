@@ -1,0 +1,120 @@
+{
+  "stage": "P2-M6 MiniMax Provider Acceptance",
+  "generated_at": "2026-06-13T23:44:33.369262+00:00",
+  "provider_status_before": {
+    "provider": "openai_compatible",
+    "configured": true,
+    "external_calls_enabled": true,
+    "model": "MiniMax-M3",
+    "redaction": true
+  },
+  "workspace_root": "/private/tmp/jobpilot_p2_m6_minimax_clean_20260613234433",
+  "ok": true,
+  "steps": [
+    {
+      "key": "workspace_init",
+      "status": "completed",
+      "workspace_id": "ws_f9259776edd1"
+    },
+    {
+      "key": "import_examples",
+      "status": "completed",
+      "documents": 2
+    },
+    {
+      "key": "extract_facts",
+      "status": "completed",
+      "facts": 10,
+      "confirmations": 8
+    },
+    {
+      "key": "create_project_card",
+      "status": "completed",
+      "project_id": "proj_63b4beff7ed3",
+      "tech_stack_count": 8
+    },
+    {
+      "key": "parse_jd",
+      "status": "completed",
+      "job_id": "job_a6ede26ce32c",
+      "title": "Junior Frontend Developer",
+      "must_have_count": 5
+    },
+    {
+      "key": "match_profile",
+      "status": "completed",
+      "fit_label": "先补强再投",
+      "strengths": 1,
+      "gaps": 5
+    },
+    {
+      "key": "create_application_package",
+      "status": "completed",
+      "package_id": "pkg_a58c1134378e",
+      "resume_markdown_chars": 1248,
+      "confirmations": 2
+    },
+    {
+      "key": "export_package",
+      "status": "completed",
+      "formats": [
+        "markdown",
+        "docx"
+      ]
+    }
+  ],
+  "exports": [
+    {
+      "format": "markdown",
+      "path": "/private/tmp/jobpilot_p2_m6_minimax_clean_20260613234433/exports/pkg_a58c1134378e_resume.md"
+    },
+    {
+      "format": "docx",
+      "path": "/private/tmp/jobpilot_p2_m6_minimax_clean_20260613234433/exports/pkg_a58c1134378e_resume.docx"
+    }
+  ],
+  "provider_invocations": {
+    "count": 4,
+    "items": [
+      {
+        "provider_name": "openai_compatible",
+        "prompt_name": "profile_extract_facts",
+        "status": "success",
+        "error_code": null,
+        "redaction_applied": true,
+        "input_summary_chars": 288
+      },
+      {
+        "provider_name": "openai_compatible",
+        "prompt_name": "job_parse_jd",
+        "status": "success",
+        "error_code": null,
+        "redaction_applied": true,
+        "input_summary_chars": 402
+      },
+      {
+        "provider_name": "openai_compatible",
+        "prompt_name": "job_match_profile",
+        "status": "success",
+        "error_code": null,
+        "redaction_applied": true,
+        "input_summary_chars": 1351
+      },
+      {
+        "provider_name": "openai_compatible",
+        "prompt_name": "application_create_package",
+        "status": "success",
+        "error_code": null,
+        "redaction_applied": true,
+        "input_summary_chars": 1432
+      }
+    ]
+  },
+  "redaction_check": {
+    "api_key_leaked_in_provider_invocation": false,
+    "full_payload_summary_risk": false,
+    "checked_provider_invocation_rows": 4
+  },
+  "error": null,
+  "workspace_id": "ws_f9259776edd1"
+}

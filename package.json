@@ -1,0 +1,9 @@
+{
+  "name": "jobpilot-ai",
+  "private": true,
+  "scripts": {
+    "dev:chatbox": "npm --prefix apps/chatbox run dev",
+    "build:chatbox": "npm --prefix apps/chatbox run build"
+  }
+}
+

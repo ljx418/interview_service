@@ -1,0 +1,14 @@
+.DS_Store
+*.bkp
+.env
+.jobpilot_workspace/
+.pytest_cache/
+__pycache__/
+*.py[cod]
+node_modules/
+dist/
+.vite/
+vendor/earendil_pi_source/node_modules/
+vendor/earendil_pi_source/packages/*/dist/
+vendor/earendil_pi_source/packages/ai/src/models.generated.ts
+vendor/earendil_pi_source/packages/ai/src/image-models.generated.ts

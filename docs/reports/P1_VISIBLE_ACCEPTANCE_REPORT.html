@@ -1,0 +1,729 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>JobPilot AI P1 可见验收报告</title>
+  <style>
+    :root {
+      --ink: #17202a;
+      --muted: #5d6b7a;
+      --line: #d7dee8;
+      --bg: #f6f8fb;
+      --panel: #ffffff;
+      --green: #1f8a5b;
+      --green-bg: #eaf7f1;
+      --yellow: #a66a00;
+      --yellow-bg: #fff4d8;
+      --red: #b42318;
+      --red-bg: #ffebe8;
+      --blue: #255a9b;
+      --blue-bg: #eaf2ff;
+      --gray-bg: #eef1f5;
+      --code: #0d1117;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+      line-height: 1.58;
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 32px 24px 56px;
+    }
+
+    header {
+      padding: 30px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      font-size: 32px;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      margin: 34px 0 14px;
+      font-size: 22px;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin: 22px 0 10px;
+      font-size: 17px;
+      letter-spacing: 0;
+    }
+
+    p {
+      margin: 8px 0;
+    }
+
+    a {
+      color: var(--blue);
+    }
+
+    .subtitle {
+      max-width: 900px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--gray-bg);
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 650;
+      white-space: nowrap;
+    }
+
+    .pill.ok {
+      border-color: #b6dec8;
+      background: var(--green-bg);
+      color: var(--green);
+    }
+
+    .pill.warn {
+      border-color: #f0d18a;
+      background: var(--yellow-bg);
+      color: var(--yellow);
+    }
+
+    .pill.stop {
+      border-color: #f4b5af;
+      background: var(--red-bg);
+      color: var(--red);
+    }
+
+    .section {
+      margin-top: 22px;
+      padding: 26px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .grid.two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .grid.three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .card {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .card h3 {
+      margin-top: 0;
+    }
+
+    .card .small {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .notice {
+      padding: 14px 16px;
+      border: 1px solid #f0d18a;
+      border-radius: 8px;
+      background: var(--yellow-bg);
+      color: #5f4100;
+    }
+
+    .success {
+      padding: 14px 16px;
+      border: 1px solid #b6dec8;
+      border-radius: 8px;
+      background: var(--green-bg);
+      color: #124b33;
+    }
+
+    .danger {
+      padding: 14px 16px;
+      border: 1px solid #f4b5af;
+      border-radius: 8px;
+      background: var(--red-bg);
+      color: #6b1710;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    th,
+    td {
+      padding: 11px 12px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #f1f4f8;
+      font-size: 13px;
+      color: #344253;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    code,
+    pre {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+
+    code {
+      padding: 2px 5px;
+      border-radius: 5px;
+      background: #eef1f5;
+      font-size: 13px;
+    }
+
+    pre {
+      overflow: auto;
+      padding: 14px;
+      border-radius: 8px;
+      background: var(--code);
+      color: #f0f6fc;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .screenshot-frame {
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .screenshot-frame img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 6px;
+      border: 1px solid var(--line);
+    }
+
+    .caption {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(120px, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .step {
+      min-height: 128px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .step strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+
+    .step span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .arch-lanes {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .lane {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .lane-title {
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #f1f4f8;
+      font-weight: 700;
+    }
+
+    .lane-items {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .module {
+      padding: 8px 10px;
+      border-radius: 7px;
+      border: 1px solid var(--line);
+      background: #fff;
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    .module.done {
+      border-color: #b6dec8;
+      background: var(--green-bg);
+      color: var(--green);
+    }
+
+    .module.partial {
+      border-color: #f0d18a;
+      background: var(--yellow-bg);
+      color: var(--yellow);
+    }
+
+    .module.future {
+      background: #edf0f4;
+      color: #5b6573;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    ul {
+      margin: 8px 0 0 20px;
+      padding: 0;
+    }
+
+    li {
+      margin: 5px 0;
+    }
+
+    @media (max-width: 900px) {
+      .grid.two,
+      .grid.three {
+        grid-template-columns: 1fr;
+      }
+
+      .flow {
+        grid-template-columns: 1fr;
+      }
+
+      .lane {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header>
+      <h1>JobPilot AI P1 可见验收报告</h1>
+      <p class="subtitle">面向人类快速评审的 HTML 报告。它汇总了本地自动化验收、Chrome 可见截图证据、P1 目标架构、当前实现架构和可实现的用户场景体验路径。报告只陈述已验证事实，不把未执行的真实外部调用写成已通过。</p>
+      <div class="meta">
+        <span class="pill">生成日期：2026-06-12</span>
+        <span class="pill ok">本地 mock/fixture 路径通过</span>
+        <span class="pill ok">Chrome 可见截图已采集</span>
+        <span class="pill warn">真实外部 Provider 未执行</span>
+        <span class="pill warn">真实个人资料未验收</span>
+      </div>
+    </header>
+
+    <section class="section">
+      <h2>1. 快速结论</h2>
+      <div class="success">
+        P1 本地可验收路径已经具备基础可用性：后端自动化测试通过、Chatbox 前端构建通过、Chrome 中可以看到 workspace、provider 状态、申请包产物卡、artifact 当前版本、历史版本、编辑、重新生成、导出和待确认项。
+      </div>
+      <div class="notice" style="margin-top: 12px;">
+        不能据此声称真实 API Key、真实 OpenAI-compatible Provider 调用、真实个人简历/JD/transcript 验收已经通过。这些仍属于高风险人工确认范围。
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>2. 截图证据</h2>
+      <div class="screenshot-frame">
+        <img src="../active/evidence/p1_chrome_chatbox_visible_acceptance.png" alt="P1 Chrome visible acceptance screenshot">
+        <p class="caption">截图路径：<code>docs/active/evidence/p1_chrome_chatbox_visible_acceptance.png</code>。截图大小约 1.7 MB。该截图证明 Chrome 中能看到 P1 关键界面状态；它不是完整业务正确性的唯一证据。</p>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>截图可见项</th>
+            <th>观察结果</th>
+            <th>验收意义</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>页面加载</td>
+            <td>Chrome 中打开本地 Chatbox，界面正常显示</td>
+            <td>前端不是空白页，基础运行链路可见</td>
+          </tr>
+          <tr>
+            <td>Workspace 状态</td>
+            <td>顶部显示 <code>Workspace ready</code></td>
+            <td>本地 workspace 初始化或恢复成功</td>
+          </tr>
+          <tr>
+            <td>Provider 状态</td>
+            <td>顶部显示 <code>mock local</code></td>
+            <td>默认无 API Key 模式可用</td>
+          </tr>
+          <tr>
+            <td>产物卡</td>
+            <td>页面显示 <code>application_package</code></td>
+            <td>申请包产物能进入 Chatbox 展示层</td>
+          </tr>
+          <tr>
+            <td>Artifact 版本</td>
+            <td>显示 current version 和 <code>v1</code>、<code>v2</code>、<code>v3</code></td>
+            <td>P1 版本化能力在 UI 中可见</td>
+          </tr>
+          <tr>
+            <td>操作入口</td>
+            <td>可见确认、导出、编辑、重新生成图标按钮</td>
+            <td>P1 关键用户操作入口已接入</td>
+          </tr>
+          <tr>
+            <td>待确认项</td>
+            <td>可见 warning / optional 待确认项</td>
+            <td>不确定内容没有被静默隐藏</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section">
+      <h2>3. 当前可以实现的用户场景体验路径</h2>
+      <p>下面是当前 P1 本地 mock/fixture 路径可以支持的体验路径。截图证据是路径终态的可见证明，后端正确性由自动化测试补充证明。</p>
+      <div class="flow">
+        <div class="step">
+          <strong>1. 启动本地服务</strong>
+          <span>FastAPI Agent Service + Chatbox。证据：自动化测试、前端构建、Chrome 截图。</span>
+        </div>
+        <div class="step">
+          <strong>2. 恢复 workspace</strong>
+          <span>页面显示 <code>Workspace ready</code>。证据：Chrome 截图。</span>
+        </div>
+        <div class="step">
+          <strong>3. 使用默认 provider</strong>
+          <span>默认 <code>mock local</code>，无需 API Key。证据：Chrome 截图 + provider 测试。</span>
+        </div>
+        <div class="step">
+          <strong>4. 查看申请包产物</strong>
+          <span>Chatbox 展示 <code>application_package</code>。证据：Chrome 截图。</span>
+        </div>
+        <div class="step">
+          <strong>5. 查看版本</strong>
+          <span>current version 与 v1/v2/v3 可见。证据：Chrome 截图 + artifact versioning 测试。</span>
+        </div>
+        <div class="step">
+          <strong>6. 编辑 / 重新生成</strong>
+          <span>UI 入口可见，后端生成新版本。证据：Chrome 截图 + regenerate 测试。</span>
+        </div>
+        <div class="step">
+          <strong>7. 导出当前版本</strong>
+          <span>Markdown 与 DOCX 导出路径存在。证据：导出测试 + 文件检查。</span>
+        </div>
+      </div>
+
+      <h3>导出文件证据</h3>
+      <pre>.jobpilot_workspace/exports/pkg_59b0cc1a1c91_resume.md
+.jobpilot_workspace/exports/pkg_59b0cc1a1c91_resume.docx</pre>
+    </section>
+
+    <section class="section">
+      <h2>4. P1 目标架构</h2>
+      <p>P1 目标不是重做产品形态，而是在 P0 已冻结的本地优先、Chatbox-first、Agent Tool-first 架构上补齐 Provider Runtime、Artifact Versioning、Regenerate 和正式导出闭环。</p>
+      <div class="legend">
+        <span class="pill ok">绿色：已实现或当前可验收基线</span>
+        <span class="pill warn">黄色：P1 本阶段实现 / 局部仍需人工确认</span>
+        <span class="pill">灰色：P2 或后续范围</span>
+      </div>
+      <div class="arch-lanes">
+        <div class="lane">
+          <div class="lane-title">入口层</div>
+          <div class="lane-items">
+            <span class="module done">React Chatbox</span>
+            <span class="module done">Workspace 状态</span>
+            <span class="module done">Provider Badge</span>
+            <span class="module done">Artifact Cards</span>
+            <span class="module partial">JSON 编辑器</span>
+            <span class="module future">复杂 Dashboard</span>
+          </div>
+        </div>
+        <div class="lane">
+          <div class="lane-title">编排层</div>
+          <div class="lane-items">
+            <span class="module done">ChatCore Facade</span>
+            <span class="module done">KeywordChatCore fallback</span>
+            <span class="module done">PiAgentChatCore</span>
+            <span class="module done">Pi Agent Core</span>
+            <span class="module done">jobpilot_orchestrate Tool</span>
+          </div>
+        </div>
+        <div class="lane">
+          <div class="lane-title">执行层</div>
+          <div class="lane-items">
+            <span class="module done">Python Domain Tool Executor</span>
+            <span class="module done">profile / job / application tools</span>
+            <span class="module done">interview / realtime / training tools</span>
+            <span class="module done">schema validation boundary</span>
+          </div>
+        </div>
+        <div class="lane">
+          <div class="lane-title">Provider 层</div>
+          <div class="lane-items">
+            <span class="module done">MockProvider 默认</span>
+            <span class="module done">FixtureProvider 测试</span>
+            <span class="module partial">OpenAI-compatible opt-in</span>
+            <span class="module done">Redaction / input summary</span>
+            <span class="module done">timeout / retry / error mapping</span>
+            <span class="module future">默认真实外部调用</span>
+          </div>
+        </div>
+        <div class="lane">
+          <div class="lane-title">产物层</div>
+          <div class="lane-items">
+            <span class="module done">Artifact record</span>
+            <span class="module done">Artifact Version</span>
+            <span class="module done">Regenerate lineage</span>
+            <span class="module done">questions_to_confirm</span>
+            <span class="module done">source_refs</span>
+            <span class="module partial">结构化表单编辑</span>
+          </div>
+        </div>
+        <div class="lane">
+          <div class="lane-title">导出层</div>
+          <div class="lane-items">
+            <span class="module done">Markdown Export</span>
+            <span class="module done">DOCX Export</span>
+            <span class="module done">Export Preflight</span>
+            <span class="module done">workspace exports only</span>
+            <span class="module partial">PDF 样式验收</span>
+          </div>
+        </div>
+        <div class="lane">
+          <div class="lane-title">存储与验收层</div>
+          <div class="lane-items">
+            <span class="module done">SQLite Workspace</span>
+            <span class="module done">local files / exports</span>
+            <span class="module done">provider_invocation redacted logs</span>
+            <span class="module done">pytest eval gates</span>
+            <span class="module done">frontend build</span>
+            <span class="module done">Chrome screenshot evidence</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>5. 当前架构实现</h2>
+      <div class="grid two">
+        <div class="card">
+          <h3>前端 Chatbox</h3>
+          <p>当前实现文件：<code>apps/chatbox/src/main.tsx</code>、<code>apps/chatbox/src/styles.css</code>。</p>
+          <p class="small">职责：展示 workspace/provider 状态、消息、artifact 卡片、版本、编辑、重新生成和导出动作。它不保存 API Key，也不拼业务 prompt。</p>
+        </div>
+        <div class="card">
+          <h3>FastAPI Agent Service</h3>
+          <p>当前实现文件：<code>services/api/main.py</code>、<code>services/api/schemas.py</code>。</p>
+          <p class="small">职责：提供 workspace、chat、provider、artifact、export 等 API，负责 HTTP 边界和错误映射。</p>
+        </div>
+        <div class="card">
+          <h3>Pi Agent Core 编排</h3>
+          <p>当前实现文件：<code>services/chat/core.py</code>、<code>services/chat/piagent_adapter.py</code>、<code>services/chat/pi_node_bridge.mjs</code>。</p>
+          <p class="small">职责：让 Pi Agent Core 产出 intent / tool plan，再交给 Python Domain Tools 执行业务。</p>
+        </div>
+        <div class="card">
+          <h3>Domain Tools</h3>
+          <p>当前实现文件：<code>services/tools/jobpilot.py</code>、<code>services/tools/core.py</code>。</p>
+          <p class="small">职责：执行 profile、job、application、interview、realtime、training 等求职业务工具，并写入 artifact / workspace。</p>
+        </div>
+        <div class="card">
+          <h3>Provider Runtime</h3>
+          <p>当前实现文件：<code>services/llm/provider.py</code>、<code>services/llm/contracts.py</code>。</p>
+          <p class="small">职责：MockProvider、FixtureProvider、OpenAI-compatible opt-in、输出 JSON 解析、schema validation、redaction、provider invocation logging。</p>
+        </div>
+        <div class="card">
+          <h3>Storage / Artifact / Export</h3>
+          <p>当前实现文件：<code>services/storage/db.py</code>、<code>services/storage/workspace.py</code>。</p>
+          <p class="small">职责：SQLite workspace、artifact_version、tool/provider invocation、Markdown/DOCX 导出和 workspace exports 边界。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>6. 自动化验收结果</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>检查项</th>
+            <th>命令或证据</th>
+            <th>结果</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>后端/评估测试</td>
+            <td><code>python3 -m pytest</code></td>
+            <td><span class="pill ok">45 passed</span></td>
+          </tr>
+          <tr>
+            <td>前端构建</td>
+            <td><code>npm --prefix apps/chatbox run build</code></td>
+            <td><span class="pill ok">通过</span></td>
+          </tr>
+          <tr>
+            <td>截图补充后文档硬化回归</td>
+            <td><code>python3 -m pytest tests/evals/test_schema_and_docs_hardening_eval.py</code></td>
+            <td><span class="pill ok">3 passed</span></td>
+          </tr>
+          <tr>
+            <td>Active 文档数量约束</td>
+            <td><code>find docs/active -name '*.md' -type f | wc -l</code></td>
+            <td><span class="pill ok">19</span></td>
+          </tr>
+          <tr>
+            <td>Chrome 可见验收</td>
+            <td><code>docs/active/evidence/p1_chrome_chatbox_visible_acceptance.png</code></td>
+            <td><span class="pill ok">通过</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section">
+      <h2>7. 已验证范围与未验证范围</h2>
+      <div class="grid two">
+        <div class="card">
+          <h3>已验证</h3>
+          <ul>
+            <li>P0 mock provider 基线保持可用；</li>
+            <li>Provider Runtime 的 mock / fixture / opt-in 架构和错误处理测试通过；</li>
+            <li>provider invocation 日志只保存脱敏摘要；</li>
+            <li>核心工具具备 provider-backed contract 路径；</li>
+            <li>artifact edit 创建新版本并保留旧版本；</li>
+            <li>regenerate 创建子版本，失败不覆盖 current；</li>
+            <li>export preflight 能阻塞 unresolved blocking confirmation；</li>
+            <li>Markdown 与 DOCX 导出可生成；</li>
+            <li>Chatbox P1 关键控件在 Chrome 中可见。</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>未验证</h3>
+          <ul>
+            <li>真实 API Key 校验；</li>
+            <li>真实 OpenAI-compatible Provider 外部调用；</li>
+            <li>真实个人简历、真实 JD、真实 transcript 验收；</li>
+            <li>不可逆迁移对用户已有 workspace 的影响；</li>
+            <li>PDF 导出的完整视觉样式；</li>
+            <li>复杂版本 diff UI；</li>
+            <li>移动端截图验收；</li>
+            <li>长时间稳定性和并发压测。</li>
+          </ul>
+        </div>
+      </div>
+      <div class="danger" style="margin-top: 14px;">
+        本报告不声称真实外部 Provider、真实 API Key、真实个人资料验收已经通过；也不声称截图等价于完整端到端业务正确性。
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>8. 人工复核建议</h2>
+      <p>人类体验验收建议聚焦下面 4 个问题：</p>
+      <table>
+        <thead>
+          <tr>
+            <th>复核点</th>
+            <th>建议判断</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>产品方向</td>
+            <td>当前界面是否符合“极简 Chatbox + 产物卡”的方向，而不是复杂 dashboard。</td>
+          </tr>
+          <tr>
+            <td>版本展示</td>
+            <td>current version、v1/v2/v3 是否足够让用户理解编辑和重新生成不会覆盖旧版本。</td>
+          </tr>
+          <tr>
+            <td>关键动作</td>
+            <td>确认、导出、编辑、重新生成入口是否足够容易发现。</td>
+          </tr>
+          <tr>
+            <td>编辑体验</td>
+            <td>JSON textarea 是否可接受为 P1 过渡方案，还是必须在 P1 内改成结构化表单。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section">
+      <h2>9. 相关材料</h2>
+      <ul>
+        <li>Markdown 验收报告：<code>docs/reports/P1_VISIBLE_ACCEPTANCE_REPORT.md</code></li>
+        <li>Chrome 截图证据：<code>docs/active/evidence/p1_chrome_chatbox_visible_acceptance.png</code></li>
+        <li>P1 PRD：<code>docs/active/01_STAGE_PRD.md</code></li>
+        <li>P1 目标架构：<code>docs/active/02_TARGET_ARCHITECTURE.md</code></li>
+        <li>P1 Chatbox 阶段审计：<code>docs/active/stage-reviews/P1_M4_WP6_CHATBOX_P1_UX_PLAN_AND_AUDIT.md</code></li>
+        <li>发布清单：<code>RELEASE_CHECKLIST.md</code></li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>
