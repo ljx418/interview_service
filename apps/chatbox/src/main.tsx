@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { CheckCircle2, Download, Edit3, FileText, FileUp, ListChecks, PlayCircle, RefreshCcw, Save, Send, ShieldCheck, Sparkles } from "lucide-react";
+import { AlertCircle, CheckCircle2, Database, Download, Edit3, FileText, FileUp, ListChecks, MessageSquare, PlayCircle, RefreshCcw, Save, Send, ShieldCheck, Sparkles } from "lucide-react";
 import "./styles.css";
 
 const API_BASE = "http://127.0.0.1:8000";
@@ -8,8 +8,11 @@ const API_BASE = "http://127.0.0.1:8000";
 type Message = {
   role: "user" | "assistant";
   content: string;
+  tone?: "normal" | "notice" | "error";
   artifacts?: unknown[];
 };
+
+type DataMode = "example" | "my_data";
 
 type StoredChatMessage = {
   role: string;
@@ -36,6 +39,8 @@ type WorkflowStep = {
 };
 
 type WorkflowResult = {
+  data_mode?: string;
+  data_source?: string;
   steps: WorkflowStep[];
   summary: {
     headline: string;
@@ -49,6 +54,20 @@ type WorkflowResult = {
   exports?: Array<{ format: string; path: string }>;
 };
 
+class ApiError extends Error {
+  errorCode?: string;
+  suggestedAction?: string;
+  recoverable?: boolean;
+
+  constructor(message: string, options?: { errorCode?: string; suggestedAction?: string; recoverable?: boolean }) {
+    super(message);
+    this.name = "ApiError";
+    this.errorCode = options?.errorCode;
+    this.suggestedAction = options?.suggestedAction;
+    this.recoverable = options?.recoverable;
+  }
+}
+
 async function api<T>(path: string, body?: unknown, method?: string): Promise<T> {
   const response = await fetch(`${API_BASE}${path}`, {
     method: method ?? (body ? "POST" : "GET"),
@@ -57,9 +76,24 @@ async function api<T>(path: string, body?: unknown, method?: string): Promise<T>
   });
   const json = await response.json();
   if (!response.ok || json.ok === false) {
-    throw new Error(json.detail?.message ?? json.detail?.message ?? "API request failed");
+    const detail = json.detail ?? json;
+    throw new ApiError(detail.message ?? "API request failed", {
+      errorCode: detail.error_code,
+      suggestedAction: detail.suggested_action,
+      recoverable: detail.recoverable,
+    });
   }
   return json.data ?? json;
+}
+
+function formatError(error: unknown, fallback: string) {
+  if (error instanceof ApiError) {
+    const code = error.errorCode ? `错误码：${error.errorCode}。` : "";
+    const action = error.suggestedAction ? ` 下一步：${error.suggestedAction}` : "";
+    return `${code}${error.message}${action}`;
+  }
+  if (error instanceof Error) return error.message;
+  return fallback;
 }
 
 function parseJson<T>(value: unknown, fallback: T): T {
@@ -245,7 +279,21 @@ function WorkflowPanel({ result, busy, onRun }: { result: WorkflowResult | null;
   );
 }
 
-function ResultRail({ result, providerStatus, workspaceId }: { result: WorkflowResult | null; providerStatus: { provider: string; external_calls_enabled: boolean } | null; workspaceId: string }) {
+function modeLabel(mode: DataMode) {
+  return mode === "example" ? "示例模式" : "我的资料";
+}
+
+function ResultRail({
+  result,
+  providerStatus,
+  workspaceId,
+  dataMode,
+}: {
+  result: WorkflowResult | null;
+  providerStatus: { provider: string; external_calls_enabled: boolean } | null;
+  workspaceId: string;
+  dataMode: DataMode;
+}) {
   const outputs = result?.key_outputs ?? {};
   const exports = result?.exports ?? [];
   return (
@@ -254,9 +302,10 @@ function ResultRail({ result, providerStatus, workspaceId }: { result: WorkflowR
         <div className="rail-title"><ShieldCheck size={16} /> 运行边界</div>
         <div className="rail-pills">
           <StatusPill tone={workspaceId ? "success" : "neutral"}>{workspaceId ? "Workspace ready" : "Starting"}</StatusPill>
+          <StatusPill tone={dataMode === "my_data" ? "warning" : "success"}>{modeLabel(dataMode)}</StatusPill>
           <StatusPill tone={providerStatus?.external_calls_enabled ? "warning" : "success"}>{providerLabel(providerStatus)}</StatusPill>
         </div>
-        <p>默认路径使用本地 workspace。外部 provider 只在你明确配置和确认后调用。</p>
+        <p>默认路径使用本地 workspace。示例模式使用 examples 数据；我的资料模式只处理你上传或输入的内容。外部 provider 只在你明确配置和确认后调用。</p>
       </section>
       <section className="rail-section">
         <div className="rail-title"><ListChecks size={16} /> 本次结果</div>
@@ -450,15 +499,19 @@ function App() {
     },
   ]);
   const [busy, setBusy] = useState(false);
+  const [dataMode, setDataMode] = useState<DataMode>("example");
   const [providerStatus, setProviderStatus] = useState<{ provider: string; external_calls_enabled: boolean } | null>(null);
   const [workflowResult, setWorkflowResult] = useState<WorkflowResult | null>(null);
   const autorunStarted = useRef(false);
   const messagesListRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const workspaceRoot = params.get("workspace_root");
     api<any>("/api/provider/status").then(setProviderStatus).catch(() => undefined);
     api<any>("/api/workspace/init", {
       name: "local-job-search",
+      root_path: workspaceRoot || undefined,
       llm_provider: "mock",
       privacy_mode: "local_first",
     }).then(async (data) => {
@@ -484,8 +537,8 @@ function App() {
     });
   }, []);
 
-  function notice(content: string) {
-    setMessages((current) => [...current, { role: "assistant", content }]);
+  function notice(content: string, tone: Message["tone"] = "notice") {
+    setMessages((current) => [...current, { role: "assistant", content, tone }]);
   }
 
   function updateArtifactStatus(artifactId: string, status: string) {
@@ -517,13 +570,20 @@ function App() {
     }
   }, [messages, busy]);
 
-  async function send() {
-    if (!input.trim() || !workspaceId) return;
-    if (!sessionId) {
-      notice("会话还在初始化，请稍后再发送。");
+  async function sendText(rawText?: string) {
+    const text = (rawText ?? input).trim();
+    if (!text) {
+      notice("请输入 JD、资料整理任务，或点击上传按钮导入简历 / 项目 README。", "notice");
       return;
     }
-    const text = input.trim();
+    if (!workspaceId) {
+      notice("workspace 还在初始化，请稍后再发送。", "notice");
+      return;
+    }
+    if (!sessionId) {
+      notice("会话还在初始化，请稍后再发送。", "notice");
+      return;
+    }
     setInput("");
     setMessages((current) => [...current, { role: "user", content: text }]);
     setBusy(true);
@@ -531,10 +591,14 @@ function App() {
       const result = await api<any>("/api/chat/message", { workspace_id: workspaceId, session_id: sessionId, message: text });
       setMessages((current) => [...current, { role: "assistant", content: result.message, artifacts: result.artifacts }]);
     } catch (error) {
-      setMessages((current) => [...current, { role: "assistant", content: error instanceof Error ? error.message : "请求失败" }]);
+      setMessages((current) => [...current, { role: "assistant", tone: "error", content: formatError(error, "请求失败") }]);
     } finally {
       setBusy(false);
     }
+  }
+
+  async function send() {
+    await sendText();
   }
 
   async function upload(file: File | undefined) {
@@ -549,12 +613,13 @@ function App() {
       });
       const json = await response.json();
       if (!response.ok) throw new Error(json.detail?.message ?? "Upload failed");
+      setDataMode("my_data");
       setMessages((current) => [
         ...current,
         { role: "assistant", content: `已导入 ${file.name}，下一步可以发送“整理资料”或粘贴 JD。`, artifacts: [{ type: "document", data: json.data }] },
       ]);
     } catch (error) {
-      setMessages((current) => [...current, { role: "assistant", content: error instanceof Error ? error.message : "上传失败" }]);
+      setMessages((current) => [...current, { role: "assistant", tone: "error", content: formatError(error, "上传失败") }]);
     } finally {
       setBusy(false);
     }
@@ -564,17 +629,18 @@ function App() {
     if (!workspaceId) return;
     setBusy(true);
     try {
-      const result = await api<WorkflowResult>("/api/workflows/p2-demo/run", { workspace_id: workspaceId });
+      setDataMode("example");
+      const result = await api<WorkflowResult>("/api/workflows/p2-demo/run", { workspace_id: workspaceId, data_mode: "example" });
       setWorkflowResult(result);
       setMessages((current) => [
         ...current,
         {
           role: "assistant",
-          content: `P2 端到端体验路径已完成：${result.steps.length} 个步骤，导出 ${result.exports?.length ?? 0} 个文件。请检查上方工作流摘要和本地 exports。`,
+          content: `示例数据端到端体验路径已完成：${result.steps.length} 个步骤，导出 ${result.exports?.length ?? 0} 个文件。请检查推进台摘要和本地 exports。`,
         },
       ]);
     } catch (error) {
-      setMessages((current) => [...current, { role: "assistant", content: error instanceof Error ? error.message : "P2 工作流执行失败" }]);
+      setMessages((current) => [...current, { role: "assistant", tone: "error", content: formatError(error, "示例工作流执行失败") }]);
     } finally {
       setBusy(false);
     }
@@ -616,24 +682,54 @@ function App() {
           </div>
           <div className="header-status">
             <StatusPill tone={workspaceId ? "success" : "neutral"}>{workspaceId ? "Workspace ready" : "Starting..."}</StatusPill>
+            <StatusPill tone={dataMode === "my_data" ? "warning" : "success"}>{modeLabel(dataMode)}</StatusPill>
             {providerStatus && <StatusPill tone={providerStatus.external_calls_enabled ? "warning" : "success"}>{providerLabel(providerStatus)}</StatusPill>}
           </div>
         </header>
         <div className="workspace-grid">
-          <section className="workstream">
-            <WorkflowPanel result={workflowResult} busy={busy} onRun={runGuidedDemo} />
+          <section className="workstream conversation-area" aria-label="对话区">
             <section className="chat-thread-panel" aria-label="Chatbox 对话">
               <div className="chat-thread-head">
                 <div>
                   <span className="eyebrow">Chatbox</span>
-                  <h2>对话与产物</h2>
-                  <p>这里处理你的上传、JD 和追问；上方推进台只展示阶段结果。</p>
+                  <h2>对话区</h2>
+                  <p>从这里上传资料、粘贴 JD 或输入任务；推进台只展示阶段、产物和导出状态。</p>
                 </div>
                 <StatusPill tone={sessionId ? "success" : "neutral"}>{sessionId ? "Session ready" : "Session starting"}</StatusPill>
               </div>
+              <div className="chat-controls" aria-label="对话模式和快捷任务">
+                <div className="mode-switch" role="group" aria-label="资料模式">
+                  <button className={dataMode === "example" ? "active" : ""} onClick={() => setDataMode("example")} type="button">
+                    <Database size={15} /> 示例模式
+                  </button>
+                  <button className={dataMode === "my_data" ? "active" : ""} onClick={() => setDataMode("my_data")} type="button">
+                    <FileText size={15} /> 我的资料
+                  </button>
+                </div>
+                <div className="quick-actions" aria-label="常用任务">
+                  <button type="button" onClick={() => sendText("整理资料")} disabled={busy || !workspaceId || !sessionId}>
+                    <MessageSquare size={15} /> 整理资料
+                  </button>
+                  <button type="button" onClick={() => sendText("生成申请包")} disabled={busy || !workspaceId || !sessionId}>
+                    <FileText size={15} /> 申请包
+                  </button>
+                  <button type="button" onClick={() => sendText("准备面试")} disabled={busy || !workspaceId || !sessionId}>
+                    <ListChecks size={15} /> 面试
+                  </button>
+                  <button type="button" onClick={runGuidedDemo} disabled={busy || !workspaceId}>
+                    <PlayCircle size={15} /> 跑示例
+                  </button>
+                </div>
+                <p className="mode-note">
+                  {dataMode === "example"
+                    ? "示例模式只使用仓库 examples 数据，适合快速验收产品路径。"
+                    : "我的资料模式只处理你上传或输入的内容；外部 provider 不会被默认调用。"}
+                </p>
+              </div>
               <div className="messages" ref={messagesListRef} role="log" aria-live="polite">
                 {messages.map((message, index) => (
-                  <div key={index} className={`message ${message.role}`}>
+                  <div key={index} className={`message ${message.role} ${message.tone ?? ""}`}>
+                    {message.tone === "error" && <AlertCircle className="message-icon" size={17} />}
                     <p>{message.content}</p>
                     {message.artifacts?.map((artifact, artifactIndex) => (
                       <ArtifactCard key={artifactIndex} artifact={artifact} workspaceId={workspaceId} onNotice={notice} onArtifactStatus={updateArtifactStatus} />
@@ -668,7 +764,10 @@ function App() {
               </div>
             </section>
           </section>
-          <ResultRail result={workflowResult} providerStatus={providerStatus} workspaceId={workspaceId} />
+          <aside className="workbench" aria-label="求职推进台">
+            <WorkflowPanel result={workflowResult} busy={busy} onRun={runGuidedDemo} />
+            <ResultRail result={workflowResult} providerStatus={providerStatus} workspaceId={workspaceId} dataMode={dataMode} />
+          </aside>
         </div>
       </section>
     </main>

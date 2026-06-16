@@ -294,7 +294,7 @@
         <mxCell id="p5_green" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;spacing=8;align=left;verticalAlign=top;fontStyle=1;" value="绿色&lt;br&gt;P0/P1/P2 已完成：工具链、Provider Runtime、Artifact Versioning、Export、Workflow、P2 报告" vertex="1">
           <mxGeometry height="140" width="310" x="60" y="360" as="geometry" />
         </mxCell>
-        <mxCell id="p5_yellow" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;spacing=8;align=left;verticalAlign=top;fontStyle=1;" value="黄色&lt;br&gt;P3 正在完善：Chatbox 响应、模式边界、推进台分离、响应式 UX、截图验收" vertex="1">
+        <mxCell id="p5_yellow" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;spacing=8;align=left;verticalAlign=top;fontStyle=1;" value="黄色&lt;br&gt;P3 已完成自动化验收：Chatbox 响应、模式边界、推进台分离、响应式 UX、截图验收" vertex="1">
           <mxGeometry height="140" width="300" x="420" y="360" as="geometry" />
         </mxCell>
         <mxCell id="p5_gray" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=12;spacing=8;align=left;verticalAlign=top;fontStyle=1;" value="灰色&lt;br&gt;P4+：MCP、CLI、ASR、会议平台、自动海投、SaaS、岗位数据源、Offer 分析" vertex="1">

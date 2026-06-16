@@ -60,7 +60,7 @@
 - P0 收口复验和 P1 启动许可已完成；
 - P1 Provider Runtime、核心工具 provider-backed、Artifact Versioning、Regenerate、Export Service 和 Chatbox P1 UX 已完成本地自动化验收；
 - P2 examples-guided Chatbox 端到端体验、HTML 报告、截图证据和 MiniMax opt-in 受控验收已完成；
-- P3 当前目标是修复真实用户 Chatbox 体验断点、响应式布局问题和示例/真实资料模式边界；
+- P3 已完成本地自动化验收：Chatbox 响应闭环、示例/真实资料模式边界、对话区/推进台分离、响应式截图和 HTML 报告已落地；
 - 真实 API Key 和真实外部 provider 调用仍必须人工确认。
 
 P3 需要解决的 P2 后继限制：

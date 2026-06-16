@@ -143,3 +143,4 @@ class ChatSessionCreateRequest(BaseModel):
 class P2DemoWorkflowRequest(BaseModel):
     workspace_id: str | None = None
     reset_workspace: bool = False
+    data_mode: Literal["example", "my_data"] = "example"

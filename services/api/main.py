@@ -344,4 +344,4 @@ def chat_message(req: ChatMessageRequest):
 
 @app.post("/api/workflows/p2-demo/run")
 def p2_demo_run(req: P2DemoWorkflowRequest):
-    return run_tool(run_p2_demo_flow, req.workspace_id, req.reset_workspace)
+    return run_tool(run_p2_demo_flow, req.workspace_id, req.reset_workspace, req.data_mode)

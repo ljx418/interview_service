@@ -26,7 +26,7 @@
 
 ## 当前阶段状态
 
-P0 已冻结并完成 M5、M7、M8、M9/M13 维护和 PiAgent 编排接入。P1 已完成本地工程闭环和可见验收。P2 已完成 examples-guided Chatbox 端到端体验，并补充 MiniMax opt-in 真实 provider 受控验收。当前进入 P3：真实用户 Chatbox 体验、对话响应闭环、对话区/推进台分离、响应式 UX 和截图验收。
+P0 已冻结并完成 M5、M7、M8、M9/M13 维护和 PiAgent 编排接入。P1 已完成本地工程闭环和可见验收。P2 已完成 examples-guided Chatbox 端到端体验，并补充 MiniMax opt-in 真实 provider 受控验收。P3 已完成本地自动化验收：真实用户 Chatbox 体验、对话响应闭环、对话区/推进台分离、响应式 UX、截图证据和 HTML 报告已落地；真实个人资料、真实外部调用和最终主观体验审查仍需人工确认。
 
 ## 当前剩余风险
 
@@ -77,12 +77,12 @@ P1 冻结说明：
 ## P3 当前计划
 
 - [x] P3-M0：制定 P3 PRD 增补、目标架构、里程碑、验收门槛、开发计划和 drawio gap 文档。
-- [ ] P3-M1：完成 Chatbox 对话响应闭环，覆盖有效输入、无效输入、缺资料和后端错误。
-- [ ] P3-M2：完成示例模式 / 真实资料模式边界和 provider 状态表达。
-- [ ] P3-M3：重构对话区与推进台分离，强化产物、确认项、版本和导出管理。
-- [ ] P3-M4：修复响应式 UX，完成 1280px、720px、390px Chrome 截图验收。
-- [ ] P3-M5：制作 P3 HTML 验收报告，包含截图证据、目标架构、当前实现、体验路径、测试结果和 PRD 规格检视。
-- [ ] P3-M6：完成 pytest、frontend build、P0/P1/P2 回归、README/TODO/active docs/drawio 同步和 P3 冻结审计。
+- [x] P3-M1：完成 Chatbox 对话响应闭环，覆盖有效输入、无效输入、缺资料和后端错误。
+- [x] P3-M2：完成示例模式 / 真实资料模式边界和 provider 状态表达。
+- [x] P3-M3：重构对话区与推进台分离，强化产物、确认项、版本和导出管理。
+- [x] P3-M4：修复响应式 UX，完成 1280px、720px、390px Chrome 截图验收。
+- [x] P3-M5：制作 P3 HTML 验收报告，包含截图证据、目标架构、当前实现、体验路径、测试结果和 PRD 规格检视。
+- [x] P3-M6：完成 pytest、frontend build、P0/P1/P2 回归、README/TODO/active docs/drawio 同步和 P3 冻结审计。
 
 ## P4+ 候选
 

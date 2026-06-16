@@ -28,7 +28,7 @@ def _step(key: str, title: str, status: str, summary: str, artifacts: list[dict[
     }
 
 
-def run_p2_demo_flow(workspace_id: str | None = None, reset_workspace: bool = False) -> dict[str, Any]:
+def run_p2_demo_flow(workspace_id: str | None = None, reset_workspace: bool = False, data_mode: str = "example") -> dict[str, Any]:
     """Run the P2 guided demo flow with repository examples.
 
     This is the automatic acceptance baseline for the user-facing end-to-end
@@ -36,6 +36,9 @@ def run_p2_demo_flow(workspace_id: str | None = None, reset_workspace: bool = Fa
     and the workspace's configured provider mode. The default workspace remains
     mock/local unless the caller explicitly initialized it otherwise.
     """
+
+    if data_mode != "example":
+        raise ValueError("EXAMPLE_WORKFLOW_MODE_REQUIRED: guided demo flow can only run with data_mode=example.")
 
     if reset_workspace or not workspace_id:
         workspace = init_workspace("p2-guided-demo")
@@ -173,6 +176,8 @@ def run_p2_demo_flow(workspace_id: str | None = None, reset_workspace: bool = Fa
     export_paths = [item.get("path") for item in exported.get("exports", []) if item.get("path")]
     result = {
         "workspace_id": workspace_id,
+        "data_mode": "example",
+        "data_source": "repository_examples",
         "provider_mode": "workspace_default",
         "steps": steps,
         "artifacts": [ref for ref in artifacts if ref],
@@ -204,4 +209,3 @@ def run_p2_demo_flow(workspace_id: str | None = None, reset_workspace: bool = Fa
         },
     }
     return result
-
