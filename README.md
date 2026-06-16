@@ -39,14 +39,14 @@ P0 已冻结。P1 已完成本地可验收实现：OpenAI-compatible provider op
 - `docs/active/06_TRACEABILITY_MATRIX.md` - 目标、模块、证据、测试和验收追踪矩阵。
 - `docs/active/07_REMAINING_DEVELOPMENT_AND_ACCEPTANCE_PLAN.md` - P0 完成范围和历史验收基线。
 - `docs/active/08_P0_PROMPT_AND_OUTPUT_SCHEMAS.md` - P0 prompt、输出 schema、source refs、待确认分级和 eval 断言。
-- `docs/active/09_AUTOMATED_DEVELOPMENT_SCOPE.md` - P0 维护和 P1 自动化开发范围、验收边界和高风险确认点。
+- `docs/active/09_AUTOMATED_DEVELOPMENT_SCOPE.md` - P3 自动化开发范围、验收边界、高风险确认点和历史阶段边界。
 - `docs/active/10_P0_FREEZE_AUDIT_AND_ACCEPTANCE_REPORT.md` - P0 冻结审计、验收结果、残留风险和后续开发大纲。
 - `docs/active/11_P1_DEVELOPMENT_AND_ACCEPTANCE_PLAN.md` - P1 开发及验收计划。
 - `docs/active/12_P1_DETAILED_IMPLEMENTATION_SPEC.md` - P1 数据模型、API、provider、versioning、regenerate、export、eval 和打回条件。
 - `docs/active/13_P2_END_TO_END_EXPERIENCE_PLAN_AND_AUDIT.md` - P2 端到端用户体验开发计划、验收门槛和启动审计。
 - `docs/active/15_P3_REAL_USER_CHATBOX_EXPERIENCE_PLAN.md` - P3 真实用户 Chatbox 体验开发及验收计划。
-- `docs/active/stage-reviews/` - P2 子阶段审计记录；P1 阶段审计已归档到 `docs/archive/stage-reviews/p1/`。
-- `docs/active/jobpilot-stage-gap-and-acceptance.drawio` - P3 架构总览与差异、开发计划、里程碑、验收门槛和追踪矩阵图。
+- `docs/active/stage-reviews/` - P2/P3 子阶段审计记录；P1 阶段审计已归档到 `docs/archive/stage-reviews/p1/`。
+- `docs/active/jobpilot-stage-gap-and-acceptance.drawio` - P3 架构模块、组件职责、调用关系、数据所有权、安全边界和验收证据图。
 - `RELEASE_CHECKLIST.md` - P1 发布前检查清单。
 
 原始 v1.0 产品文档包仍保留在 `docs/jobpilot_ai_agent_docs_v1_0/`，作为背景资料。

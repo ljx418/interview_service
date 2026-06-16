@@ -232,7 +232,7 @@ npm --prefix apps/chatbox run build
 
 通过条件：
 
-- README 说明 P2 当前阶段目标和运行方式；
+- README 说明 P2 当时阶段目标和运行方式；
 - TODO 与 active docs 不冲突；
 - PRD、目标架构、里程碑、验收门槛和 drawio 口径一致；
 - drawio 覆盖目标架构与当前架构差异、开发计划、里程碑、验收门槛和出门条件；

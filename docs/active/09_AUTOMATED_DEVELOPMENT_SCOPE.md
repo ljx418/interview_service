@@ -66,7 +66,7 @@ P2 当时阶段口径：
 
 ## 2. 当前状态判断
 
-当前 P2 文档体系已经覆盖：
+P2 当时文档体系已经覆盖：
 
 ```text
 P2 PRD
@@ -79,7 +79,7 @@ P2 PRD
 → P2 drawio 图示和文本镜像
 ```
 
-当前实现已经具备：
+P2 当时实现已经具备：
 
 - P2 Workflow Orchestrator API；
 - examples guided demo flow；
@@ -90,7 +90,7 @@ P2 PRD
 - P2 guided flow eval；
 - Chrome 初始/完成/总结截图。
 
-当前剩余 P2 工作：
+P2 当时剩余工作：
 
 - P2 HTML 验收报告；
 - 截图证据整理；

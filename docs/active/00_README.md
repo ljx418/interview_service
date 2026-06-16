@@ -4,7 +4,7 @@
 
 ## 阅读顺序
 
-1. `01_STAGE_PRD.md`：当前阶段 PRD、目标用户、目标体验路径和 P1 范围。
+1. `01_STAGE_PRD.md`：P3 当前阶段 PRD、目标用户、目标体验路径、非目标和历史阶段基线。
 2. `02_TARGET_ARCHITECTURE.md`：当前架构、目标架构、深度架构设计和差距。
 3. `03_MILESTONES_AND_DELIVERY_PLAN.md`：项目里程碑、阶段产物和出门条件。
 4. `04_ACCEPTANCE_GATES.md`：功能、安全、隐私、开源可用性的验收门槛。
@@ -12,16 +12,16 @@
 6. `06_TRACEABILITY_MATRIX.md`：目标、模块、证据、测试和验收门槛追踪矩阵。
 7. `07_REMAINING_DEVELOPMENT_AND_ACCEPTANCE_PLAN.md`：剩余开发工作包、验收证据和最终验收路径。
 8. `08_P0_PROMPT_AND_OUTPUT_SCHEMAS.md`：P0 prompt、输出 schema、source refs、待确认分级和 eval 断言。
-9. `09_AUTOMATED_DEVELOPMENT_SCOPE.md`：P0 维护和 P1 自动化开发范围、验收边界和高风险确认点。
+9. `09_AUTOMATED_DEVELOPMENT_SCOPE.md`：P3 自动化开发范围、验收边界、高风险确认点和历史阶段边界。
 10. `10_P0_FREEZE_AUDIT_AND_ACCEPTANCE_REPORT.md`：P0 冻结审计、验收结果、残留风险和后续开发大纲。
 11. `11_P1_DEVELOPMENT_AND_ACCEPTANCE_PLAN.md`：P1 开发工作包、验收证据、审计意见和端到端路径。
 12. `12_P1_DETAILED_IMPLEMENTATION_SPEC.md`：P1 数据模型、API、provider、versioning、regenerate、export、eval 和打回条件。
 13. `13_P2_END_TO_END_EXPERIENCE_PLAN_AND_AUDIT.md`：P2 端到端用户体验开发计划、验收门槛和启动审计意见。
-14. `14_P2_REMAINING_DEVELOPMENT_AND_ACCEPTANCE_PLAN.md`：P2-M4/M5 剩余开发、验收、截图、报告和冻结计划。
+14. `14_P2_REMAINING_DEVELOPMENT_AND_ACCEPTANCE_PLAN.md`：P2-M4/M5 历史开发、验收、截图、报告和冻结计划。
 15. `15_P3_REAL_USER_CHATBOX_EXPERIENCE_PLAN.md`：P3 真实用户 Chatbox 体验、响应式 UX、验收计划和启动审计。
 16. `stage-reviews/`：P2/P3 子阶段审计记录；P1 阶段审计已归档到 `docs/archive/stage-reviews/p1/`。
 17. `jobpilot-stage-gap-and-acceptance.md`：drawio 图的文本镜像，方便审查和 diff。
-18. `jobpilot-stage-gap-and-acceptance.drawio`：P3 目标架构与当前架构差异、开发计划、里程碑、验收门槛、出门条件和追踪矩阵。
+18. `jobpilot-stage-gap-and-acceptance.drawio`：P3 架构模块、组件职责、调用关系、数据所有权、安全边界和验收证据图。
 
 ## 当前阶段目标
 

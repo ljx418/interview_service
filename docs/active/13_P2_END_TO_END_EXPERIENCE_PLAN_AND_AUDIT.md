@@ -88,7 +88,7 @@ React Chatbox
 → pytest eval gates / frontend build / Chrome screenshot evidence
 ```
 
-当前 P1 优势：
+P2 启动时的 P1 优势：
 
 - mock/fixture 模式下可以无 API Key 本地验收；
 - Pi Agent Core 已可接管基础业务编排；
@@ -96,7 +96,7 @@ React Chatbox
 - Chatbox 可以展示产物卡、版本、编辑、重新生成和导出入口；
 - 已有 P1 Chrome 可见截图报告。
 
-当前 P2 差距：
+P2 启动时的差距：
 
 - 用户仍需要知道该输入什么 prompt；
 - Chatbox 没有明确的“下一步”工作流状态；
