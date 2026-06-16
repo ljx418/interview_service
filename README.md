@@ -26,6 +26,8 @@ P0 已冻结。P1 已完成本地可验收实现：OpenAI-compatible provider op
 
 P3 已完成本地自动化验收：Chatbox 已从“可演示的一键体验”推进到“真实用户可理解、可对话、可管理产物、可在窄屏使用”的求职工作台。默认验收仍使用 mock provider 和 examples 真实感数据；真实个人资料、真实外部调用和最终主观体验审查仍需人工确认。
 
+人工审查已认可 P3 验收报告的大部分内容，但对当前用户体验不完全认同。后续 P4 候选阶段应优先做 UX 体验优化，包括信息架构、任务入口、产物卡可读性、状态反馈、响应式细节和人工体验审查包。
+
 ## 当前阶段设计文档
 
 当前阶段的执行依据在 `docs/active/`。
@@ -45,6 +47,7 @@ P3 已完成本地自动化验收：Chatbox 已从“可演示的一键体验”
 - `docs/active/12_P1_DETAILED_IMPLEMENTATION_SPEC.md` - P1 数据模型、API、provider、versioning、regenerate、export、eval 和打回条件。
 - `docs/active/13_P2_END_TO_END_EXPERIENCE_PLAN_AND_AUDIT.md` - P2 端到端用户体验开发计划、验收门槛和启动审计。
 - `docs/active/15_P3_REAL_USER_CHATBOX_EXPERIENCE_PLAN.md` - P3 真实用户 Chatbox 体验开发及验收计划。
+- `docs/active/16_P4_UX_EXPERIENCE_HARDENING_PLAN.md` - P4 UX 体验优化候选计划。
 - `docs/active/stage-reviews/` - P2/P3 子阶段审计记录；P1 阶段审计已归档到 `docs/archive/stage-reviews/p1/`。
 - `docs/active/jobpilot-stage-gap-and-acceptance.drawio` - P3 架构模块、组件职责、调用关系、数据所有权、安全边界和验收证据图。
 - `RELEASE_CHECKLIST.md` - P1 发布前检查清单。

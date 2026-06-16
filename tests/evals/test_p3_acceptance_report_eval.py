@@ -22,5 +22,7 @@ def test_p3_acceptance_report_exists_and_references_real_evidence():
 
     assert "未验证范围" in html
     assert "真实个人资料自动验收" in html
-    assert "60 passed" in html
+    assert "61 passed" in html
+    assert "人工 UX 审查意见" in html
+    assert "当前用户体验已被人工完全认可" in html
     assert "npm --prefix apps/chatbox run build" in html

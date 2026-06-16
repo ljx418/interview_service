@@ -19,9 +19,10 @@
 13. `13_P2_END_TO_END_EXPERIENCE_PLAN_AND_AUDIT.md`：P2 端到端用户体验开发计划、验收门槛和启动审计意见。
 14. `14_P2_REMAINING_DEVELOPMENT_AND_ACCEPTANCE_PLAN.md`：P2-M4/M5 历史开发、验收、截图、报告和冻结计划。
 15. `15_P3_REAL_USER_CHATBOX_EXPERIENCE_PLAN.md`：P3 真实用户 Chatbox 体验、响应式 UX、验收计划和启动审计。
-16. `stage-reviews/`：P2/P3 子阶段审计记录；P1 阶段审计已归档到 `docs/archive/stage-reviews/p1/`。
-17. `jobpilot-stage-gap-and-acceptance.md`：drawio 图的文本镜像，方便审查和 diff。
-18. `jobpilot-stage-gap-and-acceptance.drawio`：P3 架构模块、组件职责、调用关系、数据所有权、安全边界和验收证据图。
+16. `16_P4_UX_EXPERIENCE_HARDENING_PLAN.md`：P4 UX 体验优化候选计划，承接 P3 人工审查反馈。
+17. `stage-reviews/`：P2/P3 子阶段审计记录；P1 阶段审计已归档到 `docs/archive/stage-reviews/p1/`。
+18. `jobpilot-stage-gap-and-acceptance.md`：drawio 图的文本镜像，方便审查和 diff。
+19. `jobpilot-stage-gap-and-acceptance.drawio`：P3 架构模块、组件职责、调用关系、数据所有权、安全边界和验收证据图。
 
 ## 当前阶段目标
 
@@ -62,6 +63,7 @@
 - P2 examples-guided Chatbox 端到端体验、HTML 报告、截图证据和 MiniMax opt-in 受控验收已完成；
 - P3 已完成本地自动化验收：Chatbox 响应闭环、示例/真实资料模式边界、对话区/推进台分离、响应式截图和 HTML 报告已落地；
 - 真实 API Key 和真实外部 provider 调用仍必须人工确认。
+- 人工审查已认可 P3 验收报告的大部分内容，但未完全认可当前用户体验；P4 候选阶段需要优先做 UX 体验优化。
 
 P3 需要解决的 P2 后继限制：
 
