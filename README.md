@@ -2,7 +2,7 @@
 
 JobPilot AI 是一个面向转行程序员的本地优先、免费开源 AI 求职 Agent 服务。默认入口是极简 Chatbox，但真正的核心是后端 Agent Tool Service：同一套能力后续可以被 Chatbox、HTTP API、CLI、MCP Client 或外部 Agent 调用。
 
-## 当前 MVP / P3 基线
+## 当前 MVP / P4 UX 基线
 
 当前骨架已经具备：
 
@@ -26,30 +26,31 @@ P0 已冻结。P1 已完成本地可验收实现：OpenAI-compatible provider op
 
 P3 已完成本地自动化验收：Chatbox 已从“可演示的一键体验”推进到“真实用户可理解、可对话、可管理产物、可在窄屏使用”的求职工作台。默认验收仍使用 mock provider 和 examples 真实感数据；真实个人资料、真实外部调用和最终主观体验审查仍需人工确认。
 
-人工审查已认可 P3 验收报告的大部分内容，但对当前用户体验不完全认同。后续 P4 候选阶段应优先做 UX 体验优化，包括信息架构、任务入口、产物卡可读性、状态反馈、响应式细节和人工体验审查包。
+人工审查已认可 P3 验收报告的大部分内容，但对当前用户体验不完全认同。当前 P4 阶段优先做 UX 体验强化，包括信息架构、任务入口、产物卡可读性、状态反馈、响应式细节、Gemini 前端审查包和人工体验审查包。P4B 已把全尺寸桌面体验纳入 hard gate：1200px、1440px、1600px、1920px 下页面必须像完整求职材料工作台，不能出现由布局错误造成的大面积空白或窄屏布局停靠在左侧。
 
 ## 当前阶段设计文档
 
 当前阶段的执行依据在 `docs/active/`。
 
 - `docs/active/00_README.md` - 阅读顺序和当前阶段基线。
-- `docs/active/01_STAGE_PRD.md` - P3 目标体验路径和历史阶段基线。
-- `docs/active/02_TARGET_ARCHITECTURE.md` - 目标架构深度设计。
+- `docs/active/01_STAGE_PRD.md` - P4 UX 目标体验路径和历史阶段基线。
+- `docs/active/02_TARGET_ARCHITECTURE.md` - P4 目标 UX 架构深度设计。
 - `docs/active/03_MILESTONES_AND_DELIVERY_PLAN.md` - 里程碑和出门条件。
-- `docs/active/04_ACCEPTANCE_GATES.md` - P3 验收门槛和最终出门条件。
+- `docs/active/04_ACCEPTANCE_GATES.md` - P4 验收门槛和最终出门条件。
 - `docs/active/05_IMPLEMENTATION_SPEC.md` - P0 强化实现规格基线。
 - `docs/active/06_TRACEABILITY_MATRIX.md` - 目标、模块、证据、测试和验收追踪矩阵。
 - `docs/active/07_REMAINING_DEVELOPMENT_AND_ACCEPTANCE_PLAN.md` - P0 完成范围和历史验收基线。
 - `docs/active/08_P0_PROMPT_AND_OUTPUT_SCHEMAS.md` - P0 prompt、输出 schema、source refs、待确认分级和 eval 断言。
-- `docs/active/09_AUTOMATED_DEVELOPMENT_SCOPE.md` - P3 自动化开发范围、验收边界、高风险确认点和历史阶段边界。
+- `docs/active/09_AUTOMATED_DEVELOPMENT_SCOPE.md` - P4 自动化开发范围、验收边界、高风险确认点和历史阶段边界。
 - `docs/active/10_P0_FREEZE_AUDIT_AND_ACCEPTANCE_REPORT.md` - P0 冻结审计、验收结果、残留风险和后续开发大纲。
 - `docs/active/11_P1_DEVELOPMENT_AND_ACCEPTANCE_PLAN.md` - P1 开发及验收计划。
 - `docs/active/12_P1_DETAILED_IMPLEMENTATION_SPEC.md` - P1 数据模型、API、provider、versioning、regenerate、export、eval 和打回条件。
 - `docs/active/13_P2_END_TO_END_EXPERIENCE_PLAN_AND_AUDIT.md` - P2 端到端用户体验开发计划、验收门槛和启动审计。
 - `docs/active/15_P3_REAL_USER_CHATBOX_EXPERIENCE_PLAN.md` - P3 真实用户 Chatbox 体验开发及验收计划。
-- `docs/active/16_P4_UX_EXPERIENCE_HARDENING_PLAN.md` - P4 UX 体验优化候选计划。
+- `docs/active/16_P4_UX_EXPERIENCE_HARDENING_PLAN.md` - P4 UX 体验强化开发及验收计划。
+- `docs/gemini-frontend-review-package/` - 可交给 Gemini 独立审查的前端页面方案和静态原型。
 - `docs/active/stage-reviews/` - P2/P3 子阶段审计记录；P1 阶段审计已归档到 `docs/archive/stage-reviews/p1/`。
-- `docs/active/jobpilot-stage-gap-and-acceptance.drawio` - P3 架构模块、组件职责、调用关系、数据所有权、安全边界和验收证据图。
+- `docs/active/jobpilot-stage-gap-and-acceptance.drawio` - P4 UX 目标架构、当前差距、开发验收计划、里程碑、门槛和出门条件图。
 - `RELEASE_CHECKLIST.md` - P1 发布前检查清单。
 
 原始 v1.0 产品文档包仍保留在 `docs/jobpilot_ai_agent_docs_v1_0/`，作为背景资料。
@@ -159,4 +160,4 @@ npm --prefix apps/chatbox run dev
 
 MVP / P1 不做注册登录、SaaS 多租户、Billing、自动海投、隐蔽式面试浮窗、面试官人脸/情绪/敏感属性分析或完整 ASR。正式面试模式只提供结构提示和事实安全提醒。
 
-P3 不把 MCP Server、CLI、ASR 或会议平台作为出门条件；P3 的核心是可对话、可管理产物、响应式可用的 Chatbox 求职工作台。
+P4 不把 MCP Server、CLI、ASR 或会议平台作为出门条件；P4 的核心是让 Chatbox 求职工作台从“可用”提升到“好理解、好操作、可被人工体验认可”。浏览器体验验收至少覆盖 1200px、1440px、1600px、1920px、720px、390px，并要求截图脚本隔离或清理 viewport emulation，避免污染人工审查浏览器。

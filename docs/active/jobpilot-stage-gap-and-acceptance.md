@@ -1,179 +1,137 @@
-# JobPilot AI P3 架构模块与验收图说明
+# JobPilot AI P4 UX 架构、差距与验收图说明
 
 本文档是 `jobpilot-stage-gap-and-acceptance.drawio` 的文本镜像，便于代码审查和 diff。
 
-本轮图示弱化阶段关系，主线改为架构模块、功能角色、调用关系、数据所有权和验收边界。
+本轮图示主线是 P4 UX 体验强化：目标 UX 架构、当前架构差距、开发及验收计划、项目里程碑、验收门槛、出门条件和审查证据。它不把 MCP、CLI、ASR、会议平台、自动海投或 SaaS 放入 P4 出门条件。
 
 ## 图示页结构
 
-P3 drawio 保持 5 页：
+P4 drawio 保持 5 页：
 
-1. 系统上下文与目标模块图；
-2. Chatbox 前端组件职责；
-3. 后端编排与 Domain Tool 关系；
-4. 数据、Artifact、Provider、Export 关系；
-5. 安全边界、验收证据和状态标记。
+1. P4 目标 UX 架构与当前差距；
+2. P4 前端页面功能角色与关联关系；
+3. P4 开发及验收计划；
+4. P4 项目里程碑、验收门槛与出门条件；
+5. 安全边界、状态标记与审查证据。
 
 颜色含义：
 
-- 绿色：已完成 / P0+P1+P2 基线；
-- 黄色：P3 本阶段已完成自动化验收，仍需人工体验审查；
-- 灰色：P4+ 后续能力；
-- 红色：高风险人工确认或禁止路径。
+- 绿色：已完成 / P0+P1+P2+P3 基线；
+- 黄色：P4 本阶段目标；
+- 灰色：P5+ 后续能力；
+- 红色：高风险人工确认或禁止路径；
+- 蓝色：用户、证据或说明性节点。
 
-## 第 1 页 - 系统上下文与目标模块图
+## 第 1 页 - P4 目标 UX 架构与当前差距
 
 目标架构主链路：
 
 ```text
 User
-→ Chatbox Client
-→ FastAPI Agent Service
-→ ChatCore Facade
-→ Flow Orchestration
-→ Domain Tool Layer
-→ Provider and Contract Layer
-→ Artifact and Storage Layer
-→ Evidence Layer
+→ Experience Shell
+→ Conversation Plane
+  → Empty State Suggested Prompts
+  → Loading / Error Recovery
+→ Full-size Desktop Workbench / Workbench Plane
+→ Artifact Review Cards
+→ P0-P3 后端基线
+→ Evidence Plane
 ```
 
-模块角色：
+当前差距：
 
-- Chatbox Client：只做输入、展示、确认、编辑和导出触发；
-- FastAPI Agent Service：HTTP 边界、请求校验、错误码、workspace 边界；
-- ChatCore Facade：隔离 KeywordChatCore / PiAgentChatCore；
-- Flow Orchestration：把用户意图转成工具计划；
-- Domain Tool Layer：执行求职业务能力；
-- Provider and Contract Layer：外部调用、安全策略、prompt contract、schema validation；
-- Artifact and Storage Layer：版本、确认项、导出、本地持久化；
-- Evidence Layer：测试、截图、HTML 报告。
+- 首屏仍偏工程状态，P4 目标是 Chatbox 空状态 suggested prompts 优先；
+- Chatbox 可响应，但 P4 目标是反馈更自然，并包含 loading / error recovery；
+- 推进台已分离，但 P4 目标是只管理结果、确认项、版本和导出，并在 1200px、1440px、1600px、1920px 形成完整桌面工作台；
+- 产物卡仍有工程术语，P4 目标是求职语义优先，并区分 primary / secondary action；
+- P4 不改变 FastAPI、ChatCore、PiAgent、Domain Tools、Artifact 和 Export 的后端主链路。
+- 截图脚本必须隔离或清理 viewport emulation，避免污染人工审查浏览器。
 
 禁止路径：
 
-- Chatbox 直接调用 Provider；
-- Chatbox 直接写 SQLite；
-- PiAgent 直接写 SQLite；
-- Provider raw output 直接导出；
-- Workflow 失败后伪造完成。
+- 前端生成求职内容；
+- 默认触发外部 provider；
+- 隐藏待确认项；
+- suggested prompts 与 composer 割裂；
+- 1200px 以上桌面宽度出现布局错误造成的大面积空白；
+- 截图脚本污染人工审查者浏览器 viewport；
+- 用静态原型冒充已实现。
 
-## 第 2 页 - Chatbox 前端组件职责
+## 第 2 页 - P4 前端页面功能角色与关联关系
 
-前端组件边界：
+前端角色：
 
-```text
-Experience Shell
-→ Mode / Provider Status
-→ Conversation View
-→ Composer / Upload Entry
-→ Workbench Panel
-→ Artifact Cards
-→ Export Actions
-```
+- Mode / Provider Strip：展示示例模式、我的资料模式、mock 默认和 external 需确认；
+- Empty State Suggested Prompts：提供导入资料、粘贴 JD、生成申请包、准备面试等建议任务，点击后填入 composer 或触发对话；
+- Chat Timeline：展示用户消息、系统计划、loading / thinking、错误恢复和完成摘要；
+- Composer Dock：处理文本、上传和快捷任务；
+- Current Task Panel：展示当前阶段、下一步和缺口提示；
+- Artifact List / Artifact Card：展示岗位解析、匹配报告、申请包、面试准备，并突出 primary action；
+- Confirm / Export Bar：执行导出前确认和导出触发；
+- Responsive / Full-size Controller：约束 1200/1440/1600/1920/720/390 多档布局，390px 下 Workbench 不压缩 Chatbox，截图结束后清理 emulation。
 
-职责：
+页面规则：
 
-- Experience Shell：展示 workspace、provider、示例/真实资料模式；
-- Conversation View：展示消息、计划、结果、错误；
-- Composer / Upload Entry：输入文本、上传资料、触发发送；
-- Workbench Panel：展示阶段、下一步、产物、确认项、版本和导出；
-- Artifact Cards：管理单个产物摘要、source refs、确认项、版本操作；
-- Export Actions：只触发后端 export preflight。
+- 不嵌套卡片；
+- 不让工程字段成为主内容；
+- 移动端不能用“可运行”替代“好用”；
+- 全尺寸桌面不能用“左侧窄栏 + 右侧空白”冒充工作台。
 
-P3 修正重点：
+## 第 3 页 - P4 开发及验收计划
 
-- Chatbox 与推进台职责分离；
-- 有效输入必须有可见响应；
-- 错误必须可理解；
-- 720px / 390px 下不能截断关键操作。
-
-## 第 3 页 - 后端编排与 Domain Tool 关系
-
-后端调用链：
+执行顺序：
 
 ```text
-Chat Routes / Workflow Routes
-→ ChatCore Facade
-→ KeywordChatCore or PiAgentChatCore
-→ Real User Flow Controller
-→ Domain Tool Executor
-→ Domain Tools
+P4-M0 文档 / drawio / Gemini 包锁定
+→ P4-M1 Chatbox 空状态 suggested prompts
+→ P4-M2 对话反馈、loading 与错误恢复
+→ P4-M3 推进台与产物卡可读性、primary action
+→ P4-M4 状态、错误恢复、provider 语义
+→ P4-M5 响应式与可访问性冒烟
+→ P4-M5A 全尺寸桌面工作台与截图脚本隔离
+→ P4-M6 before/after 报告与冻结
 ```
 
-Domain Tools：
+每阶段都必须产生测试、截图或 PRD 规格检视证据；出现重大偏差必须打回计划。
 
-- profile：extract_facts、skill evidence；
-- project：create_card；
-- job：parse_jd、match_profile；
-- application：create_package；
-- interview：prepare、story cards；
-- realtime：generate_hint；
-- review/training：review transcript、training tasks。
+## 第 4 页 - P4 项目里程碑、验收门槛与出门条件
 
-关键规则：
+P4 门槛：
 
-- ChatCore 只产出 intent / tool plan；
-- Python Domain Tools 才能写业务数据；
-- Workflow Orchestrator 只能编排工具，不复制工具逻辑；
-- 每次工具调用需要 tool invocation 记录和脱敏摘要；
-- 失败必须返回失败步骤和错误码，不得继续标绿。
+1. P0-P3 回归不退化；
+2. Chatbox 空状态任务入口清楚，suggested prompts 能进入 composer 或对话；
+3. 对话反馈可理解，包含 loading 和错误恢复 action；
+4. 推进台和产物卡可读，按钮主次清楚；
+5. provider、隐私和外呼语义不误导；
+6. 全尺寸响应式与基础可访问性，1200/1440/1600/1920 不留大面积空白，390px 下 Workbench 不压缩 Chatbox，截图脚本清理 emulation；
+7. Gemini 审查包、HTML 报告和 PRD 规格检视。
 
-## 第 4 页 - 数据、Artifact、Provider、Export 关系
+最终出门条件：
 
-数据所有权：
+一个转行程序员不读文档也能完成：
 
 ```text
-Workspace
-→ Chat Session / Message
-→ Document
-→ CareerFact / SkillEvidence / TechProject
-→ Job / MatchReport
-→ ApplicationPackage / InterviewPrep / Review
-→ Artifact / ArtifactVersion
-→ Export File
-→ ProviderInvocation
+导入资料 → 分析岗位 → 生成申请包 → 确认/编辑 → 导出
 ```
 
-关系：
+同时截图、测试、报告和人工体验记录齐全。
 
-- Document 是 source refs 的根；
-- Domain Tools 生成领域对象；
-- Artifact Service 包装可展示、可确认、可版本化的产物；
-- ArtifactVersion 保存 content_json / content_path、source_refs、questions_to_confirm；
-- Export Service 只读取 current 或显式选择版本；
-- ProviderInvocation 只保存摘要、状态、延迟和错误，不保存敏感原文。
+## 第 5 页 - 安全边界、状态标记与审查证据
 
-关键不变量：
+P4 证据包：
 
-- source refs 不得丢失；
-- questions_to_confirm 不得静默删除；
-- edit / regenerate 必须生成新版本；
-- blocking confirmation 未解决不得导出；
-- export 只写 workspace `exports/`；
-- API Key、完整简历、完整 JD、完整 transcript、完整 raw response 不得入库或入日志。
-
-## 第 5 页 - 安全边界、验收证据和状态标记
-
-安全边界：
-
-- Provider Policy Gate 是外部调用唯一出口；
-- mock provider 是默认模式；
-- external provider 必须 opt-in；
-- 真实个人资料和真实外部调用必须人工确认；
-- realtime 仍是 text-in / hint-out，不做 ASR 或会议平台。
-
-验收证据：
-
-- `python3 -m pytest`；
-- `npm --prefix apps/chatbox run build`；
-- Chrome 1280px / 720px / 390px 截图；
-- P3 HTML 验收报告；
-- PRD 规格检视；
+- Chrome screenshots；
+- 1200/1440/1600/1920/720/390 多档截图；
+- P4 HTML report；
+- Gemini review package；
+- PRD review；
 - drawio XML parse；
-- README/TODO/active docs 口径一致。
+- README/TODO sync。
 
-状态标记：
+审计原则：
 
-- 绿色：P0/P1/P2 已完成模块；
-- 黄色：P3 已完成自动化验收的 Chatbox、模式边界、推进台分离、响应式 UX、截图验收；
-- 灰色：MCP、CLI、ASR、会议平台、自动海投、SaaS、岗位数据源、Offer 分析；
-- 红色：必须人工确认或禁止绕过的路径。
+- 文档通过不等于实现通过；
+- Gemini 建议不等于人工体验通过；
+- 截图必须来自真实 Chrome；
+- 截图脚本不能污染人工审查浏览器 viewport；
+- 真实个人资料、真实外部调用、API Key、不可逆迁移和逐字代答必须人工确认。

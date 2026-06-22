@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>JobPilot AI - P4 UX Prototype</title>
+    <link rel="stylesheet" href="./prototype.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <div class="brand">
+          <span class="eyebrow">Local-first job agent</span>
+          <h1>求职材料工作台</h1>
+        </div>
+        <div class="status-strip" role="status" aria-live="polite">
+          <span class="status-badge ok" title="本地工作区已就绪">本地就绪</span>
+          <div class="mode-toggle" role="group" aria-label="数据模式">
+            <button class="segmented active" type="button" aria-pressed="true">示例模式</button>
+            <button class="segmented" type="button" aria-pressed="false">我的资料</button>
+          </div>
+          <span class="status-badge neutral" title="已配置外部模型，但当前页面没有发起外部请求">外部模型未调用（隐私安全）</span>
+        </div>
+      </header>
+
+      <section class="layout-grid">
+        <section class="conversation-plane" aria-label="Chatbox 对话区">
+          <div class="timeline" id="timeline" aria-live="polite">
+            <section class="empty-state" id="empty-state">
+              <span class="empty-kicker">从一个任务开始</span>
+              <h2>你好，需要处理什么求职材料？</h2>
+              <p>选择一个建议任务，或直接粘贴 JD。我会把计划、产物和待确认项放到右侧推进台。</p>
+              <div class="suggested-prompts" aria-label="建议任务">
+                <button class="prompt-card" type="button" data-prompt="导入我的简历和项目 README">
+                  <span>第一步</span>
+                  <strong>导入简历或项目</strong>
+                  <small>生成职业事实和项目卡</small>
+                </button>
+                <button class="prompt-card" type="button" data-prompt="帮我解析这个 JD 并生成申请包">
+                  <span>核心任务</span>
+                  <strong>粘贴目标 JD</strong>
+                  <small>分析岗位并生成申请包</small>
+                </button>
+                <button class="prompt-card" type="button" data-prompt="基于当前项目经历准备面试回答">
+                  <span>面试</span>
+                  <strong>准备面试回答</strong>
+                  <small>生成故事卡和追问练习</small>
+                </button>
+              </div>
+            </section>
+          </div>
+
+          <form class="composer" id="composer">
+            <textarea id="message" rows="2" placeholder="输入请求，或粘贴目标 JD..." aria-label="对话输入框"></textarea>
+            <div class="composer-actions">
+              <button class="btn-secondary" type="button">上传资料</button>
+              <button class="btn-primary" type="submit">发送任务</button>
+            </div>
+          </form>
+        </section>
+
+        <aside class="workbench-plane" aria-label="求职推进台">
+          <div class="workbench-header">
+            <div>
+              <span class="eyebrow">Workbench</span>
+              <h2>产物推进台</h2>
+            </div>
+            <span class="badge warning">1 待确认</span>
+          </div>
+
+          <section class="workbench-empty" id="workbench-empty">
+            <h3>导入资料后，求职产物将在此生成</h3>
+            <p>这里会显示岗位解析、匹配报告、申请包草稿、待确认项和导出状态。</p>
+          </section>
+
+          <section class="artifact-list" id="artifact-list" hidden>
+            <article class="artifact-card success">
+              <div class="card-header">
+                <span class="artifact-type">岗位解析</span>
+                <span class="status-text">已就绪</span>
+              </div>
+              <h3>Junior Frontend JD</h3>
+              <p class="summary">React、TypeScript 是核心要求；测试经验是加分项。</p>
+              <div class="card-actions">
+                <button class="btn-secondary" type="button">查看详情</button>
+              </div>
+            </article>
+
+            <article class="artifact-card flagged">
+              <div class="card-header">
+                <span class="artifact-type">申请包草稿</span>
+                <span class="status-text warning">需确认以提高可信度</span>
+              </div>
+              <h3>建议补充关键证据</h3>
+              <p class="summary">为了让简历更具说服力，建议补充项目上线状态和性能提升的具体指标。</p>
+              <ul class="confirm-list">
+                <li>TodoPlus 是否已经上线或可演示？</li>
+                <li>性能提升是否有可引用的指标或前后对比？</li>
+              </ul>
+              <div class="card-actions">
+                <button class="btn-primary" type="button">补充事实</button>
+                <button class="btn-secondary" type="button">预览草稿</button>
+                <button class="btn-ghost" type="button">重新生成</button>
+              </div>
+            </article>
+          </section>
+        </aside>
+      </section>
+
+      <button class="mobile-workbench-trigger" type="button" aria-expanded="false" aria-controls="mobile-workbench">
+        查看推进台
+      </button>
+    </main>
+    <script src="./prototype.js"></script>
+  </body>
+</html>

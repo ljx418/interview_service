@@ -1,18 +1,31 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { AlertCircle, CheckCircle2, Database, Download, Edit3, FileText, FileUp, ListChecks, MessageSquare, PlayCircle, RefreshCcw, Save, Send, ShieldCheck, Sparkles } from "lucide-react";
+import {
+  AlertCircle,
+  CheckCircle2,
+  Download,
+  Eye,
+  FileText,
+  FileUp,
+  ListChecks,
+  RefreshCcw,
+  Send,
+  ShieldCheck,
+  Sparkles,
+  X,
+} from "lucide-react";
 import "./styles.css";
 
 const API_BASE = "http://127.0.0.1:8000";
 
+type DataMode = "example" | "my_data";
+
 type Message = {
   role: "user" | "assistant";
   content: string;
-  tone?: "normal" | "notice" | "error";
+  tone?: "normal" | "notice" | "error" | "plan";
   artifacts?: unknown[];
 };
-
-type DataMode = "example" | "my_data";
 
 type StoredChatMessage = {
   role: string;
@@ -116,9 +129,13 @@ function compactFileName(path: string, maxLength = 30) {
 }
 
 function providerLabel(providerStatus: { provider: string; external_calls_enabled: boolean } | null) {
-  if (!providerStatus) return "Provider checking";
-  if (providerStatus.external_calls_enabled) return "External configured";
-  return `${providerStatus.provider} local`;
+  if (!providerStatus) return "Provider 检查中";
+  if (providerStatus.external_calls_enabled) return "外部模型未调用（隐私安全）";
+  return "外部模型未调用（隐私安全）";
+}
+
+function modeLabel(mode: DataMode) {
+  return mode === "example" ? "示例模式" : "我的资料";
 }
 
 function artifactFromStored(row: StoredArtifact) {
@@ -156,187 +173,269 @@ function restoreMessages(rows: StoredChatMessage[], artifacts: StoredArtifact[])
   });
 }
 
-function ArtifactReadableSummary({ type, data }: { type: string; data: any }) {
+function readableType(type: string) {
+  const map: Record<string, string> = {
+    job: "岗位解析",
+    match_report: "匹配报告",
+    application_package: "申请包草稿",
+    career_facts: "职业事实",
+    interview_prep: "面试准备",
+    document: "资料文件",
+  };
+  return map[type] ?? "求职产物";
+}
+
+function artifactSummary(type: string, data: any) {
   if (type === "application_package") {
-    return (
-      <div className="artifact-summary">
-        <strong>申请包摘要</strong>
-        {data?.project_description && <p>{data.project_description}</p>}
-        {data?.recruiter_message && <p>{data.recruiter_message}</p>}
-      </div>
-    );
+    return data?.project_description ?? data?.recruiter_message ?? "申请包草稿已生成，建议先检查待确认事实，再导出。";
   }
   if (type === "match_report") {
-    return (
-      <div className="artifact-summary">
-        <strong>匹配结论：{data?.fit_label ?? "待分析"}</strong>
-        {Array.isArray(data?.strengths) && data.strengths.length > 0 && <p>优势：{data.strengths.slice(0, 2).join("；")}</p>}
-        {Array.isArray(data?.gaps) && data.gaps.length > 0 && <p>缺口：{data.gaps.slice(0, 2).join("；")}</p>}
-      </div>
-    );
+    const strengths = Array.isArray(data?.strengths) ? data.strengths.slice(0, 2).join("；") : "";
+    const gaps = Array.isArray(data?.gaps) ? data.gaps.slice(0, 2).join("；") : "";
+    return [data?.fit_label ? `匹配结论：${data.fit_label}` : "", strengths ? `优势：${strengths}` : "", gaps ? `缺口：${gaps}` : ""]
+      .filter(Boolean)
+      .join("。");
   }
   if (type === "job") {
-    return (
-      <div className="artifact-summary">
-        <strong>{data?.title ?? "目标岗位"}</strong>
-        {Array.isArray(data?.tech_stack) && data.tech_stack.length > 0 && <p>技术栈：{data.tech_stack.slice(0, 6).join(" / ")}</p>}
-      </div>
-    );
+    const stack = Array.isArray(data?.tech_stack) ? data.tech_stack.slice(0, 5).join(" / ") : "";
+    return stack ? `核心技术栈：${stack}` : "岗位要求已解析，可继续生成匹配报告。";
   }
   if (type === "career_facts") {
     const facts = Array.isArray(data?.facts) ? data.facts : [];
-    return (
-      <div className="artifact-summary">
-        <strong>职业事实：{facts.length} 条</strong>
-        {facts.slice(0, 3).map((fact: any, index: number) => (
-          <p key={index}>{fact.title ?? fact.content}</p>
-        ))}
-      </div>
-    );
+    return facts.length > 0 ? `已抽取 ${facts.length} 条职业事实，建议先确认低置信内容。` : "职业事实已准备。";
   }
   if (type === "interview_prep") {
-    return (
-      <div className="artifact-summary">
-        <strong>面试准备</strong>
-        <p>问题 {data?.questions?.length ?? 0} 个，故事卡 {data?.story_cards?.length ?? 0} 张。</p>
-      </div>
-    );
+    return `问题 ${data?.questions?.length ?? 0} 个，故事卡 ${data?.story_cards?.length ?? 0} 张。`;
   }
-  return null;
+  return "产物已生成，可在此检查来源、确认项和后续操作。";
 }
 
-function StatusPill({ tone = "neutral", children }: { tone?: "success" | "warning" | "neutral"; children: React.ReactNode }) {
-  return <span className={`status-pill ${tone}`}>{children}</span>;
+function inferAssistantTone(message: string, artifacts?: unknown[]): Message["tone"] {
+  const text = message.trim();
+  if ((artifacts?.length ?? 0) > 0) return "plan";
+  if (text.includes("请先") || text.includes("请输入") || text.includes("失败") || text.includes("错误")) return "error";
+  return "notice";
 }
 
-function WorkflowPanel({ result, busy, onRun }: { result: WorkflowResult | null; busy: boolean; onRun: () => void }) {
-  const steps = result?.steps ?? [
-    { key: "import_materials", title: "导入资料", status: "pending", summary: "导入简历和项目 README。" },
-    { key: "build_profile", title: "生成事实", status: "pending", summary: "抽取职业事实、技能证据和待确认项。" },
-    { key: "analyze_job", title: "分析岗位", status: "pending", summary: "解析 JD 并生成匹配报告。" },
-    { key: "create_application_package", title: "申请包", status: "pending", summary: "生成可编辑、可导出的申请材料。" },
-    { key: "prepare_interview", title: "面试准备", status: "pending", summary: "生成面试问题和故事卡。" },
-    { key: "realtime_hint", title: "实时提示", status: "pending", summary: "文本问题转结构化提示。" },
-    { key: "review_and_training", title: "复盘训练", status: "pending", summary: "从 transcript 生成复盘和训练任务。" },
-  ];
-  const completed = steps.filter((step) => step.status === "completed").length;
-  const nextStep = steps.find((step) => step.status !== "completed");
+function guidanceForConfirmation(item: any) {
+  const text = String(item?.question ?? item ?? "");
+  if (!text) return "为了让申请材料更可信，建议补充这条事实的来源或数字证据。";
+  if (text.includes("性能") || text.includes("%") || text.includes("提升")) {
+    return `为了让简历更具说服力，建议补充具体指标证据：${text}`;
+  }
+  if (text.includes("上线") || text.includes("演示") || text.includes("链接")) {
+    return `这会影响项目可信度，建议确认后再导出：${text}`;
+  }
+  return text;
+}
+
+function CollapsibleText({ children, lines = 5, showToggle = true }: { children: React.ReactNode; lines?: number; showToggle?: boolean }) {
+  const [expanded, setExpanded] = useState(false);
+  if (!showToggle) return <>{children}</>;
   return (
-    <section className="workflow-panel">
-      <div className="workflow-head">
-        <div>
-          <span className="eyebrow">Guided flow</span>
-          <h2>求职推进台</h2>
-          <p>{result ? "已生成本次求职材料，继续检查确认项和导出文件。" : "使用 examples 跑完整路径，先得到一组可审查结果。"}</p>
-        </div>
-        <button className="workflow-run" onClick={onRun} disabled={busy}>
-          <PlayCircle size={18} /> {busy ? "执行中" : result ? "重新运行" : "一键体验"}
+    <div className={`collapsible-text ${expanded ? "is-expanded" : ""}`} style={{ ["--line-count" as string]: lines }}>
+      <div className="collapsible-content">{children}</div>
+      <button type="button" className="text-toggle" onClick={() => setExpanded((value) => !value)} aria-expanded={expanded}>
+        {expanded ? "收起" : "展开"}
+      </button>
+    </div>
+  );
+}
+
+function StatusBadge({ tone = "neutral", children, shield = false }: { tone?: "ok" | "warning" | "neutral"; children: React.ReactNode; shield?: boolean }) {
+  return <span className={`status-badge ${tone} ${shield ? "shield" : ""}`}>{children}</span>;
+}
+
+function ThinkingMessage() {
+  return (
+    <div className="message assistant loading">
+      <div>
+        <span className="thinking-spinner" aria-hidden="true" />
+        <strong>Agent 正在规划执行步骤...</strong>
+      </div>
+      <ol className="thinking-steps">
+        <li>检查 workspace、资料和目标岗位状态。</li>
+        <li>准备调用本地 Agent Tools 生成结构化产物。</li>
+        <li>完成后会把待确认项推送到右侧推进台。</li>
+      </ol>
+    </div>
+  );
+}
+
+function ErrorRecovery({ content, onRetry, onRunExample }: { content: string; onRetry: () => void; onRunExample: () => void }) {
+  return (
+    <div className="error-recovery">
+      <p>{content}</p>
+      <div className="recovery-actions">
+        <button type="button" className="btn-secondary-action" onClick={onRetry}>
+          补充 JD
+        </button>
+        <button type="button" className="btn-secondary-action" onClick={onRunExample}>
+          跑示例路径
         </button>
       </div>
-      <div className="workflow-metrics" aria-label="工作流状态摘要">
-        <div>
-          <span>{completed}/{steps.length}</span>
-          <strong>完成步骤</strong>
-        </div>
-        <div>
-          <span>{result?.summary.fit_label ?? "待分析"}</span>
-          <strong>匹配结论</strong>
-        </div>
-        <div>
-          <span>{result?.exports?.length ?? 0}</span>
-          <strong>导出文件</strong>
-        </div>
+    </div>
+  );
+}
+
+function SuggestedPrompts({ onPrompt, onRunExample }: { onPrompt: (text: string, autoSubmit?: boolean) => void; onRunExample: () => void }) {
+  return (
+    <section className="empty-state" aria-label="建议任务">
+      <h2>你好！准备好开始处理求职材料了吗？</h2>
+      <p>选择一个建议任务，或者直接粘贴你的目标 JD。计划、产物和待确认项会进入右侧推进台。</p>
+      <div className="suggested-prompts">
+        <button className="prompt-card" type="button" onClick={() => onPrompt("导入我的简历和项目资料，生成基础职业事实。")}>
+          <span className="prompt-kicker">第一步</span>
+          <h3>导入简历与项目</h3>
+          <p>生成职业事实与技能证据卡。</p>
+        </button>
+        <button className="prompt-card" type="button" onClick={() => onPrompt("帮我解析这个 JD：[请在此处粘贴 JD 内容]，并生成申请包草稿。")}>
+          <span className="prompt-kicker">核心任务</span>
+          <h3>解析目标 JD</h3>
+          <p>提取匹配缺口并生成申请包草稿。</p>
+        </button>
+        <button className="prompt-card" type="button" onClick={() => onPrompt("基于我刚刚生成的申请包，帮我准备相关的面试 STAR 故事和追问练习。")}>
+          <span className="prompt-kicker">面试</span>
+          <h3>模拟面试准备</h3>
+          <p>基于当前资料生成 STAR 故事卡。</p>
+        </button>
+        <button className="prompt-card" type="button" onClick={onRunExample}>
+          <span className="prompt-kicker">快速验收</span>
+          <h3>运行示例路径</h3>
+          <p>用 examples 数据跑完整求职材料闭环。</p>
+        </button>
       </div>
-      <div className="workflow-steps">
-        {steps.map((step, index) => (
-          <div key={`${step.key}-${index}`} className={`workflow-step ${step.status}`}>
-            <span>{step.status === "completed" ? <CheckCircle2 size={15} /> : index + 1}</span>
-            <div>
-              <strong>{step.title}</strong>
-              <p>{step.summary}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-      {!result && nextStep && <div className="next-action">下一步：{nextStep.summary}</div>}
-      {result && (
-        <div className="workflow-summary">
-          <div>
-            <strong>本次结果</strong>
-            <p>
-              事实 {result.summary.facts} 条，匹配结论 {result.summary.fit_label ?? "未提供"}，训练任务 {result.summary.training_tasks} 个。
-            </p>
-          </div>
-          <div>
-            <strong>导出文件</strong>
-            {(result.exports ?? []).map((item) => (
-              <p key={item.path}>{item.format.toUpperCase()}：{compactFileName(item.path)}</p>
-            ))}
-          </div>
-        </div>
-      )}
     </section>
   );
 }
 
-function modeLabel(mode: DataMode) {
-  return mode === "example" ? "示例模式" : "我的资料";
+function ConversationHeader({
+  dataMode,
+  busy,
+  workflowResult,
+  artifactCount,
+  onPrompt,
+  onRunExample,
+}: {
+  dataMode: DataMode;
+  busy: boolean;
+  workflowResult: WorkflowResult | null;
+  artifactCount: number;
+  onPrompt: (text: string, autoSubmit?: boolean) => void;
+  onRunExample: () => void;
+}) {
+  const completed = workflowResult?.steps?.filter((step) => step.status === "completed").length ?? 0;
+  const total = workflowResult?.steps?.length ?? 0;
+  return (
+    <section className="conversation-header" aria-label="桌面对话工作台">
+      <div className="conversation-title">
+        <span className="eyebrow">Conversation</span>
+        <h2>对话与材料处理</h2>
+        <p>
+          {workflowResult
+            ? `当前已完成 ${completed}/${total} 步，继续检查右侧产物和待确认项。`
+            : `${modeLabel(dataMode)}下可以先导入资料、粘贴 JD，或直接运行示例路径。`}
+        </p>
+      </div>
+      <div className="desktop-status-grid" aria-label="当前桌面状态">
+        <span>
+          <CheckCircle2 size={15} />
+          {busy ? "处理中" : "可继续"}
+        </span>
+        <span>
+          <ListChecks size={15} />
+          {artifactCount} 个产物
+        </span>
+        <span>
+          <ShieldCheck size={15} />
+          {dataMode === "example" ? "匿名示例" : "本地资料"}
+        </span>
+      </div>
+      <div className="desktop-action-strip" aria-label="桌面快捷任务">
+        <button type="button" onClick={() => onPrompt("导入我的简历和项目资料，生成基础职业事实。")}>
+          <FileUp size={15} /> 导入资料
+        </button>
+        <button type="button" onClick={() => onPrompt("帮我解析这个 JD：[请在此处粘贴 JD 内容]，并生成申请包草稿。")}>
+          <FileText size={15} /> 解析 JD
+        </button>
+        <button type="button" onClick={onRunExample}>
+          <Sparkles size={15} /> 示例路径
+        </button>
+      </div>
+    </section>
+  );
 }
 
-function ResultRail({
-  result,
-  providerStatus,
-  workspaceId,
+function DesktopContextPanel({
   dataMode,
+  busy,
+  workflowResult,
+  artifactCount,
+  onPrompt,
+  onRunExample,
 }: {
-  result: WorkflowResult | null;
-  providerStatus: { provider: string; external_calls_enabled: boolean } | null;
-  workspaceId: string;
   dataMode: DataMode;
+  busy: boolean;
+  workflowResult: WorkflowResult | null;
+  artifactCount: number;
+  onPrompt: (text: string, autoSubmit?: boolean) => void;
+  onRunExample: () => void;
 }) {
-  const outputs = result?.key_outputs ?? {};
-  const exports = result?.exports ?? [];
+  const completed = workflowResult?.steps?.filter((step) => step.status === "completed").length ?? 0;
+  const total = workflowResult?.steps?.length ?? 0;
+  const progressLabel = workflowResult ? `${completed}/${total} 步完成` : "等待任务";
+  const nextStep = workflowResult
+    ? "检查推进台中的待确认项，确认事实后再导出。"
+    : dataMode === "example"
+      ? "运行示例路径，快速查看完整求职材料闭环。"
+      : "上传简历或项目 README，再粘贴目标 JD。";
+
   return (
-    <aside className="result-rail" aria-label="结果摘要">
-      <section className="rail-section">
-        <div className="rail-title"><ShieldCheck size={16} /> 运行边界</div>
-        <div className="rail-pills">
-          <StatusPill tone={workspaceId ? "success" : "neutral"}>{workspaceId ? "Workspace ready" : "Starting"}</StatusPill>
-          <StatusPill tone={dataMode === "my_data" ? "warning" : "success"}>{modeLabel(dataMode)}</StatusPill>
-          <StatusPill tone={providerStatus?.external_calls_enabled ? "warning" : "success"}>{providerLabel(providerStatus)}</StatusPill>
+    <aside className="desktop-context-panel" aria-label="桌面任务上下文">
+      <section className="context-section context-primary">
+        <span className="eyebrow">Current task</span>
+        <h2>{workflowResult?.summary?.headline ?? "准备求职材料"}</h2>
+        <p>{nextStep}</p>
+        <div className="context-metrics" aria-label="当前任务指标">
+          <span>
+            <strong>{progressLabel}</strong>
+            <small>流程进度</small>
+          </span>
+          <span>
+            <strong>{artifactCount}</strong>
+            <small>可检查产物</small>
+          </span>
         </div>
-        <p>默认路径使用本地 workspace。示例模式使用 examples 数据；我的资料模式只处理你上传或输入的内容。外部 provider 只在你明确配置和确认后调用。</p>
       </section>
-      <section className="rail-section">
-        <div className="rail-title"><ListChecks size={16} /> 本次结果</div>
-        {result ? (
-          <dl className="result-list">
-            <div><dt>事实</dt><dd>{result.summary.facts} 条</dd></div>
-            <div><dt>匹配</dt><dd>{result.summary.fit_label ?? "未提供"}</dd></div>
-            <div><dt>训练</dt><dd>{result.summary.training_tasks} 个任务</dd></div>
-          </dl>
-        ) : (
-          <p>运行一键体验后，这里会固定显示结果和导出文件。</p>
-        )}
+
+      <section className="context-section">
+        <span className="eyebrow">Next actions</span>
+        <div className="context-action-list">
+          <button type="button" onClick={() => onPrompt("导入我的简历和项目资料，生成基础职业事实。")}>
+            <FileUp size={15} /> 导入资料
+          </button>
+          <button type="button" onClick={() => onPrompt("帮我解析这个 JD：[请在此处粘贴 JD 内容]，并生成申请包草稿。")}>
+            <FileText size={15} /> 粘贴 JD
+          </button>
+          <button type="button" onClick={onRunExample} disabled={busy}>
+            <Sparkles size={15} /> 跑示例路径
+          </button>
+        </div>
       </section>
-      {outputs.match && (
-        <section className="rail-section">
-          <div className="rail-title"><Sparkles size={16} /> 匹配摘要</div>
-          <p>{outputs.match.fit_label}</p>
-          {Array.isArray(outputs.match.strengths) && <p>优势：{outputs.match.strengths.slice(0, 2).join("；")}</p>}
-        </section>
-      )}
-      <section className="rail-section">
-        <div className="rail-title"><FileText size={16} /> 导出文件</div>
-        {exports.length > 0 ? (
-          <ul className="export-list">
-            {exports.map((item) => (
-              <li key={item.path}><strong>{item.format.toUpperCase()}</strong><span title={item.path}>{compactFileName(item.path, 24)}</span></li>
-            ))}
-          </ul>
-        ) : (
-          <p>暂无导出。完成申请包步骤后会生成 Markdown 和 DOCX。</p>
-        )}
+
+      <section className="context-section">
+        <span className="eyebrow">Safety boundary</span>
+        <ul className="context-checklist">
+          <li>
+            <ShieldCheck size={15} /> 默认使用本地 workspace 和 mock provider。
+          </li>
+          <li>
+            <CheckCircle2 size={15} /> 当前模式：{modeLabel(dataMode)}。
+          </li>
+          <li>
+            <AlertCircle size={15} /> 外部模型调用需要你明确确认。
+          </li>
+        </ul>
       </section>
     </aside>
   );
@@ -356,20 +455,20 @@ function ArtifactCard({
   const data = artifact?.data ?? artifact;
   const artifactRef = data?.artifact_ref;
   const artifactId = artifactRef?.artifact_id;
+  const type = artifact?.type ?? artifactRef?.artifact_type ?? "artifact";
   const packageId = data?.package_id;
   const confirmations = data?.questions_to_confirm ?? artifactRef?.questions_to_confirm ?? [];
+  const hasConfirmations = Array.isArray(confirmations) && confirmations.length > 0;
+  const summary = artifactSummary(type, data);
   const [versions, setVersions] = useState<any[]>([]);
   const [currentVersionId, setCurrentVersionId] = useState<string | undefined>(artifactRef?.current_version_id);
-  const [editing, setEditing] = useState(false);
-  const [draft, setDraft] = useState(() => JSON.stringify(data, null, 2));
 
   useEffect(() => {
     if (!artifactId || !workspaceId) return;
     api<any[]>(`/api/artifacts/${artifactId}/versions?workspace_id=${encodeURIComponent(workspaceId)}`)
       .then((items) => {
         setVersions(items ?? []);
-        const latestCurrent = artifactRef?.current_version_id ?? items?.[items.length - 1]?.id;
-        setCurrentVersionId(latestCurrent);
+        setCurrentVersionId(artifactRef?.current_version_id ?? items?.[items.length - 1]?.id);
       })
       .catch(() => undefined);
   }, [artifactId, workspaceId, artifactRef?.current_version_id]);
@@ -381,33 +480,23 @@ function ArtifactCard({
     onNotice("产物已确认。后续导出会记录该确认状态。");
   }
 
-  async function exportMarkdown() {
-    if (!packageId) return;
-    const result = await api<any>("/api/application/export-package", { workspace_id: workspaceId, package_id: packageId, formats: ["markdown", "docx"], artifact_version_id: currentVersionId });
+  async function exportPackage() {
+    if (!packageId) {
+      onNotice("当前产物还不是申请包，暂不能导出。");
+      return;
+    }
+    const result = await api<any>("/api/application/export-package", {
+      workspace_id: workspaceId,
+      package_id: packageId,
+      formats: ["markdown", "docx"],
+      artifact_version_id: currentVersionId,
+    });
     const first = result.exports?.[0];
     if (first?.path) {
       const fileName = String(first.path).split("/").pop();
       window.open(`${API_BASE}/api/application/download?workspace_id=${encodeURIComponent(workspaceId)}&path=${encodeURIComponent(`exports/${fileName}`)}`, "_blank");
     }
     onNotice("申请包已导出到本地 workspace/exports，包含 Markdown 和 DOCX。");
-  }
-
-  async function saveEdit() {
-    if (!artifactId) return;
-    let content: Record<string, unknown>;
-    try {
-      content = JSON.parse(draft);
-    } catch {
-      onNotice("JSON 格式有误，未保存。");
-      return;
-    }
-    const updated = await api<any>(`/api/artifacts/${artifactId}`, { workspace_id: workspaceId, content_json: content }, "PATCH");
-    setCurrentVersionId(updated.current_version_id);
-    setEditing(false);
-    const items = await api<any[]>(`/api/artifacts/${artifactId}/versions?workspace_id=${encodeURIComponent(workspaceId)}`);
-    setVersions(items ?? []);
-    onArtifactStatus(artifactId, updated.status ?? "needs_confirmation");
-    onNotice("已保存为新的 artifact version，旧版本仍可恢复。");
   }
 
   async function regenerate() {
@@ -421,70 +510,177 @@ function ArtifactCard({
   }
 
   return (
-    <article className="artifact-card">
-      <div className="artifact-toolbar">
-        <div>
-          <div className="artifact-type">{artifact?.type ?? artifactRef?.artifact_type ?? "artifact"}</div>
-          {artifactRef?.status && <span className={`artifact-status ${artifactRef.status}`}>{artifactRef.status}</span>}
-          {currentVersionId && <span className="artifact-version">current {currentVersionId.slice(0, 12)}</span>}
-        </div>
-        <div className="artifact-actions">
-          {artifactId && (
-            <button title="确认产物事实" onClick={confirm}>
-              <CheckCircle2 size={16} />
-            </button>
-          )}
-          {packageId && (
-            <button title="导出 Markdown + DOCX" onClick={exportMarkdown}>
-              <Download size={16} />
-            </button>
-          )}
-          {artifactId && (
-            <button title="编辑并保存新版本" onClick={() => setEditing((value) => !value)}>
-              <Edit3 size={16} />
-            </button>
-          )}
-          {artifactId && (
-            <button title="重新生成新版本" onClick={regenerate}>
-              <RefreshCcw size={16} />
-            </button>
-          )}
-        </div>
+    <article className={`artifact-card ${hasConfirmations ? "flagged" : ""}`}>
+      <div className="card-header">
+        <span className="artifact-type">{readableType(type)}</span>
+        <span className="card-status">{hasConfirmations ? "需确认以提高可信度" : "已就绪"}</span>
       </div>
+      <h3>{hasConfirmations ? "建议补充关键证据" : data?.title ?? data?.fit_label ?? readableType(type)}</h3>
+      <CollapsibleText lines={4} showToggle={summary.length > 110}>
+        <p>{summary}</p>
+      </CollapsibleText>
+      {hasConfirmations && (
+        <ul className="confirm-list">
+          {confirmations.slice(0, 3).map((item: any, index: number) => (
+            <li key={index}>{guidanceForConfirmation(item)}</li>
+          ))}
+        </ul>
+      )}
       {versions.length > 0 && (
-        <div className="versions">
-          {versions.map((version) => (
+        <div className="version-row" aria-label="版本信息">
+          {versions.slice(-4).map((version) => (
             <span key={version.id} className={version.id === currentVersionId ? "version-pill active" : "version-pill"}>
               v{version.version_number}
             </span>
           ))}
         </div>
       )}
-      {confirmations.length > 0 && (
-        <div className="confirmations">
-          {confirmations.map((item: any, index: number) => (
-            <div key={index}>
-              <strong>{item.confirmation_level ?? "warning"}</strong>
-              <span>{item.question ?? item}</span>
-            </div>
+      <div className="card-actions">
+        {hasConfirmations && artifactId && (
+          <button className="btn-primary-action" type="button" onClick={confirm}>
+            补充事实
+          </button>
+        )}
+        {packageId && (
+          <button className="btn-primary-action" type="button" onClick={exportPackage}>
+            导出
+          </button>
+        )}
+        <details className="details-popover">
+          <summary>
+            <Eye size={15} /> 来源与详情
+          </summary>
+          <pre>{JSON.stringify(data, null, 2)}</pre>
+        </details>
+        {artifactId && (
+          <button className="btn-secondary-action" type="button" onClick={regenerate}>
+            <RefreshCcw size={15} /> 重新生成
+          </button>
+        )}
+      </div>
+    </article>
+  );
+}
+
+function WorkflowArtifactCards({ result }: { result: WorkflowResult }) {
+  const outputs = result.key_outputs ?? {};
+  const cards = [
+    outputs.job && { type: "job", data: outputs.job },
+    outputs.match && { type: "match_report", data: outputs.match },
+    (outputs.application_package || outputs.package) && { type: "application_package", data: outputs.application_package || outputs.package },
+    outputs.interview && { type: "interview_prep", data: outputs.interview },
+  ].filter(Boolean) as any[];
+  return cards;
+}
+
+function WorkflowPanel({ result, busy, workspaceId, onRunExample }: { result: WorkflowResult | null; busy: boolean; workspaceId: string; onRunExample: () => void }) {
+  const completed = result?.steps?.filter((step) => step.status === "completed").length ?? 0;
+  if (!result) {
+    return (
+      <div className="workbench-empty">
+        <FileText size={48} aria-hidden="true" />
+        <p>导入资料或发送任务后，求职产物将在此生成并推进。</p>
+        <button className="btn-secondary-action" type="button" onClick={onRunExample} disabled={busy || !workspaceId}>
+          运行示例路径
+        </button>
+      </div>
+    );
+  }
+  return (
+    <section className="current-goal">
+      <span className="artifact-type">当前目标</span>
+      <h3>{result.summary.headline ?? "生成可确认的求职材料"}</h3>
+      <p>
+        已完成 {completed}/{result.steps.length} 步。匹配结论：{result.summary.fit_label ?? "待分析"}；训练任务：{result.summary.training_tasks} 个。
+      </p>
+      {(result.exports ?? []).length > 0 && (
+        <div className="export-files">
+          {result.exports?.map((item) => (
+            <span key={item.path}>
+              {item.format.toUpperCase()} · {compactFileName(item.path, 22)}
+            </span>
           ))}
         </div>
       )}
-      <ArtifactReadableSummary type={artifact?.type ?? artifactRef?.artifact_type ?? "artifact"} data={data} />
-      {editing ? (
-        <div className="artifact-editor">
-          <textarea value={draft} onChange={(event) => setDraft(event.target.value)} />
-          <button onClick={saveEdit}>
-            <Save size={16} /> 保存为新版本
-          </button>
+    </section>
+  );
+}
+
+function ResultRail({
+  artifacts,
+  workflowArtifacts,
+  workspaceId,
+  onNotice,
+  onArtifactStatus,
+}: {
+  artifacts: any[];
+  workflowArtifacts: any[];
+  workspaceId: string;
+  onNotice: (message: string) => void;
+  onArtifactStatus: (artifactId: string, status: string) => void;
+}) {
+  const allArtifacts = [...artifacts, ...workflowArtifacts];
+  if (allArtifacts.length === 0) return null;
+  return (
+    <>
+      {allArtifacts.map((artifact, index) => (
+        <ArtifactCard
+          key={`${artifact?.type ?? "artifact"}-${index}`}
+          artifact={artifact}
+          workspaceId={workspaceId}
+          onNotice={onNotice}
+          onArtifactStatus={onArtifactStatus}
+        />
+      ))}
+    </>
+  );
+}
+
+function Workbench({
+  result,
+  artifacts,
+  busy,
+  workspaceId,
+  open,
+  onClose,
+  onRunExample,
+  onNotice,
+  onArtifactStatus,
+}: {
+  result: WorkflowResult | null;
+  artifacts: any[];
+  busy: boolean;
+  workspaceId: string;
+  open: boolean;
+  onClose: () => void;
+  onRunExample: () => void;
+  onNotice: (message: string) => void;
+  onArtifactStatus: (artifactId: string, status: string) => void;
+}) {
+  const workflowArtifacts = result ? WorkflowArtifactCards({ result }) : [];
+  const artifactCount = artifacts.length + workflowArtifacts.length;
+
+  return (
+    <aside className="workbench" aria-label="求职推进台">
+      <div id="workbench-plane" className={`workbench-plane ${open ? "is-open" : ""}`} aria-label="求职产物推进台">
+        <div className="workbench-header">
+          <div>
+            <span className="eyebrow">Workbench</span>
+            <h2>产物推进台</h2>
+          </div>
+          <div className="workbench-header-actions">
+            {artifactCount > 0 && <span className="badge-count">{artifactCount} 个产物</span>}
+            <button className="btn-secondary-action drawer-close" type="button" onClick={onClose} aria-label="关闭推进台">
+              <X size={16} /> 关闭
+            </button>
+          </div>
         </div>
-      ) : (
-        <details className="json-details">
-          <summary>查看结构化 JSON</summary>
-          <pre>{JSON.stringify(data, null, 2)}</pre>
-        </details>
-      )}
-    </article>
+        <div className="workbench-body">
+          <WorkflowPanel result={result} busy={busy} workspaceId={workspaceId} onRunExample={onRunExample} />
+          <ResultRail artifacts={artifacts} workflowArtifacts={workflowArtifacts} workspaceId={workspaceId} onNotice={onNotice} onArtifactStatus={onArtifactStatus} />
+        </div>
+      </div>
+    </aside>
   );
 }
 
@@ -492,18 +688,18 @@ function App() {
   const [workspaceId, setWorkspaceId] = useState("");
   const [sessionId, setSessionId] = useState("");
   const [input, setInput] = useState("");
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      role: "assistant",
-      content: "先上传简历或项目 README，再粘贴 JD。我会按事实库、岗位分析、申请包、面试准备的顺序推进。",
-    },
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [busy, setBusy] = useState(false);
   const [dataMode, setDataMode] = useState<DataMode>("example");
   const [providerStatus, setProviderStatus] = useState<{ provider: string; external_calls_enabled: boolean } | null>(null);
   const [workflowResult, setWorkflowResult] = useState<WorkflowResult | null>(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const autorunStarted = useRef(false);
   const messagesListRef = useRef<HTMLDivElement | null>(null);
+  const inputRef = useRef<HTMLTextAreaElement | null>(null);
+
+  const artifacts = useMemo(() => messages.flatMap((message) => message.artifacts ?? []), [messages]);
+  const workflowArtifactCount = useMemo(() => (workflowResult ? WorkflowArtifactCards({ result: workflowResult }).length : 0), [workflowResult]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -524,18 +720,21 @@ function App() {
           const recovered = await api<any>(`/api/chat/sessions/${latest.id}?workspace_id=${encodeURIComponent(id)}`);
           const restored = restoreMessages(recovered.messages ?? [], recovered.artifacts ?? []);
           setSessionId(latest.id);
-          if (restored.length > 0) {
-            setMessages(restored);
-          }
+          if (restored.length > 0) setMessages(restored);
           return;
         }
       } catch {
-        setMessages((current) => [...current, { role: "assistant", content: "未能恢复历史会话，已为当前 workspace 创建新会话。" }]);
+        setMessages([{ role: "assistant", content: "未能恢复历史会话，已为当前 workspace 创建新会话。", tone: "notice" }]);
       }
-      const session = await api<any>("/api/chat/sessions", { workspace_id: id, title: "P0 验收路径" });
+      const session = await api<any>("/api/chat/sessions", { workspace_id: id, title: "P4 UX 工作台" });
       setSessionId(session.session_id);
     });
   }, []);
+
+  useEffect(() => {
+    const messageList = messagesListRef.current;
+    if (messageList) messageList.scrollTop = messageList.scrollHeight;
+  }, [messages, busy]);
 
   function notice(content: string, tone: Message["tone"] = "notice") {
     setMessages((current) => [...current, { role: "assistant", content, tone }]);
@@ -552,10 +751,7 @@ function App() {
             ...artifact,
             data: {
               ...data,
-              artifact_ref: {
-                ...data.artifact_ref,
-                status,
-              },
+              artifact_ref: { ...data.artifact_ref, status },
             },
           };
         }),
@@ -563,25 +759,22 @@ function App() {
     );
   }
 
-  useEffect(() => {
-    const messageList = messagesListRef.current;
-    if (messageList) {
-      messageList.scrollTop = messageList.scrollHeight;
+  function fillPrompt(text: string, autoSubmit = false) {
+    setInput(text);
+    inputRef.current?.focus();
+    if (autoSubmit) {
+      window.setTimeout(() => sendText(text), 80);
     }
-  }, [messages, busy]);
+  }
 
   async function sendText(rawText?: string) {
     const text = (rawText ?? input).trim();
     if (!text) {
-      notice("请输入 JD、资料整理任务，或点击上传按钮导入简历 / 项目 README。", "notice");
+      notice("还没有收到任务。你可以选择一个建议任务，或粘贴目标 JD。", "notice");
       return;
     }
-    if (!workspaceId) {
-      notice("workspace 还在初始化，请稍后再发送。", "notice");
-      return;
-    }
-    if (!sessionId) {
-      notice("会话还在初始化，请稍后再发送。", "notice");
+    if (!workspaceId || !sessionId) {
+      notice("本地工作区和会话还在初始化，请稍后再发送。", "notice");
       return;
     }
     setInput("");
@@ -589,16 +782,20 @@ function App() {
     setBusy(true);
     try {
       const result = await api<any>("/api/chat/message", { workspace_id: workspaceId, session_id: sessionId, message: text });
-      setMessages((current) => [...current, { role: "assistant", content: result.message, artifacts: result.artifacts }]);
+      setMessages((current) => [
+        ...current,
+        {
+          role: "assistant",
+          content: result.message,
+          artifacts: result.artifacts,
+          tone: inferAssistantTone(result.message, result.artifacts),
+        },
+      ]);
     } catch (error) {
       setMessages((current) => [...current, { role: "assistant", tone: "error", content: formatError(error, "请求失败") }]);
     } finally {
       setBusy(false);
     }
-  }
-
-  async function send() {
-    await sendText();
   }
 
   async function upload(file: File | undefined) {
@@ -607,16 +804,13 @@ function App() {
     form.set("file", file);
     setBusy(true);
     try {
-      const response = await fetch(`${API_BASE}/api/files/upload?workspace_id=${encodeURIComponent(workspaceId)}`, {
-        method: "POST",
-        body: form,
-      });
+      const response = await fetch(`${API_BASE}/api/files/upload?workspace_id=${encodeURIComponent(workspaceId)}`, { method: "POST", body: form });
       const json = await response.json();
       if (!response.ok) throw new Error(json.detail?.message ?? "Upload failed");
       setDataMode("my_data");
       setMessages((current) => [
         ...current,
-        { role: "assistant", content: `已导入 ${file.name}，下一步可以发送“整理资料”或粘贴 JD。`, artifacts: [{ type: "document", data: json.data }] },
+        { role: "assistant", content: `已导入 ${file.name}。下一步可以发送“整理资料”或粘贴 JD。`, artifacts: [{ type: "document", data: json.data }], tone: "notice" },
       ]);
     } catch (error) {
       setMessages((current) => [...current, { role: "assistant", tone: "error", content: formatError(error, "上传失败") }]);
@@ -632,11 +826,13 @@ function App() {
       setDataMode("example");
       const result = await api<WorkflowResult>("/api/workflows/p2-demo/run", { workspace_id: workspaceId, data_mode: "example" });
       setWorkflowResult(result);
+      setDrawerOpen(true);
       setMessages((current) => [
         ...current,
         {
           role: "assistant",
-          content: `示例数据端到端体验路径已完成：${result.steps.length} 个步骤，导出 ${result.exports?.length ?? 0} 个文件。请检查推进台摘要和本地 exports。`,
+          tone: "plan",
+          content: `示例路径已完成：${result.steps.length} 个步骤，导出 ${result.exports?.length ?? 0} 个文件。请检查推进台里的待确认项和导出状态。`,
         },
       ]);
     } catch (error) {
@@ -656,120 +852,115 @@ function App() {
 
   return (
     <main className="app-shell">
-      <aside className="sidebar">
-        <div className="brand"><Sparkles size={20} /> JobPilot AI</div>
-        <div className="side-block">
-          <span>当前目标</span>
-          <strong>拿到可确认、可导出的求职材料</strong>
+      <header className="topbar">
+        <div className="brand">
+          <span className="eyebrow">Local-first Job Agent</span>
+          <h1>求职材料工作台</h1>
         </div>
-        <div className="side-steps">
-          <span>路径</span>
-          <ol>
-            <li>导入资料</li>
-            <li>分析岗位</li>
-            <li>生成申请包</li>
-            <li>准备面试</li>
-          </ol>
+        <div className="status-strip" role="status" aria-live="polite">
+          <StatusBadge tone={workspaceId ? "ok" : "neutral"}>{workspaceId ? "本地就绪" : "本地初始化中"}</StatusBadge>
+          <div className="mode-toggle" role="group" aria-label="数据模式">
+            <button type="button" aria-pressed={dataMode === "example"} onClick={() => setDataMode("example")}>
+              示例模式
+            </button>
+            <button type="button" aria-pressed={dataMode === "my_data"} onClick={() => setDataMode("my_data")}>
+              我的资料
+            </button>
+          </div>
+          <StatusBadge tone="neutral" shield>
+            {providerLabel(providerStatus)}
+          </StatusBadge>
+          <span className="mode-note">{dataMode === "example" ? "当前使用匿名示例数据" : "仅处理本地上传资料"}</span>
         </div>
-        <div className="side-note">Chatbox 只是入口，所有产物都由后端 Agent Tools 写入本地 workspace。</div>
-      </aside>
-      <section className="chat-panel">
-        <header>
-          <div>
-            <span className="eyebrow">Local-first job agent</span>
-            <h1>求职材料工作台</h1>
-            <p>先生成可用结果，再检查事实、确认版本并导出。</p>
-          </div>
-          <div className="header-status">
-            <StatusPill tone={workspaceId ? "success" : "neutral"}>{workspaceId ? "Workspace ready" : "Starting..."}</StatusPill>
-            <StatusPill tone={dataMode === "my_data" ? "warning" : "success"}>{modeLabel(dataMode)}</StatusPill>
-            {providerStatus && <StatusPill tone={providerStatus.external_calls_enabled ? "warning" : "success"}>{providerLabel(providerStatus)}</StatusPill>}
-          </div>
-        </header>
-        <div className="workspace-grid">
-          <section className="workstream conversation-area" aria-label="对话区">
-            <section className="chat-thread-panel" aria-label="Chatbox 对话">
-              <div className="chat-thread-head">
-                <div>
-                  <span className="eyebrow">Chatbox</span>
-                  <h2>对话区</h2>
-                  <p>从这里上传资料、粘贴 JD 或输入任务；推进台只展示阶段、产物和导出状态。</p>
-                </div>
-                <StatusPill tone={sessionId ? "success" : "neutral"}>{sessionId ? "Session ready" : "Session starting"}</StatusPill>
-              </div>
-              <div className="chat-controls" aria-label="对话模式和快捷任务">
-                <div className="mode-switch" role="group" aria-label="资料模式">
-                  <button className={dataMode === "example" ? "active" : ""} onClick={() => setDataMode("example")} type="button">
-                    <Database size={15} /> 示例模式
-                  </button>
-                  <button className={dataMode === "my_data" ? "active" : ""} onClick={() => setDataMode("my_data")} type="button">
-                    <FileText size={15} /> 我的资料
-                  </button>
-                </div>
-                <div className="quick-actions" aria-label="常用任务">
-                  <button type="button" onClick={() => sendText("整理资料")} disabled={busy || !workspaceId || !sessionId}>
-                    <MessageSquare size={15} /> 整理资料
-                  </button>
-                  <button type="button" onClick={() => sendText("生成申请包")} disabled={busy || !workspaceId || !sessionId}>
-                    <FileText size={15} /> 申请包
-                  </button>
-                  <button type="button" onClick={() => sendText("准备面试")} disabled={busy || !workspaceId || !sessionId}>
-                    <ListChecks size={15} /> 面试
-                  </button>
-                  <button type="button" onClick={runGuidedDemo} disabled={busy || !workspaceId}>
-                    <PlayCircle size={15} /> 跑示例
-                  </button>
-                </div>
-                <p className="mode-note">
-                  {dataMode === "example"
-                    ? "示例模式只使用仓库 examples 数据，适合快速验收产品路径。"
-                    : "我的资料模式只处理你上传或输入的内容；外部 provider 不会被默认调用。"}
-                </p>
-              </div>
-              <div className="messages" ref={messagesListRef} role="log" aria-live="polite">
+      </header>
+
+      <div className="layout-grid">
+        <DesktopContextPanel
+          dataMode={dataMode}
+          busy={busy}
+          workflowResult={workflowResult}
+          artifactCount={artifacts.length + workflowArtifactCount}
+          onPrompt={fillPrompt}
+          onRunExample={runGuidedDemo}
+        />
+        <section className="workstream conversation-area" aria-label="对话区">
+          <section className="conversation-plane" aria-label="对话与任务区">
+            <ConversationHeader
+              dataMode={dataMode}
+              busy={busy}
+              workflowResult={workflowResult}
+              artifactCount={artifacts.length + workflowArtifactCount}
+              onPrompt={fillPrompt}
+              onRunExample={runGuidedDemo}
+            />
+            <div className="timeline" ref={messagesListRef} role="log" aria-live="polite">
+              <div className="timeline-content">
+                {messages.length === 0 && !busy && <SuggestedPrompts onPrompt={fillPrompt} onRunExample={runGuidedDemo} />}
                 {messages.map((message, index) => (
                   <div key={index} className={`message ${message.role} ${message.tone ?? ""}`}>
-                    {message.tone === "error" && <AlertCircle className="message-icon" size={17} />}
-                    <p>{message.content}</p>
-                    {message.artifacts?.map((artifact, artifactIndex) => (
-                      <ArtifactCard key={artifactIndex} artifact={artifact} workspaceId={workspaceId} onNotice={notice} onArtifactStatus={updateArtifactStatus} />
-                    ))}
+                    {message.tone === "error" ? (
+                      <ErrorRecovery content={message.content} onRetry={() => fillPrompt("请帮我解析这个 JD：[请在这里粘贴 JD 内容]")} onRunExample={runGuidedDemo} />
+                    ) : (
+                      <CollapsibleText lines={message.role === "user" ? 6 : 5} showToggle={message.content.length > 160}>
+                        <p>{message.content}</p>
+                      </CollapsibleText>
+                    )}
                   </div>
                 ))}
-                {busy && (
-                  <div className="message assistant pending">
-                    <p>正在处理请求...</p>
-                  </div>
-                )}
+                {busy && <ThinkingMessage />}
               </div>
-              <div className="composer">
-                <label className="icon-button" title="上传简历或项目 README">
-                  <FileUp size={20} />
+            </div>
+
+            <form
+              className="composer"
+              onSubmit={(event) => {
+                event.preventDefault();
+                sendText();
+              }}
+            >
+              <div className="composer-inner">
+                <label className="btn-secondary-action upload-action" title="上传简历或项目 README">
+                  <FileUp size={17} /> 上传资料
                   <input type="file" onChange={(event) => upload(event.target.files?.[0])} />
                 </label>
                 <textarea
+                  ref={inputRef}
                   value={input}
                   onChange={(event) => setInput(event.target.value)}
                   onKeyDown={(event) => {
                     if (event.key === "Enter" && !event.shiftKey) {
                       event.preventDefault();
-                      send();
+                      sendText();
                     }
                   }}
-                  placeholder="粘贴 JD，或输入：生成申请包 / 准备面试"
+                  placeholder="输入你的请求，或直接粘贴目标岗位的 JD..."
+                  aria-label="对话输入框"
+                  rows={2}
                 />
-                <button className="send" onClick={send} disabled={busy || !workspaceId || !sessionId}>
-                  <Send size={20} />
+                <button type="submit" className="btn-send" disabled={busy || !workspaceId || !sessionId} aria-label="发送任务">
+                  <Send size={17} /> 发送任务
                 </button>
               </div>
-            </section>
+            </form>
           </section>
-          <aside className="workbench" aria-label="求职推进台">
-            <WorkflowPanel result={workflowResult} busy={busy} onRun={runGuidedDemo} />
-            <ResultRail result={workflowResult} providerStatus={providerStatus} workspaceId={workspaceId} dataMode={dataMode} />
-          </aside>
-        </div>
-      </section>
+        </section>
+
+        <div className={`drawer-overlay ${drawerOpen ? "is-open" : ""}`} onClick={() => setDrawerOpen(false)} />
+        <Workbench
+          result={workflowResult}
+          artifacts={artifacts}
+          busy={busy}
+          workspaceId={workspaceId}
+          open={drawerOpen}
+          onClose={() => setDrawerOpen(false)}
+          onRunExample={runGuidedDemo}
+          onNotice={notice}
+          onArtifactStatus={updateArtifactStatus}
+        />
+        <button className="mobile-fab" type="button" onClick={() => setDrawerOpen(true)} aria-expanded={drawerOpen} aria-controls="workbench-plane">
+          查看推进台 {(artifacts.length > 0 || workflowResult) && <span className="badge">{artifacts.length || workflowResult?.steps.length}</span>}
+        </button>
+      </div>
     </main>
   );
 }

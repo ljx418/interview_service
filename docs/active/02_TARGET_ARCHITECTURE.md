@@ -1,6 +1,126 @@
-# JobPilot AI P3 目标架构深度设计
+# JobPilot AI P4 UX 目标架构深度设计
 
-## 0. P3 当前阶段架构增补
+## 0. P4 当前阶段架构增补
+
+P4 在 P0/P1/P2/P3 基线上增加“真实用户体验强化平面”。目标不是改变后端 Agent Tool-first 架构，而是把既有能力重新组织成清晰、低认知负担、可截图和可人工审查的前端体验架构。
+
+P4 架构主线：
+
+```text
+用户任务意图
+→ Experience Shell
+→ Conversation Plane
+  → Empty State Suggested Prompts
+  → Composer and Upload Dock
+  → Loading / Error Recovery
+→ Full-size Desktop Workbench Controller
+→ Workbench Plane
+→ Artifact Review Plane
+→ Export / Confirmation Plane
+→ Evidence and Review Plane
+```
+
+## 0.1 P4 目标 UX 架构模块
+
+```text
+User
+  → Chatbox Experience Shell
+    → Workspace / Mode / Provider Strip
+    → Conversation Plane
+      → Empty State Suggested Prompts
+      → Loading / Thinking Steps
+      → Error Recovery Actions
+    → Composer and Upload Dock
+    → Full-size Desktop Workbench Controller
+    → Workbench Plane / Mobile Drawer
+    → Artifact Review Cards
+    → Confirmation and Export Bar
+    → Responsive Layout Controller
+  → FastAPI Agent Service
+    → Chat Routes
+    → Workflow Routes
+    → Artifact Routes
+    → Export Routes
+    → Provider Routes
+  → ChatCore and Flow Orchestration
+    → KeywordChatCore
+    → PiAgentChatCore
+    → Real User Flow Controller
+  → Domain Tool Layer
+    → Profile / Project / Job / Application / Interview / Realtime / Review Tools
+  → Artifact and Storage Layer
+    → ArtifactVersion
+    → Confirmation Model
+    → Export Service
+    → SQLite Workspace
+  → Evidence Layer
+    → Chrome Screenshots
+    → HTML UX Report
+    → Gemini Review Package
+    → PRD Spec Review
+```
+
+## 0.2 P4 模块职责、输入输出和禁止职责
+
+| 模块 | 核心职责 | 输入 | 输出 | 禁止职责 |
+| --- | --- | --- | --- | --- |
+| Experience Shell | 建立产品语境和整体布局，承载 mode/provider/workspace 状态 | workspace、provider status、viewport | 页面骨架、当前模式、隐私提示 | 不做营销首页；不隐藏外部调用状态 |
+| Empty State Suggested Prompts | 在 Chatbox 空状态内把求职任务变成可点击建议 | 用户意图、examples 状态、资料状态 | 填入 composer 或直接触发对话 | 不作为割裂的独立任务区；不伪造已完成任务 |
+| Conversation Plane | 展示用户消息、系统计划、loading、结果、失败和下一步 | chat messages、tool summaries、errors、execution state | 人类可读对话流 | 不把裸 JSON 作为唯一反馈；不展示内部堆栈；不静默失败 |
+| Composer and Upload Dock | 支持输入、上传和快捷任务触发 | 文本、文件、快捷动作 | chat/workflow request | 不直接解析简历/JD；不直连 provider |
+| Loading / Error Recovery | 告诉用户 Agent 正在执行什么，失败后如何恢复 | running step、error code、missing input | thinking steps、retry/upload/fill action | 不用 spinner 替代解释；不让用户重复点击 |
+| Full-size Desktop Workbench Controller | 管理 1200/1440/1600/1920 桌面宽度的信息密度、列宽、空白、快捷任务和推进台关系 | viewport、workflow state、artifact count、conversation state | 桌面工作台布局、状态指标、快捷任务带、推进台摘要 | 不把窄屏布局简单放大；不留下布局错误造成的大面积空白；不污染人工浏览器 viewport |
+| Workbench Plane / Mobile Drawer | 管理当前任务状态、阶段、下一步、产物和导出；移动端折叠为抽屉或次级面板 | workflow state、artifact summaries、viewport | 状态摘要、行动列表、产物导航 | 不承担聊天输入；不复制业务生成逻辑；不在 390px 下压缩对话 |
+| Artifact Review Cards | 以求职语义展示产物摘要、待确认项、版本和主次操作 | artifact/version/source refs | 可读卡片、primary action、secondary actions | 不隐藏待确认项；不暴露内部 id 作为主标题；不让所有按钮同等权重 |
+| Confirmation and Export Bar | 在导出前展示 blocking/warning/optional 确认边界 | current artifact version、questions_to_confirm | 导出 preflight 结果、文件入口 | 不绕过 blocking confirmation |
+| Responsive Layout Controller | 管理 1200/1440/1600/1920/720/390 多档布局、滚动和输入区 | viewport、content density | 可用且顺手的布局 | 不让关键操作被遮挡或截断；不把单一宽度截图当作全尺寸验收 |
+| Gemini Review Package | 给外部模型和人类独立审查前端方案 | UX brief、prototype、checklist | 审查意见和风险清单 | 不声称代码已实现；不替代真实截图验收 |
+
+## 0.3 当前架构与 P4 目标差距
+
+| 当前实现 | P4 目标 | 风险 | 验收证据 |
+| --- | --- | --- | --- |
+| 首屏以工程状态和分区为主 | Chatbox 空状态优先呈现 suggested prompts 和下一步 | 用户不知道从哪里开始，任务入口与对话割裂 | 初始页截图、5 秒理解审查、点击 suggested prompt 证据 |
+| Chatbox 和推进台虽已分离但层级仍重 | 对话负责反馈，推进台负责状态和产物 | 用户误以为 chatbot 无响应 | 发送任务截图、错误态截图 |
+| 缺少 thinking / executing 过渡 | 显示正在读取资料、对比 JD、生成草稿等步骤 | 用户重复点击或误判卡死 | loading 状态截图 |
+| 产物卡暴露 `job`、`match_report`、内部版本等术语 | 产物卡用“岗位解析 / 匹配报告 / 申请包草稿”等求职语义，并突出阻塞操作 | 用户读不懂产物价值或不知道先点哪个按钮 | 产物卡 before/after 截图 |
+| Provider 标签可能被理解为正在外呼 | 明确“外部模型未调用（隐私安全）/ 外部调用需确认” | 隐私和费用误解 | provider 状态截图 |
+| 1200px 以上桌面宽度仍可能像窄屏布局停靠在左侧 | 全尺寸桌面必须呈现完整工作台：对话区、状态指标、快捷任务、推进台摘要和下一步建议协同展示 | 大面积空白让用户误判页面未完成，人工体验审查不通过 | 1200/1440/1600/1920 Chrome 截图和人工体验审查记录 |
+| 移动端可以运行但信息堆叠较重 | 390px 下 Conversation 优先，Workbench 收为底部抽屉或折叠面板 | 移动可用但不顺手 | 390px 关键路径截图 |
+| 截图脚本可能遗留 Chrome viewport emulation | 截图脚本必须隔离或在 finally 清理 emulation/touch override | 人工审查者浏览器被污染，产生“窄屏布局占据大屏”的虚假体验证据 | 截图脚本清理逻辑、真实浏览器宽度检查、报告说明 |
+| 验收报告有截图但缺少设计审查包 | 提供 Gemini 可独立审查的页面方案 | 外部审查上下文不足 | `docs/gemini-frontend-review-package/` |
+
+## 0.4 P4 架构不变量
+
+- Chatbox 仍是薄入口，只做输入、展示、确认、编辑和导出触发；
+- 前端不得生成求职内容，不得直接写 SQLite，不得直连 provider；
+- PiAgent / ChatCore 仍只负责意图和工具计划，业务写入仍由 Python Domain Tools 完成；
+- source refs、questions_to_confirm、artifact version、export preflight 不得因 UX 简化而丢失；
+- mock provider 仍是默认验收基线，external provider 仍需用户确认；
+- realtime 仍是 text-in / hint-out，不进入 ASR、会议平台或逐字代答；
+- P4 不能用更好看的静态原型替代真实前端实现和 Chrome 截图验收。
+
+## 0.5 P4 架构验收问题
+
+每个 P4 实现 PR 或阶段验收必须回答：
+
+- 用户是否能在首屏判断下一步？
+- Suggested prompts 是否与 composer 形成闭环，而不是割裂任务区？
+- Conversation Plane 是否对有效输入、缺资料和失败都有反馈？
+- Conversation Plane 是否有 loading / thinking / executing 状态和错误恢复 action？
+- Full-size Desktop Workbench Controller 是否覆盖 1200/1440/1600/1920，且没有布局错误造成的大面积空白？
+- Workbench Plane 是否只展示状态、产物、确认项、版本和导出，且移动端不会压缩 Chatbox？
+- Artifact Review Cards 是否保留 source refs 和 questions_to_confirm？
+- Artifact Review Cards 是否区分 primary / secondary action？
+- Provider 状态是否明确本次是否外呼，并使用用户语言？
+- 390px 下输入、消息、当前任务和产物操作是否仍可达？
+- Chrome 截图脚本是否隔离或清理 viewport emulation，避免污染人工审查者浏览器？
+- mode toggle、状态区和按钮是否具备必要 ARIA 状态？
+- Gemini 审查包和 HTML 报告是否明确“设计方案 / 已实现 / 未验证”的边界？
+
+以下 P3 内容作为已完成基线和历史背景保留。
+
+## 0.6 历史 P3 阶段架构增补
 
 P3 在 P0/P1/P2 基线上增加“真实用户 Chatbox 体验平面”。目标不是新增底层入口，而是把已有 Agent Tool 能力变成用户能直接完成的求职工作台。
 

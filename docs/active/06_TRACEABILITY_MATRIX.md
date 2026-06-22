@@ -1,6 +1,62 @@
-# JobPilot AI P3 追踪矩阵
+# JobPilot AI P4 UX 追踪矩阵
 
-## 0. P3 当前阶段追踪矩阵
+## 0. P4 当前阶段追踪矩阵
+
+| P4 目标 | 实现区域 | 主要文件 / 模块 | 证据 | 验收门槛 |
+| --- | --- | --- | --- | --- |
+| P0/P1/P2/P3 不退化 | 全路径回归 | `services/`, `apps/chatbox/`, `tests/` | `python3 -m pytest`, frontend build | P4 门槛 0 |
+| Chatbox 空状态任务入口清楚 | Conversation Empty State / Suggested Prompts | `apps/chatbox/src/main.tsx`, `apps/chatbox/src/styles.css` | 初始页 before/after、点击 prompt 后 composer 或对话截图 | P4 门槛 1 |
+| 对话反馈可理解 | Conversation Plane / Chat API | ChatCore、chat routes、message UI | 有效/缺资料/错误态、loading 状态截图 | P4 门槛 2 |
+| 错误恢复路径 | Error Recovery UI | message components、upload/JD prompts | 重新上传、补充 JD、查看格式截图 | P4 门槛 2 |
+| 推进台职责清楚 | Workbench Plane | Workbench components、workflow summary | 当前任务和产物截图 | P4 门槛 3 |
+| 产物卡可读 | Artifact Review Cards | artifact UI、artifact routes | 申请包/匹配报告/面试准备截图、primary/secondary action 截图 | P4 门槛 3 |
+| Provider 语义不误导 | Mode and Provider Strip | provider routes、status UI | mock/external/未调用/需确认截图 | P4 门槛 4 |
+| 全尺寸桌面工作台成立 | Full-size Desktop Workbench Controller | `apps/chatbox/src/main.tsx`, `apps/chatbox/src/styles.css`, 截图脚本 | 1200/1440/1600/1920 Chrome 截图、桌面空白审查记录 | P4 门槛 5 |
+| 响应式顺手 | Responsive Layout Controller / Mobile Workbench Drawer | CSS layout、composer、scroll regions | 1200/1440/1600/1920/720/390 Chrome 截图、390px Workbench 抽屉或折叠截图 | P4 门槛 5 |
+| 截图证据可信 | Evidence Capture Controller | `scripts/capture_p4_workbench_evidence.mjs` | viewport emulation 清理逻辑、真实浏览器宽度检查、截图报告说明 | P4 门槛 5 / 6 |
+| 可访问性冒烟 | Controls / Focus / Naming | button labels、focus styles、semantic regions | keyboard/focus 检查记录 | P4 门槛 5 |
+| Gemini 审查包 | Frontend Review Package | `docs/gemini-frontend-review-package/` | 文件数、静态原型、提示词 | P4 门槛 6 |
+| 报告和规格检视 | Evidence Package | `docs/reports/`, stage review | P4 HTML 报告、PRD review | P4 门槛 6 |
+| 文档和 drawio 同步 | Active Docs / Drawio | `docs/active/`, drawio | XML parse、文本镜像 | P4 门槛 6 |
+
+## 0.1 P4 防止过度计划的边界
+
+以下内容不能作为 P4 出门条件：
+
+- MCP Server；
+- CLI；
+- ASR / Whisper；
+- 会议平台助手；
+- 自动海投；
+- SaaS 登录、多租户、Billing；
+- 默认真实外部 Provider；
+- 真实个人资料自动验收；
+- 岗位数据源接入和 Offer 分析；
+- 全量重写前端或复杂 Dashboard。
+
+## 0.2 P4 防止规格不足的边界
+
+缺少以下任一项，不能认为 P4 完成：
+
+- Chatbox 空状态能让用户知道第一步；
+- suggested prompts 能填入 composer 或触发对话；
+- 有效输入、缺资料、错误都有可见反馈；
+- loading / thinking / executing 状态可见；
+- 错误状态有恢复 action；
+- 推进台和对话职责清楚；
+- 产物卡不依赖 JSON 才能理解，且按钮主次分明；
+- provider 状态不误导外呼；
+- 1200/1440/1600/1920 全尺寸桌面截图可用，且没有布局错误造成的大面积空白；
+- 截图脚本隔离或清理 viewport emulation，不能污染人工审查者浏览器；
+- 720/390 宽度截图可用，390px 下 Workbench 不压缩 Chatbox；
+- mode toggle 具备 `aria-pressed` 或等价状态；
+- Gemini 前端审查包存在且文件数小于 20；
+- P4 HTML 报告不做虚假验收；
+- README/TODO/active docs/drawio 口径一致。
+
+以下 P3 追踪矩阵作为已完成基线和历史背景保留。
+
+## 0.3 历史 P3 阶段追踪矩阵
 
 | P3 目标 | 实现区域 | 主要文件 / 模块 | 证据 | 验收门槛 |
 | --- | --- | --- | --- | --- |
