@@ -1,0 +1,167 @@
+{
+  "name": "P5 本地资料闭环自动化验收",
+  "goal": "验证 Chatbox 在本地/mock 边界内，可以导入本地资料、解析 JD、生成申请包、阻塞未确认导出、确认后导出，并生成真实界面截图证据；不声明真实个人资料或外部 provider 默认路径通过。",
+  "url": "http://127.0.0.1:5173/?workspace_root=/mnt/c/workspace/interview_service/.tmp/p5_browser_workspace",
+  "targetArchitecture": [
+    "Chatbox UI：负责资料入口、连续对话、Agent 状态机、产物推进台、确认与导出交互。",
+    "FastAPI API：提供 workspace、文件导入、profile/JD/application/artifact/chat 接口。",
+    "KeywordChatCore：本地确定性意图路由，区分自由追问、状态查询和显式工具执行。",
+    "JobPilot Domain Tools：写入 career_facts、job_parse、match_report、application_package 等 artifact，并保留 source_refs、questions_to_confirm、version。",
+    "SQLite workspace：本地保存聊天、产物、版本和导出文件；默认不调用真实外部 provider。",
+    "Acceptance Evidence：Chrome/CDP 驱动真实界面、截图、HTML 报告和 pytest/build 命令结果。"
+  ],
+  "currentImplementation": [
+    "React/Vite Chatbox 初始化本地 workspace 和 chat session。",
+    "页面通过 FastAPI ingest-local 导入仓库内脱敏本地资料，再通过真实 UI 继续对话。",
+    "申请包默认携带 blocking questions_to_confirm；未确认导出会返回 EXPORT_PRECHECK_FAILED。",
+    "artifact confirm 会同步确认当前 artifact_version；确认后 Markdown/DOCX 导出可执行。",
+    "右侧推进台按 needs_confirmation、confirmed、exported 展示状态；保留确认项作为审计记录。",
+    "本场景不使用 API Key，不执行 MiniMax/DeepSeek/OpenAI-compatible 外呼。"
+  ],
+  "acceptanceCriteria": [
+    "页面显示本地就绪、Mock 本地模式和本地隐私边界。",
+    "浏览器自动导入本地资料后，可以在真实 UI 中解析 JD 并生成匹配报告。",
+    "生成申请包后，推进台显示需确认状态和确认问题。",
+    "未确认导出必须失败，并在对话区出现可理解的恢复提示。",
+    "点击确认事实后，状态机不再把该申请包计为待确认。",
+    "确认后导出成功，报告截图可见导出完成提示或已导出状态。",
+    "1200、1440、1600、1920、720、390 视口均有真实界面截图证据。",
+    "报告明确未验证真实个人资料、真实外部 provider、SaaS、ASR、会议平台和自动投递。"
+  ],
+  "commandResults": [
+    {
+      "command": ".venv/bin/python -m pytest tests/evals/test_p5_local_data_closure_eval.py -q",
+      "status": "passed",
+      "evidence": "6 passed；覆盖本地资料闭环、阻塞确认、编辑后重新阻塞、自由追问不写 artifact、目标 JD 申请包路由、source_refs preflight。"
+    },
+    {
+      "command": ".venv/bin/python -m pytest tests/evals/test_p1_export_preflight_eval.py tests/test_demo_flow.py tests/evals/test_p2_guided_demo_flow_eval.py tests/evals/test_full_demo_flow_eval.py tests/evals/test_artifact_and_session_hardening_eval.py -q",
+      "status": "passed",
+      "evidence": "9 passed, 1 warning；受影响导出、示例工作流和 artifact 回归已更新为确认后导出。"
+    },
+    {
+      "command": "npm --prefix apps/chatbox run build",
+      "status": "passed",
+      "evidence": "TypeScript 与 Vite build 通过。"
+    }
+  ],
+  "prdReview": [
+    {
+      "requirement": "P5-M1：真实资料本地导入可理解。",
+      "evidence": "浏览器场景通过后端 ingest-local 导入脱敏本地资料，随后真实 UI 继续执行。",
+      "status": "PASS for automated local fixture"
+    },
+    {
+      "requirement": "P5-M2：JD 解析与匹配报告成立。",
+      "evidence": "截图等待“我已解析岗位并生成适合度分析”。",
+      "status": "PASS for local/mock automated path"
+    },
+    {
+      "requirement": "P5-M3/M4：申请包必须确认事实后才能导出。",
+      "evidence": "未确认导出截图等待“导出失败”，确认后截图等待“申请包已导出”。",
+      "status": "PASS for confirmation gate"
+    },
+    {
+      "requirement": "P5-FC：自由追问不应误触发工具。",
+      "evidence": "pytest 覆盖“这个经历能用于这个 JD 吗？”不新增 artifact。",
+      "status": "PASS by eval"
+    },
+    {
+      "requirement": "P5 出门仍需要人工体验审查。",
+      "evidence": "本报告只提供自动化浏览器证据。",
+      "status": "NOT A HUMAN ACCEPTANCE"
+    }
+  ],
+  "codeReview": [
+    {
+      "area": "services/tools/jobpilot.py",
+      "finding": "application_package 默认生成 blocking confirmation；export_application_package 按 artifact/version confirmed 状态执行 preflight。",
+      "severity": "pass"
+    },
+    {
+      "area": "services/chat/core.py",
+      "finding": "本地自由追问增加“还缺/缺什么/能用于/能投吗”等 next-step 识别，避免短 JD 相关追问误触发 JD 解析。",
+      "severity": "pass"
+    },
+    {
+      "area": "apps/chatbox/src/main.tsx",
+      "finding": "待确认计数不再把已确认/已导出的保留确认项误计为待确认；导出失败会显示恢复提示。",
+      "severity": "pass"
+    }
+  ],
+  "documentationAudit": [
+    {
+      "area": "P5 PRD / Architecture / Gates",
+      "finding": "当前文档已把 P5 限定为本地资料闭环，外部 provider、SaaS、ASR、自动投递均为非目标或后续阶段。",
+      "status": "pass"
+    },
+    {
+      "area": "Acceptance report boundary",
+      "finding": "本报告不得替代人工体验审查，不得声明真实个人资料或真实 provider 默认路径已通过。",
+      "status": "pass"
+    }
+  ],
+  "unverifiedScope": [
+    "未使用用户真实个人资料；自动化资料来自仓库内脱敏 fixture。",
+    "未配置或调用 MiniMax、DeepSeek、OpenAI-compatible 等真实外部 provider。",
+    "未验证 SaaS 登录、多租户、计费、ASR、会议平台、自动投递、真实招聘网站投递。",
+    "未替代人工体验审查；截图只能证明本次自动化路径实际通过。"
+  ],
+  "auditOpinion": "如果所有步骤通过，本报告只能支持 P5 本地/mock 自动化路径达到开发验收候选状态。P5 最终冻结仍需要完整回归、脱敏截图复核和人工体验记录。",
+  "viewports": [
+    { "name": "desktop", "width": 1440, "height": 980 },
+    { "name": "desktop1200", "width": 1200, "height": 900 },
+    { "name": "desktop1600", "width": 1600, "height": 1000 },
+    { "name": "desktop1920", "width": 1920, "height": 1080 },
+    { "name": "narrow720", "width": 720, "height": 900 },
+    { "name": "mobile", "width": 390, "height": 844, "mobile": true }
+  ],
+  "steps": [
+    { "name": "Open Chatbox", "action": "goto", "url": "http://127.0.0.1:5173/?workspace_root=/mnt/c/workspace/interview_service/.tmp/p5_browser_workspace", "viewport": "desktop" },
+    { "name": "Wait for local workspace", "action": "waitText", "text": "本地就绪", "timeoutMs": 15000, "viewport": "desktop" },
+    { "name": "Initial P5 desktop state", "action": "screenshot", "file": "p5_initial_desktop.png", "viewport": "desktop" },
+    {
+      "name": "Ingest local redacted materials",
+      "action": "evaluate",
+      "viewport": "desktop",
+      "expression": "(async () => { const root='/mnt/c/workspace/interview_service/.tmp/p5_browser_workspace'; const api='http://127.0.0.1:8000'; const status=await fetch(`${api}/api/workspace/status?root_path=${encodeURIComponent(root)}`).then(r=>r.json()); const workspaceId=status.data.workspace_id || status.data.id; const qs=(obj)=>new URLSearchParams(obj).toString(); await fetch(`${api}/api/files/ingest-local?${qs({workspace_id:workspaceId,source_path:'/mnt/c/workspace/interview_service/examples/resumes/transition_frontend_resume.md',kind:'resume'})}`,{method:'POST'}); await fetch(`${api}/api/files/ingest-local?${qs({workspace_id:workspaceId,source_path:'/mnt/c/workspace/interview_service/examples/projects/todoplus_README.md',kind:'project'})}`,{method:'POST'}); await fetch(`${api}/api/profile/extract-facts`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({workspace_id:workspaceId,target_roles:['Junior Frontend Developer']})}); return workspaceId; })()"
+    },
+    { "name": "Fill JD", "action": "fill", "selector": "textarea[aria-label='对话输入框']", "value": "职位：Junior Frontend Developer\n职责：开发 React + TypeScript 前端页面，和 FastAPI 后端协作完成本地数据工作流。\n要求：React、TypeScript、基础 Python、能写自动化测试，重视用户体验和可维护性。\n加分：熟悉本地优先隐私设计、Markdown 导出、Playwright 或 pytest。", "viewport": "desktop" },
+    { "name": "Send JD", "action": "clickText", "text": "发送任务", "viewport": "desktop" },
+    { "name": "Wait JD parsed", "action": "waitText", "text": "我已解析岗位并生成适合度分析", "timeoutMs": 15000, "viewport": "desktop" },
+    { "name": "JD and match evidence", "action": "screenshot", "file": "p5_jd_match_desktop.png", "viewport": "desktop" },
+    { "name": "Fill package request", "action": "fill", "selector": "textarea[aria-label='对话输入框']", "value": "请基于当前资料和目标 JD，生成申请包草稿。", "viewport": "desktop" },
+    { "name": "Send package request", "action": "clickText", "text": "发送任务", "viewport": "desktop" },
+    { "name": "Wait package generated", "action": "waitText", "text": "申请包已生成，请先确认事实再导出", "timeoutMs": 15000, "viewport": "desktop" },
+    { "name": "Package needs confirmation evidence", "action": "screenshot", "file": "p5_package_needs_confirmation.png", "viewport": "desktop" },
+    {
+      "name": "Try export before confirmation",
+      "action": "evaluate",
+      "viewport": "desktop",
+      "expression": "(() => { const cards=Array.from(document.querySelectorAll('.artifact-card')); const card=cards.find((node)=>node.innerText.includes('申请包草稿') || node.innerText.includes('申请包')); if (!card) throw new Error('Application package artifact card not found'); card.scrollIntoView({block:'center'}); const button=Array.from(card.querySelectorAll('button')).find((node)=>node.innerText.trim()==='导出'); if (!button) throw new Error('Export button not found in package card'); button.click(); return true; })()"
+    },
+    { "name": "Wait export blocked", "action": "waitText", "text": "EXPORT_PRECHECK_FAILED", "timeoutMs": 15000, "viewport": "desktop" },
+    { "name": "Blocked export evidence", "action": "screenshot", "file": "p5_export_blocked.png", "viewport": "desktop" },
+    {
+      "name": "Confirm package facts",
+      "action": "evaluate",
+      "viewport": "desktop",
+      "expression": "(() => { const cards=Array.from(document.querySelectorAll('.artifact-card')); const card=cards.find((node)=>node.innerText.includes('申请包草稿') || node.innerText.includes('申请包')); if (!card) throw new Error('Application package artifact card not found'); card.scrollIntoView({block:'center'}); const button=Array.from(card.querySelectorAll('button')).find((node)=>node.innerText.trim()==='确认事实'); if (!button) throw new Error('Confirm button not found in package card'); button.click(); return true; })()"
+    },
+    { "name": "Wait package confirmed", "action": "waitText", "text": "产物已确认", "timeoutMs": 15000, "viewport": "desktop" },
+    { "name": "Confirmed package evidence", "action": "screenshot", "file": "p5_package_confirmed.png", "viewport": "desktop" },
+    {
+      "name": "Export after confirmation",
+      "action": "evaluate",
+      "viewport": "desktop",
+      "expression": "(() => { const cards=Array.from(document.querySelectorAll('.artifact-card')); const card=cards.find((node)=>node.innerText.includes('申请包草稿') || node.innerText.includes('申请包')); if (!card) throw new Error('Application package artifact card not found'); card.scrollIntoView({block:'center'}); const button=Array.from(card.querySelectorAll('button')).find((node)=>node.innerText.trim()==='导出'); if (!button) throw new Error('Export button not found in package card after confirmation'); button.click(); return true; })()"
+    },
+    { "name": "Wait export completed", "action": "waitText", "text": "申请包已导出到本地", "timeoutMs": 15000, "viewport": "desktop" },
+    { "name": "Export completed evidence", "action": "screenshot", "file": "p5_export_completed.png", "viewport": "desktop" },
+    { "name": "Export completed 1200 evidence", "action": "screenshot", "file": "p5_export_completed_1200.png", "viewport": "desktop1200" },
+    { "name": "Export completed 1600 evidence", "action": "screenshot", "file": "p5_export_completed_1600.png", "viewport": "desktop1600" },
+    { "name": "Export completed 1920 evidence", "action": "screenshot", "file": "p5_export_completed_1920.png", "viewport": "desktop1920" },
+    { "name": "Narrow exported layout evidence", "action": "screenshot", "file": "p5_export_completed_720.png", "viewport": "narrow720" },
+    { "name": "Mobile exported layout evidence", "action": "screenshot", "file": "p5_export_completed_mobile.png", "viewport": "mobile" }
+  ]
+}

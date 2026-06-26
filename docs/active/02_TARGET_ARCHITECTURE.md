@@ -1,6 +1,154 @@
-# JobPilot AI P4 UX 目标架构深度设计
+# JobPilot AI P5 真实资料本地闭环目标架构
 
-## 0. P4 当前阶段架构增补
+## 0. P5 当前阶段架构增补
+
+P5 在 P4 已冻结的 Chatbox 工作台、FastAPI、ChatCore、Domain Tools、Artifact/Export 和本地 workspace 基线上增加“真实资料本地闭环平面”。目标不是重写后端或默认启用外部 provider，而是让真实资料、真实 JD、事实确认、产物编辑、导出和多轮追问都沿同一条可审计链路闭合。
+
+P5 架构主线：
+
+```text
+User
+→ Chatbox Experience Shell
+  → Composer / Upload Dock
+  → Conversation Plane
+  → Workbench Plane
+  → Artifact Review / Edit / Export Plane
+→ FastAPI Agent Service
+  → Workspace Routes
+  → File Upload Routes
+  → Chat Routes
+  → Workflow Routes
+  → Artifact Routes
+  → Export Routes
+→ ChatCore and Intent Router
+  → Context Snapshot
+  → Real Data Intake Controller
+  → Fact Confirmation Loop
+  → Application Package Loop
+→ Domain Tool Layer
+  → Profile / Project / Job / Match / Application / Interview Tools
+→ Artifact and Storage Layer
+  → Artifact Service
+  → ArtifactVersion
+  → Confirmation Model
+  → Export Service
+  → SQLite Workspace / Local Files
+→ Provider Policy Gate
+  → Mock default
+  → External provider denied unless P6 opt-in confirmation exists
+→ Evidence Layer
+  → P5 automation report
+  → PRD spec review
+  → privacy/redaction audit
+```
+
+## 0.1 P5 代码实体与职责
+
+| 层级 | 当前代码实体 | P5 状态 | P5 职责 | 禁止职责 |
+| --- | --- | --- | --- | --- |
+| Chatbox UI | `apps/chatbox/src/main.tsx`, `apps/chatbox/src/styles.css` | 自动化候选通过，待人工体验冻结 | 呈现上传/粘贴入口、资料解析状态、事实确认、申请包产物、编辑/再生成/导出、多轮追问 | 不生成求职内容；不直接写 SQLite；不直连 provider |
+| API 边界 | `services/api/main.py` | 自动化候选通过，待真实资料复核 | 暴露 workspace、upload、chat、workflow、artifact、export 的 P5 路由和错误语义 | 不回传 API Key；不把完整敏感原文写入日志 |
+| ChatCore | `services/chat/core.py` | 自动化候选通过，待人工体验复核 | 区分自由追问、状态查询、资料导入、JD 解析、事实确认、生成/再生成等意图 | 不在普通聊天中写 artifact；不绕过确认 |
+| Workflow Orchestrator | `services/workflows/p2_demo.py` 及 P5 本地闭环路径 | 自动化候选通过，待真实资料路径复核 | 从 examples flow 扩展为真实资料本地 flow，保留可回归基线 | 不伪造真实资料路径通过 |
+| Domain Tools | `services/tools/` | 自动化候选通过，待真实资料质量复核 | 执行资料解析、项目抽取、JD 解析、匹配、申请包生成、面试准备 | 不访问 workspace 外路径；不绕过 source refs |
+| Artifact Service | artifact/version 相关服务 | 自动化候选通过，待版本 UI 人工复核 | 保留 source refs、`questions_to_confirm`、版本、编辑、再生成历史 | 不覆盖旧版本；不隐藏 blocking confirmation |
+| Export Service | export 相关服务 | 自动化候选通过，待真实资料导出脱敏复核 | 导出 Markdown/DOCX，并在导出前执行 preflight | 不写 workspace 外路径；不导出未确认 blocking 内容 |
+| Storage | SQLite workspace、本地文件目录 | 自动化候选通过，持续作为冻结门槛 | 持久化资料、会话、产物、版本、导出记录 | 不保存 API Key；不写完整 raw provider response |
+| Provider Policy Gate | provider runtime/policy | 已实现需约束 | P5 默认 mock/local；真实外部 provider 归入 P6 opt-in | 不默认外呼；不把已配置误写为已调用 |
+| Evidence | `docs/reports/`, screenshot/test scripts | 自动化候选通过，待真实资料报告复核 | 生成脱敏 P5 验收报告、截图和 PRD 规格检视 | 不暴露真实个人资料全文；不做未执行声明 |
+
+## 0.2 P5 当前架构与目标差距
+
+| 当前实现 | P5 目标 | 状态 | 验收证据 |
+| --- | --- | --- | --- |
+| P4 Chatbox 已可用，默认 examples/mock 路径冻结 | 支持用户自己的资料和 JD 进入本地闭环 | 自动化候选通过，P5-REAL 待执行 | 上传/粘贴资料截图、脱敏解析结果、错误恢复截图 |
+| 资料导入已有基础文件路径和示例数据 | 真实资料导入必须显示本地处理、支持格式、解析摘要、缺失项 | 脱敏 fixture 通过，真实资料路径待用户提供 | 资料导入 eval、隐私提示截图 |
+| JD 解析已服务 examples 路径 | JD 粘贴/导入后给出岗位要求、风险、缺口和下一步 | 自动化候选通过，真实 JD 片段待复核 | JD 解析截图、缺失信息恢复测试 |
+| Artifact 卡已可读 | 真实资料产物必须显示来源、待确认项、版本、编辑/再生成 | 自动化候选通过，人工体验待复核 | artifact card 截图、version/edit/regenerate 测试 |
+| 自由连续对话已在本地/mock 基线通过 | 围绕当前资料/JD/申请包回答状态、建议和非执行型追问 | 自动化候选通过，不代表 provider-backed 聊天 | 多轮追问不误写 artifact 的 eval |
+| Markdown/DOCX 导出已实现 | 导出前必须执行确认 preflight，并标明 warning/blocking | 自动化候选通过，真实资料导出待脱敏复核 | 导出 preflight、导出文件和截图 |
+| Provider opt-in 基础存在 | P5 默认不外呼；P6 才验证真实 provider | 已实现需约束 | provider 状态截图、无外呼日志审计 |
+| P4 报告和 drawio 已完成 | P5 报告必须脱敏并区分真实资料授权/示例数据 | P5 自动化报告已生成，真实资料报告复核待执行 | P5 HTML 报告、PRD 规格检视 |
+
+## 0.3 P5 架构不变量
+
+- 用户资料和 JD 进入系统后必须先落在本地 workspace 边界内；
+- 前端只能发起请求、展示状态、触发确认、编辑和导出，不能承担业务生成；
+- ChatCore 只能决定意图和下一步，业务写入仍由 Python Domain Tools 执行；
+- artifact 必须保留 source refs、`questions_to_confirm`、版本和导出状态；
+- blocking confirmation 未处理时不得导出正式申请材料；
+- P5 默认 provider 是 mock/local；真实外部 provider、API Key 和 provider-backed 自由智能聊天属于 P6 opt-in；
+- 自动化报告不得包含完整真实简历、真实 JD、API Key 或外部 provider raw response；
+- 任何涉及真实个人资料、真实外部调用、workspace 删除或不可逆迁移的验收都必须先获得用户确认。
+
+## 0.4 P5 架构验收问题
+
+每个 P5 实现或阶段验收必须回答：
+
+- 用户是否能清楚知道资料会留在本地，外部 provider 未默认调用？
+- 上传或粘贴资料后，系统是否返回可读摘要、来源和待确认项？
+- JD 解析是否能给出岗位要求、缺口和下一步，而不是只生成内部 JSON？
+- 普通追问是否不会误触发生成、解析或 artifact 写入？
+- 明确“生成申请包 / 重新生成 / 导出”时，是否走确认和版本链路？
+- Workbench 是否能让用户看到当前资料、目标 JD、产物、确认项、版本和导出状态？
+- 导出前是否执行 blocking/warning/optional preflight？
+- 报告是否区分真实授权资料、脱敏资料和 examples 真实感数据？
+- 文档、drawio、测试和报告是否都没有把 P6/P7/P8 能力写成 P5 已完成？
+
+## 0.5 P5 最小可执行接口契约
+
+P5 优先复用当前 API 和 Domain Tools，不以新增复杂后端入口作为默认方案。只有现有接口无法表达验收状态时，才允许增加最小新接口；新增接口必须同步 schema、测试、报告和 drawio。
+
+| P5 用户动作 | 默认接口 / 模块 | 请求输入 | 必须返回或产生 | P5 约束 |
+| --- | --- | --- | --- | --- |
+| 创建或恢复 workspace | `POST /api/workspace/init`, `GET /api/workspace/status` | name、root_path、privacy_mode | workspace_id、root_path、privacy_mode、next_actions | 默认 `privacy_mode=local_first`，不得默认外呼 |
+| 上传资料 | `POST /api/files/upload` | workspace_id、file | document_id、kind、path 或安全错误 | 文件必须落在 workspace 内；报告不得暴露全文 |
+| 导入本地资料 | `POST /api/files/ingest-local` | workspace_id、source_path、kind | document_id、source metadata | 必须拒绝 workspace 外逃逸路径 |
+| 解析资料 | `POST /api/profile/extract-facts` | workspace_id、document_ids、target_roles | career_facts、skill_evidence、artifact_ref、source_refs、questions_to_confirm | 没有 document_ids 时可使用 workspace 现有文档，但必须可追踪来源 |
+| 生成项目卡 | `POST /api/project/create-card` | workspace_id、project_name、source_document_ids、target_role | tech_project、artifact_ref、source_refs | 不得臆造未在资料中出现的项目事实 |
+| 解析 JD | `POST /api/job/parse-jd` 或明确 JD chat intent | workspace_id、jd_text、source_url | job_id、requirements、risks、artifact_ref | 缺少 JD 时返回恢复动作，不伪造成解析成功 |
+| 匹配岗位 | `POST /api/job/match-profile` | workspace_id、job_id | match_report、strengths、gaps、questions_to_confirm | 必须说明证据不足的项 |
+| 生成申请包 | `POST /api/application/create-package` 或明确 chat intent | workspace_id、job_id、style、language | package_id、artifact_ref、draft、questions_to_confirm | blocking confirmation 未处理时仍可生成草稿，但不得正式导出 |
+| 编辑产物 | `PATCH /api/artifacts/{artifact_id}` | workspace_id、content_json | 新 artifact version | 不覆盖旧版本，不丢 source_refs |
+| 重新生成 | `POST /api/artifacts/{artifact_id}/regenerate` | workspace_id | 新 artifact version | 保留旧版本和失败恢复信息 |
+| 确认事实 | `POST /api/artifacts/{artifact_id}/confirm` | workspace_id | confirmed status 或剩余 blocking 项 | 不允许隐藏未处理 blocking 项 |
+| 导出申请包 | `POST /api/application/export-package` | workspace_id、package_id、formats、artifact_version_id | exports、preflight、download path | 只能写 workspace `exports/`，blocking 未处理时不得导出正式材料 |
+| 多轮追问 | `POST /api/chat/message` | workspace_id、session_id、message | assistant message、chat_mode、artifacts | 普通追问不写 artifact；明确工具意图才执行 |
+
+P5 前端状态机必须至少表达以下状态：
+
+```text
+idle
+→ profile_importing
+→ profile_ready 或 profile_needs_recovery
+→ jd_importing
+→ jd_ready 或 jd_needs_recovery
+→ facts_need_confirmation
+→ package_draft_ready
+→ package_editing / regenerating
+→ export_preflight_blocked 或 export_ready
+→ exported
+```
+
+P5 不要求一次性引入新全局状态管理库。若现有 `main.tsx` 状态已难以维护，可以在 P5-M1 后按组件边界拆分；拆分必须保持行为不变，并优先服务资料导入、JD 解析、事实确认、产物和导出状态可读。
+
+## 0.6 P5 数据、脱敏和验收资料策略
+
+P5 自动化开发默认使用 `examples/` 真实感数据和测试临时 workspace。真实个人资料只能用于用户明确授权的人工体验审查；任何自动化报告、截图标题、日志、fixture 和提交内容都不得包含完整真实资料。
+
+| 数据类型 | P5 默认处理 | 可进入报告 | 禁止事项 |
+| --- | --- | --- | --- |
+| examples 简历/JD/项目 | 可用于自动化验收 | 可摘要展示，并标注为真实感示例数据 | 不得写成真实个人资料 |
+| 用户真实简历/JD | 仅用户明确授权后用于人工体验 | 只能脱敏摘要、截图局部或人工结论 | 不得全文写入仓库、报告、日志、fixture |
+| API Key / provider 配置 | P5 不默认使用 | 只能写“未调用 / 需 P6 opt-in” | 不得写入报告、截图、日志或提交 |
+| provider raw response | P5 默认不存在 | 不适用 | 不得伪造或声称已通过 |
+| 导出文件 | 写入 workspace `exports/` | 可展示路径和脱敏片段 | 不得越过 workspace 或包含未授权隐私 |
+
+P5 自动化报告必须包含“未验证范围”段落，并明确列出：真实外部 provider、provider-backed 自由智能聊天、SaaS、ASR、会议平台、自动投递、MCP/CLI、最终产品化发布。
+
+以下 P4 内容作为已冻结基线和历史背景保留。
+
+## 1. 历史 P4 UX 体验强化架构基线
 
 P4 在 P0/P1/P2/P3 基线上增加“真实用户体验强化平面”。目标不是改变后端 Agent Tool-first 架构，而是把既有能力重新组织成清晰、低认知负担、可截图和可人工审查的前端体验架构。
 
@@ -12,6 +160,8 @@ P4 架构主线：
 → Conversation Plane
   → Empty State Suggested Prompts
   → Composer and Upload Dock
+  → Free Local Dialogue / Multi-turn Follow-up
+  → Chat Intent Router
   → Loading / Error Recovery
 → Full-size Desktop Workbench Controller
 → Workbench Plane
@@ -28,6 +178,8 @@ User
     → Workspace / Mode / Provider Strip
     → Conversation Plane
       → Empty State Suggested Prompts
+      → Free Local Dialogue
+      → Clarification / Status / Next-step Replies
       → Loading / Thinking Steps
       → Error Recovery Actions
     → Composer and Upload Dock
@@ -45,6 +197,8 @@ User
   → ChatCore and Flow Orchestration
     → KeywordChatCore
     → PiAgentChatCore
+    → Chat Intent Router
+    → Context Snapshot
     → Real User Flow Controller
   → Domain Tool Layer
     → Profile / Project / Job / Application / Interview / Realtime / Review Tools
@@ -66,7 +220,9 @@ User
 | --- | --- | --- | --- | --- |
 | Experience Shell | 建立产品语境和整体布局，承载 mode/provider/workspace 状态 | workspace、provider status、viewport | 页面骨架、当前模式、隐私提示 | 不做营销首页；不隐藏外部调用状态 |
 | Empty State Suggested Prompts | 在 Chatbox 空状态内把求职任务变成可点击建议 | 用户意图、examples 状态、资料状态 | 填入 composer 或直接触发对话 | 不作为割裂的独立任务区；不伪造已完成任务 |
-| Conversation Plane | 展示用户消息、系统计划、loading、结果、失败和下一步 | chat messages、tool summaries、errors、execution state | 人类可读对话流 | 不把裸 JSON 作为唯一反馈；不展示内部堆栈；不静默失败 |
+| Conversation Plane | 展示用户消息、自由追问、系统计划、loading、结果、失败和下一步 | chat messages、tool summaries、errors、execution state、context snapshot | 人类可读对话流 | 不把裸 JSON 作为唯一反馈；不展示内部堆栈；不静默失败；不把普通聊天误触发为工具写入 |
+| Chat Intent Router | 区分自由对话、状态查询、下一步、澄清和明确工具意图 | message、session history、workspace snapshot | free dialogue reply、clarification、tool intent | 不默认外呼 provider；不在未确认时写 artifact；不把“还没准备好 JD”误判为解析 JD |
+| Context Snapshot | 为连续对话提供当前 workspace 摘要 | latest job、latest package、artifact count、pending confirmations | 状态摘要、下一步提示上下文 | 不暴露敏感原文；不替代 artifact/source refs |
 | Composer and Upload Dock | 支持输入、上传和快捷任务触发 | 文本、文件、快捷动作 | chat/workflow request | 不直接解析简历/JD；不直连 provider |
 | Loading / Error Recovery | 告诉用户 Agent 正在执行什么，失败后如何恢复 | running step、error code、missing input | thinking steps、retry/upload/fill action | 不用 spinner 替代解释；不让用户重复点击 |
 | Full-size Desktop Workbench Controller | 管理 1200/1440/1600/1920 桌面宽度的信息密度、列宽、空白、快捷任务和推进台关系 | viewport、workflow state、artifact count、conversation state | 桌面工作台布局、状态指标、快捷任务带、推进台摘要 | 不把窄屏布局简单放大；不留下布局错误造成的大面积空白；不污染人工浏览器 viewport |
@@ -83,6 +239,7 @@ User
 | 首屏以工程状态和分区为主 | Chatbox 空状态优先呈现 suggested prompts 和下一步 | 用户不知道从哪里开始，任务入口与对话割裂 | 初始页截图、5 秒理解审查、点击 suggested prompt 证据 |
 | Chatbox 和推进台虽已分离但层级仍重 | 对话负责反馈，推进台负责状态和产物 | 用户误以为 chatbot 无响应 | 发送任务截图、错误态截图 |
 | 缺少 thinking / executing 过渡 | 显示正在读取资料、对比 JD、生成草稿等步骤 | 用户重复点击或误判卡死 | loading 状态截图 |
+| Chatbox 偏固定任务控制台 | 增加本地/mock 自由连续对话基线：普通追问、状态查询、下一步不会误触发工具 | 用户觉得对话被中断，或无意中写入 artifact | 自由追问两轮测试、浏览器截图、会话恢复证据 |
 | 产物卡暴露 `job`、`match_report`、内部版本等术语 | 产物卡用“岗位解析 / 匹配报告 / 申请包草稿”等求职语义，并突出阻塞操作 | 用户读不懂产物价值或不知道先点哪个按钮 | 产物卡 before/after 截图 |
 | Provider 标签可能被理解为正在外呼 | 明确“外部模型未调用（隐私安全）/ 外部调用需确认” | 隐私和费用误解 | provider 状态截图 |
 | 1200px 以上桌面宽度仍可能像窄屏布局停靠在左侧 | 全尺寸桌面必须呈现完整工作台：对话区、状态指标、快捷任务、推进台摘要和下一步建议协同展示 | 大面积空白让用户误判页面未完成，人工体验审查不通过 | 1200/1440/1600/1920 Chrome 截图和人工体验审查记录 |
@@ -95,6 +252,8 @@ User
 - Chatbox 仍是薄入口，只做输入、展示、确认、编辑和导出触发；
 - 前端不得生成求职内容，不得直接写 SQLite，不得直连 provider；
 - PiAgent / ChatCore 仍只负责意图和工具计划，业务写入仍由 Python Domain Tools 完成；
+- 本地连续对话只作为 mock/offline 基线，不得被描述为完整 provider-backed 自由智能聊天；
+- Chat Intent Router 只有在明确工具意图或用户确认后才允许触发 Domain Tools 写入 artifact；
 - source refs、questions_to_confirm、artifact version、export preflight 不得因 UX 简化而丢失；
 - mock provider 仍是默认验收基线，external provider 仍需用户确认；
 - realtime 仍是 text-in / hint-out，不进入 ASR、会议平台或逐字代答；
@@ -107,6 +266,8 @@ User
 - 用户是否能在首屏判断下一步？
 - Suggested prompts 是否与 composer 形成闭环，而不是割裂任务区？
 - Conversation Plane 是否对有效输入、缺资料和失败都有反馈？
+- Conversation Plane 是否能承接普通自由追问、状态查询和下一步问题，而不误触发工具？
+- Chat Intent Router 是否能区分“聊方向”与“解析 JD / 生成申请包”等明确工具意图？
 - Conversation Plane 是否有 loading / thinking / executing 状态和错误恢复 action？
 - Full-size Desktop Workbench Controller 是否覆盖 1200/1440/1600/1920，且没有布局错误造成的大面积空白？
 - Workbench Plane 是否只展示状态、产物、确认项、版本和导出，且移动端不会压缩 Chatbox？

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from pathlib import Path
 from typing import Callable
 
@@ -31,6 +32,7 @@ from services.api.schemas import (
     UpdateFactRequest,
     WorkspaceInitRequest,
     P2DemoWorkflowRequest,
+    ProviderRuntimeConfigRequest,
 )
 from services.chat import get_chat_core
 from services.llm.contracts import JobParseOutput
@@ -91,6 +93,56 @@ def health():
 @app.get("/api/provider/status")
 def provider_status_api(provider: str | None = None):
     return run_tool(provider_status, provider)
+
+
+def _provider_runtime_config() -> dict:
+    status = provider_status()
+    if status["provider"] == "mock":
+        return {
+            **status,
+            "preset": "",
+            "base_url": "",
+            "api_key_configured": False,
+            "model": None,
+            "timeout_seconds": int(float(os.environ.get("JOBPILOT_LLM_TIMEOUT_SECONDS", "30"))),
+            "max_retries": int(os.environ.get("JOBPILOT_LLM_MAX_RETRIES", "1")),
+            "runtime_only": True,
+        }
+    return {
+        **status,
+        "preset": os.environ.get("JOBPILOT_OPENAI_PROVIDER_PRESET", "").strip().lower(),
+        "base_url": os.environ.get("JOBPILOT_OPENAI_BASE_URL", ""),
+        "api_key_configured": bool(os.environ.get("JOBPILOT_OPENAI_API_KEY", "")),
+        "model": os.environ.get("JOBPILOT_OPENAI_MODEL", status.get("model") or ""),
+        "timeout_seconds": int(float(os.environ.get("JOBPILOT_LLM_TIMEOUT_SECONDS", "30"))),
+        "max_retries": int(os.environ.get("JOBPILOT_LLM_MAX_RETRIES", "1")),
+        "runtime_only": True,
+    }
+
+
+@app.get("/api/provider/runtime-config")
+def provider_runtime_config_get():
+    return run_tool(_provider_runtime_config)
+
+
+@app.post("/api/provider/runtime-config")
+def provider_runtime_config_set(req: ProviderRuntimeConfigRequest):
+    def _set():
+        provider_name = normalize_provider_name(req.provider)
+        os.environ["JOBPILOT_LLM_PROVIDER"] = provider_name
+        if provider_name == "mock":
+            os.environ["JOBPILOT_OPENAI_PROVIDER_PRESET"] = ""
+            return _provider_runtime_config()
+        os.environ["JOBPILOT_OPENAI_PROVIDER_PRESET"] = req.preset.strip().lower()
+        os.environ["JOBPILOT_OPENAI_BASE_URL"] = req.base_url.strip().rstrip("/")
+        if req.api_key:
+            os.environ["JOBPILOT_OPENAI_API_KEY"] = req.api_key.strip()
+        os.environ["JOBPILOT_OPENAI_MODEL"] = req.model.strip()
+        os.environ["JOBPILOT_LLM_TIMEOUT_SECONDS"] = str(max(1, req.timeout_seconds))
+        os.environ["JOBPILOT_LLM_MAX_RETRIES"] = str(max(0, req.max_retries))
+        return _provider_runtime_config()
+
+    return run_tool(_set)
 
 
 @app.post("/api/provider/check")

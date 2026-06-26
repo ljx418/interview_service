@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>P5 阶段性合成资料可视化验收报告</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17211f;
+      --muted: #5f6f69;
+      --line: #d8e0dc;
+      --panel: #ffffff;
+      --wash: #f5f8f6;
+      --green: #0f7667;
+      --green-soft: #e4f5ef;
+      --amber: #a16207;
+      --amber-soft: #fff4d6;
+      --red: #b42318;
+      --red-soft: #fee4e2;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font: 15px/1.65 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: var(--wash);
+    }
+    header, main { max-width: 1180px; margin: 0 auto; padding: 28px; }
+    header { padding-top: 36px; }
+    h1 { margin: 0 0 10px; font-size: 32px; letter-spacing: 0; }
+    h2 { margin: 0 0 14px; font-size: 22px; }
+    h3 { margin: 22px 0 10px; font-size: 17px; }
+    p { margin: 8px 0; }
+    a { color: var(--green); text-decoration: none; font-weight: 700; }
+    code { background: #eef4f1; border: 1px solid #d8e0dc; border-radius: 5px; padding: 2px 5px; }
+    section {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 20px;
+      margin: 18px 0;
+      box-shadow: 0 10px 28px rgba(23, 33, 31, 0.05);
+    }
+    table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+    th, td { border-bottom: 1px solid #e7ece9; padding: 10px; text-align: left; vertical-align: top; }
+    th { color: var(--muted); font-size: 13px; }
+    ul { margin: 8px 0 0 20px; padding: 0; }
+    .meta { color: var(--muted); }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      padding: 6px 10px;
+      margin: 4px 6px 4px 0;
+      font-weight: 800;
+      background: #fff;
+    }
+    .pass { color: var(--green); background: var(--green-soft); border-color: #b7dfd2; }
+    .warn { color: var(--amber); background: var(--amber-soft); border-color: #f4d58d; }
+    .fail { color: var(--red); background: var(--red-soft); border-color: #fecdca; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      background: #fbfdfc;
+    }
+    figure {
+      margin: 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+    }
+    img { display: block; width: 100%; height: auto; border-bottom: 1px solid var(--line); }
+    figcaption { padding: 10px 12px; color: var(--muted); font-size: 13px; }
+    .callout {
+      border: 1px solid #f4d58d;
+      background: #fffaf0;
+      border-radius: 8px;
+      padding: 14px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <p class="meta">JobPilot AI · 2026-06-26 · P5 阶段性审计</p>
+    <h1>P5 阶段性合成资料可视化验收报告</h1>
+    <p>
+      <span class="badge pass">自动化验收通过</span>
+      <span class="badge pass">三身份合成资料通过</span>
+      <span class="badge pass">截图证据可见</span>
+      <span class="badge warn">不代表 P5-REAL</span>
+      <span class="badge warn">不代表真实 provider 通过</span>
+    </p>
+    <p class="meta">本报告使用 Chrome/CDP 驱动真实 Chatbox 页面执行自动化用户路径。资料全部来自仓库内合成 persona，不读取用户真实个人资料，不调用真实外部模型。</p>
+  </header>
+  <main>
+    <section>
+      <h2>验收结论</h2>
+      <div class="callout">
+        <p><strong>结论：</strong>本轮支持“P5 合成资料增强自动化候选通过”。不能写成“P5 已冻结”“P5-REAL 已通过”“真实个人资料路径已通过”或“真实外部 provider 默认路径已通过”。</p>
+      </div>
+      <table>
+        <thead><tr><th>检查项</th><th>结果</th><th>证据</th></tr></thead>
+        <tbody>
+          <tr><td>全量后端/评测回归</td><td class="pass">通过</td><td><code>.venv/bin/python -m pytest</code>：88 passed, 1 warning</td></tr>
+          <tr><td>前端构建</td><td class="pass">通过</td><td><code>npm --prefix apps/chatbox run build</code>：TypeScript 与 Vite build 通过</td></tr>
+          <tr><td>drawio 架构图</td><td class="pass">通过</td><td><code>drawio_parse=passed pages=6</code></td></tr>
+          <tr><td>浏览器端到端验收</td><td class="pass">通过</td><td>三份 persona scenario 均生成独立 HTML 报告和截图目录</td></tr>
+          <tr><td>虚假验收风险扫描</td><td class="pass">通过</td><td>未发现把合成资料写成真实个人资料验收通过的正向声明</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>目标架构与当前实现</h2>
+      <div class="grid">
+        <div>
+          <h3>目标架构</h3>
+          <ul>
+            <li>Chatbox UI：资料入口、连续对话、Agent 状态机、产物推进台、确认与导出。</li>
+            <li>FastAPI API：workspace、文件导入、profile/JD/application/artifact/chat 接口。</li>
+            <li>ChatCore：默认本地 mock/keyword 路由，区分自由追问、状态查询和显式工具触发。</li>
+            <li>JobPilot Domain Tools：生成 career facts、job parse、match report、application package、interview prep。</li>
+            <li>SQLite workspace：本地保存聊天、产物、版本、确认状态和导出文件。</li>
+            <li>Acceptance Evidence：pytest、前端 build、drawio parse、Chrome/CDP 截图和 HTML 报告。</li>
+          </ul>
+        </div>
+        <div>
+          <h3>当前实现</h3>
+          <ul>
+            <li>React/Vite Chatbox 已显示本地就绪、示例/我的资料、Mock 本地模式和模型设置入口。</li>
+            <li>页面支持上传资料、自由聊、粘贴 JD、生成申请包、准备面试等输入框上方快捷动作。</li>
+            <li>对话与材料处理区作为可视化状态机，展示理解任务、读取资料、生成材料、确认导出。</li>
+            <li>产物推进台展示匹配报告、申请包草稿、确认项、版本、来源详情和导出状态。</li>
+            <li>移动端将 workbench 收束为底部抽屉，关键按钮可见并可操作。</li>
+            <li>PiAgent bridge 超时阈值已从固定 15 秒改为可配置默认 45 秒，并在非 strict 模式可控降级。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>本轮可完成的用户体验路径</h2>
+      <div class="cards">
+        <div class="card"><strong>1. 打开本地 Chatbox</strong><p>用户看到本地就绪、Mock 本地模式、示例/我的资料边界和安全提示。</p></div>
+        <div class="card"><strong>2. 导入合成资料</strong><p>系统通过本地 workspace 读取合成 resume/project，并生成职业事实。</p></div>
+        <div class="card"><strong>3. 粘贴目标 JD</strong><p>对话区解析岗位，生成岗位要求、匹配报告和下一步状态。</p></div>
+        <div class="card"><strong>4. 生成申请包</strong><p>系统生成申请包草稿，并保留需要确认的事实项。</p></div>
+        <div class="card"><strong>5. 确认前导出阻塞</strong><p>未确认事实时导出返回 <code>EXPORT_PRECHECK_FAILED</code>，避免未经确认的正式材料输出。</p></div>
+        <div class="card"><strong>6. 确认后导出</strong><p>点击确认事实后，申请包可以导出到本地，推进台显示已导出状态。</p></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>三身份验收覆盖</h2>
+      <table>
+        <thead><tr><th>Persona</th><th>目标岗位</th><th>独立报告</th><th>结论</th></tr></thead>
+        <tbody>
+          <tr><td>运营数据分析转前端</td><td>Junior Frontend Developer</td><td><a href="P5_SYNTHETIC_REALISM_ACCEPTANCE_ops_to_frontend.html">查看报告</a></td><td class="pass">通过</td></tr>
+          <tr><td>手工测试转自动化全栈</td><td>QA Automation / Full-stack Assistant</td><td><a href="P5_SYNTHETIC_REALISM_ACCEPTANCE_qa_to_fullstack.html">查看报告</a></td><td class="pass">通过</td></tr>
+          <tr><td>数学教师转教育科技前端</td><td>EdTech Frontend Developer</td><td><a href="P5_SYNTHETIC_REALISM_ACCEPTANCE_teacher_to_edtech.html">查看报告</a></td><td class="pass">通过</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>关键截图证据</h2>
+      <h3>桌面路径：JD 解析与匹配报告</h3>
+      <div class="grid">
+        <figure>
+          <img src="p5-synthetic-realism-ops_to_frontend-evidence/p5_real_jd_match_redacted.png" alt="运营转前端 JD 匹配截图">
+          <figcaption>运营数据分析转前端：JD 解析后状态机显示待确认和产物数量。</figcaption>
+        </figure>
+        <figure>
+          <img src="p5-synthetic-realism-qa_to_fullstack-evidence/p5_real_jd_match_redacted.png" alt="测试转全栈 JD 匹配截图">
+          <figcaption>手工测试转自动化全栈：同一路径在不同背景资料下通过。</figcaption>
+        </figure>
+        <figure>
+          <img src="p5-synthetic-realism-teacher_to_edtech-evidence/p5_real_jd_match_redacted.png" alt="教师转教育科技 JD 匹配截图">
+          <figcaption>数学教师转教育科技前端：非技术背景转岗资料可进入匹配流程。</figcaption>
+        </figure>
+      </div>
+
+      <h3>确认与导出门槛</h3>
+      <div class="grid">
+        <figure>
+          <img src="p5-synthetic-realism-ops_to_frontend-evidence/p5_real_package_needs_confirmation_redacted.png" alt="申请包待确认截图">
+          <figcaption>申请包生成后显示需确认事实，不能直接作为正式材料导出。</figcaption>
+        </figure>
+        <figure>
+          <img src="p5-synthetic-realism-ops_to_frontend-evidence/p5_real_export_blocked_redacted.png" alt="确认前导出被阻塞截图">
+          <figcaption>确认前导出被阻塞，出现可审计的失败状态。</figcaption>
+        </figure>
+        <figure>
+          <img src="p5-synthetic-realism-ops_to_frontend-evidence/p5_real_export_completed_redacted.png" alt="确认后导出完成截图">
+          <figcaption>确认事实后，申请包导出完成，推进台进入已导出状态。</figcaption>
+        </figure>
+      </div>
+
+      <h3>响应式证据</h3>
+      <div class="grid">
+        <figure>
+          <img src="p5-synthetic-realism-teacher_to_edtech-evidence/p5_real_export_completed_1920_redacted.png" alt="1920 桌面截图">
+          <figcaption>1920px 桌面：三栏工作台和状态机可见。</figcaption>
+        </figure>
+        <figure>
+          <img src="p5-synthetic-realism-teacher_to_edtech-evidence/p5_real_export_completed_720_redacted.png" alt="720 窄屏截图">
+          <figcaption>720px 窄屏：输入区和推进台仍可操作。</figcaption>
+        </figure>
+        <figure>
+          <img src="p5-synthetic-realism-teacher_to_edtech-evidence/p5_real_export_completed_mobile_redacted.png" alt="390 移动端截图">
+          <figcaption>390px 移动端：Workbench 以底部抽屉显示，关键操作按钮可见。</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section>
+      <h2>代码检视、文档审计与 PRD 规格检视</h2>
+      <table>
+        <thead><tr><th>类别</th><th>结论</th><th>状态</th></tr></thead>
+        <tbody>
+          <tr><td>代码检视</td><td>本轮发现并修复 PiAgent bridge 15 秒超时阈值过窄问题；P5 主路径无阻塞回归。</td><td class="pass">通过</td></tr>
+          <tr><td>文档审计</td><td>PRD、目标架构、验收门槛、drawio 和 stage review 仍保持 P5/P6/P7/P8+ 边界一致。</td><td class="pass">通过</td></tr>
+          <tr><td>功能完整性</td><td>资料导入、JD 解析、申请包生成、确认门槛、导出、多视口证据在合成资料路径下通过。</td><td class="pass">通过</td></tr>
+          <tr><td>测试覆盖</td><td>pytest 覆盖 P0-P5 eval、provider redaction、workspace privacy、PiAgent fallback、P5 synthetic realism；浏览器报告覆盖真实 UI 路径。</td><td class="pass">通过</td></tr>
+          <tr><td>概念一致性</td><td>mock/local 默认、合成资料边界、真实资料需授权、真实 provider opt-in 均保持一致。</td><td class="pass">通过</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>未验证范围</h2>
+      <ul>
+        <li>未使用用户真实个人资料；本轮三份 persona 均为合成资料。</li>
+        <li>未调用 MiniMax、DeepSeek、OpenAI-compatible 等真实外部 provider。</li>
+        <li>未验证真实招聘网站投递、自动海投、SaaS 登录、多租户、Billing、ASR 或会议平台。</li>
+        <li>未替代人工体验认可，也不能作为最终产品化发布证明。</li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>

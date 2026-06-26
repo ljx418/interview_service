@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Browser automation smoke test - Browser Acceptance Report</title>
+  <style>
+    body { margin: 0; font: 15px/1.55 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #1f2933; background: #f6f8fb; }
+    header, main { max-width: 1120px; margin: 0 auto; padding: 28px; }
+    header { padding-top: 36px; }
+    h1 { margin: 0 0 10px; font-size: 30px; letter-spacing: 0; }
+    h2 { margin: 28px 0 12px; font-size: 19px; }
+    .meta { color: #52606d; }
+    .badge { display: inline-block; padding: 5px 10px; border-radius: 6px; font-weight: 700; background: #ffe3e3; color: #a61b1b; }
+    section { background: #fff; border: 1px solid #d9e2ec; border-radius: 8px; padding: 18px; margin: 18px 0; }
+    table { width: 100%; border-collapse: collapse; background: #fff; }
+    th, td { text-align: left; border-bottom: 1px solid #e4e7eb; padding: 10px; vertical-align: top; }
+    th { color: #52606d; font-size: 13px; }
+    code { background: #eef2f7; padding: 2px 5px; border-radius: 4px; }
+    .passed { color: #0f6b3d; font-weight: 700; }
+    .failed { color: #a61b1b; font-weight: 700; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+    figure { margin: 0; border: 1px solid #d9e2ec; border-radius: 8px; overflow: hidden; background: #fff; }
+    img { display: block; width: 100%; height: auto; border-bottom: 1px solid #d9e2ec; }
+    figcaption { padding: 10px 12px; color: #52606d; font-size: 13px; }
+    pre { white-space: pre-wrap; overflow-wrap: anywhere; background: #fff4f4; color: #7f1d1d; padding: 12px; border-radius: 6px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Browser automation smoke test</h1>
+    <p><span class="badge">failed</span></p>
+    <p class="meta">Verify that a CLI agent can drive a real browser and capture screenshot evidence.</p>
+    <p class="meta">Started: 2026-06-23T08:23:59.125Z · Ended: 2026-06-23T08:24:09.176Z · Report: <code>/mnt/c/workSpace/interview_service/docs/reports/browser-acceptance/BROWSER_ACCEPTANCE_REPORT.html</code></p>
+  </header>
+  <main>
+    <section>
+      <h2>目标架构</h2>
+      <ul><li>Agent CLI</li><li>browser-acceptance</li><li>Chrome DevTools Protocol</li><li>Chrome browser</li><li>HTML evidence report</li></ul>
+      <h2>当前实现</h2>
+      <ul><li>Node.js built-in fetch/WebSocket</li><li>Chrome remote debugging endpoint</li><li>PNG screenshot evidence</li><li>Self-contained HTML report</li></ul>
+    </section>
+    <section>
+      <h2>自动化步骤</h2>
+      <table><thead><tr><th>#</th><th>步骤</th><th>动作</th><th>结果</th></tr></thead><tbody><tr><td>1</td><td>Unhandled automation failure</td><td><code>error</code></td><td class="failed">failed</td></tr></tbody></table>
+      <h2>失败信息</h2><pre>TypeError: fetch failed
+    at node:internal/deps/undici/undici:14902:13
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async waitForChrome (file:///mnt/c/workSpace/interview_service/scripts/browser_tools/browser-acceptance.mjs:55:24)
+    at async main (file:///mnt/c/workSpace/interview_service/scripts/browser_tools/browser-acceptance.mjs:339:5)</pre>
+    </section>
+    <section>
+      <h2>截图证据</h2>
+      <div class="grid"><p>No screenshots captured.</p></div>
+    </section>
+  </main>
+</body>
+</html>

@@ -28,6 +28,7 @@ def _build_package(tmp_path):
 def test_export_writes_markdown_and_formal_docx_with_warning_notes(tmp_path):
     workspace_id, package = _build_package(tmp_path)
 
+    jobpilot.confirm_artifact(workspace_id, package["artifact_ref"]["artifact_id"])
     exported = jobpilot.export_application_package(workspace_id, package["package_id"], ["markdown", "docx"])
 
     markdown_path = Path(next(item["path"] for item in exported["exports"] if item["format"] == "markdown"))
@@ -51,6 +52,7 @@ def test_export_uses_current_artifact_version(tmp_path):
     edited.pop("artifact_ref", None)
     edited.pop("source_fact_refs", None)
     jobpilot.update_artifact(workspace_id, artifact_id, edited)
+    jobpilot.confirm_artifact(workspace_id, artifact_id)
 
     exported = jobpilot.export_application_package(workspace_id, package["package_id"], ["markdown"])
 
@@ -89,6 +91,7 @@ def test_blocking_confirmation_prevents_export(tmp_path):
 
 def test_download_still_rejects_non_exports_paths(tmp_path):
     workspace_id, package = _build_package(tmp_path)
+    jobpilot.confirm_artifact(workspace_id, package["artifact_ref"]["artifact_id"])
     jobpilot.export_application_package(workspace_id, package["package_id"], ["markdown"])
     client = TestClient(app)
 

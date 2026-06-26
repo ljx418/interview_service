@@ -41,6 +41,7 @@ def test_realtime_end_updates_session_in_non_default_workspace(tmp_path):
 def test_application_download_rejects_non_exports_paths(tmp_path):
     workspace, package = _build_application_workspace(tmp_path)
     workspace_id = workspace["workspace_id"]
+    jobpilot.confirm_artifact(workspace_id, package["artifact_ref"]["artifact_id"])
     exported = jobpilot.export_application_package(workspace_id, package["package_id"], ["markdown"])
     export_file = Path(exported["exports"][0]["path"]).name
     client = TestClient(app)
@@ -62,6 +63,8 @@ def test_confirm_artifact_persists_status_for_ui_refresh(tmp_path):
     assert confirmed["status"] == "confirmed"
     artifacts = jobpilot.list_artifacts(workspace_id)
     assert next(item for item in artifacts if item["id"] == artifact_id)["status"] == "confirmed"
+    exported = jobpilot.export_application_package(workspace_id, package["package_id"], ["markdown"])
+    assert Path(exported["exports"][0]["path"]).exists()
 
 
 def test_chat_session_api_recovers_messages_and_artifact_content_for_chatbox(tmp_path):

@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>JobPilot AI P4 自动化验收报告 - 20260624-201546</title>
+  <style>
+    :root { color-scheme: light; --ink:#17211c; --muted:#5b6b62; --line:#d7ded8; --panel:#ffffff; --bg:#f3f6f2; --green:#1f6f5b; --amber:#946200; --red:#a23b32; --soft:#eef7f2; --soft2:#fff8eb; }
+    * { box-sizing: border-box; }
+    body { margin:0; font:15px/1.65 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; color:var(--ink); background:var(--bg); }
+    header, main { max-width:1180px; margin:0 auto; padding:28px; }
+    header { padding-top:34px; }
+    h1 { margin:0 0 10px; font-size:30px; letter-spacing:0; }
+    h2 { margin:0 0 14px; font-size:20px; }
+    h3 { margin:16px 0 8px; font-size:16px; }
+    p { margin:8px 0; }
+    ul, ol { margin:8px 0 0; padding-left:22px; }
+    li { margin:4px 0; }
+    code { background:#eef2ef; padding:2px 5px; border-radius:4px; }
+    section { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:20px; margin:18px 0; }
+    .meta { color:var(--muted); }
+    .badges { display:flex; flex-wrap:wrap; gap:8px; margin:16px 0; }
+    .badge { display:inline-flex; align-items:center; gap:6px; border:1px solid var(--line); border-radius:999px; padding:6px 10px; font-weight:700; background:#fff; }
+    .pass { color:var(--green); background:#e6f6ee; border-color:#b9dfcc; }
+    .warn { color:var(--amber); background:#fff6df; border-color:#ead19a; }
+    .stop { color:var(--red); background:#fff0ed; border-color:#e9b6af; }
+    .grid2 { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:14px; }
+    .note { background:var(--soft); border-left:4px solid var(--green); padding:12px 14px; border-radius:6px; }
+    .warning-box { background:var(--soft2); border-left:4px solid var(--amber); padding:12px 14px; border-radius:6px; }
+    table { width:100%; border-collapse:collapse; margin-top:8px; }
+    th, td { text-align:left; vertical-align:top; border-bottom:1px solid #e5ebe6; padding:10px; }
+    th { color:var(--muted); font-size:13px; }
+    .shots { display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:16px; }
+    .shot-card { margin:0; border:1px solid var(--line); border-radius:8px; overflow:hidden; background:#fff; }
+    .shot-card img { display:block; width:100%; height:auto; border-bottom:1px solid var(--line); background:#eef2ef; }
+    .shot-card figcaption { padding:12px; color:var(--muted); font-size:13px; }
+    .shot-card figcaption strong { display:block; color:var(--ink); font-size:14px; margin-bottom:4px; }
+    .shot-card figcaption span { display:block; margin-bottom:8px; }
+    .toc a { color:var(--green); text-decoration:none; margin-right:14px; white-space:nowrap; }
+    .verdict { font-size:17px; }
+  </style>
+</head>
+<body>
+  <header>
+    <p class="meta">JobPilot AI / P4 自动化验收 / 2026-06-24</p>
+    <h1>P4 自动化验收报告：Chatbox 求职材料工作台</h1>
+    <p class="verdict">本报告基于真实 Chrome/CDP 自动化截图、pytest、前端 build 和 drawio 解析结果生成。它证明的是本地/mock 范围内的自动化验收证据，不等同于人工体验认可。</p>
+    <div class="badges">
+      <span class="badge pass">自动化场景通过</span>
+      <span class="badge pass">13 张真实界面截图</span>
+      <span class="badge pass">71 passed, 1 warning</span>
+      <span class="badge warn">发现 1 个 UI 后续项</span>
+      <span class="badge stop">不是人工验收</span>
+    </div>
+    <nav class="toc">
+      <a href="#summary">结论</a><a href="#architecture">架构</a><a href="#paths">体验路径</a><a href="#evidence">截图证据</a><a href="#tests">测试结果</a><a href="#risks">边界与风险</a>
+    </nav>
+  </header>
+  <main>
+    <section id="summary">
+      <h2>1. 验收结论</h2>
+      <div class="note">
+        <p><strong>结论：</strong>P4 本地/mock 自动化验收主路径通过，可作为进入人工体验审查的证据包。</p>
+        <p><strong>不能声称：</strong>P4 已获人工体验认可、真实个人资料路径已通过、真实外部 provider 默认路径已通过、ASR/会议平台/自动投递/SaaS 已通过。</p>
+      </div>
+      <div class="warning-box">
+        <p><strong>真实发现的问题：</strong>显式请求“生成职业事实”后，数据库和消息引用证明已生成 <code>career_facts</code>，顶部/移动入口也显示 1 个产物；但桌面右侧 Workbench 主体仍可能显示“还没有生成产物”的空状态。该项标记为 <strong>PARTIAL - UI FOLLOW-UP REQUIRED</strong>，不能写成完全通过。</p>
+      </div>
+    </section>
+
+    <section id="architecture">
+      <h2>2. 目标架构与当前实现</h2>
+      <div class="grid2">
+        <div>
+          <h3>目标架构</h3>
+          <ul>
+            <li>以 Chatbox 为第一入口，承接资料导入、JD 解析、申请包、面试准备、实时文本提示和复盘路径。</li>
+            <li>P4 UX 层包含首屏建议任务、模式/provider 状态、对话区、Workbench/产物推进台和响应式布局。</li>
+            <li>P4C-FC 层支持本地/mock 连续对话、状态查询、下一步建议、显式工具执行和会话恢复。</li>
+            <li>Evidence Layer 使用 Chrome/CDP 截图、自动化步骤、HTML 报告和 PRD 规格检视证明实际运行结果。</li>
+          </ul>
+        </div>
+        <div>
+          <h3>当前架构实现</h3>
+          <ul>
+            <li>FastAPI 提供 workspace、files、profile、job、application、interview、realtime、artifact、chat、provider 和 workflow API。</li>
+            <li>React/Vite Chatbox 初始化本地 workspace，恢复 chat session，并展示本地/provider/隐私状态。</li>
+            <li>默认使用 <code>KeywordChatCore</code> 本地/mock 路由；自由聊天不调用外部 provider，明确工具意图才调用 Domain Tools。</li>
+            <li>SQLite workspace 持久化 documents、artifacts、versions、chat sessions、tool logs 和 exports。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="paths">
+      <h2>3. 当前可实现的用户场景路径</h2>
+      <ol>
+        <li>打开本地 Chatbox，看到“导入资料 / 解析 JD / 示例路径 / 自由聊求职方向”等建议任务。</li>
+        <li>在 1200、1280、1440、1600、1920 桌面宽度下查看三栏工作台，不出现窄屏布局左贴的大面积空白。</li>
+        <li>在 720 窄屏和 390 移动端查看页面，核心输入和 Workbench 入口保持可达。</li>
+        <li>运行 examples 示例路径，完成 9/9 步，生成职业事实、项目卡、JD 解析、匹配报告、申请包、导出文件和面试训练相关产物。</li>
+        <li>进行两轮自由对话，系统返回求职方向建议，不误生成 artifact。</li>
+        <li>询问“当前进展如何”，系统基于 workspace 返回当前无产物状态。</li>
+        <li>明确要求“整理资料，生成职业事实”后，系统生成 <code>career_facts</code> artifact；但 Workbench 主体显示存在刷新不一致，需要后续修复。</li>
+        <li>移动端重新打开同一 workspace，能恢复会话历史并显示推进台入口。</li>
+      </ol>
+    </section>
+
+    <section id="tests">
+      <h2>4. 自动化测试与命令结果</h2>
+      <table>
+        <thead><tr><th>检查项</th><th>结果</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td><code>.venv/bin/python -m pytest</code></td><td class="pass">通过</td><td>71 passed, 1 warning；warning 来自依赖层 PendingDeprecationWarning。</td></tr>
+          <tr><td><code>npm --prefix apps/chatbox run build</code></td><td class="pass">通过</td><td>TypeScript 与 Vite production build 通过。</td></tr>
+          <tr><td>drawio XML parse</td><td class="pass">通过</td><td><code>docs/active/jobpilot-stage-gap-and-acceptance.drawio</code> 解析出 5 个 diagram。</td></tr>
+          <tr><td>Chrome/CDP 自动化场景</td><td class="pass">通过</td><td>48 个浏览器动作完成，生成 13 张 PNG 截图。</td></tr>
+          <tr><td>视觉审查</td><td class="warn">部分通过</td><td>发现 Workbench artifact 列表刷新/展示不一致。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="evidence">
+      <h2>5. 截图证据</h2>
+      <p class="meta">点击任意截图可打开原始 PNG。以下路径均为相对于本 HTML 的有效路径。</p>
+      <div class="shots">
+        <figure class="shot-card">
+          <a href="p4-automated-acceptance-20260624-201546-evidence/p4_final_initial_1200.png" target="_blank" rel="noreferrer"><img src="p4-automated-acceptance-20260624-201546-evidence/p4_final_initial_1200.png" alt="1200px 桌面首屏"></a>
+          <figcaption><strong>1200px 桌面首屏</strong><span>三栏工作台首屏：左侧当前任务与安全边界，中间 Chatbox 建议任务，右侧 Workbench 空状态。</span><code>p4-automated-acceptance-20260624-201546-evidence/p4_final_initial_1200.png</code></figcaption>
+        </figure>
+
+        <figure class="shot-card">
+          <a href="p4-automated-acceptance-20260624-201546-evidence/p4_final_initial_1280.png" target="_blank" rel="noreferrer"><img src="p4-automated-acceptance-20260624-201546-evidence/p4_final_initial_1280.png" alt="1280px 桌面首屏"></a>
+          <figcaption><strong>1280px 桌面首屏</strong><span>验证常见笔记本宽度下对话区、输入区和推进台均可见。</span><code>p4-automated-acceptance-20260624-201546-evidence/p4_final_initial_1280.png</code></figcaption>
+        </figure>
+
+        <figure class="shot-card">
+          <a href="p4-automated-acceptance-20260624-201546-evidence/p4_final_initial_1440.png" target="_blank" rel="noreferrer"><img src="p4-automated-acceptance-20260624-201546-evidence/p4_final_initial_1440.png" alt="1440px 桌面首屏"></a>
+          <figcaption><strong>1440px 桌面首屏</strong><span>验证桌面工作台信息密度和建议任务入口。</span><code>p4-automated-acceptance-20260624-201546-evidence/p4_final_initial_1440.png</code></figcaption>
+        </figure>
+
+        <figure class="shot-card">
+          <a href="p4-automated-acceptance-20260624-201546-evidence/p4_final_initial_1600.png" target="_blank" rel="noreferrer"><img src="p4-automated-acceptance-20260624-201546-evidence/p4_final_initial_1600.png" alt="1600px 桌面首屏"></a>
+          <figcaption><strong>1600px 桌面首屏</strong><span>验证大屏不退化为窄屏左贴布局。</span><code>p4-automated-acceptance-20260624-201546-evidence/p4_final_initial_1600.png</code></figcaption>
+        </figure>
+
+        <figure class="shot-card">
+          <a href="p4-automated-acceptance-20260624-201546-evidence/p4_final_initial_1920.png" target="_blank" rel="noreferrer"><img src="p4-automated-acceptance-20260624-201546-evidence/p4_final_initial_1920.png" alt="1920px 桌面首屏"></a>
+          <figcaption><strong>1920px 桌面首屏</strong><span>验证全尺寸桌面下三栏工作台和 provider 隐私状态可见。</span><code>p4-automated-acceptance-20260624-201546-evidence/p4_final_initial_1920.png</code></figcaption>
+        </figure>
+
+        <figure class="shot-card">
+          <a href="p4-automated-acceptance-20260624-201546-evidence/p4_final_narrow_720.png" target="_blank" rel="noreferrer"><img src="p4-automated-acceptance-20260624-201546-evidence/p4_final_narrow_720.png" alt="720px 窄屏首屏"></a>
+          <figcaption><strong>720px 窄屏首屏</strong><span>验证窄屏下核心任务入口和输入路径仍可达。</span><code>p4-automated-acceptance-20260624-201546-evidence/p4_final_narrow_720.png</code></figcaption>
+        </figure>
+
+        <figure class="shot-card">
+          <a href="p4-automated-acceptance-20260624-201546-evidence/p4_final_mobile_390.png" target="_blank" rel="noreferrer"><img src="p4-automated-acceptance-20260624-201546-evidence/p4_final_mobile_390.png" alt="390px 移动端首屏"></a>
+          <figcaption><strong>390px 移动端首屏</strong><span>验证移动端不出现严重横向滚动，Workbench 折叠为次级入口。</span><code>p4-automated-acceptance-20260624-201546-evidence/p4_final_mobile_390.png</code></figcaption>
+        </figure>
+
+        <figure class="shot-card">
+          <a href="p4-automated-acceptance-20260624-201546-evidence/p4_final_guided_completed_1440.png" target="_blank" rel="noreferrer"><img src="p4-automated-acceptance-20260624-201546-evidence/p4_final_guided_completed_1440.png" alt="示例路径完成态"></a>
+          <figcaption><strong>示例路径完成态</strong><span>示例数据跑完 9/9 步，显示产物数量、导出文件和推进台步骤。</span><code>p4-automated-acceptance-20260624-201546-evidence/p4_final_guided_completed_1440.png</code></figcaption>
+        </figure>
+
+        <figure class="shot-card">
+          <a href="p4-automated-acceptance-20260624-201546-evidence/p4_final_fc_free_first.png" target="_blank" rel="noreferrer"><img src="p4-automated-acceptance-20260624-201546-evidence/p4_final_fc_free_first.png" alt="自由对话第一轮"></a>
+          <figcaption><strong>自由对话第一轮</strong><span>用户先聊求职方向，系统给出本地/mock 回复，不生成产物。</span><code>p4-automated-acceptance-20260624-201546-evidence/p4_final_fc_free_first.png</code></figcaption>
+        </figure>
+
+        <figure class="shot-card">
+          <a href="p4-automated-acceptance-20260624-201546-evidence/p4_final_fc_free_second.png" target="_blank" rel="noreferrer"><img src="p4-automated-acceptance-20260624-201546-evidence/p4_final_fc_free_second.png" alt="自由对话第二轮"></a>
+          <figcaption><strong>自由对话第二轮</strong><span>连续追问下一步建议，仍保持 0 个产物，证明普通追问未误触发工具写入。</span><code>p4-automated-acceptance-20260624-201546-evidence/p4_final_fc_free_second.png</code></figcaption>
+        </figure>
+
+        <figure class="shot-card">
+          <a href="p4-automated-acceptance-20260624-201546-evidence/p4_final_fc_status.png" target="_blank" rel="noreferrer"><img src="p4-automated-acceptance-20260624-201546-evidence/p4_final_fc_status.png" alt="状态查询"></a>
+          <figcaption><strong>状态查询</strong><span>用户询问当前进展，系统基于 workspace 返回“暂无产物”的状态说明。</span><code>p4-automated-acceptance-20260624-201546-evidence/p4_final_fc_status.png</code></figcaption>
+        </figure>
+
+        <figure class="shot-card">
+          <a href="p4-automated-acceptance-20260624-201546-evidence/p4_final_fc_artifact.png" target="_blank" rel="noreferrer"><img src="p4-automated-acceptance-20260624-201546-evidence/p4_final_fc_artifact.png" alt="显式工具生成职业事实"></a>
+          <figcaption><strong>显式工具生成职业事实</strong><span>用户明确要求整理资料后，生成 career_facts；同时暴露 Workbench 主体仍可能显示空状态的 UI 问题。</span><code>p4-automated-acceptance-20260624-201546-evidence/p4_final_fc_artifact.png</code></figcaption>
+        </figure>
+
+        <figure class="shot-card">
+          <a href="p4-automated-acceptance-20260624-201546-evidence/p4_final_fc_mobile_restore.png" target="_blank" rel="noreferrer"><img src="p4-automated-acceptance-20260624-201546-evidence/p4_final_fc_mobile_restore.png" alt="移动端会话恢复"></a>
+          <figcaption><strong>移动端会话恢复</strong><span>移动端恢复同一会话，历史消息和推进台入口可见。</span><code>p4-automated-acceptance-20260624-201546-evidence/p4_final_fc_mobile_restore.png</code></figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section id="risks">
+      <h2>6. PRD 规格检视、未验证范围与风险</h2>
+      <table>
+        <thead><tr><th>要求</th><th>证据</th><th>结论</th></tr></thead>
+        <tbody>
+          <tr><td>P4 首屏任务入口清楚</td><td>桌面和移动首屏截图显示建议任务、输入区、provider 状态和 Workbench 空状态。</td><td class="pass">本地/mock 自动化范围通过</td></tr>
+          <tr><td>多尺寸响应式工作台</td><td>1200/1280/1440/1600/1920/720/390 截图。</td><td class="pass">自动化截图通过</td></tr>
+          <tr><td>示例路径可完成</td><td>示例路径完成态截图显示 9/9 步和 4 个前端汇总产物。</td><td class="pass">examples 路径通过</td></tr>
+          <tr><td>自由对话不误写 artifact</td><td>两轮自由对话截图和 DB 检查显示普通追问后仍为 0 个产物。</td><td class="pass">本地/mock 范围通过</td></tr>
+          <tr><td>显式工具意图生成 artifact</td><td>DB 和消息引用证明生成 <code>career_facts</code>；截图显示计数为 1。</td><td class="warn">部分通过：Workbench 主体显示需修复</td></tr>
+          <tr><td>P4 最终人工体验认可</td><td>本报告只做自动化验收。</td><td class="stop">未验证</td></tr>
+          <tr><td>真实个人资料 / 真实外部 provider</td><td>本轮未使用真实个人资料，未读取 API Key，未调用外部 provider。</td><td class="stop">未验证</td></tr>
+        </tbody>
+      </table>
+      <h3>明确未验证范围</h3>
+      <ul>
+        <li>没有使用真实个人简历、真实 JD、真实 transcript 或任何私密资料。</li>
+        <li>没有调用真实外部 provider，也没有读取 API Key。</li>
+        <li>没有验证 ASR、会议平台、自动投递、SaaS 登录、多租户、Billing。</li>
+        <li>没有完成人工体验审查；本报告不能替代人工主观体验认可。</li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>

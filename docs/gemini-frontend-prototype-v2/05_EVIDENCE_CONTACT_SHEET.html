@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>JobPilot AI P4 真实截图证据索引</title>
+  <style>
+    :root { --bg:#f5f6f2; --panel:#fff; --ink:#17211c; --muted:#617067; --line:#dbe1db; --primary:#245f56; --warn:#946200; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.65 "Segoe UI","Microsoft YaHei",system-ui,sans-serif; }
+    header, main { max-width:1180px; margin:0 auto; padding:28px; }
+    h1 { margin:0 0 8px; font-size:30px; }
+    h2 { font-size:18px; margin:0 0 12px; }
+    p { margin:6px 0; }
+    section { margin:18px 0; padding:18px; border:1px solid var(--line); border-radius:8px; background:var(--panel); }
+    .meta { color:var(--muted); }
+    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:16px; }
+    figure { margin:0; border:1px solid var(--line); border-radius:8px; overflow:hidden; background:#fff; }
+    img { display:block; width:100%; height:auto; border-bottom:1px solid var(--line); }
+    figcaption { padding:12px; color:var(--muted); font-size:13px; }
+    strong { display:block; color:var(--ink); margin-bottom:4px; }
+    code { display:block; margin-top:8px; overflow-wrap:anywhere; background:#eef2ef; border-radius:5px; padding:4px 6px; }
+    .warn { border-left:4px solid var(--warn); background:#fff8e8; }
+  </style>
+</head>
+<body>
+  <header>
+    <p class="meta">JobPilot AI / P4 自动化截图 / Gemini 设计输入</p>
+    <h1>真实截图证据索引</h1>
+    <p>以下截图来自 Chrome/CDP 自动化验收。它们证明当前本地/mock 体验能跑通，同时也暴露了需要设计修复的问题。</p>
+  </header>
+  <main>
+    <section class="warn">
+      <h2>重要问题</h2>
+      <p>显式“生成职业事实”后，计数显示 1 个产物，但桌面 Workbench 主体仍可能显示空状态。Gemini 生成新原型时必须修正这种计数与主体内容不一致的问题。</p>
+    </section>
+    <section>
+      <h2>截图清单</h2>
+      <div class="grid">
+        <figure><a href="../reports/p4-automated-acceptance-20260624-201546-evidence/p4_final_initial_1200.png"><img src="../reports/p4-automated-acceptance-20260624-201546-evidence/p4_final_initial_1200.png" alt="1200px 桌面首屏"></a><figcaption><strong>1200px 桌面首屏</strong>三栏工作台可见。<code>p4_final_initial_1200.png</code></figcaption></figure>
+        <figure><a href="../reports/p4-automated-acceptance-20260624-201546-evidence/p4_final_initial_1280.png"><img src="../reports/p4-automated-acceptance-20260624-201546-evidence/p4_final_initial_1280.png" alt="1280px 桌面首屏"></a><figcaption><strong>1280px 桌面首屏</strong>常见笔记本宽度下输入和推进台可见。<code>p4_final_initial_1280.png</code></figcaption></figure>
+        <figure><a href="../reports/p4-automated-acceptance-20260624-201546-evidence/p4_final_initial_1440.png"><img src="../reports/p4-automated-acceptance-20260624-201546-evidence/p4_final_initial_1440.png" alt="1440px 桌面首屏"></a><figcaption><strong>1440px 桌面首屏</strong>桌面工作台密度参考。<code>p4_final_initial_1440.png</code></figcaption></figure>
+        <figure><a href="../reports/p4-automated-acceptance-20260624-201546-evidence/p4_final_initial_1600.png"><img src="../reports/p4-automated-acceptance-20260624-201546-evidence/p4_final_initial_1600.png" alt="1600px 桌面首屏"></a><figcaption><strong>1600px 桌面首屏</strong>大屏不应退化为空洞布局。<code>p4_final_initial_1600.png</code></figcaption></figure>
+        <figure><a href="../reports/p4-automated-acceptance-20260624-201546-evidence/p4_final_initial_1920.png"><img src="../reports/p4-automated-acceptance-20260624-201546-evidence/p4_final_initial_1920.png" alt="1920px 桌面首屏"></a><figcaption><strong>1920px 桌面首屏</strong>全尺寸桌面工作台参考。<code>p4_final_initial_1920.png</code></figcaption></figure>
+        <figure><a href="../reports/p4-automated-acceptance-20260624-201546-evidence/p4_final_narrow_720.png"><img src="../reports/p4-automated-acceptance-20260624-201546-evidence/p4_final_narrow_720.png" alt="720px 窄屏"></a><figcaption><strong>720px 窄屏</strong>窄屏任务入口和输入可达性参考。<code>p4_final_narrow_720.png</code></figcaption></figure>
+        <figure><a href="../reports/p4-automated-acceptance-20260624-201546-evidence/p4_final_mobile_390.png"><img src="../reports/p4-automated-acceptance-20260624-201546-evidence/p4_final_mobile_390.png" alt="390px 移动端"></a><figcaption><strong>390px 移动端</strong>移动端 Chatbox 优先，推进台次级入口。<code>p4_final_mobile_390.png</code></figcaption></figure>
+        <figure><a href="../reports/p4-automated-acceptance-20260624-201546-evidence/p4_final_guided_completed_1440.png"><img src="../reports/p4-automated-acceptance-20260624-201546-evidence/p4_final_guided_completed_1440.png" alt="示例路径完成"></a><figcaption><strong>示例路径完成</strong>9/9 步、导出文件和产物摘要。<code>p4_final_guided_completed_1440.png</code></figcaption></figure>
+        <figure><a href="../reports/p4-automated-acceptance-20260624-201546-evidence/p4_final_fc_free_first.png"><img src="../reports/p4-automated-acceptance-20260624-201546-evidence/p4_final_fc_free_first.png" alt="自由对话第一轮"></a><figcaption><strong>自由对话第一轮</strong>自由聊求职方向，不生成产物。<code>p4_final_fc_free_first.png</code></figcaption></figure>
+        <figure><a href="../reports/p4-automated-acceptance-20260624-201546-evidence/p4_final_fc_free_second.png"><img src="../reports/p4-automated-acceptance-20260624-201546-evidence/p4_final_fc_free_second.png" alt="自由对话第二轮"></a><figcaption><strong>自由对话第二轮</strong>连续追问后仍是 0 个产物。<code>p4_final_fc_free_second.png</code></figcaption></figure>
+        <figure><a href="../reports/p4-automated-acceptance-20260624-201546-evidence/p4_final_fc_status.png"><img src="../reports/p4-automated-acceptance-20260624-201546-evidence/p4_final_fc_status.png" alt="状态查询"></a><figcaption><strong>状态查询</strong>系统返回当前无产物状态。<code>p4_final_fc_status.png</code></figcaption></figure>
+        <figure><a href="../reports/p4-automated-acceptance-20260624-201546-evidence/p4_final_fc_artifact.png"><img src="../reports/p4-automated-acceptance-20260624-201546-evidence/p4_final_fc_artifact.png" alt="显式生成职业事实"></a><figcaption><strong>显式生成职业事实</strong>产物计数与 Workbench 主体不一致，需要修复。<code>p4_final_fc_artifact.png</code></figcaption></figure>
+        <figure><a href="../reports/p4-automated-acceptance-20260624-201546-evidence/p4_final_fc_mobile_restore.png"><img src="../reports/p4-automated-acceptance-20260624-201546-evidence/p4_final_fc_mobile_restore.png" alt="移动端恢复"></a><figcaption><strong>移动端会话恢复</strong>历史消息和推进台入口可见。<code>p4_final_fc_mobile_restore.png</code></figcaption></figure>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

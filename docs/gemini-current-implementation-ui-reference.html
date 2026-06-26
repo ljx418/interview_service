@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JobPilot AI 当前实现界面参考页</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f7f6f1;
+      --panel: #ffffff;
+      --ink: #15211f;
+      --muted: #66736f;
+      --line: #d9ded6;
+      --brand: #2f6f5f;
+      --brand-2: #18483d;
+      --amber: #b8731b;
+      --red: #a84032;
+      --wash: #eaf1ec;
+      --shadow: 0 18px 40px rgba(24, 43, 38, 0.10);
+      --radius: 8px;
+      --mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      --sans: ui-sans-serif, "Segoe UI", "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      line-height: 1.58;
+      letter-spacing: 0;
+    }
+
+    a {
+      color: var(--brand-2);
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+    }
+
+    code,
+    pre {
+      font-family: var(--mono);
+    }
+
+    .shell {
+      width: min(1480px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: 24px 0 56px;
+    }
+
+    .hero {
+      min-height: 340px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(320px, 0.75fr);
+      gap: 20px;
+      align-items: stretch;
+      margin-bottom: 20px;
+    }
+
+    .hero-main,
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .hero-main {
+      padding: 34px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero-main:before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 6px;
+      background: linear-gradient(90deg, var(--brand), #7a8f56, var(--amber));
+    }
+
+    .eyebrow {
+      margin: 0 0 12px;
+      color: var(--brand-2);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 880px;
+      font-size: clamp(34px, 5vw, 64px);
+      line-height: 1.04;
+      letter-spacing: 0;
+      text-wrap: balance;
+    }
+
+    .lead {
+      max-width: 920px;
+      margin: 22px 0 0;
+      color: #3e4b47;
+      font-size: 18px;
+      text-wrap: pretty;
+    }
+
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 28px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 5px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #f9fbf7;
+      color: #31413d;
+      font-size: 13px;
+      font-weight: 650;
+      white-space: nowrap;
+    }
+
+    .badge.warn {
+      border-color: #e3c99e;
+      background: #fff7e8;
+      color: #745015;
+    }
+
+    .badge.stop {
+      border-color: #e2b6ae;
+      background: #fff0ed;
+      color: #8a3327;
+    }
+
+    .side-card {
+      padding: 24px;
+      display: grid;
+      gap: 14px;
+      align-content: start;
+    }
+
+    .side-card h2,
+    .panel h2 {
+      margin: 0;
+      font-size: 20px;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+
+    .side-card p,
+    .panel p {
+      margin: 0;
+      color: var(--muted);
+      text-wrap: pretty;
+    }
+
+    .quick-list {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .quick-list li {
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fbfcfa;
+    }
+
+    .quick-list strong {
+      display: block;
+      margin-bottom: 3px;
+      font-size: 14px;
+    }
+
+    .quick-list span {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 20px;
+    }
+
+    .panel {
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .span-4 {
+      grid-column: span 4;
+    }
+
+    .span-6 {
+      grid-column: span 6;
+    }
+
+    .span-8 {
+      grid-column: span 8;
+    }
+
+    .span-12 {
+      grid-column: span 12;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 24px;
+      margin: 34px 0 14px;
+    }
+
+    .section-head h2 {
+      margin: 0;
+      font-size: 28px;
+      line-height: 1.18;
+      letter-spacing: 0;
+    }
+
+    .section-head p {
+      max-width: 760px;
+      margin: 0;
+      color: var(--muted);
+      text-align: right;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+    }
+
+    .table th,
+    .table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+      text-align: left;
+    }
+
+    .table th {
+      background: #eef3ee;
+      color: #23332f;
+      font-size: 13px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .table tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .table td {
+      color: #3c4945;
+      font-size: 14px;
+    }
+
+    .shot-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .shot {
+      margin: 0;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .shot img {
+      display: block;
+      width: 100%;
+      height: auto;
+      background: #ecefea;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .shot figcaption {
+      padding: 16px;
+    }
+
+    .shot h3 {
+      margin: 0 0 7px;
+      font-size: 17px;
+      line-height: 1.3;
+      letter-spacing: 0;
+    }
+
+    .shot p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      text-wrap: pretty;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      margin-bottom: 9px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 750;
+      border: 1px solid var(--line);
+      background: #f8faf6;
+      color: #40504c;
+    }
+
+    .status.pass {
+      border-color: #b8d4c3;
+      background: #ebf6ef;
+      color: #246247;
+    }
+
+    .status.partial {
+      border-color: #e3c99e;
+      background: #fff7e8;
+      color: #775418;
+    }
+
+    .status.fail {
+      border-color: #e2b6ae;
+      background: #fff0ed;
+      color: #8a3327;
+    }
+
+    .prompt {
+      white-space: pre-wrap;
+      margin: 14px 0 0;
+      padding: 18px;
+      overflow-x: auto;
+      border: 1px solid #cad4cf;
+      border-radius: var(--radius);
+      background: #101a17;
+      color: #e8f0eb;
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    .callout {
+      border-left: 4px solid var(--amber);
+      padding: 14px 16px;
+      background: #fff8eb;
+      color: #60420e;
+      border-radius: 0 var(--radius) var(--radius) 0;
+    }
+
+    .callout strong {
+      color: #4c3308;
+    }
+
+    .toc {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .toc a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      padding: 7px 10px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #f9fbf7;
+      color: #263934;
+      font-size: 13px;
+      font-weight: 650;
+      text-decoration: none;
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .grid,
+      .shot-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .span-4,
+      .span-6,
+      .span-8,
+      .span-12 {
+        grid-column: auto;
+      }
+
+      .section-head {
+        display: block;
+      }
+
+      .section-head p {
+        margin-top: 8px;
+        text-align: left;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .shell {
+        width: min(100vw - 20px, 1480px);
+        padding-top: 10px;
+      }
+
+      .hero-main,
+      .side-card,
+      .panel {
+        padding: 18px;
+      }
+
+      .table {
+        display: block;
+        overflow-x: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="hero" id="top">
+      <div class="hero-main">
+        <div>
+          <p class="eyebrow">JobPilot AI / Current Implementation Reference</p>
+          <h1>当前真实实现界面参考页</h1>
+          <p class="lead">
+            本页把当前 Chatbox 实现、自动化验收截图和能力边界放在同一个 HTML 页面中，供 Gemini 继续生成更好的前端网页设计原型。
+            它不是新的设计稿，也不是人工体验通过证明。
+          </p>
+        </div>
+        <div class="meta-row" aria-label="边界声明">
+          <span class="badge">真实界面截图</span>
+          <span class="badge">本地 mock / demo 路径</span>
+          <span class="badge warn">P4 自动化证据</span>
+          <span class="badge stop">未声明人工体验认可</span>
+          <span class="badge stop">未验证真实外部 provider 默认路径</span>
+        </div>
+      </div>
+      <aside class="panel side-card">
+        <h2>给 Gemini 的使用方式</h2>
+        <p>请让 Gemini 以本页截图和约束为唯一事实来源，优化产品界面，不要凭空增加已完成能力。</p>
+        <nav class="toc" aria-label="页面目录">
+          <a href="#context">项目上下文</a>
+          <a href="#architecture">架构对照</a>
+          <a href="#flows">可体验路径</a>
+          <a href="#evidence">截图证据</a>
+          <a href="#prompt">提示词</a>
+        </nav>
+        <ul class="quick-list">
+          <li>
+            <strong>页面目的</strong>
+            <span>交给 Gemini 做视觉、布局、信息层级和交互原型优化。</span>
+          </li>
+          <li>
+            <strong>事实来源</strong>
+            <span>当前仓库实现和自动化截图证据，不包含虚构数据。</span>
+          </li>
+          <li>
+            <strong>主要风险</strong>
+            <span>工作台 artifact 展示存在局部刷新不一致，不能被美化成已通过。</span>
+          </li>
+        </ul>
+      </aside>
+    </section>
+
+    <section class="grid" id="context" aria-label="项目上下文">
+      <article class="panel span-4">
+        <h2>当前产品目标</h2>
+        <p>
+          JobPilot AI 目标是把求职者资料、职位意图、简历产物、模拟面试和后续投递工作流组织到一个连续的 AI 工作台内。
+          当前阶段聚焦 Chatbox 的连续对话、资料沉淀、工作台可见性和人工体验审查前的自动化证据收口。
+        </p>
+      </article>
+      <article class="panel span-4">
+        <h2>当前界面形态</h2>
+        <p>
+          桌面端为三栏工作台：左侧导航和状态，中间对话流，右侧 Workbench 产物区。
+          窄屏和移动端通过抽屉或压缩布局继续访问会话、任务与产物。
+        </p>
+      </article>
+      <article class="panel span-4">
+        <h2>当前主要问题</h2>
+        <p>
+          视觉风格仍显粗糙，卡片密度和层级不够清晰，任务区与对话区的产品感不足。
+          Artifact 生成后的右侧工作台展示存在局部不一致，需要作为体验缺陷保留。
+        </p>
+      </article>
+    </section>
+
+    <section id="architecture">
+      <div class="section-head">
+        <h2>目标架构与当前实现</h2>
+        <p>以下是给 Gemini 判断“哪些能设计、哪些不能承诺”的事实边界。</p>
+      </div>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>架构层</th>
+            <th>目标架构</th>
+            <th>当前实现状态</th>
+            <th>设计时不能越界的点</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Experience Shell</td>
+            <td>统一承载聊天、任务、资料、产物和阶段状态的求职工作台。</td>
+            <td>Chatbox 前端已具备桌面三栏和移动端压缩路径。</td>
+            <td>可以优化为更专业的应用工作台，但不要做成营销落地页。</td>
+          </tr>
+          <tr>
+            <td>Conversation Plane</td>
+            <td>支持自然语言、多轮连续对话、阶段引导和自由输入。</td>
+            <td>当前自动化覆盖了 guided path、free chat 输入和状态查询。</td>
+            <td>自由 chatbox 和无中断连续多轮能力仍是后续目标，不能写成已完整产品化。</td>
+          </tr>
+          <tr>
+            <td>Workbench Plane</td>
+            <td>展示用户资料、职位意图、简历、职业事实和后续工作流产物。</td>
+            <td>后端和消息引用能产生 career_facts artifact，右侧 UI 有局部刷新不一致。</td>
+            <td>必须保留“部分通过/待修复”的表达，不能把缺陷藏掉。</td>
+          </tr>
+          <tr>
+            <td>Provider Layer</td>
+            <td>可接入真实外部模型和未来 ASR、会议、投递平台。</td>
+            <td>当前验收是本地 mock/demo，不包含真实 API Key 和真实外部调用默认路径。</td>
+            <td>不要写出任何表示真实 provider、真实个人资料路径已经完成验收的文案。</td>
+          </tr>
+          <tr>
+            <td>Evidence & Acceptance</td>
+            <td>用自动化截图、测试报告和人工体验审查共同收口。</td>
+            <td>已有 P4 自动化验收报告和截图证据，人工认可未完成。</td>
+            <td>Gemini 输出只能辅助设计优化，不能替代人工体验验收。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="flows">
+      <div class="section-head">
+        <h2>当前可以体验的用户路径</h2>
+        <p>这些路径已经通过自动化截图形成证据，可作为 Gemini 设计原型的页面树基础。</p>
+      </div>
+      <section class="grid">
+        <article class="panel span-6">
+          <h2>路径 A：打开 Chatbox 工作台</h2>
+          <p>用户进入桌面端工作台，看到侧边栏、对话区、任务状态和右侧产物/资料区域。可作为首屏主界面设计。</p>
+        </article>
+        <article class="panel span-6">
+          <h2>路径 B：完成 guided path</h2>
+          <p>用户按引导输入目标信息，系统推进阶段并给出任务反馈。可作为“结构化引导 + 聊天”的核心体验设计。</p>
+        </article>
+        <article class="panel span-6">
+          <h2>路径 C：自由输入并查询状态</h2>
+          <p>用户可以输入自由文本、继续第二轮对话，并通过状态查询查看阶段和 workspace 变化。</p>
+        </article>
+        <article class="panel span-6">
+          <h2>路径 D：生成并查看 career facts</h2>
+          <p>系统可生成职业事实 artifact，消息流和后端引用存在证据；右侧工作台展示仍有局部不一致。</p>
+        </article>
+        <article class="panel span-6">
+          <h2>路径 E：移动端恢复访问</h2>
+          <p>390px 移动视口下，页面可恢复到可访问状态，适合让 Gemini 设计移动端抽屉和压缩面板。</p>
+        </article>
+        <article class="panel span-6">
+          <h2>路径 F：多桌面宽度检查</h2>
+          <p>1200、1280、1440、1600、1920px 视口都有截图，适合检查三栏布局比例、信息密度和视觉稳定性。</p>
+        </article>
+      </section>
+    </section>
+
+    <section id="evidence">
+      <div class="section-head">
+        <h2>真实界面截图证据</h2>
+        <p>以下截图来自自动化验收过程。请基于截图优化，不要删除缺陷或改写事实。</p>
+      </div>
+      <div class="shot-grid">
+        <figure class="shot">
+          <img src="reports/p4-automated-acceptance-20260624-201546-evidence/p4_final_initial_1200.png" alt="1200px 桌面工作台初始界面截图">
+          <figcaption>
+            <span class="status pass">桌面 1200px</span>
+            <h3>三栏工作台初始状态</h3>
+            <p>展示当前导航、会话、Workbench 的真实密度。Gemini 应重点优化信息层级、留白和主操作可见性。</p>
+          </figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="reports/p4-automated-acceptance-20260624-201546-evidence/p4_final_initial_1280.png" alt="1280px 桌面工作台初始界面截图">
+          <figcaption>
+            <span class="status pass">桌面 1280px</span>
+            <h3>常见笔记本宽度</h3>
+            <p>用于判断三栏宽度分配是否压迫中间聊天区，以及右侧产物区是否足够可读。</p>
+          </figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="reports/p4-automated-acceptance-20260624-201546-evidence/p4_final_initial_1440.png" alt="1440px 桌面工作台初始界面截图">
+          <figcaption>
+            <span class="status pass">桌面 1440px</span>
+            <h3>主力桌面宽度</h3>
+            <p>建议 Gemini 优先以该宽度作为桌面设计主画布，保留可操作工作台而不是做宣传页。</p>
+          </figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="reports/p4-automated-acceptance-20260624-201546-evidence/p4_final_initial_1600.png" alt="1600px 桌面工作台初始界面截图">
+          <figcaption>
+            <span class="status pass">桌面 1600px</span>
+            <h3>宽桌面布局</h3>
+            <p>用于检查宽屏下是否需要更明确的面板边界、主从关系和可扫描任务列表。</p>
+          </figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="reports/p4-automated-acceptance-20260624-201546-evidence/p4_final_initial_1920.png" alt="1920px 桌面工作台初始界面截图">
+          <figcaption>
+            <span class="status pass">桌面 1920px</span>
+            <h3>全尺寸桌面工作台</h3>
+            <p>用于检视大屏下视觉空白、卡片尺度、右侧资料区和顶部状态栏是否足够产品化。</p>
+          </figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="reports/p4-automated-acceptance-20260624-201546-evidence/p4_final_narrow_720.png" alt="720px 窄屏工作台截图">
+          <figcaption>
+            <span class="status pass">窄屏 720px</span>
+            <h3>窄屏响应式状态</h3>
+            <p>用于设计平板、小窗口和分屏下的导航压缩策略。</p>
+          </figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="reports/p4-automated-acceptance-20260624-201546-evidence/p4_final_mobile_390.png" alt="390px 移动端工作台截图">
+          <figcaption>
+            <span class="status pass">移动端 390px</span>
+            <h3>移动端初始状态</h3>
+            <p>用于设计移动端信息优先级、抽屉入口、底部操作和聊天输入区。</p>
+          </figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="reports/p4-automated-acceptance-20260624-201546-evidence/p4_final_guided_completed_1440.png" alt="guided path 完成后的桌面截图">
+          <figcaption>
+            <span class="status pass">Guided path</span>
+            <h3>引导路径完成状态</h3>
+            <p>展示用户完成引导后的对话反馈和任务状态。Gemini 应优化阶段反馈、成功状态和下一步操作。</p>
+          </figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="reports/p4-automated-acceptance-20260624-201546-evidence/p4_final_fc_free_first.png" alt="第一次自由对话输入后的截图">
+          <figcaption>
+            <span class="status pass">Free chat 1</span>
+            <h3>第一轮自由输入</h3>
+            <p>展示自由文本输入后的聊天反馈。后续设计要强化“自由聊天仍在同一工作台中”的连续感。</p>
+          </figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="reports/p4-automated-acceptance-20260624-201546-evidence/p4_final_fc_free_second.png" alt="第二次自由对话输入后的截图">
+          <figcaption>
+            <span class="status pass">Free chat 2</span>
+            <h3>第二轮自由输入</h3>
+            <p>展示多轮继续输入后的会话状态。当前能力仍需按后续计划增强为更自由、不中断的连续多轮体验。</p>
+          </figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="reports/p4-automated-acceptance-20260624-201546-evidence/p4_final_fc_status.png" alt="状态查询后的截图">
+          <figcaption>
+            <span class="status pass">状态查询</span>
+            <h3>Workspace 状态反馈</h3>
+            <p>展示用户查询阶段和资料状态后的反馈。可优化为更清晰的状态面板和阶段时间线。</p>
+          </figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="reports/p4-automated-acceptance-20260624-201546-evidence/p4_final_fc_artifact.png" alt="career facts artifact 生成后的截图">
+          <figcaption>
+            <span class="status partial">Artifact 局部通过</span>
+            <h3>Career facts 生成证据</h3>
+            <p>消息和后端引用显示 artifact 已生成，但右侧 Workbench 展示存在局部刷新不一致。Gemini 不能把它描述成完整通过。</p>
+          </figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="reports/p4-automated-acceptance-20260624-201546-evidence/p4_final_fc_mobile_restore.png" alt="移动端恢复访问后的截图">
+          <figcaption>
+            <span class="status pass">移动端恢复</span>
+            <h3>移动端后续访问</h3>
+            <p>展示流程后移动端仍可访问。可作为移动端工作台重新组织信息架构的依据。</p>
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section id="prompt">
+      <div class="section-head">
+        <h2>给 Gemini 的提示词</h2>
+        <p>复制下方文本给 Gemini，并附上本 HTML 页面或截图文件夹。</p>
+      </div>
+      <article class="panel">
+        <div class="callout">
+          <strong>重要：</strong>Gemini 的输出应是前端视觉和交互原型优化建议或代码，不应把 P4 描述为已获人工认可，也不应把真实个人资料、真实 API Key、真实外部 provider 默认路径描述为已完成验收。
+        </div>
+        <pre class="prompt">你正在帮助优化 JobPilot AI 项目的 Chatbox / Workbench 前端体验。请只基于我提供的“当前真实实现界面参考页”和截图证据进行设计，不要虚构已完成能力。
+
+项目目标：
+JobPilot AI 是一个求职 AI 工作台，目标是把用户资料、职位目标、简历/职业事实产物、模拟面试和后续投递工作流整合在一个连续对话体验中。
+
+当前真实实现：
+1. 桌面端是三栏工作台：左侧导航和状态，中间聊天对话，右侧 Workbench 产物/资料区。
+2. 移动端和窄屏已有响应式访问路径。
+3. 自动化截图覆盖了 1200/1280/1440/1600/1920px 桌面、720px 窄屏、390px 移动端、guided path、free chat、多轮输入、状态查询和 career_facts artifact。
+4. 当前验收使用本地 mock/demo 路径；不要把真实外部 provider、真实 API Key 或真实个人资料路径描述为已完成验收。
+5. 不要把 P4 描述为已获人工体验认可。
+6. 已知问题：career_facts artifact 在消息和后端引用中存在，但右侧 Workbench 展示存在局部刷新不一致，需要在设计说明中保留为待修复体验缺陷。
+
+请完成：
+1. 基于当前真实界面，重新设计一个更专业、更好看的求职 AI 工作台前端原型。
+2. 输出页面树和关键组件方案，至少覆盖：桌面三栏工作台、聊天输入区、阶段/任务状态、Workbench artifact 区、资料摘要区、移动端抽屉或底部导航。
+3. 明确哪些只是视觉/交互优化，哪些需要工程实现配合，不要把缺陷美化成已通过。
+4. 给出可直接交给前端实现的 HTML/CSS/JS 原型，或者给出清晰的 React 组件结构和样式 token。
+5. 设计风格要求：不要做营销落地页；不要使用夸张渐变、装饰光球、虚假统计、虚假 logo 或虚假证言；界面要像可长期使用的生产力工具，信息密度高但清晰。
+6. 每个设计决策都要说明它解决了当前截图中的哪个问题。
+
+请优先优化：
+1. 首屏信息层级，让用户一眼知道当前阶段、可做什么、产物在哪里。
+2. 聊天区和工作台区的联动感。
+3. Artifact 生成、待生成、局部失败或刷新不一致的状态表达。
+4. 窄屏和移动端的可用性。
+5. 视觉质感，包括字体层级、留白、边框、色彩、按钮和输入区状态。
+</pre>
+      </article>
+    </section>
+  </main>
+</body>
+</html>

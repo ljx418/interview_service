@@ -1,12 +1,96 @@
-# JobPilot AI P4 UX 追踪矩阵
+# JobPilot AI P5 真实资料本地闭环追踪矩阵
 
-## 0. P4 当前阶段追踪矩阵
+## 0. P5 当前阶段追踪矩阵
+
+| P5 目标 | 实现区域 | 主要文件 / 模块 | 证据 | 验收门槛 |
+| --- | --- | --- | --- | --- |
+| P0-P4 不退化 | 全路径回归 | `services/`, `apps/chatbox/`, `tests/` | `.venv/bin/python -m pytest`, frontend build | P5 门槛 0 |
+| 真实资料本地导入 | Upload / Composer / Workspace files | `apps/chatbox/src/main.tsx`, `services/api/main.py`, workspace storage | 上传/粘贴截图、导入 eval、隐私提示 | P5 门槛 1 |
+| 资料解析摘要 | Profile / Project tools | `services/tools/`, artifact service | 资料摘要、source refs、待确认项截图 | P5 门槛 1 / 3 |
+| JD 导入与解析 | Job tools / Chat route | JD parsing tools、ChatCore、message UI | JD 解析截图、缺失信息恢复测试 | P5 门槛 2 |
+| 事实确认闭环 | Confirmation model / Artifact cards | artifact/version services、Workbench UI | blocking/warning/optional 状态、确认操作截图 | P5 门槛 3 |
+| 申请包生成 | Application tools / Workflow | application package tools、P5 workflow | 申请包草稿、匹配说明、面试准备截图 | P5 门槛 4 |
+| 编辑与再生成 | Artifact versioning | artifact routes、version UI | edit/regenerate/version 测试和截图 | P5 门槛 4 |
+| 导出 preflight | Export service | export routes/service | Markdown/DOCX 文件、preflight 记录 | P5 门槛 4 |
+| 本地多轮追问 | Chat Intent Router / Context Snapshot | `services/chat/core.py`, chat session storage, message UI | 普通追问不写 artifact、状态查询截图 | P5 门槛 5 |
+| provider 和隐私边界 | Provider Policy Gate / Logs | provider runtime、tool invocation logs | 无外呼审计、脱敏日志、provider 状态截图 | P5 门槛 6 |
+| 多视口体验 | Responsive UI | `apps/chatbox/src/styles.css`, screenshot scripts | 1200/1440/1600/1920/720/390 截图 | P5 门槛 7 |
+| 文档和 drawio 同步 | Active Docs / Drawio | `docs/active/`, drawio | XML parse、文本镜像、README/TODO sync | P5 门槛 7 |
+
+## 0.1 P5 防止过度计划的边界
+
+以下内容不能作为 P5 出门条件：
+
+- 默认真实外部 provider；
+- provider-backed 自由智能聊天默认路径；
+- SaaS 登录、多租户、Billing；
+- ASR / Whisper、系统音频、会议平台；
+- 自动投递、岗位数据源聚合、Offer 分析；
+- MCP Server 或 CLI 产品入口；
+- 未授权真实个人资料自动验收；
+- workspace 删除、不可逆迁移或外部同步。
+
+## 0.2 P5 防止规格不足的边界
+
+缺少以下任一项，不能认为 P5 完成：
+
+- 用户能导入或粘贴资料，并理解本地处理边界；
+- 用户能导入或粘贴 JD，并看到可读解析和缺失信息；
+- `questions_to_confirm` 能影响生成和导出；
+- 申请包支持编辑、版本、重新生成和导出 preflight；
+- 普通多轮追问不误触发工具写入；
+- P5 报告脱敏，且不把 examples 写成真实个人资料验收；
+- P0-P4 回归、前端 build、drawio parse 和 PRD 规格检视均通过；
+- README/TODO/active docs/drawio 口径一致。
+
+## 0.3 P5 自动化开发任务映射
+
+| 开发任务 | 代码边界 | 建议测试 | 截图 / 报告证据 |
+| --- | --- | --- | --- |
+| P5-M1 资料导入 | Chatbox upload/paste UI、`/api/files/upload`、`/api/files/ingest-local`、`extract_facts` | `test_p5_real_data_local_flow_eval.py` | 资料入口、解析中、解析摘要、失败恢复 |
+| P5-M2 JD 解析 | ChatCore JD intent、`/api/job/parse-jd`、`/api/job/match-profile` | `test_p5_jd_gap_recovery_eval.py` | JD 解析、缺资料、缺 JD、可生成申请包状态 |
+| P5-M3 事实确认 | Artifact cards、confirmation model、`/api/artifacts/{id}/confirm` | `test_p5_confirmation_gate_eval.py` | blocking/warning/optional、补充事实、确认后状态 |
+| P5-M4 申请包闭环 | `create_application_package`、artifact update/version/regenerate、export service | `test_p5_application_package_loop_eval.py`, `test_p5_export_preflight_eval.py` | 草稿、编辑、再生成、版本、导出 preflight、导出完成 |
+| P5-FC 本地多轮追问 | `services/chat/core.py`、chat session storage、Context Snapshot | `test_p5_local_dialogue_eval.py` | 两轮普通追问不写 artifact、明确工具意图执行 |
+| P5 隐私边界 | Provider Policy Gate、tool logs、report generator | `test_p5_privacy_redaction_eval.py` | 报告未出现 API Key、完整真实资料、provider raw response |
+| P5 自动化报告 | browser evidence script、HTML report | `test_p5_acceptance_report_eval.py` | 中文报告、真实界面截图、未验证范围、虚假验收风险 |
+| P5 drawio/docs | active docs、drawio、文本镜像 | XML parse + `rg` 口径检查 | drawio 6 页、颜色语义、P5/P6/P7/P8 边界一致 |
+
+## 0.3.1 P5 自动化候选实现状态
+
+| P5 项 | 当前证据 | 结论 | 冻结前剩余事项 |
+| --- | --- | --- | --- |
+| P5-M1 资料导入 | `test_p5_local_data_closure_eval.py`、P5 HTML 初始/导入后截图 | 脱敏 fixture 本地路径通过 | 用户提供真实脱敏资料路径后复核 |
+| P5-M2 JD 解析 | P5 HTML `p5_jd_match_desktop.png`、JD/match eval | 本地/mock 路径通过 | 真实授权 JD 局部片段复核 |
+| P5-M3 确认闭环 | blocking export eval、artifact/version confirmed eval | 自动化通过 | 人工确认文案是否可理解 |
+| P5-M4 申请包/导出 | 编辑后重新阻塞、确认后 Markdown/DOCX 导出 eval | 自动化通过 | 人工复核编辑/再生成/版本 UI |
+| P5-FC 多轮追问 | 普通追问不写 artifact、目标 JD 申请包路由 eval | 自动化通过 | 人工复核连续对话体验 |
+| P5-M5 报告 | `docs/reports/P5_LOCAL_DATA_CLOSURE_ACCEPTANCE_REPORT.html`、1200/1440/1600/1920/720/390 截图 | 自动化候选通过 | 真实资料脱敏复核 |
+| P5-REAL | 待用户提供明确本地脱敏真实资料路径和允许展示字段 | 未执行 | 只读用户指定路径，完成真实资料/JD 局部片段复核 |
+| P5-Freeze | `88 passed, 1 warning`、frontend build passed、drawio parse passed、三身份合成资料 Chrome/CDP 可视化验收通过，可作为候选证据 | 未冻结 | 真实资料路径、人工体验清单、final closure audit |
+
+## 0.4 P5 文档支撑与冻结前审计结论
+
+当前文档在补齐接口契约、数据脱敏、自动化验收矩阵、路线选择和打回规则后，已经支撑 P5 自动化候选开发。当前需要继续支撑的是 P5-REAL 和 P5-Freeze：真实授权资料复核、人工体验审查、最终回归和 final closure audit。默认路线仍为“复用现有本地工具链并逐步加固”，不默认引入真实外部 provider 或大规模重构。
+
+仍需冻结前用证据关闭的风险：
+
+- 当前本地/mock 生成质量不等于真实 provider 质量；
+- 真实资料样式不可控，自动化只能覆盖 examples 或脱敏 fixture，用户授权资料必须单独复核；
+- ChatCore 意图识别仍是启发式，普通追问不误写 artifact 已自动化覆盖，但仍需人工体验复核；
+- 事实确认和导出 preflight 已形成自动化硬约束，但真实资料导出仍需脱敏复核；
+- UI 多状态已可通过自动化候选路径，编辑/再生成/版本 UI 仍需人工体验判断是否可理解。
+
+以下 P4 内容作为已冻结基线和历史背景保留。
+
+## 1. 历史 P4 UX 体验强化追踪矩阵
 
 | P4 目标 | 实现区域 | 主要文件 / 模块 | 证据 | 验收门槛 |
 | --- | --- | --- | --- | --- |
 | P0/P1/P2/P3 不退化 | 全路径回归 | `services/`, `apps/chatbox/`, `tests/` | `python3 -m pytest`, frontend build | P4 门槛 0 |
 | Chatbox 空状态任务入口清楚 | Conversation Empty State / Suggested Prompts | `apps/chatbox/src/main.tsx`, `apps/chatbox/src/styles.css` | 初始页 before/after、点击 prompt 后 composer 或对话截图 | P4 门槛 1 |
 | 对话反馈可理解 | Conversation Plane / Chat API | ChatCore、chat routes、message UI | 有效/缺资料/错误态、loading 状态截图 | P4 门槛 2 |
+| 自由连续多轮对话 | Chat Intent Router / Free Local Dialogue / Context Snapshot | `services/chat/core.py`, chat session storage, message UI | 自由追问两轮不触发工具的 eval、状态/下一步回复截图、会话恢复证据 | P4 门槛 2 / P4C-FC |
 | 错误恢复路径 | Error Recovery UI | message components、upload/JD prompts | 重新上传、补充 JD、查看格式截图 | P4 门槛 2 |
 | 推进台职责清楚 | Workbench Plane | Workbench components、workflow summary | 当前任务和产物截图 | P4 门槛 3 |
 | 产物卡可读 | Artifact Review Cards | artifact UI、artifact routes | 申请包/匹配报告/面试准备截图、primary/secondary action 截图 | P4 门槛 3 |
@@ -41,6 +125,8 @@
 - Chatbox 空状态能让用户知道第一步；
 - suggested prompts 能填入 composer 或触发对话；
 - 有效输入、缺资料、错误都有可见反馈；
+- 普通自由追问、状态查询、下一步问题不会误触发工具写入；
+- 明确工具意图仍能稳定触发对应 Domain Tools；
 - loading / thinking / executing 状态可见；
 - 错误状态有恢复 action；
 - 推进台和对话职责清楚；

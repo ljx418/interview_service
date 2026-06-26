@@ -1,10 +1,14 @@
 .DS_Store
 *.bkp
 .env
+.tmp/
+.venv/
 .jobpilot_workspace/
 .pytest_cache/
 __pycache__/
 *.py[cod]
+*.db
+*.log
 node_modules/
 dist/
 .vite/

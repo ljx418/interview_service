@@ -136,7 +136,7 @@
           <div class="card">
             <span class="pill pass">自动化验收通过</span>
             <h3>测试结果</h3>
-            <p><code>python3 -m pytest</code>：63 passed。<br /><code>npm --prefix apps/chatbox run build</code>：通过。</p>
+            <p>历史快照：<code>python3 -m pytest</code>：63 passed。<br /><code>npm --prefix apps/chatbox run build</code>：通过。当前 P4 final closure 回归结果见 <code>P4_FINAL_CLOSURE_AUTOMATED_ACCEPTANCE_REPORT.html</code>：71 passed。</p>
           </div>
           <div class="card">
             <span class="pill warn">待人工确认</span>
@@ -228,7 +228,7 @@
         <table>
           <thead><tr><th>门槛</th><th>结论</th><th>证据</th></tr></thead>
           <tbody>
-            <tr><td>P0-P3 回归不退化</td><td><span class="pill pass">通过</span></td><td><code>python3 -m pytest</code>：63 passed。</td></tr>
+            <tr><td>P0-P3 回归不退化</td><td><span class="pill pass">通过</span></td><td>历史快照：<code>python3 -m pytest</code>：63 passed；当前 P4 final closure：71 passed。</td></tr>
             <tr><td>前端构建</td><td><span class="pill pass">通过</span></td><td><code>npm --prefix apps/chatbox run build</code>：通过。</td></tr>
             <tr><td>全尺寸桌面</td><td><span class="pill pass">自动化通过</span></td><td>1200、1440、1600、1920 截图存在且已人工目检关键图。</td></tr>
             <tr><td>窄屏 / 移动</td><td><span class="pill pass">自动化通过</span></td><td>720、390 截图存在，推进台以抽屉展示。</td></tr>

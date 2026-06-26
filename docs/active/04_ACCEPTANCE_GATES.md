@@ -1,4 +1,189 @@
-# JobPilot AI P4 UX 验收门槛
+# JobPilot AI P5 真实资料本地闭环验收门槛
+
+## P5 验收门槛 0 - P0-P4 冻结基线不退化
+
+通过条件：
+
+- P0/P1/P2/P3/P4 本地 mock/examples 路径继续可运行；
+- Chatbox 仍是薄入口，不生成求职内容、不直接写 SQLite、不直连 provider；
+- Artifact version、edit、regenerate、Markdown/DOCX export 继续可用；
+- P4 的自由连续对话、本地工作台、响应式布局和截图脚本隔离不退化；
+- workspace 路径沙箱、tool log 脱敏、provider policy gate 不退化。
+
+最低证据：
+
+```bash
+.venv/bin/python -m pytest
+npm --prefix apps/chatbox run build
+```
+
+## P5 验收门槛 1 - 真实资料本地导入可理解
+
+通过条件：
+
+- 用户可以在 Chatbox 中上传或粘贴自己的资料；
+- UI 明确说明默认本地处理、mock/local 默认、外部 provider 需确认；
+- 导入后展示解析状态、资料摘要、source refs 和待确认项；
+- 缺资料、格式不支持、解析失败时提供恢复路径；
+- 未授权真实资料不得进入自动化报告、日志或 fixture。
+
+不通过条件：
+
+- 用户无法判断资料是否已导入；
+- 导入失败被写成成功；
+- 报告暴露完整真实简历、项目材料或隐私字段；
+- 文案暗示默认会调用真实外部 provider。
+
+## P5 验收门槛 2 - JD 解析与缺失信息恢复成立
+
+通过条件：
+
+- 用户可以粘贴或导入目标 JD；
+- 系统返回岗位要求、关键词、硬性条件、隐含风险和缺失信息；
+- “缺资料 / 缺 JD / 缺确认项 / 可生成申请包”状态可区分；
+- 缺失信息进入 `questions_to_confirm` 或等价确认队列；
+- JD 解析结果使用求职语义展示，不以裸 JSON 作为主要反馈。
+
+## P5 验收门槛 3 - 事实确认闭环可执行
+
+通过条件：
+
+- blocking、warning、optional 确认项可见；
+- 用户可以补充、确认、暂缓或编辑相关事实；
+- blocking confirmation 未处理时不得导出正式申请材料；
+- source refs、确认状态、artifact version 在 UI 和数据层可追溯；
+- 待确认项文案能解释“为什么影响求职材料”。
+
+## P5 验收门槛 4 - 申请包生成、编辑、再生成和导出可信
+
+通过条件：
+
+- 申请包草稿基于当前资料和目标 JD 生成；
+- 用户可以编辑草稿、保存新版本、重新生成并查看版本；
+- Markdown/DOCX 导出前执行 preflight；
+- 导出只写 workspace 允许路径；
+- 申请包、匹配说明、面试准备等产物以人类可读摘要展示；
+- 用户不展开 JSON 也能理解产物价值、风险和下一步。
+
+不通过条件：
+
+- 旧版本被覆盖；
+- blocking confirmation 被绕过；
+- 导出路径越过 workspace；
+- 产物主要依赖内部 id、version id 或裸 JSON 才能理解。
+
+## P5 验收门槛 5 - 本地多轮追问不误触发工具
+
+通过条件：
+
+- 用户可以围绕当前资料、JD、申请包连续追问；
+- “当前进展如何 / 下一步做什么 / 我还缺什么 / 这个经历能否用于该 JD”返回上下文相关回复；
+- 普通追问不写入 artifact；
+- 明确“解析 / 生成 / 重新生成 / 导出”才触发工具；
+- 会话恢复后能看到关键上下文和当前 workspace 摘要。
+
+## P5 验收门槛 6 - 隐私、provider 和报告不误导
+
+通过条件：
+
+- P5 默认不调用真实外部 provider；
+- provider 状态明确区分“未配置”“已配置但本次未调用”“外部调用需确认”“调用失败”；
+- API Key、完整简历、完整 JD、完整 transcript、完整 provider raw response 不进入日志、报告或截图说明；
+- 自动化报告必须标明使用的是用户授权脱敏资料还是 examples 真实感数据；
+- 真实外部 provider、provider-backed 自由智能聊天、SaaS、ASR、会议平台、自动投递均列为 P6+ 或独立阶段。
+
+## P5 验收门槛 7 - 多视口体验和证据完整
+
+通过条件：
+
+- 1200px、1440px、1600px、1920px 桌面宽度下，Conversation、Workbench、Artifact/Export 有清晰结构；
+- 720px 窄屏和 390px 移动宽度下，上传/输入/确认/导出主要操作可达；
+- 输入区、资料动作、确认按钮和产物卡文字不重叠、不溢出；
+- 截图证据来自真实界面，不以静态原型替代实现；
+- 截图脚本不污染人工审查者浏览器 viewport。
+
+## P5 自动化验收矩阵
+
+P5 完成前至少需要以下自动化证据。文件名为建议命名，允许实现时按仓库测试命名习惯微调，但覆盖内容不得减少。
+
+| 验收项 | 建议测试 / 报告 | 必须证明 | 不得声称 |
+| --- | --- | --- | --- |
+| P0-P4 回归 | `.venv/bin/python -m pytest` | 历史 mock/examples 路径不退化 | 不代表 P5 已通过 |
+| 前端可构建 | `npm --prefix apps/chatbox run build` | P5 UI 能成功构建 | 不代表人类体验通过 |
+| 资料导入 | `tests/evals/test_p5_real_data_local_flow_eval.py` | 上传/粘贴资料、解析摘要、source refs、恢复路径 | 不代表未授权真实资料通过 |
+| JD 解析 | `tests/evals/test_p5_jd_gap_recovery_eval.py` | JD 解析、缺资料/缺 JD/可生成状态区分 | 不代表岗位数据源接入 |
+| 事实确认 | `tests/evals/test_p5_confirmation_gate_eval.py` | blocking/warning/optional 可见，blocking 影响导出 | 不代表事实已由真人确认 |
+| 编辑和再生成 | `tests/evals/test_p5_application_package_loop_eval.py` | 申请包生成、编辑、版本、重新生成、旧版本保留 | 不代表文本质量达到外部 provider 水平 |
+| 导出 preflight | `tests/evals/test_p5_export_preflight_eval.py` | workspace exports、blocking 拦截、Markdown/DOCX 路径 | 不代表 PDF 或 SaaS 下载能力 |
+| 本地多轮追问 | `tests/evals/test_p5_local_dialogue_eval.py` | 普通追问不写 artifact，明确工具意图才执行 | 不代表 provider-backed 自由智能聊天 |
+| 隐私和脱敏 | `tests/evals/test_p5_privacy_redaction_eval.py` | API Key、完整真实资料、provider raw response 不进报告/日志 | 不代表真实外部 provider 已验收 |
+| 自动化报告 | `tests/evals/test_p5_acceptance_report_eval.py` | 中文 HTML 报告、真实界面截图、未验证范围、虚假验收风险 | 不代表人工体验认可 |
+| drawio 一致性 | drawio XML parse + 文本镜像检查 | 页数不超过 8、颜色语义、模块状态和 active docs 一致 | 不代表功能已实现 |
+
+P5 HTML 报告必须至少截图以下真实界面状态：
+
+- 初始页：本地/mock 默认、资料导入入口、外部 provider 未默认调用；
+- 资料导入后：资料摘要、source refs、待确认项；
+- JD 解析后：岗位要求、缺口和下一步；
+- 事实确认：blocking/warning/optional 项；
+- 申请包草稿：摘要、版本、编辑/再生成入口；
+- 导出 preflight：blocking 拦截或可导出状态；
+- 导出完成：Markdown/DOCX 路径；
+- 多轮追问：普通追问不生成 artifact，明确工具意图会执行；
+- 多视口：1200px、1440px、1600px、1920px、720px、390px。
+
+## P5 人工体验审查门槛
+
+自动化验收通过后，仍必须进行人工体验审查。人工审查只能认可以下内容：
+
+- 本地资料/JD/申请包闭环是否顺手；
+- 用户是否能理解当前状态、下一步、确认项和导出风险；
+- UI 是否存在明显重叠、按钮错位、文本溢出或主次不清；
+- 报告是否没有虚假验收和隐私泄露。
+
+P5-REAL 执行前置条件：
+
+- 用户明确提供本地脱敏真实资料路径和允许展示字段；
+- 只读取用户指定路径，不擅自搜索个人目录；
+- 真实资料截图和报告默认遮蔽联系方式、账号、API Key、私密链接和未授权长原文；
+- 如需真实外部 provider，必须转入 P6 opt-in 计划并单独确认，不能混入 P5 默认验收。
+
+人工审查不得把以下内容写成通过：
+
+- 未确认的真实个人资料路径；
+- 未授权真实外部 provider；
+- provider-backed 自由智能聊天；
+- SaaS、ASR、会议平台、自动投递、MCP/CLI；
+- 最终产品化发布。
+
+## P5 最终出门条件
+
+一个转行程序员可以在本地 Chatbox 使用自己的求职资料和目标 JD，完成：
+
+```text
+导入资料 → 解析资料 → 导入 JD → 解析岗位 → 确认事实
+→ 生成申请包 → 编辑/重新生成 → 导出 → 围绕当前资料继续追问
+```
+
+项目必须通过 P0-P4 回归、P5 自动化验收、PRD 规格检视、drawio XML parse、脱敏截图报告和人工体验审查。P5 完成不代表真实外部 provider 默认路径、SaaS、ASR、会议平台、自动投递或最终产品化发布已通过。
+
+当前 P5 自动化候选证据只证明本地/mock + 脱敏 fixture 路径达到冻结候选状态。P5 最终出门必须额外补齐 P5-REAL 真实授权资料复核、人工体验审查清单和 P5 final closure audit。
+
+## P5 不通过条件
+
+出现以下任一情况，P5 不得验收通过：
+
+- 真实资料未经确认被写入报告、日志或 fixture；
+- 默认触发真实外部 provider；
+- 用户无法判断资料、JD、确认项或申请包当前状态；
+- 普通追问误触发生成、解析、导出或 artifact 写入；
+- blocking confirmation 未处理仍能导出正式申请材料；
+- 产物主要依赖 JSON 或内部 id 才能理解；
+- 报告把 examples 写成真实个人资料验收；
+- 报告把 P6/P7/P8 能力写成 P5 已完成；
+- P0-P4 冻结基线退化。
+
+以下 P4 内容作为已冻结基线和历史背景保留。
 
 ## P4 验收门槛 0 - P0/P1/P2/P3 回归不退化
 
@@ -39,12 +224,29 @@ npm --prefix apps/chatbox run build
 通过条件：
 
 - 有效输入后有可见响应、计划、处理中状态或结果；
+- 普通自由追问、求职偏好补充、状态查询和下一步问题能连续对话，不误触发工具写入；
+- “我还没有 JD，先聊聊求职方向”不得被误判为 JD 解析；
+- “继续 / 下一步 / 当前进展如何”应基于当前 workspace 状态给出可理解回复；
+- 只有明确“整理资料 / 解析 JD / 生成申请包 / 准备面试”等工具意图时才生成对应 artifact；
 - 缺资料、无效任务、后端错误都有恢复路径；
 - loading / thinking 状态必须展示执行步骤，例如读取资料、对比 JD、生成草稿；
 - 错误气泡必须包含可执行恢复动作，例如重新上传、补充 JD、查看支持格式；
 - 长 JD、长计划和长摘要必须具备折叠或收起策略；
 - 发送、上传、快捷任务在桌面/窄屏/移动端可见；
 - 错误不被静默吞掉，也不伪造成成功。
+
+P4C-FC 最低证据：
+
+```bash
+.venv/bin/python -m pytest tests/evals/test_p3_chatbox_response_eval.py
+npm --prefix apps/chatbox run build
+```
+
+截图或 HTML 报告至少覆盖：
+
+- 自由聊两轮不生成 artifact；
+- 明确工具意图后生成 artifact；
+- 会话恢复后仍能看到自由对话历史。
 
 ## P4 验收门槛 3 - 推进台和产物卡可读
 
@@ -117,12 +319,21 @@ npm --prefix apps/chatbox run build
 
 一个转行程序员可以在本地打开 Chatbox，不读开发文档也能知道从哪里开始，能清楚区分示例模式和我的资料模式，能通过对话区完成资料/JD/申请包任务，能在推进台理解当前阶段、产物、确认项、版本和导出，并能在 1200px、1440px、1600px、1920px、720px、390px 下顺手完成关键路径。P4 必须通过回归测试、前端 build、Chrome 截图、PRD 规格检视、Gemini 审查包和人工体验审查记录。
 
+若进入 P4C-FC，最终出门条件还必须增加：
+
+- Chatbox 能承接自由、多轮、不中断的本地/mock 对话；
+- 普通追问不会误触发工具或写入 artifact；
+- 明确工具意图仍能稳定执行；
+- 文档和报告明确 provider-backed 自由智能聊天仍是 P6 opt-in，不属于当前默认完成范围。
+
 ## P4 不通过条件
 
 出现以下任一情况，P4 不得验收通过：
 
 - 用户仍然不知道第一步该做什么；
 - Chatbox 发送有效任务后仍表现为无响应；
+- 普通自由聊天误触发 JD 解析、资料整理、申请包生成或 artifact 写入；
+- 用户明确说“先别生成 / 先解释”时仍执行生成；
 - 推进台与聊天区职责再次混淆；
 - 产物卡主要依赖 JSON 或内部 id 才能理解；
 - provider 状态让用户误以为默认外呼；

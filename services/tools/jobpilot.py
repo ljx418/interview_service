@@ -245,6 +245,11 @@ def confirm_artifact(workspace_id: str, artifact_id: str) -> dict:
     if not row:
         raise ValueError("Artifact not found.")
     conn.execute("UPDATE artifact SET status='confirmed', updated_at=? WHERE workspace_id=? AND id=?", (now_iso(), workspace_id, artifact_id))
+    if row.get("current_version_id"):
+        conn.execute(
+            "UPDATE artifact_version SET status='confirmed' WHERE workspace_id=? AND artifact_id=? AND id=?",
+            (workspace_id, artifact_id, row["current_version_id"]),
+        )
     conn.commit()
     row["status"] = "confirmed"
     return row
@@ -828,7 +833,8 @@ def create_application_package(workspace_id: str, job_id: str, style: str = "jun
         _source_ref("tech_project", proj["id"], "summary", proj["summary"][:160], "medium") for proj in projects
     ] + [_source_ref("job", job_id, "jd_summary", job["jd_summary"][:160], "high")]
     confirmations = [
-        _confirmation("请确认所有项目均由你本人完成或明确说明协作部分。", "warning", "对外材料需要准确描述个人贡献。", source_refs),
+        _confirmation("请确认所有项目均由你本人完成或明确说明协作部分。", "blocking", "P5 要求申请包导出前必须确认个人贡献和事实边界。", source_refs),
+        _confirmation("请确认简历、项目描述和沟通稿没有使用无法证明的经历或结果。", "blocking", "对外投递材料必须只包含可解释、可追溯的事实。", source_refs),
         _confirmation("请补充可量化结果；没有数据时不要编造。", "optional", "指标缺失不会阻塞 Markdown 导出，但必须保留提醒。", source_refs),
     ]
     resume_md = f"""# 定制简历草稿 - {job['title']}
@@ -916,11 +922,12 @@ def _confirmation_notes(questions: list[dict], level: str | None = None) -> list
 
 def _render_export_markdown(content: dict[str, Any], questions: list[dict]) -> str:
     markdown = content.get("resume_markdown") or ""
+    blockers = _confirmation_notes(questions, "blocking")
     warnings = _confirmation_notes(questions, "warning")
     optionals = _confirmation_notes(questions, "optional")
-    if warnings or optionals:
+    if blockers or warnings or optionals:
         markdown += "\n\n## 导出前仍需注意\n"
-        for note in [*warnings, *optionals]:
+        for note in [*blockers, *warnings, *optionals]:
             markdown += f"- {note}\n"
     return markdown
 
@@ -982,7 +989,8 @@ def export_application_package(workspace_id: str, package_id: str, formats: list
     source_refs = loads(version["source_refs"], [])
     if not source_refs:
         raise ValueError("EXPORT_PRECHECK_FAILED: Application package has no source refs.")
-    if _has_blocking_confirmations(questions_to_confirm):
+    is_confirmed_for_export = artifact.get("status") in {"confirmed", "exported"} or version.get("status") == "confirmed"
+    if _has_blocking_confirmations(questions_to_confirm) and not is_confirmed_for_export:
         raise ValueError("EXPORT_PRECHECK_FAILED: Application package has blocking confirmations. Confirm or edit it before export.")
     markdown = _render_export_markdown(content, questions_to_confirm)
     exports = []

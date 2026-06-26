@@ -120,13 +120,14 @@ def run_p2_demo_flow(workspace_id: str | None = None, reset_workspace: bool = Fa
         )
     )
 
+    jobpilot.confirm_artifact(workspace_id, package["artifact_ref"]["artifact_id"])
     exported = jobpilot.export_application_package(workspace_id, package["package_id"], ["markdown", "docx"])
     steps.append(
         _step(
             "export_package",
             "导出申请包",
             "completed",
-            "已导出 Markdown 和 DOCX 到本地 workspace/exports。",
+            "已完成申请包事实确认，并导出 Markdown 和 DOCX 到本地 workspace/exports。",
             [],
             {"exports": exported.get("exports", [])},
         )
@@ -202,6 +203,7 @@ def run_p2_demo_flow(workspace_id: str | None = None, reset_workspace: bool = Fa
                 "project_description": package.get("project_description"),
                 "recruiter_message": package.get("recruiter_message"),
                 "questions_to_confirm": package.get("questions_to_confirm", []),
+                "artifact_ref": exported.get("artifact_ref") or package.get("artifact_ref"),
             },
             "interview": {"questions": prep.get("questions", []), "story_cards": prep.get("story_cards", [])},
             "realtime_hint": hint.get("hint", hint),

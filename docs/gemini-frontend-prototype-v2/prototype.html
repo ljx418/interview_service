@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>JobPilot AI P4 Frontend Prototype v2</title>
+  <link rel="stylesheet" href="./prototype.css">
+</head>
+<body>
+  <main class="app-shell" data-state="empty">
+    <header class="topbar">
+      <div class="brand">
+        <span class="eyebrow">JobPilot AI</span>
+        <h1>求职材料工作台</h1>
+      </div>
+      <div class="status-strip" aria-label="当前状态">
+        <span class="status-dot ok">本地就绪</span>
+        <div class="mode-toggle" role="group" aria-label="数据模式">
+          <button type="button" aria-pressed="true">示例模式</button>
+          <button type="button" aria-pressed="false">我的资料</button>
+        </div>
+        <span class="status-dot shield">外部模型未调用（隐私安全）</span>
+        <span class="mode-note">当前是设计原型，不连接真实 API</span>
+      </div>
+    </header>
+
+    <section class="workspace">
+      <aside class="context-panel" aria-label="当前任务与下一步">
+        <section class="context-card primary">
+          <span class="eyebrow">Current task</span>
+          <h2 id="context-title">准备求职材料</h2>
+          <p id="context-copy">先选择一个建议任务，或直接描述你的求职目标。默认只使用本地 mock 路径。</p>
+          <div class="progress-track"><span id="progress-bar"></span></div>
+          <div class="metrics">
+            <span><strong id="metric-progress">等待任务</strong><small>流程进度</small></span>
+            <span><strong id="metric-artifacts">0</strong><small>可检查产物</small></span>
+          </div>
+        </section>
+        <section class="context-card">
+          <span class="eyebrow">Next actions</span>
+          <button class="action-row" data-action="upload" type="button"><span class="icon-box">UP</span>导入资料</button>
+          <button class="action-row" data-action="jd" type="button"><span class="icon-box">JD</span>粘贴目标 JD</button>
+          <button class="action-row" data-action="demo" type="button"><span class="icon-box">9/9</span>运行示例路径</button>
+        </section>
+        <section class="context-card">
+          <span class="eyebrow">Safety boundary</span>
+          <ul class="safety-list">
+            <li>默认本地 workspace 和 mock provider。</li>
+            <li>外部模型调用需要用户明确确认。</li>
+            <li>本原型不代表人工体验已通过。</li>
+          </ul>
+        </section>
+      </aside>
+
+      <section class="conversation-plane" aria-label="Chatbox 对话区">
+        <div class="conversation-head">
+          <div>
+            <span class="eyebrow">Conversation</span>
+            <h2>对话与材料处理</h2>
+            <p id="conversation-summary">可以自由追问、补充偏好、导入资料、粘贴 JD，或直接运行示例路径。</p>
+          </div>
+          <div class="mini-stats">
+            <span id="mini-status">可继续</span>
+            <span><b id="mini-artifacts">0</b> 个产物</span>
+            <span>匿名示例</span>
+          </div>
+        </div>
+
+        <div class="timeline" id="timeline" role="log" aria-live="polite">
+          <section class="empty-state" id="empty-state">
+            <span class="empty-kicker">推荐路径</span>
+            <h2>先把求职材料变成可确认的产物</h2>
+            <p>选择一个建议任务，或直接输入你的问题。普通聊天不会写入产物；明确要求整理资料、解析 JD 或生成申请包时才执行工具。</p>
+            <div class="suggested-grid">
+              <button class="prompt-card" data-action="upload" type="button"><span>01</span><strong>导入简历与项目</strong><small>生成职业事实和技能证据</small></button>
+              <button class="prompt-card" data-action="jd" type="button"><span>02</span><strong>解析目标 JD</strong><small>提取匹配缺口并生成申请包</small></button>
+              <button class="prompt-card" data-action="interview" type="button"><span>03</span><strong>准备面试回答</strong><small>生成 STAR 故事和追问练习</small></button>
+              <button class="prompt-card" data-action="free" type="button"><span>CHAT</span><strong>自由聊求职方向</strong><small>先讨论目标和准备顺序</small></button>
+              <button class="prompt-card featured" data-action="demo" type="button"><span>FAST</span><strong>运行示例路径</strong><small>用 examples 数据看完整闭环</small></button>
+            </div>
+          </section>
+        </div>
+
+        <form class="composer" id="composer">
+          <button class="upload-btn" type="button" data-action="upload">上传资料</button>
+          <textarea id="message-input" rows="2" aria-label="对话输入框" placeholder="可以连续追问、补充偏好，或直接粘贴目标岗位 JD..."></textarea>
+          <button class="send-btn" type="submit">发送任务</button>
+        </form>
+      </section>
+
+      <aside class="workbench" aria-label="产物推进台">
+        <div class="workbench-plane" id="workbench-plane">
+          <div class="workbench-head">
+            <div>
+              <span class="eyebrow">Workbench</span>
+              <h2>产物推进台</h2>
+            </div>
+            <span class="artifact-count" id="artifact-count">0 个产物</span>
+          </div>
+          <div class="workbench-body" id="workbench-body"></div>
+        </div>
+      </aside>
+    </section>
+
+    <button class="mobile-workbench-trigger" id="mobile-workbench-trigger" type="button" aria-expanded="false" aria-controls="workbench-plane">查看推进台 <span id="mobile-count">0</span></button>
+    <div class="drawer-mask" id="drawer-mask" hidden></div>
+
+    <aside class="tweaks" id="tweaks">
+      <button class="tweaks-toggle" type="button" aria-expanded="false">Tweaks</button>
+      <div class="tweaks-panel" hidden>
+        <label>设计方向
+          <select id="variant-select">
+            <option value="stable">稳健工具型</option>
+            <option value="coach">求职教练型</option>
+            <option value="review">文档审查型</option>
+          </select>
+        </label>
+        <label>原型状态
+          <select id="state-select">
+            <option value="empty">空状态</option>
+            <option value="free">自由对话</option>
+            <option value="status">状态查询</option>
+            <option value="loading">处理中</option>
+            <option value="demo">示例路径完成</option>
+            <option value="artifact">生成职业事实</option>
+            <option value="error">错误恢复</option>
+          </select>
+        </label>
+      </div>
+    </aside>
+
+    <p class="prototype-note">设计原型：不连接真实 API，不调用外部 provider，不代表人工验收。</p>
+  </main>
+  <script src="./prototype.js"></script>
+</body>
+</html>

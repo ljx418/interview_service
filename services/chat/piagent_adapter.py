@@ -44,6 +44,7 @@ class PiAgentChatCore:
         self.project_root = Path(__file__).resolve().parents[2]
         self.source_root = source_root or self.project_root / "vendor/earendil_pi_source"
         self.node_bridge = self.project_root / "services/chat/pi_node_bridge.mjs"
+        self.bridge_timeout_seconds = int(os.environ.get("JOBPILOT_PI_BRIDGE_TIMEOUT_SECONDS", "45"))
         self.handler = self._load_handler()
         if self.handler is None and strict and not self._node_bridge_ready():
             raise PiAgentUnavailableError(
@@ -158,15 +159,22 @@ class PiAgentChatCore:
         env = os.environ.copy()
         env["JOBPILOT_PI_SOURCE_ROOT"] = str(self.source_root)
         payload = json.dumps({"workspace_id": workspace_id, "session_id": session_id, "message": message})
-        completed = subprocess.run(
-            ["node", str(self.node_bridge)],
-            input=payload,
-            text=True,
-            capture_output=True,
-            timeout=15,
-            env=env,
-            check=False,
-        )
+        try:
+            completed = subprocess.run(
+                ["node", str(self.node_bridge)],
+                input=payload,
+                text=True,
+                capture_output=True,
+                timeout=self.bridge_timeout_seconds,
+                env=env,
+                check=False,
+            )
+        except subprocess.TimeoutExpired:
+            return {
+                "ok": False,
+                "error_code": "PI_AGENT_BRIDGE_TIMEOUT",
+                "message": f"Pi bridge timed out after {self.bridge_timeout_seconds} seconds.",
+            }
         if not completed.stdout.strip():
             return {"ok": False, "error_code": "PI_AGENT_BRIDGE_FAILED", "message": completed.stderr.strip() or "Pi bridge produced no output."}
         try:

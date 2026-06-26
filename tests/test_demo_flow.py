@@ -32,6 +32,7 @@ def test_demo_flow_runs_end_to_end(tmp_path):
 
     package = jobpilot.create_application_package(workspace_id, job["job_id"])
     assert "待确认" in package["resume_markdown"]
+    jobpilot.confirm_artifact(workspace_id, package["artifact_ref"]["artifact_id"])
     exported = jobpilot.export_application_package(workspace_id, package["package_id"], ["markdown"])
     assert Path(exported["exports"][0]["path"]).exists()
 
@@ -48,4 +49,3 @@ def test_demo_flow_runs_end_to_end(tmp_path):
     transcript = (ROOT / "examples/transcripts/project_deep_dive.txt").read_text(encoding="utf-8")
     review = jobpilot.review_interview(workspace_id, session["session_id"], transcript)
     assert review["training_tasks"]
-

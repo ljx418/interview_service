@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>JobPilot AI P5 合成资料审核页</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f3ee;
+      --panel: #fffdf9;
+      --ink: #17211f;
+      --muted: #66736f;
+      --line: #dfd8ce;
+      --brand: #1f6f64;
+      --brand-soft: #e5f1ee;
+      --warn: #a86517;
+      --warn-soft: #fff3dc;
+      --danger: #9a2f2f;
+      --danger-soft: #ffe9e9;
+      --ok: #26724b;
+      --ok-soft: #e7f4ec;
+      --code: #263330;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.62;
+    }
+    header {
+      padding: 40px 6vw 28px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, #fffdf9 0%, #f7f1e8 100%);
+    }
+    main { width: min(1180px, 92vw); margin: 28px auto 64px; }
+    h1, h2, h3 { margin: 0; line-height: 1.22; }
+    h1 { font-size: clamp(28px, 4vw, 44px); letter-spacing: 0; }
+    h2 { font-size: 22px; margin-bottom: 14px; }
+    h3 { font-size: 17px; margin: 20px 0 8px; }
+    p { margin: 8px 0; }
+    .subtitle { color: var(--muted); max-width: 900px; margin-top: 14px; font-size: 16px; }
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .grid { display: grid; gap: 18px; }
+    .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    section, .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 22px;
+      box-shadow: 0 10px 30px rgba(42, 34, 23, 0.06);
+    }
+    section { margin-bottom: 18px; }
+    .callout {
+      border-left: 4px solid var(--brand);
+      background: var(--brand-soft);
+      padding: 14px 16px;
+      border-radius: 6px;
+      margin: 14px 0;
+    }
+    .callout.warn { border-color: var(--warn); background: var(--warn-soft); }
+    .callout.danger { border-color: var(--danger); background: var(--danger-soft); }
+    .callout.ok { border-color: var(--ok); background: var(--ok-soft); }
+    ul, ol { margin: 8px 0 0 20px; padding: 0; }
+    li { margin: 6px 0; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #fff;
+    }
+    th, td {
+      text-align: left;
+      vertical-align: top;
+      padding: 11px 12px;
+      border-bottom: 1px solid var(--line);
+      font-size: 14px;
+    }
+    th { background: #f2eee6; font-weight: 800; color: #34413e; }
+    tr:last-child td { border-bottom: 0; }
+    code {
+      background: #edf1ef;
+      color: var(--code);
+      border: 1px solid #d7dfdc;
+      padding: 2px 5px;
+      border-radius: 5px;
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-size: 0.92em;
+    }
+    .tag {
+      display: inline-block;
+      margin: 3px 5px 3px 0;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: #f1eee7;
+      color: #49524f;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .status-ok { color: var(--ok); font-weight: 800; }
+    .status-warn { color: var(--warn); font-weight: 800; }
+    .status-danger { color: var(--danger); font-weight: 800; }
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .flow div {
+      min-height: 84px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 12px;
+      font-weight: 800;
+      font-size: 14px;
+    }
+    .flow span {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-weight: 500;
+      font-size: 12px;
+    }
+    footer {
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+      padding: 24px;
+    }
+    @media (max-width: 920px) {
+      .grid.two, .grid.three, .flow { grid-template-columns: 1fr; }
+      header { padding: 30px 5vw 22px; }
+      main { width: min(100% - 24px, 1180px); margin-top: 16px; }
+      section, .card { padding: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>JobPilot AI P5 合成资料审核页</h1>
+    <p class="subtitle">本页用于在进入真实资料验收前，先让人类审核“简历 + 背景资料 + 目标 JD + 待确认问题”的资料结构是否足够支撑 P5 真实资料本地闭环。页面内人物、公司、联系方式、项目经历均为合成示例，不代表真实个人资料验收通过。</p>
+    <div class="meta">
+      <span class="pill">阶段：P5-REAL 前置资料审核</span>
+      <span class="pill">模式：本地 / mock / 无外部 provider</span>
+      <span class="pill">日期：2026-06-26</span>
+      <span class="pill">状态：待人工审核资料形态</span>
+    </div>
+  </header>
+
+  <main>
+    <section>
+      <h2>1. 审核边界</h2>
+      <div class="callout danger">
+        <strong>重要边界：</strong>本页不包含真实 API Key、不调用真实外部模型、不搜索用户电脑中的个人文件、不代表真实个人资料路径已通过。真实资料验收必须由用户提供明确本地路径、允许展示字段和脱敏范围后才能执行。
+      </div>
+      <div class="grid three">
+        <div class="card">
+          <h3>本页要确认什么</h3>
+          <ul>
+            <li>JobPilot 需要哪些资料才能生成可信申请包。</li>
+            <li>哪些字段会进入解析、待确认和导出流程。</li>
+            <li>哪些缺口必须在真实验收前补齐。</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>本页不证明什么</h3>
+          <ul>
+            <li>不证明真实个人资料已完成验收。</li>
+            <li>不证明 MiniMax、DeepSeek 或其他 provider 可用。</li>
+            <li>不证明 P5 已冻结或产品化完成。</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>建议审核结果</h3>
+          <ul>
+            <li>确认合成资料结构是否贴近真实求职材料。</li>
+            <li>指出需要新增或删减的背景资料项。</li>
+            <li>决定真实资料验收时允许展示的字段。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>2. 合成候选人简历</h2>
+      <table>
+        <tbody>
+          <tr><th>姓名</th><td>林晨（合成示例姓名）</td></tr>
+          <tr><th>目标岗位</th><td>初级前端工程师 / 全栈开发助理</td></tr>
+          <tr><th>联系方式</th><td><code>lin.chen@example.invalid</code>、<code>138-0000-0000</code>（均为占位信息）</td></tr>
+          <tr><th>当前背景</th><td>3 年运营自动化与数据分析经验，过去 12 个月系统学习 React、TypeScript、FastAPI 和自动化测试，目标转向前端/全栈方向。</td></tr>
+          <tr><th>教育经历</th><td>某大学 信息管理与信息系统 本科，2017-2021（合成学校，不用于真实背调）。</td></tr>
+          <tr><th>求职偏好</th><td>北京 / 上海 / 远程；偏好业务工具、AI 应用、数据看板、内部效率平台；不接受长期出差。</td></tr>
+        </tbody>
+      </table>
+
+      <h3>职业摘要</h3>
+      <p>候选人具备业务流程拆解、数据指标定义、低代码工具搭建和跨团队沟通经验；近期通过项目实践补齐前端工程化、API 集成、状态管理和 Playwright 自动化验收能力。适合投递需要产品理解、工程执行和细节耐心的初级前端或全栈助理岗位。</p>
+
+      <h3>技能标签</h3>
+      <p>
+        <span class="tag">React</span>
+        <span class="tag">TypeScript</span>
+        <span class="tag">Vite</span>
+        <span class="tag">FastAPI</span>
+        <span class="tag">SQLite</span>
+        <span class="tag">Playwright</span>
+        <span class="tag">Chrome/CDP</span>
+        <span class="tag">ECharts</span>
+        <span class="tag">Markdown/DOCX Export</span>
+        <span class="tag">本地隐私优先</span>
+      </p>
+    </section>
+
+    <section>
+      <h2>3. 项目与证据材料</h2>
+      <div class="grid three">
+        <div class="card">
+          <h3>JobPilot 求职材料工作台</h3>
+          <p><strong>职责：</strong>参与 React 工作台、FastAPI 工具 API、产物确认、导出和自动化验收。</p>
+          <p><strong>证据：</strong>README、截图报告、测试输出、用户路径说明。</p>
+          <p><strong>待确认：</strong>候选人真实贡献边界、是否可公开仓库链接、是否允许展示截图。</p>
+        </div>
+        <div class="card">
+          <h3>运营数据看板</h3>
+          <p><strong>职责：</strong>把销售漏斗、转化率和异常订单整理为可筛选图表。</p>
+          <p><strong>证据：</strong>合成数据 fixture、界面截图、指标口径说明。</p>
+          <p><strong>待确认：</strong>真实公司数据不可外泄，需要只保留脱敏指标和通用方法。</p>
+        </div>
+        <div class="card">
+          <h3>自动化验收工具链</h3>
+          <p><strong>职责：</strong>使用 Playwright / Chrome CDP 截图，生成中文 HTML 报告。</p>
+          <p><strong>证据：</strong>多视口截图、HTML 报告、pytest/build 记录。</p>
+          <p><strong>待确认：</strong>报告可展示字段、截图是否包含个人信息。</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>4. 目标 JD 合成样例</h2>
+      <table>
+        <tbody>
+          <tr><th>岗位</th><td>Junior Frontend Engineer / AI 工具方向</td></tr>
+          <tr><th>岗位目标</th><td>参与 AI 办公工具的前端页面、状态管理、API 对接和基础自动化测试。</td></tr>
+          <tr><th>核心要求</th><td>React / TypeScript 基础扎实；能与后端 REST API 协作；关注组件可维护性、可访问性和响应式布局；能阅读产品文档并补充验收证据。</td></tr>
+          <tr><th>加分项</th><td>Playwright、FastAPI、LLM 应用、Markdown/DOCX 导出、数据看板、求职或 HR 业务理解。</td></tr>
+          <tr><th>风险项</th><td>真实商业项目年限有限；需要明确说明“转行背景 + 可验证项目证据”，不能夸大生产环境经验。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>5. 真实验收前需要用户提供或确认的资料</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>资料</th>
+            <th>用途</th>
+            <th>默认处理</th>
+            <th>是否阻塞 P5-REAL</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>简历文件或文本</td>
+            <td>抽取 CareerFact、SkillEvidence、项目经历和待确认项。</td>
+            <td>本地读取；报告中默认脱敏联系方式。</td>
+            <td><span class="status-danger">阻塞</span></td>
+          </tr>
+          <tr>
+            <td>项目 README / 作品说明</td>
+            <td>生成 TechProject、项目证据和申请包素材。</td>
+            <td>仅使用用户指定路径。</td>
+            <td><span class="status-danger">阻塞</span></td>
+          </tr>
+          <tr>
+            <td>目标 JD</td>
+            <td>解析岗位要求、生成匹配报告和定制申请包。</td>
+            <td>可用公开 JD 或用户粘贴文本。</td>
+            <td><span class="status-danger">阻塞</span></td>
+          </tr>
+          <tr>
+            <td>求职偏好与禁忌</td>
+            <td>避免生成不符合城市、薪资、行业或远程偏好的建议。</td>
+            <td>写入本地 workspace，不进入外部 provider。</td>
+            <td><span class="status-warn">建议必填</span></td>
+          </tr>
+          <tr>
+            <td>允许展示字段</td>
+            <td>决定 HTML 报告截图和文字中哪些信息可见。</td>
+            <td>默认隐藏手机号、邮箱、地址、证件号。</td>
+            <td><span class="status-danger">阻塞</span></td>
+          </tr>
+          <tr>
+            <td>外部 provider 授权</td>
+            <td>P6 才用于 provider-backed 自由智能聊天或真实模型生成。</td>
+            <td>P5 默认不启用。</td>
+            <td><span class="status-ok">不阻塞 P5 默认路径</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>6. JobPilot 应呈现的用户体验路径</h2>
+      <div class="flow">
+        <div>导入资料<span>用户上传或粘贴简历、项目说明、经历材料。</span></div>
+        <div>解析证据<span>系统显示来源、事实、技能证据和待确认项。</span></div>
+        <div>粘贴 JD<span>用户输入目标岗位，系统生成 JD 结构。</span></div>
+        <div>事实确认<span>blocking/warning/optional 分级展示，阻塞项未确认不得导出。</span></div>
+        <div>生成申请包<span>生成摘要、匹配报告、求职信/申请包草稿。</span></div>
+        <div>编辑导出<span>编辑后重新阻塞，确认后导出 Markdown/DOCX。</span></div>
+      </div>
+      <div class="callout ok">
+        <strong>期望验收体验：</strong>用户能清楚知道系统正在处理什么、哪些事实缺口阻塞导出、为什么某些内容不能直接生成，以及导出的申请包依据哪些本地资料和 JD。
+      </div>
+    </section>
+
+    <section>
+      <h2>7. 待人工审核问题</h2>
+      <table>
+        <thead>
+          <tr><th>级别</th><th>问题</th><th>验收影响</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="status-danger">Blocking</span></td>
+            <td>真实资料验收时，用户是否提供明确本地路径和允许展示字段？</td>
+            <td>未确认则不得执行 P5-REAL，不得声称真实资料通过。</td>
+          </tr>
+          <tr>
+            <td><span class="status-danger">Blocking</span></td>
+            <td>简历、项目 README、JD 三类资料是否齐全？</td>
+            <td>缺任一类都会导致申请包生成依据不足。</td>
+          </tr>
+          <tr>
+            <td><span class="status-warn">Warning</span></td>
+            <td>是否允许在报告中展示姓名、项目名、局部原文片段？</td>
+            <td>影响报告可读性和隐私风险，需要记录到验收结论。</td>
+          </tr>
+          <tr>
+            <td><span class="status-warn">Warning</span></td>
+            <td>项目经历是否有可验证证据，是否存在夸大风险？</td>
+            <td>影响申请包可信度，必要时生成“待确认事实”。</td>
+          </tr>
+          <tr>
+            <td><span class="status-ok">Optional</span></td>
+            <td>是否需要覆盖第二个目标 JD 或多个城市偏好？</td>
+            <td>可作为 P5 后续增强，不阻塞默认闭环。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>8. 建议给 ChatGPT 审计的文档包</h2>
+      <p>若需要外部审计，建议只发送下列小于 20 个文件的文档包，不发送 <code>.env</code>、真实资料、日志、数据库或账号凭据。</p>
+      <ol>
+        <li><code>README.md</code></li>
+        <li><code>TODO.md</code></li>
+        <li><code>docs/active/00_README.md</code></li>
+        <li><code>docs/active/01_STAGE_PRD.md</code></li>
+        <li><code>docs/active/02_TARGET_ARCHITECTURE.md</code></li>
+        <li><code>docs/active/03_MILESTONES_AND_DELIVERY_PLAN.md</code></li>
+        <li><code>docs/active/04_ACCEPTANCE_GATES.md</code></li>
+        <li><code>docs/active/06_TRACEABILITY_MATRIX.md</code></li>
+        <li><code>docs/active/jobpilot-stage-gap-and-acceptance.md</code></li>
+        <li><code>docs/active/jobpilot-stage-gap-and-acceptance.drawio</code></li>
+        <li><code>docs/active/stage-reviews/P5_PRE_FREEZE_AUTOMATED_CANDIDATE_AUDIT.md</code></li>
+        <li><code>docs/active/stage-reviews/P5_HUMAN_EXPERIENCE_REVIEW_CHECKLIST.md</code></li>
+        <li><code>docs/active/stage-reviews/P5_FREEZE_EXIT_AUDIT_PLAN.md</code></li>
+        <li><code>docs/active/stage-reviews/P5_EXTERNAL_REVIEW_REVISION_AUDIT.md</code></li>
+        <li><code>docs/active/stage-reviews/P5_DOCUMENTATION_COVERAGE_REAUDIT.md</code></li>
+        <li><code>docs/reports/P5_LOCAL_DATA_CLOSURE_ACCEPTANCE_REPORT.html</code></li>
+        <li><code>docs/reports/P5_SYNTHETIC_PROFILE_REVIEW.html</code></li>
+      </ol>
+    </section>
+  </main>
+
+  <footer>
+    JobPilot AI P5 synthetic review material. This page is a local documentation artifact only.
+  </footer>
+</body>
+</html>

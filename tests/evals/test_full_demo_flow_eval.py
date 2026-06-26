@@ -18,6 +18,7 @@ def test_full_realistic_demo_flow_reaches_all_p0_outputs(tmp_path):
     job = jobpilot.parse_jd(workspace_id, (ROOT / "examples/jds/junior_frontend_jd.md").read_text(encoding="utf-8"))
     match = jobpilot.match_profile(workspace_id, job["job_id"])
     package = jobpilot.create_application_package(workspace_id, job["job_id"])
+    jobpilot.confirm_artifact(workspace_id, package["artifact_ref"]["artifact_id"])
     exported = jobpilot.export_application_package(workspace_id, package["package_id"], ["markdown"])
     prep = jobpilot.prepare_interview(workspace_id, job["job_id"], package["package_id"])
     session = jobpilot.start_realtime_session(workspace_id, job["job_id"])

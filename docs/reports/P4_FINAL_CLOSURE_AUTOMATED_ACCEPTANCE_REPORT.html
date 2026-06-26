@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>P4 Final Closure Automated Audit - Browser Acceptance Report</title>
+  <style>
+    body { margin: 0; font: 15px/1.55 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #1f2933; background: #f6f8fb; }
+    header, main { max-width: 1120px; margin: 0 auto; padding: 28px; }
+    header { padding-top: 36px; }
+    h1 { margin: 0 0 10px; font-size: 30px; letter-spacing: 0; }
+    h2 { margin: 28px 0 12px; font-size: 19px; }
+    .meta { color: #52606d; }
+    .badge { display: inline-block; padding: 5px 10px; border-radius: 6px; font-weight: 700; background: #d9f9e6; color: #0f6b3d; }
+    section { background: #fff; border: 1px solid #d9e2ec; border-radius: 8px; padding: 18px; margin: 18px 0; }
+    table { width: 100%; border-collapse: collapse; background: #fff; }
+    th, td { text-align: left; border-bottom: 1px solid #e4e7eb; padding: 10px; vertical-align: top; }
+    th { color: #52606d; font-size: 13px; }
+    code { background: #eef2f7; padding: 2px 5px; border-radius: 4px; }
+    .passed { color: #0f6b3d; font-weight: 700; }
+    .failed { color: #a61b1b; font-weight: 700; }
+    .warning { color: #8a4b0f; font-weight: 700; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+    figure { margin: 0; border: 1px solid #d9e2ec; border-radius: 8px; overflow: hidden; background: #fff; }
+    img { display: block; width: 100%; height: auto; border-bottom: 1px solid #d9e2ec; }
+    figcaption { padding: 10px 12px; color: #52606d; font-size: 13px; }
+    pre { white-space: pre-wrap; overflow-wrap: anywhere; background: #fff4f4; color: #7f1d1d; padding: 12px; border-radius: 6px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>P4 Final Closure Automated Audit</h1>
+    <p><span class="badge">passed</span></p>
+    <p class="meta">Re-check original PRD experience paths and P4 UX gates with real browser screenshots, without claiming human acceptance or real external-provider acceptance.</p>
+    <p class="meta">Started: 2026-06-24T11:42:14.990Z · Ended: 2026-06-24T11:42:38.306Z · Report: <code>/mnt/c/workspace/interview_service/docs/reports/P4_FINAL_CLOSURE_AUTOMATED_ACCEPTANCE_REPORT.html</code></p>
+  </header>
+  <main>
+    <section>
+      <h2>目标架构</h2>
+      <ul><li>Original PRD: Chatbox-first local workspace for profile, JD, application package, interview preparation, realtime text hint, and review flows.</li><li>P4 UX layer: suggested prompts, visible mode/provider state, conversation plane, workbench/artifact rail, responsive desktop/mobile layout.</li><li>P4C-FC layer: local/mock continuous dialogue, status/next-step replies, explicit tool execution, and chat session restore.</li><li>Evidence layer: Chrome/CDP screenshot automation with viewport cleanup and HTML reporting.</li></ul>
+      <h2>当前实现</h2>
+      <ul><li>FastAPI exposes workspace, files, profile, job, application, interview, realtime, artifact, chat, provider, and guided workflow APIs.</li><li>React/Vite Chatbox initializes a local workspace, restores latest chat sessions, and labels provider/privacy state.</li><li>KeywordChatCore is the default local/mock chat router; explicit intents call Domain Tools, free chat does not call a provider.</li><li>SQLite local workspace persists documents, artifacts, versions, sessions, tool logs, and exports.</li></ul>
+    </section>
+    <section>
+      <h2>自动化步骤</h2>
+      <table><thead><tr><th>#</th><th>步骤</th><th>动作</th><th>结果</th></tr></thead><tbody><tr><td>1</td><td>Open initial 1200</td><td><code>goto</code></td><td class="passed">passed</td></tr>
+<tr><td>2</td><td>Wait initial 1200</td><td><code>waitText</code></td><td class="passed">passed</td></tr>
+<tr><td>3</td><td>Initial 1200 evidence</td><td><code>screenshot</code></td><td class="passed">passed</td></tr>
+<tr><td>4</td><td>Open initial 1280</td><td><code>goto</code></td><td class="passed">passed</td></tr>
+<tr><td>5</td><td>Wait initial 1280</td><td><code>waitText</code></td><td class="passed">passed</td></tr>
+<tr><td>6</td><td>Initial 1280 evidence</td><td><code>screenshot</code></td><td class="passed">passed</td></tr>
+<tr><td>7</td><td>Open initial 1440</td><td><code>goto</code></td><td class="passed">passed</td></tr>
+<tr><td>8</td><td>Wait initial 1440</td><td><code>waitText</code></td><td class="passed">passed</td></tr>
+<tr><td>9</td><td>Initial 1440 evidence</td><td><code>screenshot</code></td><td class="passed">passed</td></tr>
+<tr><td>10</td><td>Open guided example</td><td><code>goto</code></td><td class="passed">passed</td></tr>
+<tr><td>11</td><td>Wait guided example completion</td><td><code>waitText</code></td><td class="passed">passed</td></tr>
+<tr><td>12</td><td>Guided example completed evidence</td><td><code>screenshot</code></td><td class="passed">passed</td></tr>
+<tr><td>13</td><td>Open initial 1600</td><td><code>goto</code></td><td class="passed">passed</td></tr>
+<tr><td>14</td><td>Wait initial 1600</td><td><code>waitText</code></td><td class="passed">passed</td></tr>
+<tr><td>15</td><td>Initial 1600 evidence</td><td><code>screenshot</code></td><td class="passed">passed</td></tr>
+<tr><td>16</td><td>Open initial 1920</td><td><code>goto</code></td><td class="passed">passed</td></tr>
+<tr><td>17</td><td>Wait initial 1920</td><td><code>waitText</code></td><td class="passed">passed</td></tr>
+<tr><td>18</td><td>Initial 1920 evidence</td><td><code>screenshot</code></td><td class="passed">passed</td></tr>
+<tr><td>19</td><td>Open narrow 720</td><td><code>goto</code></td><td class="passed">passed</td></tr>
+<tr><td>20</td><td>Wait narrow 720</td><td><code>waitText</code></td><td class="passed">passed</td></tr>
+<tr><td>21</td><td>Narrow 720 evidence</td><td><code>screenshot</code></td><td class="passed">passed</td></tr>
+<tr><td>22</td><td>Open mobile 390</td><td><code>goto</code></td><td class="passed">passed</td></tr>
+<tr><td>23</td><td>Wait mobile 390</td><td><code>waitText</code></td><td class="passed">passed</td></tr>
+<tr><td>24</td><td>Mobile 390 evidence</td><td><code>screenshot</code></td><td class="passed">passed</td></tr>
+<tr><td>25</td><td>Open P4C-FC</td><td><code>goto</code></td><td class="passed">passed</td></tr>
+<tr><td>26</td><td>Wait P4C-FC local workspace</td><td><code>waitText</code></td><td class="passed">passed</td></tr>
+<tr><td>27</td><td>Wait P4C-FC session initialization</td><td><code>wait</code></td><td class="passed">passed</td></tr>
+<tr><td>28</td><td>Click free chat</td><td><code>clickText</code></td><td class="passed">passed</td></tr>
+<tr><td>29</td><td>Wait first free reply</td><td><code>waitText</code></td><td class="passed">passed</td></tr>
+<tr><td>30</td><td>P4C-FC first free turn</td><td><code>screenshot</code></td><td class="passed">passed</td></tr>
+<tr><td>31</td><td>Fill free follow-up</td><td><code>fill</code></td><td class="passed">passed</td></tr>
+<tr><td>32</td><td>Send free follow-up</td><td><code>clickText</code></td><td class="passed">passed</td></tr>
+<tr><td>33</td><td>Wait next-step reply</td><td><code>waitText</code></td><td class="passed">passed</td></tr>
+<tr><td>34</td><td>Wait after next-step reply settles</td><td><code>wait</code></td><td class="passed">passed</td></tr>
+<tr><td>35</td><td>P4C-FC second free turn</td><td><code>screenshot</code></td><td class="passed">passed</td></tr>
+<tr><td>36</td><td>Fill status query</td><td><code>fill</code></td><td class="passed">passed</td></tr>
+<tr><td>37</td><td>Send status query</td><td><code>clickText</code></td><td class="passed">passed</td></tr>
+<tr><td>38</td><td>Wait status query</td><td><code>waitText</code></td><td class="passed">passed</td></tr>
+<tr><td>39</td><td>Wait after status reply settles</td><td><code>wait</code></td><td class="passed">passed</td></tr>
+<tr><td>40</td><td>P4C-FC status evidence</td><td><code>screenshot</code></td><td class="passed">passed</td></tr>
+<tr><td>41</td><td>Fill explicit tool request</td><td><code>fill</code></td><td class="passed">passed</td></tr>
+<tr><td>42</td><td>Send explicit tool request</td><td><code>clickText</code></td><td class="passed">passed</td></tr>
+<tr><td>43</td><td>Wait career facts artifact</td><td><code>waitText</code></td><td class="passed">passed</td></tr>
+<tr><td>44</td><td>P4C-FC explicit artifact evidence</td><td><code>screenshot</code></td><td class="passed">passed</td></tr>
+<tr><td>45</td><td>Open restored P4C-FC mobile</td><td><code>goto</code></td><td class="passed">passed</td></tr>
+<tr><td>46</td><td>Wait restored mobile conversation</td><td><code>waitText</code></td><td class="passed">passed</td></tr>
+<tr><td>47</td><td>P4C-FC mobile restored evidence</td><td><code>screenshot</code></td><td class="passed">passed</td></tr></tbody></table>
+
+    </section>
+    <section>
+      <h2>验收标准</h2>
+      <ul><li>P4 desktop workbench renders without layout-collapse evidence at 1200, 1440, 1600, and 1920 widths.</li><li>P4 narrow/mobile states keep core input and workbench access reachable at 720 and 390 widths.</li><li>The guided example path can complete and display generated outputs in the workbench.</li><li>P4C-FC can complete two free dialogue turns, a status query, explicit profile extraction, and session restore.</li><li>The report must separate automated evidence from human experience acceptance.</li><li>The report must not claim real personal data, real external provider, ASR, meeting platform, auto-apply, or SaaS acceptance.</li></ul>
+    </section>
+    <section>
+      <h2>命令结果</h2>
+      <table><thead><tr><th>命令</th><th>状态</th><th>证据</th></tr></thead><tbody><tr><td><code>.venv/bin/python -m pytest</code></td><td class="passed">passed</td><td>71 passed, 1 warning</td></tr>
+<tr><td><code>npm --prefix apps/chatbox run build</code></td><td class="passed">passed</td><td>TypeScript and Vite production build passed</td></tr>
+<tr><td><code>drawio XML parse</code></td><td class="passed">passed</td><td>docs/active/jobpilot-stage-gap-and-acceptance.drawio parsed with 5 diagrams</td></tr>
+<tr><td><code>document consistency scan</code></td><td class="warning">warning</td><td>Older P4/P4B/P4C reports still contain historical test-count snapshots; final closure uses current 71 passed result</td></tr></tbody></table>
+    </section>
+    <section>
+      <h2>PRD 规格检视</h2>
+      <table><thead><tr><th>PRD / Gate 要求</th><th>证据</th><th>结论</th></tr></thead><tbody><tr><td>Original PRD path A-F: local workspace, profile/JD/package/interview/realtime/review capabilities remain represented by APIs and regression tests.</td><td>Full pytest suite plus guided workflow browser evidence; final audit document maps PRD paths to tests and current limits.</td><td class="passed">PASS for local/mock automated scope</td></tr>
+<tr><td>P4: user can understand first step from Chatbox without reading developer docs.</td><td>Initial desktop and mobile screenshots show suggested prompts, local state, provider boundary, and workbench empty state.</td><td class="passed">PASS for automated visual evidence</td></tr>
+<tr><td>P4: workbench/artifact cards are separate from conversation and human-readable.</td><td>Guided example completion screenshot shows generated workflow output and workbench access.</td><td class="passed">PASS for examples path</td></tr>
+<tr><td>P4C-FC: free local dialogue must not force artifact writes; explicit tool intent still writes artifacts.</td><td>Free-chat screenshots and explicit profile extraction screenshot in this run.</td><td class="passed">PASS for local/mock automated scope</td></tr>
+<tr><td>P4 final gate requires human experience review.</td><td>This is an automated audit only.</td><td class="">NOT A HUMAN ACCEPTANCE</td></tr></tbody></table>
+    </section>
+    <section>
+      <h2>代码检视</h2>
+      <table><thead><tr><th>区域</th><th>结论</th><th>级别</th></tr></thead><tbody><tr><td>services/chat/core.py intent router</td><td>Free local dialogue, decline-to-execute phrases, status query, next-step query, and explicit tool intents are separated and covered by eval tests.</td><td class="pass">pass</td></tr>
+<tr><td>apps/chatbox/src/main.tsx</td><td>Chatbox remains a browser client over API routes, exposes local/provider state, suggested prompts, loading state, error recovery, upload, and session restore.</td><td class="pass">pass</td></tr>
+<tr><td>apps/chatbox/src/styles.css</td><td>Desktop three-column workbench and mobile drawer/composer layout are evidenced by screenshots; 390px send and workbench buttons are both reachable.</td><td class="pass">pass</td></tr>
+<tr><td>scripts/browser_tools/browser-acceptance.mjs</td><td>Chrome/CDP runner captures screenshots and clears viewport emulation in finally; report now renders command, PRD, code, and documentation audit sections.</td><td class="pass">pass</td></tr>
+<tr><td>provider-backed free chat</td><td>Not implemented in P4; correctly remains P6 opt-in and is not claimed by code or report.</td><td class="not verified">not verified</td></tr></tbody></table>
+    </section>
+    <section>
+      <h2>文档审计</h2>
+      <table><thead><tr><th>区域</th><th>结论</th><th>状态</th></tr></thead><tbody><tr><td>Original PRD v1.0 vs active P4 PRD</td><td>Original product paths A-F remain the full product reference; P4 docs correctly scope the current stage to UX hardening and local/mock continuous dialogue.</td><td class="pass">pass</td></tr>
+<tr><td>Acceptance gates</td><td>P4 gates cover regression, empty state, feedback, workbench, provider/privacy, responsive screenshots, reports, and human review boundary.</td><td class="pass">pass</td></tr>
+<tr><td>Roadmap and handoff wording</td><td>Docs consistently warn not to claim P4B/P4C human acceptance or real external-provider default acceptance.</td><td class="pass">pass</td></tr>
+<tr><td>Historical reports</td><td>Earlier P4/P4B/P4C reports still preserve historical test counts; this final closure report is the current source of truth for the 71-test run.</td><td class="warning">warning</td></tr></tbody></table>
+    </section>
+    <section>
+      <h2>截图证据</h2>
+      <div class="grid"><figure><img src="p4_final_initial_1200.png" alt="Initial 1200 evidence"><figcaption>Initial 1200 evidence<br><code>p4_final_initial_1200.png</code></figcaption></figure>
+<figure><img src="p4_final_initial_1280.png" alt="Initial 1280 evidence"><figcaption>Initial 1280 evidence<br><code>p4_final_initial_1280.png</code></figcaption></figure>
+<figure><img src="p4_final_initial_1440.png" alt="Initial 1440 evidence"><figcaption>Initial 1440 evidence<br><code>p4_final_initial_1440.png</code></figcaption></figure>
+<figure><img src="p4_final_guided_completed_1440.png" alt="Guided example completed evidence"><figcaption>Guided example completed evidence<br><code>p4_final_guided_completed_1440.png</code></figcaption></figure>
+<figure><img src="p4_final_initial_1600.png" alt="Initial 1600 evidence"><figcaption>Initial 1600 evidence<br><code>p4_final_initial_1600.png</code></figcaption></figure>
+<figure><img src="p4_final_initial_1920.png" alt="Initial 1920 evidence"><figcaption>Initial 1920 evidence<br><code>p4_final_initial_1920.png</code></figcaption></figure>
+<figure><img src="p4_final_narrow_720.png" alt="Narrow 720 evidence"><figcaption>Narrow 720 evidence<br><code>p4_final_narrow_720.png</code></figcaption></figure>
+<figure><img src="p4_final_mobile_390.png" alt="Mobile 390 evidence"><figcaption>Mobile 390 evidence<br><code>p4_final_mobile_390.png</code></figcaption></figure>
+<figure><img src="p4_final_fc_free_first.png" alt="P4C-FC first free turn"><figcaption>P4C-FC first free turn<br><code>p4_final_fc_free_first.png</code></figcaption></figure>
+<figure><img src="p4_final_fc_free_second.png" alt="P4C-FC second free turn"><figcaption>P4C-FC second free turn<br><code>p4_final_fc_free_second.png</code></figcaption></figure>
+<figure><img src="p4_final_fc_status.png" alt="P4C-FC status evidence"><figcaption>P4C-FC status evidence<br><code>p4_final_fc_status.png</code></figcaption></figure>
+<figure><img src="p4_final_fc_artifact.png" alt="P4C-FC explicit artifact evidence"><figcaption>P4C-FC explicit artifact evidence<br><code>p4_final_fc_artifact.png</code></figcaption></figure>
+<figure><img src="p4_final_fc_mobile_restore.png" alt="P4C-FC mobile restored evidence"><figcaption>P4C-FC mobile restored evidence<br><code>p4_final_fc_mobile_restore.png</code></figcaption></figure></div>
+    </section>
+    <section>
+      <h2>未验证范围与审计意见</h2>
+      <ul><li>No real personal profile, raw private resume, raw private JD, or transcript was used.</li><li>No real external provider call was made.</li><li>No ASR, meeting platform, automatic application, SaaS login, billing, or multi-tenant path was tested.</li><li>This report does not decide final human UX approval.</li></ul>
+      <p>If every step passes and the linked regression commands pass, P4 automated closure evidence is sufficient for a human review checkpoint. It is not sufficient for productization, real-data, external-provider, or human acceptance claims.</p>
+    </section>
+  </main>
+</body>
+</html>

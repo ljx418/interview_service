@@ -1,137 +1,204 @@
-# JobPilot AI P4 UX 架构、差距与验收图说明
+# JobPilot AI P5 真实资料本地闭环架构、差距与验收图说明
 
-本文档是 `jobpilot-stage-gap-and-acceptance.drawio` 的文本镜像，便于代码审查和 diff。
+本文档是 `jobpilot-stage-gap-and-acceptance.drawio` 的文本镜像，便于代码审查和 diff。P4 已作为本地/mock Chatbox 体验冻结基线保留；本轮图示主线是 P5 真实资料本地闭环。
 
-本轮图示主线是 P4 UX 体验强化：目标 UX 架构、当前架构差距、开发及验收计划、项目里程碑、验收门槛、出门条件和审查证据。它不把 MCP、CLI、ASR、会议平台、自动海投或 SaaS 放入 P4 出门条件。
+P5 不把真实外部 provider、SaaS、ASR、会议平台、自动投递、MCP Server 或 CLI 放入出门条件。任何真实个人资料、真实外部调用、API Key、workspace 删除或不可逆迁移都必须先获得用户确认。
 
 ## 图示页结构
 
-P4 drawio 保持 5 页：
+P5 drawio 保持 6 页，不超过 8 页：
 
-1. P4 目标 UX 架构与当前差距；
-2. P4 前端页面功能角色与关联关系；
-3. P4 开发及验收计划；
-4. P4 项目里程碑、验收门槛与出门条件；
-5. 安全边界、状态标记与审查证据。
+1. P5 目标体验与当前差距；
+2. 当前架构与 P5 目标架构；
+3. 代码实体、分层结构与交互关系；
+4. P5 开发及验收计划；
+5. P5 项目里程碑、验收门槛与出门条件；
+6. 安全边界、状态标记、证据和后续阶段。
 
 颜色含义：
 
-- 绿色：已完成 / P0+P1+P2+P3 基线；
-- 黄色：P4 本阶段目标；
-- 灰色：P5+ 后续能力；
-- 红色：高风险人工确认或禁止路径；
-- 蓝色：用户、证据或说明性节点。
+- 绿色：已实现并冻结，包括 P0/P1/P2/P3/P4 本地/mock 基线；
+- 黄色：P5 本阶段自动化候选已通过、但仍待真实资料或人工体验冻结的能力；
+- 橙色：P5 中需要人工确认的高敏流程，例如真实资料授权、报告脱敏、导出确认、不可逆操作；
+- 灰色：P6/P7/P8+ 后续开发能力；
+- 红色：禁止路径、打回条件或必须审批的风险项；
+- 蓝色：用户动作、验收数据、截图证据或说明性节点。
 
-## 第 1 页 - P4 目标 UX 架构与当前差距
+## 第 1 页 - P5 目标体验与当前差距
 
-目标架构主链路：
+目标体验主链路：
 
 ```text
 User
-→ Experience Shell
-→ Conversation Plane
-  → Empty State Suggested Prompts
-  → Loading / Error Recovery
-→ Full-size Desktop Workbench / Workbench Plane
-→ Artifact Review Cards
-→ P0-P3 后端基线
-→ Evidence Plane
+→ 本地 Chatbox
+→ 上传/粘贴真实资料
+→ 粘贴/导入目标 JD
+→ 资料解析 + JD 解析
+→ questions_to_confirm 事实确认
+→ 申请包生成
+→ 编辑 / 重新生成
+→ 导出 Markdown/DOCX
+→ 围绕当前资料和 JD 多轮追问
 ```
 
 当前差距：
 
-- 首屏仍偏工程状态，P4 目标是 Chatbox 空状态 suggested prompts 优先；
-- Chatbox 可响应，但 P4 目标是反馈更自然，并包含 loading / error recovery；
-- 推进台已分离，但 P4 目标是只管理结果、确认项、版本和导出，并在 1200px、1440px、1600px、1920px 形成完整桌面工作台；
-- 产物卡仍有工程术语，P4 目标是求职语义优先，并区分 primary / secondary action；
-- P4 不改变 FastAPI、ChatCore、PiAgent、Domain Tools、Artifact 和 Export 的后端主链路。
-- 截图脚本必须隔离或清理 viewport emulation，避免污染人工审查浏览器。
+- P4 已完成示例路径和本地/mock Chatbox 体验冻结，P5 本地/mock + 脱敏 fixture 自动化候选已通过；
+- 当前仍缺少用户明确授权的真实资料路径、允许展示字段、人工体验记录和 final closure audit；
+- 本地连续对话已扩展到当前资料/JD/申请包上下文，但不代表 provider-backed 自由智能聊天；
+- provider opt-in 基础存在，但 P5 默认不得外呼真实 provider；
+- 报告必须脱敏，不能把真实个人资料或 API Key 写入证据。
 
-禁止路径：
+## 第 2 页 - 当前架构与 P5 目标架构
 
-- 前端生成求职内容；
-- 默认触发外部 provider；
-- 隐藏待确认项；
-- suggested prompts 与 composer 割裂；
-- 1200px 以上桌面宽度出现布局错误造成的大面积空白；
-- 截图脚本污染人工审查者浏览器 viewport；
-- 用静态原型冒充已实现。
+当前已实现基线：
 
-## 第 2 页 - P4 前端页面功能角色与关联关系
+```text
+React Chatbox
+→ FastAPI Agent Service
+→ ChatCore / PiAgent Adapter
+→ Domain Tools
+→ Artifact Versioning
+→ Export Service
+→ SQLite Workspace
+→ P4 Evidence
+```
 
-前端角色：
+P5 目标新增或改造的当前状态：
 
-- Mode / Provider Strip：展示示例模式、我的资料模式、mock 默认和 external 需确认；
-- Empty State Suggested Prompts：提供导入资料、粘贴 JD、生成申请包、准备面试等建议任务，点击后填入 composer 或触发对话；
-- Chat Timeline：展示用户消息、系统计划、loading / thinking、错误恢复和完成摘要；
-- Composer Dock：处理文本、上传和快捷任务；
-- Current Task Panel：展示当前阶段、下一步和缺口提示；
-- Artifact List / Artifact Card：展示岗位解析、匹配报告、申请包、面试准备，并突出 primary action；
-- Confirm / Export Bar：执行导出前确认和导出触发；
-- Responsive / Full-size Controller：约束 1200/1440/1600/1920/720/390 多档布局，390px 下 Workbench 不压缩 Chatbox，截图结束后清理 emulation。
+```text
+Real Data Intake Controller（脱敏 fixture 自动化候选通过，真实资料待复核）
+→ JD Intake and Gap Recovery（自动化候选通过，真实 JD 片段待复核）
+→ Fact Confirmation Loop（blocking/warning/optional 自动化通过，人工文案待复核）
+→ Application Package Edit/Regenerate Loop（核心链路通过，版本 UI 待人工复核）
+→ Export Preflight（自动化硬门槛通过，真实资料导出待脱敏复核）
+→ Local Context Snapshot（本地多轮追问通过，不代表 provider-backed 聊天）
+→ P5 Redacted Evidence（P5 HTML 报告已生成，final closure audit 待补）
+```
 
-页面规则：
+架构关系：
 
-- 不嵌套卡片；
-- 不让工程字段成为主内容；
-- 移动端不能用“可运行”替代“好用”；
-- 全尺寸桌面不能用“左侧窄栏 + 右侧空白”冒充工作台。
+- Chatbox 只做输入、展示、确认、编辑和导出触发；
+- FastAPI 负责请求边界、错误语义和 API 编排；
+- ChatCore 负责意图区分和上下文摘要；
+- Domain Tools 负责资料解析、JD 解析、匹配和申请包生成；
+- Artifact/Export/Storage 负责版本、确认项、导出和本地持久化；
+- Provider Policy Gate 负责保持 P5 默认不外呼。
 
-## 第 3 页 - P4 开发及验收计划
+## 第 3 页 - 代码实体、分层结构与交互关系
+
+必须在图中出现的具体代码实体：
+
+- `apps/chatbox/src/main.tsx`：Experience Shell、Conversation Plane、Workbench、Artifact/Export UI；P5 自动化候选通过，待人工体验冻结；
+- `apps/chatbox/src/styles.css`：多视口布局、按钮对齐、文本溢出和移动端可达性；P5 多视口截图已覆盖 1200/1440/1600/1920/720/390；
+- `services/api/main.py`：workspace、upload、chat、workflow、artifact、export API 边界；P5 本地/mock 候选通过，真实资料路径待复核；
+- `services/chat/core.py`：自由追问、状态查询、资料导入、JD 解析、生成/导出意图区分；普通追问不写 artifact 已自动化覆盖；
+- `services/workflows/p2_demo.py` 和 P5 本地闭环路径：从 examples flow 扩展到真实资料本地 flow；不得伪造真实资料通过；
+- `services/tools/`：Profile、Project、Job、Match、Application、Interview 等 Domain Tools；脱敏 fixture 通过，真实资料质量待复核；
+- Artifact/version/export/storage 相关服务：source refs、`questions_to_confirm`、版本和导出 preflight；blocking 导出门槛已自动化覆盖；
+- Provider runtime/policy：mock 默认，external provider 需 P6 opt-in；
+- `docs/reports/` 与截图脚本：P5 脱敏自动化验收证据。
+
+P5 默认复用现有接口：
+
+- workspace：`POST /api/workspace/init`、`GET /api/workspace/status`；
+- file intake：`POST /api/files/upload`、`POST /api/files/ingest-local`；
+- profile/project：`POST /api/profile/extract-facts`、`POST /api/project/create-card`；
+- job/match：`POST /api/job/parse-jd`、`POST /api/job/match-profile`；
+- application/export：`POST /api/application/create-package`、`POST /api/application/export-package`；
+- artifact：confirm、update、versions、restore、regenerate；
+- chat：chat sessions、`POST /api/chat/message`；
+- provider policy：P5 默认 mock/local，external provider 需 P6 opt-in。
+
+依赖方向：
+
+```text
+Chatbox UI
+→ FastAPI Routes
+→ ChatCore / Workflow Controller
+→ Domain Tools
+→ Artifact / Export / Storage
+→ Evidence
+```
+
+禁止关系：
+
+- Chatbox 直接调用 provider；
+- Chatbox 直接写 SQLite；
+- Provider raw output 未校验即写入 artifact；
+- Export Service 绕过 blocking confirmation；
+- Evidence 报告写入完整真实资料或 API Key。
+
+## 第 4 页 - P5 开发及验收计划
 
 执行顺序：
 
 ```text
-P4-M0 文档 / drawio / Gemini 包锁定
-→ P4-M1 Chatbox 空状态 suggested prompts
-→ P4-M2 对话反馈、loading 与错误恢复
-→ P4-M3 推进台与产物卡可读性、primary action
-→ P4-M4 状态、错误恢复、provider 语义
-→ P4-M5 响应式与可访问性冒烟
-→ P4-M5A 全尺寸桌面工作台与截图脚本隔离
-→ P4-M6 before/after 报告与冻结
+P5-M0 文档 / drawio / 风险边界锁定
+→ P5-M1 真实资料本地导入与解析 UX（自动化候选通过）
+→ P5-M2 JD 导入、解析和缺失信息恢复（自动化候选通过）
+→ P5-M3 事实确认与 questions_to_confirm 闭环（自动化候选通过）
+→ P5-M4 申请包生成、编辑、再生成和导出 preflight（自动化候选通过）
+→ P5-FC 围绕资料/JD/申请包的本地多轮追问（自动化候选通过）
+→ P5-M5 脱敏自动化验收报告、截图证据和 PRD 规格检视（自动化候选通过）
+→ P5-REAL 真实授权资料脱敏复核（待用户提供路径）
+→ P5-Freeze 回归复验、人工体验记录、final closure audit 和阶段冻结（未完成）
 ```
 
-每阶段都必须产生测试、截图或 PRD 规格检视证据；出现重大偏差必须打回计划。
+当前最新候选证据为 P5 HTML 报告、多视口真实截图、`.venv/bin/python -m pytest` 88 passed, 1 warning、前端 build 通过、drawio parse 通过和三身份合成资料 Chrome/CDP 可视化验收通过。出现隐私泄露、默认外呼、虚假验收或 P0-P4 基线退化时必须打回计划。
 
-## 第 4 页 - P4 项目里程碑、验收门槛与出门条件
+P5 当前采用路线 A：复用现有本地工具链并逐步加固。路线 B“P5 直接引入真实外部 provider”转入 P6 opt-in；路线 C“大规模重构前端/状态架构”仅在现有结构阻塞 P5-M1/M2 后局部采用。
 
-P4 门槛：
+## 第 5 页 - P5 项目里程碑、验收门槛与出门条件
 
-1. P0-P3 回归不退化；
-2. Chatbox 空状态任务入口清楚，suggested prompts 能进入 composer 或对话；
-3. 对话反馈可理解，包含 loading 和错误恢复 action；
-4. 推进台和产物卡可读，按钮主次清楚；
-5. provider、隐私和外呼语义不误导；
-6. 全尺寸响应式与基础可访问性，1200/1440/1600/1920 不留大面积空白，390px 下 Workbench 不压缩 Chatbox，截图脚本清理 emulation；
-7. Gemini 审查包、HTML 报告和 PRD 规格检视。
+P5 门槛：
+
+1. P0-P4 冻结基线不退化；
+2. 真实资料本地导入可理解；
+3. JD 解析与缺失信息恢复成立；
+4. 事实确认闭环可执行；
+5. 申请包生成、编辑、再生成和导出可信；
+6. 本地多轮追问不误触发工具；
+7. 隐私、provider 和报告不误导；
+8. 多视口体验和证据完整。
+
+自动化矩阵必须覆盖：
+
+- P5 real data local flow；
+- JD gap recovery；
+- confirmation gate；
+- application package edit/regenerate loop；
+- export preflight；
+- local dialogue；
+- privacy redaction；
+- HTML acceptance report；
+- drawio/docs consistency。
 
 最终出门条件：
 
-一个转行程序员不读文档也能完成：
-
 ```text
-导入资料 → 分析岗位 → 生成申请包 → 确认/编辑 → 导出
+导入资料 → 解析资料 → 导入 JD → 解析岗位 → 确认事实
+→ 生成申请包 → 编辑/重新生成 → 导出 → 围绕当前资料继续追问
 ```
 
-同时截图、测试、报告和人工体验记录齐全。
+P5 完成只代表真实资料本地闭环通过；不代表真实外部 provider 默认路径、SaaS、ASR、会议平台、自动投递或最终产品化发布已通过。
 
-## 第 5 页 - 安全边界、状态标记与审查证据
+## 第 6 页 - 安全边界、状态标记、证据和后续阶段
 
-P4 证据包：
+P5 证据包：
 
-- Chrome screenshots；
-- 1200/1440/1600/1920/720/390 多档截图；
-- P4 HTML report；
-- Gemini review package；
-- PRD review；
-- drawio XML parse；
-- README/TODO sync。
+- P5 HTML 自动化验收报告；
+- 1200/1440/1600/1920/720/390 多视口真实界面截图；
+- 资料导入、JD 解析、事实确认、申请包、编辑再生成、导出、多轮追问截图；
+- pytest 88 passed, 1 warning、frontend build、drawio XML parse、三身份合成资料 Chrome/CDP 可视化验收；
+- README/TODO/active docs 同步；
+- PRD 规格检视和虚假验收风险清单。
 
-审计原则：
+高风险边界：
 
-- 文档通过不等于实现通过；
-- Gemini 建议不等于人工体验通过；
-- 截图必须来自真实 Chrome；
-- 截图脚本不能污染人工审查浏览器 viewport；
-- 真实个人资料、真实外部调用、API Key、不可逆迁移和逐字代答必须人工确认。
+- 真实个人资料必须用户授权；
+- 自动化报告必须脱敏；
+- 真实外部 provider 必须进入 P6 opt-in；
+- API Key 不得进入仓库、报告、日志或截图；
+- ASR、会议平台、自动投递、SaaS、MCP/CLI 不是 P5 出门条件；
+- 文档通过不等于实现通过，drawio 方向认可不等于功能验收通过。

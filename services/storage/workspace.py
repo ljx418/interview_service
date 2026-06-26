@@ -52,11 +52,11 @@ def init_workspace(
     if existing:
         workspace = row_to_dict(existing) or {}
         conn.execute(
-            "UPDATE workspace SET name=?, llm_provider=?, privacy_mode=?, updated_at=? WHERE id=?",
-            (name, llm_provider, privacy_mode, stamp, workspace["id"]),
+            "UPDATE workspace SET name=?, root_path=?, llm_provider=?, privacy_mode=?, updated_at=? WHERE id=?",
+            (name, str(root), llm_provider, privacy_mode, stamp, workspace["id"]),
         )
         conn.commit()
-        workspace.update({"name": name, "llm_provider": llm_provider, "privacy_mode": privacy_mode})
+        workspace.update({"name": name, "root_path": str(root), "llm_provider": llm_provider, "privacy_mode": privacy_mode})
         WORKSPACE_INDEX[workspace["id"]] = root
         return {**workspace, "created": False, "next_actions": ["上传简历", "添加项目 README", "粘贴目标岗位 JD"]}
 

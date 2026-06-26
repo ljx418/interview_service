@@ -23,6 +23,16 @@ class ProviderCheckRequest(BaseModel):
     confirm_external_call: bool = False
 
 
+class ProviderRuntimeConfigRequest(BaseModel):
+    provider: Literal["mock", "openai_compatible", "openai"] = "mock"
+    preset: Literal["", "minimax", "deepseek"] = ""
+    base_url: str = ""
+    api_key: str = ""
+    model: str = ""
+    timeout_seconds: int = 30
+    max_retries: int = 1
+
+
 class ExtractFactsRequest(BaseModel):
     workspace_id: str
     document_ids: list[str] | None = None

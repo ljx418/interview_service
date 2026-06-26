@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>JobPilot AI P4B 真实使用场景自动化验收报告</title>
+    <style>
+      :root {
+        --bg: #f4f7fb;
+        --surface: #ffffff;
+        --soft: #f8fafc;
+        --ink: #111827;
+        --muted: #5b6575;
+        --line: #dbe3ee;
+        --blue: #1d4ed8;
+        --green: #15803d;
+        --amber: #a16207;
+        --red: #b91c1c;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+        line-height: 1.6;
+      }
+      main {
+        width: min(1280px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 32px 0 72px;
+      }
+      header, section {
+        margin-bottom: 18px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+        padding: 24px;
+      }
+      h1, h2, h3 { margin: 0 0 10px; line-height: 1.25; }
+      h1 { font-size: 30px; }
+      h2 { font-size: 22px; }
+      h3 { font-size: 16px; }
+      p { margin: 0 0 12px; color: var(--muted); }
+      code {
+        border-radius: 6px;
+        background: #e5edf7;
+        padding: 2px 5px;
+        color: var(--ink);
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th, td {
+        border-bottom: 1px solid var(--line);
+        padding: 10px 8px;
+        text-align: left;
+        vertical-align: top;
+      }
+      th { color: var(--ink); }
+      td, li { color: var(--muted); }
+      ul { margin: 8px 0 0; padding-left: 20px; }
+      figure { margin: 0; }
+      img {
+        display: block;
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: white;
+      }
+      figcaption {
+        margin-top: 8px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .eyebrow {
+        color: var(--blue);
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+      }
+      .grid {
+        display: grid;
+        gap: 16px;
+      }
+      .summary { grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
+      .two { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+      .shots { grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); }
+      .card {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--soft);
+        padding: 16px;
+      }
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 999px;
+        padding: 4px 10px;
+        font-size: 12px;
+        font-weight: 800;
+      }
+      .pass { background: #ecfdf3; color: var(--green); }
+      .warn { background: #fffbeb; color: var(--amber); }
+      .risk { background: #fef2f2; color: var(--red); }
+      .info { background: #eff6ff; color: var(--blue); }
+      .path { overflow-wrap: anywhere; font-size: 13px; }
+      .callout {
+        border-left: 4px solid var(--amber);
+        background: #fffbeb;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <div class="eyebrow">Automated Real-Scenario Acceptance · 2026-06-23</div>
+        <h1>JobPilot AI P4B 真实使用场景自动化验收报告</h1>
+        <p>
+          本报告记录一次重新执行的浏览器自动化验收：使用独立 headless Chrome DevTools target 打开本地 Chatbox，
+          模拟用户首屏理解、缺资料错误恢复、运行示例路径、查看推进台和多宽度响应式体验。
+        </p>
+        <p>
+          本报告只证明自动化路径和截图证据，不替代人工主观体验认可；真实个人资料和真实外部 provider 默认路径仍未完成验收。
+        </p>
+        <div class="grid summary">
+          <div class="card">
+            <span class="pill pass">截图重采完成</span>
+            <h3>浏览器证据</h3>
+            <p>Chrome CDP 覆盖 1200 / 1280 / 1440 / 1600 / 1920 / 720 / 390 宽度。</p>
+          </div>
+          <div class="card">
+            <span class="pill pass">回归通过</span>
+            <h3>自动化测试</h3>
+            <p>历史快照：<code>.venv/bin/python -m pytest</code>：63 passed，1 warning。<br /><code>npm --prefix apps/chatbox run build</code>：passed。当前 P4 final closure 回归结果见 <code>P4_FINAL_CLOSURE_AUTOMATED_ACCEPTANCE_REPORT.html</code>：71 passed。</p>
+          </div>
+          <div class="card">
+            <span class="pill warn">人工待确认</span>
+            <h3>体验结论</h3>
+            <p>自动化截图显示关键路径可达；是否好用、好看、愿意长期使用仍需人工审查。</p>
+          </div>
+        </div>
+      </header>
+
+      <section>
+        <h2>目标架构</h2>
+        <div class="grid two">
+          <div class="card">
+            <h3>前端体验平面</h3>
+            <ul>
+              <li>Experience Shell：展示 workspace、模式、provider 和隐私状态。</li>
+              <li>Conversation Plane：承载 suggested prompts、用户输入、loading、错误恢复和结果反馈。</li>
+              <li>Full-size Desktop Workbench Controller：管理 1200px 以上桌面信息密度。</li>
+              <li>Workbench Plane：只展示当前目标、产物、确认项、版本和导出。</li>
+              <li>Responsive Controller：覆盖桌面、窄屏和移动端，不让 Workbench 压缩主对话。</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>后端 Agent Tool 架构</h3>
+            <ul>
+              <li>FastAPI routes 提供 workspace、chat、workflow、artifact、export 和 provider API。</li>
+              <li>ChatCore / PiAgent adapter 负责意图和工具计划，不直接写业务数据。</li>
+              <li>Python Domain Tools 负责资料抽取、JD 解析、匹配、申请包、面试准备和复盘。</li>
+              <li>SQLite workspace 保存 artifact、artifact_version、chat_session、provider_invocation 和导出路径。</li>
+              <li>mock provider 是默认验收基线；外部 provider 必须人工确认。</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>当前架构实现</h2>
+        <table>
+          <thead>
+            <tr><th>模块</th><th>当前实现</th><th>自动化证据</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>首屏任务入口</td>
+              <td>Chatbox 空状态提供导入资料、粘贴 JD、生成申请包、准备面试等 suggested prompts。</td>
+              <td>初始态 1200/1440/1600/1920 截图。</td>
+            </tr>
+            <tr>
+              <td>错误恢复</td>
+              <td>缺少 JD 时显示“请先粘贴一个 JD”和补充 JD / 跑示例路径动作。</td>
+              <td>错误恢复 1200/1280 截图。</td>
+            </tr>
+            <tr>
+              <td>示例路径</td>
+              <td>运行 examples 后生成申请包草稿和推进台产物卡。</td>
+              <td>完成态 1200/1280/1440/1600/1920 截图。</td>
+            </tr>
+            <tr>
+              <td>全尺寸桌面</td>
+              <td>桌面以任务上下文、对话区、推进台三栏组织，不把窄屏布局停靠在左侧。</td>
+              <td>1200/1440/1600/1920 截图。</td>
+            </tr>
+            <tr>
+              <td>窄屏和移动端</td>
+              <td>720px 和 390px 下主对话优先，推进台以抽屉/次级区域访问。</td>
+              <td>720/390 截图。</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>自动化用户场景路径</h2>
+        <table>
+          <thead>
+            <tr><th>步骤</th><th>模拟用户动作</th><th>期望结果</th><th>结果</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td>打开本地 Chatbox</td><td>看到本地隐私状态、示例模式、suggested prompts 和 Workbench 空状态。</td><td><span class="pill pass">通过</span></td></tr>
+            <tr><td>2</td><td>输入“生成申请包”但没有 JD</td><td>页面不静默失败，显示补充 JD / 跑示例路径恢复动作。</td><td><span class="pill pass">通过</span></td></tr>
+            <tr><td>3</td><td>点击运行示例路径</td><td>示例资料跑通并生成申请包草稿、确认项和产物卡。</td><td><span class="pill pass">通过</span></td></tr>
+            <tr><td>4</td><td>切换桌面宽度</td><td>1200px 以上保持完整工作台结构。</td><td><span class="pill pass">通过</span></td></tr>
+            <tr><td>5</td><td>切换窄屏 / 移动端宽度</td><td>720px / 390px 下主对话和推进台入口可达。</td><td><span class="pill pass">通过</span></td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>截图证据</h2>
+        <div class="grid shots">
+          <figure>
+            <img src="evidence/p4_workbench_initial_1200.png" alt="1200px 初始态工作台" />
+            <figcaption>1200px 初始态：任务上下文、对话区、推进台同时可见。</figcaption>
+          </figure>
+          <figure>
+            <img src="evidence/p4_workbench_initial_1440.png" alt="1440px 初始态工作台" />
+            <figcaption>1440px 初始态：桌面信息密度提高，不是窄屏布局放大。</figcaption>
+          </figure>
+          <figure>
+            <img src="evidence/p4_workbench_initial_1920.png" alt="1920px 初始态工作台" />
+            <figcaption>1920px 初始态：全尺寸桌面仍保持工作台结构。</figcaption>
+          </figure>
+          <figure>
+            <img src="evidence/p4_workbench_error_recovery_1200.png" alt="1200px 错误恢复态" />
+            <figcaption>缺资料恢复：生成申请包前提示补充 JD 或运行示例路径。</figcaption>
+          </figure>
+          <figure>
+            <img src="evidence/p4_workbench_completed_1200.png" alt="1200px 示例完成态" />
+            <figcaption>1200px 完成态：推进台展示申请包草稿、确认项和导出入口。</figcaption>
+          </figure>
+          <figure>
+            <img src="evidence/p4_workbench_completed_1920.png" alt="1920px 示例完成态" />
+            <figcaption>1920px 完成态：三栏结构仍成立，产物卡可读。</figcaption>
+          </figure>
+          <figure>
+            <img src="evidence/p4_workbench_narrow_720.png" alt="720px 窄屏推进台" />
+            <figcaption>720px 窄屏：推进台以抽屉/次级入口访问，不挤压主对话。</figcaption>
+          </figure>
+          <figure>
+            <img src="evidence/p4_workbench_mobile_390.png" alt="390px 移动端推进台" />
+            <figcaption>390px 移动端：核心对话和推进台入口可达。</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section>
+        <h2>自动化验收结果</h2>
+        <table>
+          <thead>
+            <tr><th>验收项</th><th>结果</th><th>证据</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>P0-P4 回归</td><td><span class="pill pass">通过</span></td><td>历史快照：<code>.venv/bin/python -m pytest</code>：63 passed，1 warning；当前 P4 final closure：71 passed。</td></tr>
+            <tr><td>前端构建</td><td><span class="pill pass">通过</span></td><td><code>npm --prefix apps/chatbox run build</code>：built in 9.24s。</td></tr>
+            <tr><td>Chrome 截图脚本</td><td><span class="pill pass">通过</span></td><td><code>scripts/capture_p4_workbench_evidence.mjs</code> 创建独立 target，并在 finally 清理 viewport/touch emulation。</td></tr>
+            <tr><td>截图尺寸</td><td><span class="pill pass">通过</span></td><td><code>file docs/reports/evidence/p4_workbench_*.png</code> 确认 1200/1280/1440/1600/1920/720/390。</td></tr>
+            <tr><td>人工体验认可</td><td><span class="pill warn">未自动验收</span></td><td>需要使用 <code>docs/active/stage-reviews/P4B_HUMAN_EXPERIENCE_REVIEW_CHECKLIST.md</code> 人工评分。</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>证据文件</h2>
+        <ul>
+          <li class="path">docs/reports/evidence/p4_workbench_initial_1200.png</li>
+          <li class="path">docs/reports/evidence/p4_workbench_initial_1280.png</li>
+          <li class="path">docs/reports/evidence/p4_workbench_initial_1440.png</li>
+          <li class="path">docs/reports/evidence/p4_workbench_initial_1600.png</li>
+          <li class="path">docs/reports/evidence/p4_workbench_initial_1920.png</li>
+          <li class="path">docs/reports/evidence/p4_workbench_error_recovery_1200.png</li>
+          <li class="path">docs/reports/evidence/p4_workbench_error_recovery_1280.png</li>
+          <li class="path">docs/reports/evidence/p4_workbench_completed_1200.png</li>
+          <li class="path">docs/reports/evidence/p4_workbench_completed_1280.png</li>
+          <li class="path">docs/reports/evidence/p4_workbench_completed_1440.png</li>
+          <li class="path">docs/reports/evidence/p4_workbench_completed_1600.png</li>
+          <li class="path">docs/reports/evidence/p4_workbench_completed_1920.png</li>
+          <li class="path">docs/reports/evidence/p4_workbench_narrow_720.png</li>
+          <li class="path">docs/reports/evidence/p4_workbench_mobile_390.png</li>
+        </ul>
+      </section>
+
+      <section class="callout">
+        <h2>未验证范围与防虚假验收</h2>
+        <ul>
+          <li>本轮使用 examples 匿名真实感数据，不等于真实个人简历、真实 JD 或真实 transcript 验收通过。</li>
+          <li>本轮没有默认触发真实外部 provider 调用，也没有验证真实 API Key 的生产质量。</li>
+          <li>本报告不能替代人工主观体验认可，不能写成“P4B 已被人工体验认可”。</li>
+          <li>P4B 不包含 MCP、CLI、ASR、会议平台、自动投递、SaaS 登录、多租户或 Billing。</li>
+          <li>如需使用真实资料或外部模型，必须先取得人工确认并另行记录受控验收范围。</li>
+        </ul>
+      </section>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,90 @@
+{
+  "name": "P4C-FC Chatbox Continuous Dialogue Acceptance",
+  "goal": "Verify the local/mock Chatbox can support free multi-turn dialogue, workspace status queries, explicit tool execution, session restore, and responsive evidence without claiming real external-provider acceptance.",
+  "url": "http://127.0.0.1:5173/?workspace_root=/mnt/c/workspace/interview_service/.tmp/p4c_fc_browser_workspace",
+  "targetArchitecture": [
+    "Chatbox UI stays a thin browser client for conversation, uploads, mode/provider status, and artifact display.",
+    "Chat Session State stores user and assistant messages for restore after refresh.",
+    "Chat Intent Router separates free local dialogue, status/next-step replies, and explicit domain tool intents.",
+    "Domain Tools write artifacts only for explicit profile, JD, package, or interview requests.",
+    "Provider-backed free chat remains a later opt-in path and is not used by this default local/mock acceptance."
+  ],
+  "currentImplementation": [
+    "React/Vite Chatbox initializes a local workspace and chat session through FastAPI.",
+    "KeywordChatCore handles local deterministic free dialogue and tool routing.",
+    "Workspace artifacts and chat messages are persisted in the local SQLite workspace.",
+    "Browser automation uses Chrome DevTools Protocol screenshots and clears viewport emulation at the end.",
+    "The UI labels the default privacy boundary as local/mock and external model not called."
+  ],
+  "acceptanceCriteria": [
+    "The first free-chat turn produces an assistant reply and no artifact rail is required.",
+    "A second follow-up can continue the conversation without forced tool execution.",
+    "A status query returns the current workspace state without writing a new artifact.",
+    "Only an explicit profile request generates a career facts artifact.",
+    "Refreshing the page restores the previous conversation.",
+    "Desktop and mobile screenshots are captured from the actual running UI.",
+    "The report does not claim human acceptance, real personal-data acceptance, or real external-provider acceptance."
+  ],
+  "prdReview": [
+    {
+      "requirement": "P4C-FC: at least two free follow-up turns without forced artifact writes.",
+      "evidence": "Desktop screenshots show free-chat first turn and follow-up before explicit tool execution.",
+      "status": "PASS for local/mock automated path"
+    },
+    {
+      "requirement": "P4 Gate 2: status/next-step questions should return understandable workspace replies.",
+      "evidence": "Status-query screenshot waits for current workspace summary text.",
+      "status": "PASS for automated scenario"
+    },
+    {
+      "requirement": "P4 Gate 2: explicit tool intent still generates the expected artifact.",
+      "evidence": "Explicit profile request waits for career facts text and captures artifact/workbench state.",
+      "status": "PASS for profile extraction path"
+    },
+    {
+      "requirement": "P4 Gate 4: provider and privacy semantics must not mislead.",
+      "evidence": "Header and context panel state local/mock default and external model not called.",
+      "status": "PASS for default path"
+    },
+    {
+      "requirement": "P4 final gate requires human experience review.",
+      "evidence": "This report is automated browser evidence only.",
+      "status": "NOT A HUMAN ACCEPTANCE"
+    }
+  ],
+  "unverifiedScope": [
+    "No real external provider call was made.",
+    "No real personal profile or raw private data was used.",
+    "No ASR, meeting platform, automatic job application, SaaS login, billing, or multi-tenant path was tested.",
+    "This report does not replace the user's human experience review."
+  ],
+  "auditOpinion": "Automated acceptance may support P4C-FC local/mock readiness only if all steps pass and screenshots match the actual UI. Any provider-backed or real-data claim remains blocked until separate confirmation and acceptance.",
+  "viewports": [
+    { "name": "desktop", "width": 1440, "height": 980 },
+    { "name": "mobile", "width": 390, "height": 844, "mobile": true }
+  ],
+  "steps": [
+    { "name": "Open Chatbox", "action": "goto", "url": "http://127.0.0.1:5173/?workspace_root=/mnt/c/workspace/interview_service/.tmp/p4c_fc_browser_workspace" },
+    { "name": "Wait for local workspace", "action": "waitText", "text": "本地就绪", "timeoutMs": 15000 },
+    { "name": "Initial desktop state", "action": "screenshot", "file": "p4c_fc_desktop_initial.png", "viewport": "desktop" },
+    { "name": "Start free job-search chat", "action": "clickText", "text": "自由聊求职方向", "viewport": "desktop" },
+    { "name": "Wait for first free-chat reply", "action": "waitText", "text": "已收到你的补充", "timeoutMs": 15000, "viewport": "desktop" },
+    { "name": "Free-chat first turn", "action": "screenshot", "file": "p4c_fc_free_chat_first_turn.png", "viewport": "desktop" },
+    { "name": "Fill follow-up question", "action": "fill", "selector": "textarea[aria-label='对话输入框']", "value": "继续，我下一步应该先补 React 还是项目经历？", "viewport": "desktop" },
+    { "name": "Send follow-up", "action": "clickText", "text": "发送任务", "viewport": "desktop" },
+    { "name": "Wait for next-step reply", "action": "waitText", "text": "下一步", "timeoutMs": 15000, "viewport": "desktop" },
+    { "name": "Free-chat second turn", "action": "screenshot", "file": "p4c_fc_free_chat_second_turn.png", "viewport": "desktop" },
+    { "name": "Fill status query", "action": "fill", "selector": "textarea[aria-label='对话输入框']", "value": "当前进展如何？有哪些产物？", "viewport": "desktop" },
+    { "name": "Send status query", "action": "clickText", "text": "发送任务", "viewport": "desktop" },
+    { "name": "Wait for status summary", "action": "waitText", "text": "当前还没有生成求职产物", "timeoutMs": 15000, "viewport": "desktop" },
+    { "name": "Status query state", "action": "screenshot", "file": "p4c_fc_status_query.png", "viewport": "desktop" },
+    { "name": "Fill explicit profile request", "action": "fill", "selector": "textarea[aria-label='对话输入框']", "value": "请整理资料，生成职业事实。", "viewport": "desktop" },
+    { "name": "Send explicit profile request", "action": "clickText", "text": "发送任务", "viewport": "desktop" },
+    { "name": "Wait for career facts artifact", "action": "waitText", "text": "职业事实", "timeoutMs": 15000, "viewport": "desktop" },
+    { "name": "Explicit tool artifact state", "action": "screenshot", "file": "p4c_fc_explicit_tool_artifact.png", "viewport": "desktop" },
+    { "name": "Refresh page for restore", "action": "goto", "url": "http://127.0.0.1:5173/?workspace_root=/mnt/c/workspace/interview_service/.tmp/p4c_fc_browser_workspace", "viewport": "desktop" },
+    { "name": "Wait for restored conversation", "action": "waitText", "text": "请整理资料，生成职业事实", "timeoutMs": 15000, "viewport": "desktop" },
+    { "name": "Session restore evidence", "action": "screenshot", "file": "p4c_fc_session_restore.png", "viewport": "desktop" },
+    { "name": "Mobile restored layout", "action": "screenshot", "file": "p4c_fc_mobile_restored.png", "viewport": "mobile" }
+  ]
+}

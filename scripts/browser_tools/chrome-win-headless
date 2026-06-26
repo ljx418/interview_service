@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+CHROME_PATH="${CHROME_PATH:-/mnt/c/Program Files/Google/Chrome/Application/chrome.exe}"
+CHROME_DEBUG_PORT="${CHROME_DEBUG_PORT:-9223}"
+CHROME_USER_DATA_DIR="${CHROME_USER_DATA_DIR:-/tmp/jobpilot-chrome-profile-${CHROME_DEBUG_PORT}}"
+
+exec "$CHROME_PATH" \
+  --headless=new \
+  --disable-gpu \
+  --remote-debugging-address=127.0.0.1 \
+  --remote-debugging-port="$CHROME_DEBUG_PORT" \
+  --user-data-dir="$CHROME_USER_DATA_DIR" \
+  --no-first-run \
+  --no-default-browser-check \
+  "$@"

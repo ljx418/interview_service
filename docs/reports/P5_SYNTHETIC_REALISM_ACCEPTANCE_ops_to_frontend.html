@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>P5-SYNTHETIC 真实感合成资料闭环验收 - 运营数据分析转前端 - Browser Acceptance Report</title>
+  <style>
+    body { margin: 0; font: 15px/1.55 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #1f2933; background: #f6f8fb; }
+    header, main { max-width: 1120px; margin: 0 auto; padding: 28px; }
+    header { padding-top: 36px; }
+    h1 { margin: 0 0 10px; font-size: 30px; letter-spacing: 0; }
+    h2 { margin: 28px 0 12px; font-size: 19px; }
+    .meta { color: #52606d; }
+    .badge { display: inline-block; padding: 5px 10px; border-radius: 6px; font-weight: 700; background: #d9f9e6; color: #0f6b3d; }
+    section { background: #fff; border: 1px solid #d9e2ec; border-radius: 8px; padding: 18px; margin: 18px 0; }
+    table { width: 100%; border-collapse: collapse; background: #fff; }
+    th, td { text-align: left; border-bottom: 1px solid #e4e7eb; padding: 10px; vertical-align: top; }
+    th { color: #52606d; font-size: 13px; }
+    code { background: #eef2f7; padding: 2px 5px; border-radius: 4px; }
+    .passed { color: #0f6b3d; font-weight: 700; }
+    .failed { color: #a61b1b; font-weight: 700; }
+    .warning { color: #8a4b0f; font-weight: 700; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+    figure { margin: 0; border: 1px solid #d9e2ec; border-radius: 8px; overflow: hidden; background: #fff; }
+    img { display: block; width: 100%; height: auto; border-bottom: 1px solid #d9e2ec; }
+    figcaption { padding: 10px 12px; color: #52606d; font-size: 13px; }
+    pre { white-space: pre-wrap; overflow-wrap: anywhere; background: #fff4f4; color: #7f1d1d; padding: 12px; border-radius: 6px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>P5-SYNTHETIC 真实感合成资料闭环验收 - 运营数据分析转前端</h1>
+    <p><span class="badge">passed</span></p>
+    <p class="meta">使用多身份合成资料加强 P5 本地资料闭环验收真实性；本场景不使用真实个人资料，不代表 P5-REAL 真实个人资料路径通过。</p>
+    <p class="meta">Started: 2026-06-26T13:51:56.992Z · Ended: 2026-06-26T13:52:12.025Z · Report: <code>/mnt/c/workspace/interview_service/docs/reports/P5_SYNTHETIC_REALISM_ACCEPTANCE_ops_to_frontend.html</code></p>
+  </header>
+  <main>
+    <section>
+      <h2>目标架构</h2>
+      <ul><li>Chatbox UI：展示本地资料入口、事实确认、申请包产物、导出和连续追问状态。</li><li>FastAPI API：复用 workspace、ingest-local、profile、job、application、artifact 和 export 接口。</li><li>JobPilot Domain Tools：从用户指定文件抽取事实、项目证据、岗位要求、匹配报告和申请包。</li><li>Provider Policy Gate：P5-REAL 强制 mock/local；真实外部 provider 转入 P6 opt-in。</li><li>Evidence Layer：Chrome/CDP 截图、脱敏 HTML 报告、PRD 规格检视和隐私审计。</li></ul>
+      <h2>当前实现</h2>
+      <ul><li>资料来源为 examples/p5_synthetic_personas 下的合成简历、合成项目资料和合成 JD。</li><li>真实资料路径只来自 JOBPILOT_REAL_RESUME_PATH、JOBPILOT_REAL_PROJECT_PATH、JOBPILOT_REAL_JD_PATH。</li><li>脚本生成临时 .tmp scenario；真实原文和绝对路径不得进入仓库文档或最终报告正文。</li><li>浏览器截图前注入 redacted summary 样式，隐藏消息正文、资料预览、source quote 和长文本。</li><li>未确认 blocking questions_to_confirm 时导出必须失败；确认事实后允许 Markdown/DOCX 导出。</li></ul>
+    </section>
+    <section>
+      <h2>自动化步骤</h2>
+      <table><thead><tr><th>#</th><th>步骤</th><th>动作</th><th>结果</th></tr></thead><tbody><tr><td>1</td><td>Open Chatbox</td><td><code>goto</code></td><td class="passed">passed</td></tr>
+<tr><td>2</td><td>Wait for local workspace</td><td><code>waitText</code></td><td class="passed">passed</td></tr>
+<tr><td>3</td><td>Provider guard</td><td><code>evaluate</code></td><td class="passed">passed</td></tr>
+<tr><td>4</td><td>Enable redacted screenshot mode</td><td><code>evaluate</code></td><td class="passed">passed</td></tr>
+<tr><td>5</td><td>Initial redacted P5-REAL state</td><td><code>screenshot</code></td><td class="passed">passed</td></tr>
+<tr><td>6</td><td>Ingest authorized local materials</td><td><code>evaluate</code></td><td class="passed">passed</td></tr>
+<tr><td>7</td><td>Fill authorized JD</td><td><code>fill</code></td><td class="passed">passed</td></tr>
+<tr><td>8</td><td>Send JD</td><td><code>clickText</code></td><td class="passed">passed</td></tr>
+<tr><td>9</td><td>Wait JD parsed</td><td><code>waitText</code></td><td class="passed">passed</td></tr>
+<tr><td>10</td><td>JD and match redacted evidence</td><td><code>screenshot</code></td><td class="passed">passed</td></tr>
+<tr><td>11</td><td>Fill package request</td><td><code>fill</code></td><td class="passed">passed</td></tr>
+<tr><td>12</td><td>Send package request</td><td><code>clickText</code></td><td class="passed">passed</td></tr>
+<tr><td>13</td><td>Wait package generated</td><td><code>waitText</code></td><td class="passed">passed</td></tr>
+<tr><td>14</td><td>Package needs confirmation redacted evidence</td><td><code>screenshot</code></td><td class="passed">passed</td></tr>
+<tr><td>15</td><td>Try export before confirmation</td><td><code>evaluate</code></td><td class="passed">passed</td></tr>
+<tr><td>16</td><td>Wait export blocked</td><td><code>waitText</code></td><td class="passed">passed</td></tr>
+<tr><td>17</td><td>Blocked export redacted evidence</td><td><code>screenshot</code></td><td class="passed">passed</td></tr>
+<tr><td>18</td><td>Confirm package facts</td><td><code>evaluate</code></td><td class="passed">passed</td></tr>
+<tr><td>19</td><td>Wait package confirmed</td><td><code>waitText</code></td><td class="passed">passed</td></tr>
+<tr><td>20</td><td>Confirmed package redacted evidence</td><td><code>screenshot</code></td><td class="passed">passed</td></tr>
+<tr><td>21</td><td>Export after confirmation</td><td><code>evaluate</code></td><td class="passed">passed</td></tr>
+<tr><td>22</td><td>Wait export completed</td><td><code>waitText</code></td><td class="passed">passed</td></tr>
+<tr><td>23</td><td>Export completed redacted evidence</td><td><code>screenshot</code></td><td class="passed">passed</td></tr>
+<tr><td>24</td><td>Export completed 1200 redacted evidence</td><td><code>screenshot</code></td><td class="passed">passed</td></tr>
+<tr><td>25</td><td>Export completed 1600 redacted evidence</td><td><code>screenshot</code></td><td class="passed">passed</td></tr>
+<tr><td>26</td><td>Export completed 1920 redacted evidence</td><td><code>screenshot</code></td><td class="passed">passed</td></tr>
+<tr><td>27</td><td>Narrow exported layout redacted evidence</td><td><code>screenshot</code></td><td class="passed">passed</td></tr>
+<tr><td>28</td><td>Mobile exported layout redacted evidence</td><td><code>screenshot</code></td><td class="passed">passed</td></tr></tbody></table>
+
+    </section>
+    <section>
+      <h2>验收标准</h2>
+      <ul><li>资料必须明确标注为合成，不得在报告中写成真实个人资料验收。</li><li>只读取用户指定的三个文件，不递归扫描个人目录。</li><li>文本抽取质量通过，不把空文本、乱码或二进制噪声写成解析成功。</li><li>P5-REAL 使用 mock/local provider，不配置、不调用 MiniMax、DeepSeek 或 OpenAI-compatible。</li><li>完成资料导入、JD 解析、匹配报告、申请包、导出拦截、事实确认、导出和连续追问。</li><li>报告截图只展示脱敏摘要；不得出现联系方式、账号、API Key、私密链接或未授权长原文。</li><li>报告明确 P5 尚未因本步骤自动冻结，P5-Freeze 仍需最终回归、人工体验记录和 final closure audit。</li></ul>
+    </section>
+    <section>
+      <h2>命令结果</h2>
+      <table><thead><tr><th>命令</th><th>状态</th><th>证据</th></tr></thead><tbody><tr><td><code>scripts/generate_p5_real_data_acceptance.py</code></td><td class="planned">planned</td><td>生成临时场景前完成路径、provider 和文本抽取质量检查。</td></tr>
+<tr><td><code>node scripts/browser_tools/browser-acceptance.mjs --scenario .tmp/p5-real-data-closure.scenario.json</code></td><td class="pending">pending</td><td>执行真实界面截图并生成 HTML 报告。</td></tr></tbody></table>
+    </section>
+    <section>
+      <h2>PRD 规格检视</h2>
+      <table><thead><tr><th>PRD / Gate 要求</th><th>证据</th><th>结论</th></tr></thead><tbody><tr><td>P5-REAL 使用真实授权资料完成本地闭环。</td><td>场景由三个用户指定文件路径生成，且不递归扫描目录。</td><td class="">PENDING UNTIL RUN</td></tr>
+<tr><td>P5 默认不调用真实外部 provider。</td><td>Provider guard 在浏览器场景开始时检查 provider/status。</td><td class="">PENDING UNTIL RUN</td></tr>
+<tr><td>报告必须脱敏。</td><td>截图前注入 redacted summary 样式，并在报告中列出隐私边界。</td><td class="">PENDING UNTIL RUN</td></tr>
+<tr><td>blocking confirmation 未处理不得导出。</td><td>场景先触发未确认导出失败，再确认事实并导出。</td><td class="">PENDING UNTIL RUN</td></tr></tbody></table>
+    </section>
+    <section>
+      <h2>代码检视</h2>
+      <table><thead><tr><th>区域</th><th>结论</th><th>级别</th></tr></thead><tbody><tr><td colspan="3">Scenario did not define code review items.</td></tr></tbody></table>
+    </section>
+    <section>
+      <h2>文档审计</h2>
+      <table><thead><tr><th>区域</th><th>结论</th><th>状态</th></tr></thead><tbody><tr><td>P5/P6 边界</td><td>P5-REAL 不启用真实 provider；provider-backed 能力仍属于 P6 opt-in。</td><td class="pass">pass</td></tr>
+<tr><td>P5.5 职业画像</td><td>职业画像与能力评估不插入 P5 冻结范围，作为 P5.5 候选阶段。</td><td class="pass">pass</td></tr>
+<tr><td>合成资料边界</td><td>该 persona 用于覆盖不同背景和目标岗位，不证明真实个人资料路径通过。</td><td class="pass">pass</td></tr></tbody></table>
+    </section>
+    <section>
+      <h2>截图证据</h2>
+      <div class="grid"><figure><img src="p5-synthetic-realism-ops_to_frontend-evidence/p5_real_initial_redacted.png" alt="Initial redacted P5-REAL state"><figcaption>Initial redacted P5-REAL state<br><code>p5-synthetic-realism-ops_to_frontend-evidence/p5_real_initial_redacted.png</code></figcaption></figure>
+<figure><img src="p5-synthetic-realism-ops_to_frontend-evidence/p5_real_jd_match_redacted.png" alt="JD and match redacted evidence"><figcaption>JD and match redacted evidence<br><code>p5-synthetic-realism-ops_to_frontend-evidence/p5_real_jd_match_redacted.png</code></figcaption></figure>
+<figure><img src="p5-synthetic-realism-ops_to_frontend-evidence/p5_real_package_needs_confirmation_redacted.png" alt="Package needs confirmation redacted evidence"><figcaption>Package needs confirmation redacted evidence<br><code>p5-synthetic-realism-ops_to_frontend-evidence/p5_real_package_needs_confirmation_redacted.png</code></figcaption></figure>
+<figure><img src="p5-synthetic-realism-ops_to_frontend-evidence/p5_real_export_blocked_redacted.png" alt="Blocked export redacted evidence"><figcaption>Blocked export redacted evidence<br><code>p5-synthetic-realism-ops_to_frontend-evidence/p5_real_export_blocked_redacted.png</code></figcaption></figure>
+<figure><img src="p5-synthetic-realism-ops_to_frontend-evidence/p5_real_package_confirmed_redacted.png" alt="Confirmed package redacted evidence"><figcaption>Confirmed package redacted evidence<br><code>p5-synthetic-realism-ops_to_frontend-evidence/p5_real_package_confirmed_redacted.png</code></figcaption></figure>
+<figure><img src="p5-synthetic-realism-ops_to_frontend-evidence/p5_real_export_completed_redacted.png" alt="Export completed redacted evidence"><figcaption>Export completed redacted evidence<br><code>p5-synthetic-realism-ops_to_frontend-evidence/p5_real_export_completed_redacted.png</code></figcaption></figure>
+<figure><img src="p5-synthetic-realism-ops_to_frontend-evidence/p5_real_export_completed_1200_redacted.png" alt="Export completed 1200 redacted evidence"><figcaption>Export completed 1200 redacted evidence<br><code>p5-synthetic-realism-ops_to_frontend-evidence/p5_real_export_completed_1200_redacted.png</code></figcaption></figure>
+<figure><img src="p5-synthetic-realism-ops_to_frontend-evidence/p5_real_export_completed_1600_redacted.png" alt="Export completed 1600 redacted evidence"><figcaption>Export completed 1600 redacted evidence<br><code>p5-synthetic-realism-ops_to_frontend-evidence/p5_real_export_completed_1600_redacted.png</code></figcaption></figure>
+<figure><img src="p5-synthetic-realism-ops_to_frontend-evidence/p5_real_export_completed_1920_redacted.png" alt="Export completed 1920 redacted evidence"><figcaption>Export completed 1920 redacted evidence<br><code>p5-synthetic-realism-ops_to_frontend-evidence/p5_real_export_completed_1920_redacted.png</code></figcaption></figure>
+<figure><img src="p5-synthetic-realism-ops_to_frontend-evidence/p5_real_export_completed_720_redacted.png" alt="Narrow exported layout redacted evidence"><figcaption>Narrow exported layout redacted evidence<br><code>p5-synthetic-realism-ops_to_frontend-evidence/p5_real_export_completed_720_redacted.png</code></figcaption></figure>
+<figure><img src="p5-synthetic-realism-ops_to_frontend-evidence/p5_real_export_completed_mobile_redacted.png" alt="Mobile exported layout redacted evidence"><figcaption>Mobile exported layout redacted evidence<br><code>p5-synthetic-realism-ops_to_frontend-evidence/p5_real_export_completed_mobile_redacted.png</code></figcaption></figure></div>
+    </section>
+    <section>
+      <h2>未验证范围与审计意见</h2>
+      <ul><li>未使用真实个人资料；本场景只能加强自动化真实性，不能替代 P5-REAL。</li><li>未验证真实外部 provider、provider-backed 自由智能聊天、SaaS、ASR、会议平台、自动投递或 MCP/CLI。</li><li>未证明最终产品化发布通过。</li><li>未替代人工体验审查；P5-Freeze 仍需 final closure audit。</li></ul>
+      <p>该报告若执行通过，只能支持 P5-REAL 真实授权资料本地闭环通过；P5 冻结仍需 P5-Freeze 复验。</p>
+    </section>
+  </main>
+</body>
+</html>

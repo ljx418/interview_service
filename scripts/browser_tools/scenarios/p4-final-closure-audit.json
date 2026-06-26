@@ -1,0 +1,190 @@
+{
+  "name": "P4 Final Closure Automated Audit",
+  "goal": "Re-check original PRD experience paths and P4 UX gates with real browser screenshots, without claiming human acceptance or real external-provider acceptance.",
+  "url": "http://127.0.0.1:5173/",
+  "targetArchitecture": [
+    "Original PRD: Chatbox-first local workspace for profile, JD, application package, interview preparation, realtime text hint, and review flows.",
+    "P4 UX layer: suggested prompts, visible mode/provider state, conversation plane, workbench/artifact rail, responsive desktop/mobile layout.",
+    "P4C-FC layer: local/mock continuous dialogue, status/next-step replies, explicit tool execution, and chat session restore.",
+    "Evidence layer: Chrome/CDP screenshot automation with viewport cleanup and HTML reporting."
+  ],
+  "currentImplementation": [
+    "FastAPI exposes workspace, files, profile, job, application, interview, realtime, artifact, chat, provider, and guided workflow APIs.",
+    "React/Vite Chatbox initializes a local workspace, restores latest chat sessions, and labels provider/privacy state.",
+    "KeywordChatCore is the default local/mock chat router; explicit intents call Domain Tools, free chat does not call a provider.",
+    "SQLite local workspace persists documents, artifacts, versions, sessions, tool logs, and exports."
+  ],
+  "acceptanceCriteria": [
+    "P4 desktop workbench renders without layout-collapse evidence at 1200, 1440, 1600, and 1920 widths.",
+    "P4 narrow/mobile states keep core input and workbench access reachable at 720 and 390 widths.",
+    "The guided example path can complete and display generated outputs in the workbench.",
+    "P4C-FC can complete two free dialogue turns, a status query, explicit profile extraction, and session restore.",
+    "The report must separate automated evidence from human experience acceptance.",
+    "The report must not claim real personal data, real external provider, ASR, meeting platform, auto-apply, or SaaS acceptance."
+  ],
+  "commandResults": [
+    {
+      "command": ".venv/bin/python -m pytest",
+      "status": "passed",
+      "evidence": "71 passed, 1 warning"
+    },
+    {
+      "command": "npm --prefix apps/chatbox run build",
+      "status": "passed",
+      "evidence": "TypeScript and Vite production build passed"
+    },
+    {
+      "command": "drawio XML parse",
+      "status": "passed",
+      "evidence": "docs/active/jobpilot-stage-gap-and-acceptance.drawio parsed with 5 diagrams"
+    },
+    {
+      "command": "document consistency scan",
+      "status": "warning",
+      "evidence": "Older P4/P4B/P4C reports still contain historical test-count snapshots; final closure uses current 71 passed result"
+    }
+  ],
+  "prdReview": [
+    {
+      "requirement": "Original PRD path A-F: local workspace, profile/JD/package/interview/realtime/review capabilities remain represented by APIs and regression tests.",
+      "evidence": "Full pytest suite plus guided workflow browser evidence; final audit document maps PRD paths to tests and current limits.",
+      "status": "PASS for local/mock automated scope"
+    },
+    {
+      "requirement": "P4: user can understand first step from Chatbox without reading developer docs.",
+      "evidence": "Initial desktop and mobile screenshots show suggested prompts, local state, provider boundary, and workbench empty state.",
+      "status": "PASS for automated visual evidence"
+    },
+    {
+      "requirement": "P4: workbench/artifact cards are separate from conversation and human-readable.",
+      "evidence": "Guided example completion screenshot shows generated workflow output and workbench access.",
+      "status": "PASS for examples path"
+    },
+    {
+      "requirement": "P4C-FC: free local dialogue must not force artifact writes; explicit tool intent still writes artifacts.",
+      "evidence": "Free-chat screenshots and explicit profile extraction screenshot in this run.",
+      "status": "PASS for local/mock automated scope"
+    },
+    {
+      "requirement": "P4 final gate requires human experience review.",
+      "evidence": "This is an automated audit only.",
+      "status": "NOT A HUMAN ACCEPTANCE"
+    }
+  ],
+  "codeReview": [
+    {
+      "area": "services/chat/core.py intent router",
+      "finding": "Free local dialogue, decline-to-execute phrases, status query, next-step query, and explicit tool intents are separated and covered by eval tests.",
+      "severity": "pass"
+    },
+    {
+      "area": "apps/chatbox/src/main.tsx",
+      "finding": "Chatbox remains a browser client over API routes, exposes local/provider state, suggested prompts, loading state, error recovery, upload, and session restore.",
+      "severity": "pass"
+    },
+    {
+      "area": "apps/chatbox/src/styles.css",
+      "finding": "Desktop three-column workbench and mobile drawer/composer layout are evidenced by screenshots; 390px send and workbench buttons are both reachable.",
+      "severity": "pass"
+    },
+    {
+      "area": "scripts/browser_tools/browser-acceptance.mjs",
+      "finding": "Chrome/CDP runner captures screenshots and clears viewport emulation in finally; report now renders command, PRD, code, and documentation audit sections.",
+      "severity": "pass"
+    },
+    {
+      "area": "provider-backed free chat",
+      "finding": "Not implemented in P4; correctly remains P6 opt-in and is not claimed by code or report.",
+      "severity": "not verified"
+    }
+  ],
+  "documentationAudit": [
+    {
+      "area": "Original PRD v1.0 vs active P4 PRD",
+      "finding": "Original product paths A-F remain the full product reference; P4 docs correctly scope the current stage to UX hardening and local/mock continuous dialogue.",
+      "status": "pass"
+    },
+    {
+      "area": "Acceptance gates",
+      "finding": "P4 gates cover regression, empty state, feedback, workbench, provider/privacy, responsive screenshots, reports, and human review boundary.",
+      "status": "pass"
+    },
+    {
+      "area": "Roadmap and handoff wording",
+      "finding": "Docs consistently warn not to claim P4B/P4C human acceptance or real external-provider default acceptance.",
+      "status": "pass"
+    },
+    {
+      "area": "Historical reports",
+      "finding": "Earlier P4/P4B/P4C reports still preserve historical test counts; this final closure report is the current source of truth for the 71-test run.",
+      "status": "warning"
+    }
+  ],
+  "unverifiedScope": [
+    "No real personal profile, raw private resume, raw private JD, or transcript was used.",
+    "No real external provider call was made.",
+    "No ASR, meeting platform, automatic application, SaaS login, billing, or multi-tenant path was tested.",
+    "This report does not decide final human UX approval."
+  ],
+  "auditOpinion": "If every step passes and the linked regression commands pass, P4 automated closure evidence is sufficient for a human review checkpoint. It is not sufficient for productization, real-data, external-provider, or human acceptance claims.",
+  "viewports": [
+    { "name": "desktop1200", "width": 1200, "height": 900 },
+    { "name": "desktop1280", "width": 1280, "height": 900 },
+    { "name": "desktop1440", "width": 1440, "height": 980 },
+    { "name": "desktop1600", "width": 1600, "height": 1000 },
+    { "name": "desktop1920", "width": 1920, "height": 1080 },
+    { "name": "narrow720", "width": 720, "height": 920 },
+    { "name": "mobile390", "width": 390, "height": 844, "mobile": true },
+    { "name": "fcDesktop", "width": 1440, "height": 980 },
+    { "name": "fcMobile", "width": 390, "height": 844, "mobile": true }
+  ],
+  "steps": [
+    { "name": "Open initial 1200", "action": "goto", "url": "http://127.0.0.1:5173/?workspace_root=/mnt/c/workspace/interview_service/.tmp/p4_final_initial_workspace", "viewport": "desktop1200" },
+    { "name": "Wait initial 1200", "action": "waitText", "text": "本地就绪", "timeoutMs": 15000, "viewport": "desktop1200" },
+    { "name": "Initial 1200 evidence", "action": "screenshot", "file": "p4_final_initial_1200.png", "viewport": "desktop1200" },
+    { "name": "Open initial 1280", "action": "goto", "url": "http://127.0.0.1:5173/?workspace_root=/mnt/c/workspace/interview_service/.tmp/p4_final_initial_workspace", "viewport": "desktop1280" },
+    { "name": "Wait initial 1280", "action": "waitText", "text": "本地就绪", "timeoutMs": 15000, "viewport": "desktop1280" },
+    { "name": "Initial 1280 evidence", "action": "screenshot", "file": "p4_final_initial_1280.png", "viewport": "desktop1280" },
+    { "name": "Open initial 1440", "action": "goto", "url": "http://127.0.0.1:5173/?workspace_root=/mnt/c/workspace/interview_service/.tmp/p4_final_initial_workspace", "viewport": "desktop1440" },
+    { "name": "Wait initial 1440", "action": "waitText", "text": "本地就绪", "timeoutMs": 15000, "viewport": "desktop1440" },
+    { "name": "Initial 1440 evidence", "action": "screenshot", "file": "p4_final_initial_1440.png", "viewport": "desktop1440" },
+    { "name": "Open initial 1600", "action": "goto", "url": "http://127.0.0.1:5173/?workspace_root=/mnt/c/workspace/interview_service/.tmp/p4_final_initial_workspace", "viewport": "desktop1600" },
+    { "name": "Wait initial 1600", "action": "waitText", "text": "本地就绪", "timeoutMs": 15000, "viewport": "desktop1600" },
+    { "name": "Initial 1600 evidence", "action": "screenshot", "file": "p4_final_initial_1600.png", "viewport": "desktop1600" },
+    { "name": "Open initial 1920", "action": "goto", "url": "http://127.0.0.1:5173/?workspace_root=/mnt/c/workspace/interview_service/.tmp/p4_final_initial_workspace", "viewport": "desktop1920" },
+    { "name": "Wait initial 1920", "action": "waitText", "text": "本地就绪", "timeoutMs": 15000, "viewport": "desktop1920" },
+    { "name": "Initial 1920 evidence", "action": "screenshot", "file": "p4_final_initial_1920.png", "viewport": "desktop1920" },
+    { "name": "Open narrow 720", "action": "goto", "url": "http://127.0.0.1:5173/?workspace_root=/mnt/c/workspace/interview_service/.tmp/p4_final_initial_workspace", "viewport": "narrow720" },
+    { "name": "Wait narrow 720", "action": "waitText", "text": "本地就绪", "timeoutMs": 15000, "viewport": "narrow720" },
+    { "name": "Narrow 720 evidence", "action": "screenshot", "file": "p4_final_narrow_720.png", "viewport": "narrow720" },
+    { "name": "Open mobile 390", "action": "goto", "url": "http://127.0.0.1:5173/?workspace_root=/mnt/c/workspace/interview_service/.tmp/p4_final_initial_workspace", "viewport": "mobile390" },
+    { "name": "Wait mobile 390", "action": "waitText", "text": "本地就绪", "timeoutMs": 15000, "viewport": "mobile390" },
+    { "name": "Mobile 390 evidence", "action": "screenshot", "file": "p4_final_mobile_390.png", "viewport": "mobile390" },
+    { "name": "Open guided example", "action": "goto", "url": "http://127.0.0.1:5173/?workspace_root=/mnt/c/workspace/interview_service/.tmp/p4_final_guided_workspace&autorun=1", "viewport": "desktop1440" },
+    { "name": "Wait guided example completion", "action": "waitText", "text": "示例路径已完成", "timeoutMs": 25000, "viewport": "desktop1440" },
+    { "name": "Guided example completed evidence", "action": "screenshot", "file": "p4_final_guided_completed_1440.png", "viewport": "desktop1440" },
+    { "name": "Open P4C-FC", "action": "goto", "url": "http://127.0.0.1:5173/?workspace_root=/mnt/c/workspace/interview_service/.tmp/p4_final_fc_workspace", "viewport": "fcDesktop" },
+    { "name": "Wait P4C-FC local workspace", "action": "waitText", "text": "本地就绪", "timeoutMs": 15000, "viewport": "fcDesktop" },
+    { "name": "Wait P4C-FC session initialization", "action": "wait", "ms": 1000, "viewport": "fcDesktop" },
+    { "name": "Click free chat", "action": "clickText", "text": "自由聊求职方向", "viewport": "fcDesktop" },
+    { "name": "Wait first free reply", "action": "waitText", "text": "已收到你的补充", "timeoutMs": 15000, "viewport": "fcDesktop" },
+    { "name": "P4C-FC first free turn", "action": "screenshot", "file": "p4_final_fc_free_first.png", "viewport": "fcDesktop" },
+    { "name": "Fill free follow-up", "action": "fill", "selector": "textarea[aria-label='对话输入框']", "value": "继续，我下一步应该先补 React 还是项目经历？", "viewport": "fcDesktop" },
+    { "name": "Send free follow-up", "action": "clickText", "text": "发送任务", "viewport": "fcDesktop" },
+    { "name": "Wait next-step reply", "action": "waitText", "text": "下一步可以上传简历/项目资料", "timeoutMs": 15000, "viewport": "fcDesktop" },
+    { "name": "Wait after next-step reply settles", "action": "wait", "ms": 500, "viewport": "fcDesktop" },
+    { "name": "P4C-FC second free turn", "action": "screenshot", "file": "p4_final_fc_free_second.png", "viewport": "fcDesktop" },
+    { "name": "Fill status query", "action": "fill", "selector": "textarea[aria-label='对话输入框']", "value": "当前进展如何？有哪些产物？", "viewport": "fcDesktop" },
+    { "name": "Send status query", "action": "clickText", "text": "发送任务", "viewport": "fcDesktop" },
+    { "name": "Wait status query", "action": "waitText", "text": "当前还没有生成求职产物", "timeoutMs": 15000, "viewport": "fcDesktop" },
+    { "name": "Wait after status reply settles", "action": "wait", "ms": 500, "viewport": "fcDesktop" },
+    { "name": "P4C-FC status evidence", "action": "screenshot", "file": "p4_final_fc_status.png", "viewport": "fcDesktop" },
+    { "name": "Fill explicit tool request", "action": "fill", "selector": "textarea[aria-label='对话输入框']", "value": "请整理资料，生成职业事实。", "viewport": "fcDesktop" },
+    { "name": "Send explicit tool request", "action": "clickText", "text": "发送任务", "viewport": "fcDesktop" },
+    { "name": "Wait career facts artifact", "action": "waitText", "text": "职业事实", "timeoutMs": 15000, "viewport": "fcDesktop" },
+    { "name": "P4C-FC explicit artifact evidence", "action": "screenshot", "file": "p4_final_fc_artifact.png", "viewport": "fcDesktop" },
+    { "name": "Open restored P4C-FC mobile", "action": "goto", "url": "http://127.0.0.1:5173/?workspace_root=/mnt/c/workspace/interview_service/.tmp/p4_final_fc_workspace", "viewport": "fcMobile" },
+    { "name": "Wait restored mobile conversation", "action": "waitText", "text": "请整理资料，生成职业事实", "timeoutMs": 15000, "viewport": "fcMobile" },
+    { "name": "P4C-FC mobile restored evidence", "action": "screenshot", "file": "p4_final_fc_mobile_restore.png", "viewport": "fcMobile" }
+  ]
+}

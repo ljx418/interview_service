@@ -1,0 +1,41 @@
+{
+  "name": "Browser automation smoke test",
+  "goal": "Verify that a CLI agent can open a browser, assert page text, and capture screenshot evidence.",
+  "targetArchitecture": [
+    "Codex CLI or Claude Code CLI",
+    "browser-acceptance command",
+    "Chrome DevTools Protocol",
+    "Windows Chrome or Chromium",
+    "HTML acceptance report with screenshots"
+  ],
+  "currentImplementation": [
+    "Node.js built-in fetch and WebSocket",
+    "Local Chrome remote debugging endpoint",
+    "Scenario JSON for reproducible browser actions",
+    "PNG evidence and self-contained HTML report"
+  ],
+  "url": "data:text/html,<html><body><h1>JobPilot browser automation smoke</h1><button>Continue</button><p>ready</p></body></html>",
+  "viewports": [
+    {
+      "name": "desktop",
+      "width": 1280,
+      "height": 900
+    }
+  ],
+  "steps": [
+    {
+      "name": "Open smoke page",
+      "action": "goto"
+    },
+    {
+      "name": "Assert visible ready text",
+      "action": "waitText",
+      "text": "ready"
+    },
+    {
+      "name": "Capture smoke evidence",
+      "action": "screenshot",
+      "file": "smoke-desktop.png"
+    }
+  ]
+}

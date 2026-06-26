@@ -1,4 +1,5 @@
 from pathlib import Path
+import subprocess
 import sys
 import types
 
@@ -65,6 +66,27 @@ def test_piagent_adapter_reports_earendil_source_not_built(tmp_path, monkeypatch
     result = core.handle_message(workspace_id, session["session_id"], "整理资料")
 
     assert result["chat_core"] == {"requested": "piagent", "active": "keyword", "reason": "pi_agent_not_built"}
+    assert result["artifacts"][0]["type"] == "career_facts"
+
+
+def test_piagent_adapter_falls_back_when_node_bridge_times_out(tmp_path, monkeypatch):
+    monkeypatch.setattr(PiAgentChatCore, "CANDIDATE_MODULES", ("missing_piagent_module",))
+    source_root = tmp_path / "earendil_pi_source"
+    (source_root / "packages/agent/dist/index.js").parent.mkdir(parents=True)
+    (source_root / "packages/ai/dist/index.js").parent.mkdir(parents=True)
+    (source_root / "packages/agent/dist/index.js").write_text("export const Agent = null;", encoding="utf-8")
+    (source_root / "packages/ai/dist/index.js").write_text("export const ai = null;", encoding="utf-8")
+    workspace_id = _workspace_with_profile(tmp_path)
+    session = jobpilot.create_chat_session(workspace_id, "piagent-timeout")
+
+    def timeout_run(*args, **kwargs):
+        raise subprocess.TimeoutExpired(cmd=args[0], timeout=kwargs.get("timeout"))
+
+    monkeypatch.setattr(subprocess, "run", timeout_run)
+    core = PiAgentChatCore(fallback=KeywordChatCore(), strict=False, source_root=source_root)
+    result = core.handle_message(workspace_id, session["session_id"], "整理资料")
+
+    assert result["chat_core"] == {"requested": "piagent", "active": "keyword", "reason": "pi_agent_bridge_timeout"}
     assert result["artifacts"][0]["type"] == "career_facts"
 
 
