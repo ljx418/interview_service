@@ -3,6 +3,8 @@ from __future__ import annotations
 import os
 from pathlib import Path
 from typing import Callable
+from datetime import datetime, timedelta, timezone
+from uuid import uuid4
 
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
@@ -15,13 +17,16 @@ from services.api.schemas import (
     ApplicationPackageRequest,
     ChatMessageRequest,
     ChatSessionCreateRequest,
+    DiagnosticsReportRequest,
     ExportPackageRequest,
     ExtractFactsRequest,
     InterviewPrepareRequest,
     InterviewReviewRequest,
     MatchProfileRequest,
     ParseJdRequest,
+    ProviderConsentRequest,
     ProjectCardRequest,
+    ProviderPreferencesRequest,
     ProviderCheckRequest,
     RealtimeDetectRequest,
     RealtimeHintRequest,
@@ -31,20 +36,28 @@ from services.api.schemas import (
     StoryCardsRequest,
     UpdateFactRequest,
     WorkspaceInitRequest,
+    WorkspaceBackupRequest,
+    WorkspaceCleanupPlanRequest,
+    WorkspaceMigrationPlanRequest,
     P2DemoWorkflowRequest,
     ProviderRuntimeConfigRequest,
 )
 from services.chat import get_chat_core
+from services.chat.context import build_chat_context
+from services.chat.provider_backed import handle_provider_backed_message
 from services.llm.contracts import JobParseOutput
 from services.llm.provider import ProviderError, get_provider, normalize_provider_name, provider_status
 from services.storage.db import rows_to_dicts
 from services.storage.workspace import safe_child
 from services.storage.workspace import get_workspace, init_workspace, workspace_conn
 from services.tools import jobpilot
+from services.workspace_lifecycle import diagnostics_report, workspace_backup, workspace_cleanup_plan, workspace_migration_plan
 from services.workflows.p2_demo import run_p2_demo_flow
 
 
 app = FastAPI(title="JobPilot AI Agent Service", version="0.1.0")
+
+_PROVIDER_CONSENTS: dict[str, dict] = {}
 
 app.add_middleware(
     CORSMiddleware,
@@ -90,16 +103,96 @@ def health():
     return {"ok": True, "service": "jobpilot-ai", "version": "0.1.0"}
 
 
+def _now() -> datetime:
+    return datetime.now(timezone.utc)
+
+
+def _redacted_provider_display(status: dict, *, workspace_id: str | None = None, session_id: str | None = None) -> dict:
+    consent = _active_provider_consent(workspace_id, session_id)
+    called_in_workspace = False
+    called_in_session = False
+    fallback_used = False
+    last_error = None
+    if workspace_id:
+        try:
+            conn, _ = workspace_conn(workspace_id)
+            latest = conn.execute(
+                "SELECT status, error_code FROM provider_invocation WHERE workspace_id=? ORDER BY created_at DESC LIMIT 1",
+                (workspace_id,),
+            ).fetchone()
+            if latest:
+                called_in_workspace = latest["status"] == "success"
+                last_error = latest["error_code"]
+            latest_chat = conn.execute(
+                """
+                SELECT status, error_code, fallback_used FROM provider_chat_invocation
+                WHERE workspace_id=? AND (? IS NULL OR session_id=?)
+                ORDER BY created_at DESC LIMIT 1
+                """,
+                (workspace_id, session_id, session_id),
+            ).fetchone()
+            if latest_chat:
+                called_in_session = latest_chat["status"] == "called"
+                called_in_workspace = called_in_workspace or called_in_session
+                fallback_used = bool(latest_chat["fallback_used"])
+                last_error = latest_chat["error_code"] or last_error
+        except Exception:
+            called_in_workspace = False
+            called_in_session = False
+    configured = bool(status.get("configured"))
+    provider_name = status.get("provider", "mock")
+    p6_state = "mock_default"
+    if provider_name != "mock" and configured:
+        p6_state = "consented" if consent else "configured"
+    if called_in_workspace:
+        p6_state = "called"
+    if fallback_used:
+        p6_state = "fallback"
+    if last_error:
+        p6_state = "failed"
+    return {
+        **status,
+        "p6_state": p6_state,
+        "configured": configured,
+        "configured_is_called": False,
+        "called_in_workspace": called_in_workspace,
+        "called_in_session": called_in_session,
+        "consented": bool(consent),
+        "consent": consent,
+        "last_error": last_error,
+        "fallback_used": fallback_used,
+        "external_call_requires_consent": provider_name != "mock",
+        "api_key_redacted": True,
+    }
+
+
+def _active_provider_consent(workspace_id: str | None, session_id: str | None) -> dict | None:
+    if not workspace_id or not session_id:
+        return None
+    now = _now()
+    expired = [key for key, value in _PROVIDER_CONSENTS.items() if value["expires_at_dt"] <= now]
+    for key in expired:
+        _PROVIDER_CONSENTS.pop(key, None)
+    for consent in _PROVIDER_CONSENTS.values():
+        if consent["workspace_id"] == workspace_id and consent["session_id"] == session_id:
+            public = {key: value for key, value in consent.items() if key != "expires_at_dt"}
+            return public
+    return None
+
+
 @app.get("/api/provider/status")
-def provider_status_api(provider: str | None = None):
-    return run_tool(provider_status, provider)
+def provider_status_api(provider: str | None = None, workspace_id: str | None = None, session_id: str | None = None):
+    def _status():
+        return _redacted_provider_display(provider_status(provider), workspace_id=workspace_id, session_id=session_id)
+
+    return run_tool(_status)
 
 
-def _provider_runtime_config() -> dict:
+def _provider_runtime_config(*, workspace_id: str | None = None, session_id: str | None = None) -> dict:
     status = provider_status()
     if status["provider"] == "mock":
         return {
-            **status,
+            **_redacted_provider_display(status, workspace_id=workspace_id, session_id=session_id),
             "preset": "",
             "base_url": "",
             "api_key_configured": False,
@@ -109,7 +202,7 @@ def _provider_runtime_config() -> dict:
             "runtime_only": True,
         }
     return {
-        **status,
+        **_redacted_provider_display(status, workspace_id=workspace_id, session_id=session_id),
         "preset": os.environ.get("JOBPILOT_OPENAI_PROVIDER_PRESET", "").strip().lower(),
         "base_url": os.environ.get("JOBPILOT_OPENAI_BASE_URL", ""),
         "api_key_configured": bool(os.environ.get("JOBPILOT_OPENAI_API_KEY", "")),
@@ -121,8 +214,11 @@ def _provider_runtime_config() -> dict:
 
 
 @app.get("/api/provider/runtime-config")
-def provider_runtime_config_get():
-    return run_tool(_provider_runtime_config)
+def provider_runtime_config_get(workspace_id: str | None = None, session_id: str | None = None):
+    def _get():
+        return _provider_runtime_config(workspace_id=workspace_id, session_id=session_id)
+
+    return run_tool(_get)
 
 
 @app.post("/api/provider/runtime-config")
@@ -143,6 +239,53 @@ def provider_runtime_config_set(req: ProviderRuntimeConfigRequest):
         return _provider_runtime_config()
 
     return run_tool(_set)
+
+
+@app.post("/api/provider/preferences")
+def provider_preferences_set(req: ProviderPreferencesRequest):
+    def _set():
+        provider_name = normalize_provider_name(req.provider)
+        os.environ["JOBPILOT_LLM_PROVIDER"] = provider_name
+        if provider_name == "mock":
+            os.environ["JOBPILOT_OPENAI_PROVIDER_PRESET"] = ""
+            return _provider_runtime_config()
+        os.environ["JOBPILOT_OPENAI_PROVIDER_PRESET"] = req.preset.strip().lower()
+        os.environ["JOBPILOT_OPENAI_BASE_URL"] = req.base_url.strip().rstrip("/")
+        os.environ["JOBPILOT_OPENAI_MODEL"] = req.model.strip()
+        return _provider_runtime_config()
+
+    return run_tool(_set)
+
+
+@app.post("/api/provider/consent")
+def provider_consent(req: ProviderConsentRequest):
+    def _consent():
+        status = provider_status()
+        if status["provider"] == "mock":
+            return _redacted_provider_display(status, workspace_id=req.workspace_id, session_id=req.session_id)
+        if not req.confirm_external_call:
+            return {
+                **_redacted_provider_display(status, workspace_id=req.workspace_id, session_id=req.session_id),
+                "consent_required": True,
+                "message": "真实外部 provider 调用需要显式确认；未确认时不会外呼。",
+            }
+        if not status.get("configured"):
+            raise ValueError("Provider is not fully configured; API key, base URL, and model are required before consent.")
+        consent_id = f"provider_consent_{uuid4().hex}"
+        expires_at = _now() + timedelta(seconds=max(60, req.ttl_seconds))
+        consent = {
+            "consent_id": consent_id,
+            "workspace_id": req.workspace_id,
+            "session_id": req.session_id,
+            "scope": req.scope,
+            "allowed_data_classes": req.allowed_data_classes,
+            "expires_at": expires_at.isoformat(),
+            "expires_at_dt": expires_at,
+        }
+        _PROVIDER_CONSENTS[consent_id] = consent
+        return _redacted_provider_display(status, workspace_id=req.workspace_id, session_id=req.session_id)
+
+    return run_tool(_consent)
 
 
 @app.post("/api/provider/check")
@@ -189,6 +332,26 @@ def workspace_init(req: WorkspaceInitRequest):
 @app.get("/api/workspace/status")
 def workspace_status(workspace_id: str | None = None, root_path: str | None = None):
     return run_tool(get_workspace, root_path, workspace_id)
+
+
+@app.post("/api/workspace/backup")
+def workspace_backup_api(req: WorkspaceBackupRequest):
+    return run_tool(workspace_backup, req.workspace_id, req.target)
+
+
+@app.post("/api/workspace/cleanup/plan")
+def workspace_cleanup_plan_api(req: WorkspaceCleanupPlanRequest):
+    return run_tool(workspace_cleanup_plan, req.workspace_id, req.rules)
+
+
+@app.post("/api/workspace/migrate/plan")
+def workspace_migration_plan_api(req: WorkspaceMigrationPlanRequest):
+    return run_tool(workspace_migration_plan, req.workspace_id, req.target_version)
+
+
+@app.post("/api/diagnostics/report")
+def diagnostics_report_api(req: DiagnosticsReportRequest):
+    return run_tool(diagnostics_report, req.workspace_id, req.include_provider)
 
 
 @app.post("/api/files/upload")
@@ -384,6 +547,11 @@ def chat_sessions_get(session_id: str, workspace_id: str):
     return run_tool(jobpilot.get_chat_session, workspace_id, session_id)
 
 
+@app.get("/api/chat/session/{session_id}/context")
+def chat_session_context(session_id: str, workspace_id: str):
+    return run_tool(build_chat_context, workspace_id, session_id)
+
+
 @app.post("/api/realtime/end")
 def realtime_end(session_id: str):
     return run_tool(jobpilot.end_realtime_session, session_id)
@@ -391,7 +559,19 @@ def realtime_end(session_id: str):
 
 @app.post("/api/chat/message")
 def chat_message(req: ChatMessageRequest):
-    return run_tool(get_chat_core().handle_message, req.workspace_id, req.session_id, req.message)
+    def _chat():
+        core = get_chat_core()
+        if req.provider_mode == "provider_opt_in":
+            return handle_provider_backed_message(
+                fallback_core=core,
+                workspace_id=req.workspace_id,
+                session_id=req.session_id,
+                message=req.message,
+                consent=_active_provider_consent(req.workspace_id, req.session_id),
+            )
+        return core.handle_message(req.workspace_id, req.session_id, req.message)
+
+    return run_tool(_chat)
 
 
 @app.post("/api/workflows/p2-demo/run")

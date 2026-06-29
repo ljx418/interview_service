@@ -1,8 +1,256 @@
-# JobPilot AI P5 真实资料本地闭环里程碑与交付计划
+# JobPilot AI P6+P7 长程对话与产品化 Beta 里程碑与交付计划
+
+## P6+P7 当前阶段目标
+
+P5 本地/mock + 脱敏 fixture 自动化候选已完成。用户已确认 P5-REAL/P5-Freeze 冻结延期到 P7 后复验。当前阶段不继续读取真实个人资料，也不把 P5 自动化候选写成最终冻结通过。
+
+当前执行顺序：
+
+```text
+P6P7-DOC-M0 文档 / drawio / 风险边界 / 验收门槛锁定
+→ P6-M0 启动审计和详细开发计划
+→ P6-M1 Provider opt-in UX 与模型设置
+→ P6-M2 Provider-backed Chat Adapter
+→ P6-M3 Long Context Manager
+→ P6-M4 Tool Safety 与 Artifact/Export Guard 复验
+→ P6-M5 Privacy / Redaction / Invocation Log
+→ P6-M6 可视化验收报告、受控真实 provider 验收和 P6-Freeze
+→ P7-M0 产品化 Beta 启动审计
+→ P7-M1 Workspace 生命周期和本地数据管理
+→ P7-M2 诊断、发布、部署、回滚和运行证据
+→ P7-M3 Beta 使用说明、支持流程、隐私审计和 P7-Freeze
+→ P7-POST-P5-REAL / P5-Freeze 复验
+```
+
+## P6P7-DOC-M0 - 文档、drawio、风险边界和验收门槛锁定
+
+交付物：
+
+- P6+P7 阶段 PRD；
+- P6+P7 目标架构、当前架构差异和具体代码实体关系；
+- P6+P7 里程碑、验收门槛、追踪矩阵；
+- drawio gap 图和文本镜像；
+- README/TODO/active docs 同步；
+- P5-REAL/P5-Freeze 冻结延期复验口径；
+- 真实 provider、API Key、真实资料、workspace 删除、不可逆迁移和报告脱敏确认点清单。
+
+出门条件：
+
+- 文档明确当前阶段是 P6+P7，而不是继续 P5-Freeze；
+- drawio 不超过 8 页，覆盖目标架构与当前架构差异、开发及验收计划、项目里程碑、验收门槛及出门条件；
+- 架构图中的条目是具体代码实体和强关联交互关系；
+- 文档没有把真实 provider 默认路径、真实个人资料路径、SaaS、ASR、会议平台、自动投递或 MCP/CLI 写成当前已完成；
+- 进入代码开发前，审计无致命或重大规格偏差。
+
+## P6-M0 - 启动审计和详细开发计划
+
+交付物：
+
+- Provider Policy Gate 详细规格，详见 `19_P6_PROVIDER_BACKED_LONG_CONTEXT_CHAT_PLAN.md` 第 9 节；
+- Long Context Manager 数据结构和压缩策略，详见 `19_P6_PROVIDER_BACKED_LONG_CONTEXT_CHAT_PLAN.md` 第 9 节；
+- Provider Invocation Log schema，详见 `19_P6_PROVIDER_BACKED_LONG_CONTEXT_CHAT_PLAN.md` 第 9 节；
+- 外呼确认 UX 规格，详见 `19_P6_PROVIDER_BACKED_LONG_CONTEXT_CHAT_PLAN.md` 第 9 节；
+- P6 测试矩阵和报告脱敏模板；
+- 开发前审计结论。
+
+出门条件：
+
+- 明确 provider configured、consented、called、failed、fallback 五类状态；
+- 明确 20-50 轮长程连续对话验收方法，不写成真正无限上下文；
+- 明确 fake provider、mock provider、受控真实 provider 的证据边界；
+- 无 API Key 泄露或默认外呼风险。
+
+## P6-M1 - Provider opt-in UX 与模型设置
+
+交付物：
+
+- Chatbox 模型设置入口；
+- provider / model / preset 选择；
+- 调用前确认弹窗或等价确认区；
+- provider 状态条和本轮调用状态；
+- 默认不外呼、配置但未确认不外呼的测试和截图。
+
+出门条件：
+
+- 用户能看到“外部模型未调用 / 需确认 / 本轮已调用 / 调用失败降级”；
+- 配置 provider 不等于调用 provider；
+- API Key 不在前端展示、日志或报告中出现；
+- 用户取消确认后仍可使用本地连续对话。
+
+## P6-M2 - Provider-backed Chat Adapter
+
+交付物：
+
+- provider-backed 自由聊天 adapter；
+- timeout、retry、schema validation、redaction；
+- fake provider eval；
+- 用户授权后的受控真实 provider E2E 计划和执行记录；
+- provider 失败降级到 local fallback。
+
+出门条件：
+
+- 未授权请求不会外呼；
+- 授权请求有脱敏 invocation log；
+- provider 超时、429、结构错误、网络错误均有用户可理解恢复路径；
+- provider raw response 不直接写 artifact 或报告。
+
+## P6-M3 - Long Context Manager
+
+交付物：
+
+- recent message window；
+- rolling conversation summary；
+- workspace context snapshot；
+- artifact/JD/profile retrieval；
+- refresh recovery；
+- 20-50 轮长程对话 eval。
+
+出门条件：
+
+- 长对话不会导致 UI 卡死或上下文完全丢失；
+- 刷新后能恢复消息、摘要和当前 workspace 状态；
+- 上下文摘要有来源边界，不发送完整敏感原文；
+- 普通聊天仍不写 artifact。
+
+## P6-M4 - Tool Safety 与 Artifact/Export Guard 复验
+
+交付物：
+
+- provider-backed chat 与工具执行的意图确认边界；
+- 普通聊天不写 artifact 测试；
+- 明确工具意图才执行 Domain Tools；
+- blocking confirmation 和 export preflight 回归。
+
+出门条件：
+
+- provider-backed 回复不能绕过 `questions_to_confirm`；
+- 明确“生成申请包 / 重新生成 / 导出”才进入工具路径；
+- blocking confirmation 未处理时仍不得正式导出；
+- source refs、artifact version 和 export path 可追踪。
+
+## P6-M5 - Privacy / Redaction / Invocation Log
+
+交付物：
+
+- provider invocation 脱敏日志；
+- prompt/context/report redaction；
+- API Key 和隐私扫描 eval；
+- 报告脱敏检查；
+- provider 费用/隐私提示。
+
+出门条件：
+
+- API Key、完整真实资料、完整 provider raw response 不进入仓库、日志、报告、截图说明或 fixture；
+- 日志能区分 configured/called/failed/fallback；
+- 自动化报告明确未验证范围；
+- 真实个人资料外发必须先由用户确认。
+
+## P6-M6 / P6-Freeze - 可视化验收和阶段冻结
+
+交付物：
+
+- P6 中文 HTML 自动化验收报告；
+- 多视口真实界面截图；
+- provider opt-in、长对话、刷新恢复、失败降级、tool safety、隐私脱敏截图；
+- pytest、frontend build、drawio parse；
+- PRD 规格检视和 final audit。
+
+出门条件：
+
+- P6 门槛全部通过；
+- 受控真实 provider 验收只在用户确认后执行；
+- 报告不把 20-50 轮长程对话写成真正无限聊天；
+- 报告不把 provider configured 写成 provider called；
+- P0-P5 本地基线不退化。
+
+## P7-M0 - 产品化 Beta 启动审计
+
+交付物：
+
+- P7 Beta 范围确认；
+- workspace 生命周期规格；
+- 数据保留、清理、备份、迁移 dry-run 和不可逆操作确认规格；
+- diagnostics / release / rollback / support 计划；
+- P7 开发前审计结论。
+
+出门条件：
+
+- 不引入 SaaS、多租户、Billing；
+- workspace 删除和迁移 apply 不默认执行；
+- 诊断报告脱敏规则明确；
+- P7 后 P5-REAL/P5-Freeze 复验路径明确。
+
+## P7-M1 - Workspace 生命周期和本地数据管理
+
+交付物：
+
+- workspace 列表、恢复、导出、清理计划、备份和迁移 dry-run；
+- 本地数据生命周期说明；
+- 不可逆操作确认 UI；
+- 生命周期 eval 和截图。
+
+出门条件：
+
+- 用户能理解数据在哪里、如何备份、如何清理；
+- dry-run 不修改文件；
+- 删除或迁移 apply 必须高风险确认；
+- 不写 workspace 外路径。
+
+## P7-M2 - 诊断、发布、部署、回滚和运行证据
+
+交付物：
+
+- 脱敏诊断报告；
+- 启动脚本和部署说明；
+- 回滚计划；
+- 错误追踪和日志脱敏；
+- 本地环境健康检查。
+
+出门条件：
+
+- 开发者能按文档复现启动和回滚；
+- 诊断报告不泄露 API Key、完整个人资料或 provider raw response；
+- 错误状态有恢复建议；
+- release checklist 可执行。
+
+## P7-M3 / P7-Freeze - Beta 使用说明、支持流程和最终验收
+
+交付物：
+
+- Beta 使用说明；
+- 支持流程和故障排查；
+- 安全隐私审计；
+- P7 中文 HTML 可视化验收报告；
+- final freeze audit；
+- README/TODO/active docs/drawio 同步。
+
+出门条件：
+
+- P6 provider opt-in 不退化；
+- P7 workspace lifecycle、diagnostics、release/rollback 和 privacy audit 均有证据；
+- P7 报告不声称 SaaS、ASR、会议平台、自动投递或真实个人资料默认路径通过；
+- 可以进入 P7-post P5-REAL/P5-Freeze 复验。
+
+## P7-POST-P5-REAL / P5-Freeze - 延期复验
+
+交付物：
+
+- 用户明确提供资料路径和允许展示字段后的 P5-REAL 复验；
+- P5-REAL 脱敏报告；
+- P5 人工体验记录；
+- P5 final closure audit；
+- 若用户不提供真实资料，则记录为未执行。
+
+出门条件：
+
+- 只读取用户指定路径；
+- 真实资料截图和报告默认脱敏；
+- 不调用真实 provider，除非另行按 P6 opt-in 确认；
+- 不能用 synthetic personas 或 examples 替代真实个人资料复验。
 
 ## P5 阶段目标
 
-P4 已在 2026-06-25 完成本地/mock Chatbox 体验冻结。P5 的目标是把 P4 的示例路径推进到“真实资料本地闭环”：用户可以在本地 Chatbox 中导入或粘贴自己的资料和目标 JD，完成解析、匹配、事实确认、申请材料生成、编辑再生成、导出和连续追问。P5 不默认启用真实外部 provider，不进入 SaaS、ASR、会议平台、自动投递或 MCP/CLI 产品入口。
+本节作为历史基线和 P7-post 复验依据保留。P4 已在 2026-06-25 完成本地/mock Chatbox 体验冻结。P5 的目标是把 P4 的示例路径推进到“真实资料本地闭环”：用户可以在本地 Chatbox 中导入或粘贴自己的资料和目标 JD，完成解析、匹配、事实确认、申请材料生成、编辑再生成、导出和连续追问。P5 不默认启用真实外部 provider，不进入 SaaS、ASR、会议平台、自动投递或 MCP/CLI 产品入口。
 
 执行顺序：
 

@@ -1,55 +1,55 @@
-# JobPilot AI P5 真实资料本地闭环架构、差距与验收图说明
+# JobPilot AI P6+P7 架构、差距与验收图说明
 
-本文档是 `jobpilot-stage-gap-and-acceptance.drawio` 的文本镜像，便于代码审查和 diff。P4 已作为本地/mock Chatbox 体验冻结基线保留；本轮图示主线是 P5 真实资料本地闭环。
+本文档是 `jobpilot-stage-gap-and-acceptance.drawio` 的文本镜像，便于代码审查和 diff。P4 已作为本地/mock Chatbox 体验冻结基线保留；P5 本地/mock + 脱敏 fixture 自动化候选证据保留为后续基线；P5-REAL/P5-Freeze 已冻结延期到 P7 完成后复验。当前图示主线是 P6 真实 provider opt-in、长程连续对话和 P7 产品化 Beta。
 
-P5 不把真实外部 provider、SaaS、ASR、会议平台、自动投递、MCP Server 或 CLI 放入出门条件。任何真实个人资料、真实外部调用、API Key、workspace 删除或不可逆迁移都必须先获得用户确认。
+任何真实 API Key、真实个人资料、真实外部 provider 调用、workspace 删除、不可逆迁移、ASR/会议平台/自动投递/SaaS 操作都必须先获得用户确认。
 
 ## 图示页结构
 
-P5 drawio 保持 6 页，不超过 8 页：
+drawio 保持 6 页，不超过 8 页：
 
-1. P5 目标体验与当前差距；
-2. 当前架构与 P5 目标架构；
+1. P6+P7 目标体验与当前差距；
+2. 当前架构与 P6+P7 目标架构；
 3. 代码实体、分层结构与交互关系；
-4. P5 开发及验收计划；
-5. P5 项目里程碑、验收门槛与出门条件；
-6. 安全边界、状态标记、证据和后续阶段。
+4. P6+P7 开发及验收计划；
+5. 项目里程碑、验收门槛与出门条件；
+6. 安全边界、证据、状态标记和 P7-post 复验。
 
 颜色含义：
 
-- 绿色：已实现并冻结，包括 P0/P1/P2/P3/P4 本地/mock 基线；
-- 黄色：P5 本阶段自动化候选已通过、但仍待真实资料或人工体验冻结的能力；
-- 橙色：P5 中需要人工确认的高敏流程，例如真实资料授权、报告脱敏、导出确认、不可逆操作；
-- 灰色：P6/P7/P8+ 后续开发能力；
-- 红色：禁止路径、打回条件或必须审批的风险项；
-- 蓝色：用户动作、验收数据、截图证据或说明性节点。
+- 绿色：已实现并冻结或作为基线保留，包括 P0/P1/P2/P3/P4 本地/mock 基线、P5 自动化候选证据；
+- 蓝色：当前 P6+P7 计划开发能力；
+- 黄色：需修改或复验的既有能力；
+- 橙色：需要用户确认的高风险流程，例如真实 provider、真实资料、workspace 删除、不可逆迁移；
+- 灰色：P8+ 后续能力；
+- 红色：禁止路径、打回条件或虚假验收风险。
 
-## 第 1 页 - P5 目标体验与当前差距
+## 第 1 页 - P6+P7 目标体验与当前差距
 
 目标体验主链路：
 
 ```text
 User
 → 本地 Chatbox
-→ 上传/粘贴真实资料
-→ 粘贴/导入目标 JD
-→ 资料解析 + JD 解析
-→ questions_to_confirm 事实确认
-→ 申请包生成
-→ 编辑 / 重新生成
-→ 导出 Markdown/DOCX
-→ 围绕当前资料和 JD 多轮追问
+→ 默认 local/mock，不外呼
+→ 模型设置和 provider opt-in
+→ 调用前确认
+→ provider-backed 自由聊天
+→ Long Context Manager 维护 20-50 轮连续对话
+→ provider 失败降级本地对话
+→ P7 workspace 生命周期、诊断、发布/回滚和支持流程
+→ P7-post P5-REAL/P5-Freeze 复验
 ```
 
 当前差距：
 
-- P4 已完成示例路径和本地/mock Chatbox 体验冻结，P5 本地/mock + 脱敏 fixture 自动化候选已通过；
-- 当前仍缺少用户明确授权的真实资料路径、允许展示字段、人工体验记录和 final closure audit；
-- 本地连续对话已扩展到当前资料/JD/申请包上下文，但不代表 provider-backed 自由智能聊天；
-- provider opt-in 基础存在，但 P5 默认不得外呼真实 provider；
-- 报告必须脱敏，不能把真实个人资料或 API Key 写入证据。
+- P4 已完成本地/mock Chatbox 体验冻结；
+- P5 自动化候选已完成，但 P5-REAL/P5-Freeze 冻结延期复验；
+- P6 仍缺 provider opt-in UX、真实 provider chat adapter、Long Context Manager、invocation log 脱敏和失败降级证据；
+- P7 仍缺 workspace lifecycle、diagnostics、release/rollback、support runbook 和 Beta 验收报告；
+- P8+ SaaS、ASR、会议平台、自动投递、MCP/CLI 不属于本阶段。
 
-## 第 2 页 - 当前架构与 P5 目标架构
+## 第 2 页 - 当前架构与 P6+P7 目标架构
 
 当前已实现基线：
 
@@ -61,144 +61,140 @@ React Chatbox
 → Artifact Versioning
 → Export Service
 → SQLite Workspace
-→ P4 Evidence
+→ P4/P5 Evidence
 ```
 
-P5 目标新增或改造的当前状态：
+P6+P7 目标新增或改造：
 
 ```text
-Real Data Intake Controller（脱敏 fixture 自动化候选通过，真实资料待复核）
-→ JD Intake and Gap Recovery（自动化候选通过，真实 JD 片段待复核）
-→ Fact Confirmation Loop（blocking/warning/optional 自动化通过，人工文案待复核）
-→ Application Package Edit/Regenerate Loop（核心链路通过，版本 UI 待人工复核）
-→ Export Preflight（自动化硬门槛通过，真实资料导出待脱敏复核）
-→ Local Context Snapshot（本地多轮追问通过，不代表 provider-backed 聊天）
-→ P5 Redacted Evidence（P5 HTML 报告已生成，final closure audit 待补）
+Model Settings / Provider Consent UI
+→ Provider Status / Consent Routes
+→ Provider Policy Gate
+→ Provider-backed Dialogue Adapter
+→ Long Context Manager
+→ Local Fallback Dialogue
+→ Provider Invocation Log
+→ Workspace Lifecycle Service
+→ Diagnostics Report Service
+→ P6/P7 Visual Acceptance Reports
+→ P7-post P5 Revalidation
 ```
 
 架构关系：
 
-- Chatbox 只做输入、展示、确认、编辑和导出触发；
-- FastAPI 负责请求边界、错误语义和 API 编排；
-- ChatCore 负责意图区分和上下文摘要；
-- Domain Tools 负责资料解析、JD 解析、匹配和申请包生成；
-- Artifact/Export/Storage 负责版本、确认项、导出和本地持久化；
-- Provider Policy Gate 负责保持 P5 默认不外呼。
+- Chatbox 只做输入、展示、确认、编辑、导出和模型设置触发；
+- FastAPI 负责请求边界、provider consent/status、workspace lifecycle 和 diagnostics 路由；
+- ChatCore/Chat Orchestrator 负责自由聊天、澄清、状态查询、工具意图和 provider-backed 回复选择；
+- Long Context Manager 负责 recent window、rolling summary、workspace snapshot 和相关 artifact/JD/profile 检索；
+- Provider Policy Gate 负责默认拒绝未授权外呼；
+- Artifact/Export/Storage 继续负责版本、确认项、导出和本地持久化；
+- Diagnostics/Evidence 负责脱敏报告和验收证据。
 
 ## 第 3 页 - 代码实体、分层结构与交互关系
 
 必须在图中出现的具体代码实体：
 
-- `apps/chatbox/src/main.tsx`：Experience Shell、Conversation Plane、Workbench、Artifact/Export UI；P5 自动化候选通过，待人工体验冻结；
-- `apps/chatbox/src/styles.css`：多视口布局、按钮对齐、文本溢出和移动端可达性；P5 多视口截图已覆盖 1200/1440/1600/1920/720/390；
-- `services/api/main.py`：workspace、upload、chat、workflow、artifact、export API 边界；P5 本地/mock 候选通过，真实资料路径待复核；
-- `services/chat/core.py`：自由追问、状态查询、资料导入、JD 解析、生成/导出意图区分；普通追问不写 artifact 已自动化覆盖；
-- `services/workflows/p2_demo.py` 和 P5 本地闭环路径：从 examples flow 扩展到真实资料本地 flow；不得伪造真实资料通过；
-- `services/tools/`：Profile、Project、Job、Match、Application、Interview 等 Domain Tools；脱敏 fixture 通过，真实资料质量待复核；
-- Artifact/version/export/storage 相关服务：source refs、`questions_to_confirm`、版本和导出 preflight；blocking 导出门槛已自动化覆盖；
-- Provider runtime/policy：mock 默认，external provider 需 P6 opt-in；
-- `docs/reports/` 与截图脚本：P5 脱敏自动化验收证据。
-
-P5 默认复用现有接口：
-
-- workspace：`POST /api/workspace/init`、`GET /api/workspace/status`；
-- file intake：`POST /api/files/upload`、`POST /api/files/ingest-local`；
-- profile/project：`POST /api/profile/extract-facts`、`POST /api/project/create-card`；
-- job/match：`POST /api/job/parse-jd`、`POST /api/job/match-profile`；
-- application/export：`POST /api/application/create-package`、`POST /api/application/export-package`；
-- artifact：confirm、update、versions、restore、regenerate；
-- chat：chat sessions、`POST /api/chat/message`；
-- provider policy：P5 默认 mock/local，external provider 需 P6 opt-in。
-
-依赖方向：
-
-```text
-Chatbox UI
-→ FastAPI Routes
-→ ChatCore / Workflow Controller
-→ Domain Tools
-→ Artifact / Export / Storage
-→ Evidence
-```
+- `apps/chatbox/src/main.tsx`：Experience Shell、Conversation Plane、Workbench、Model Settings、Provider Consent、Workspace Lifecycle UI；
+- `apps/chatbox/src/styles.css`：多视口布局、模型设置弹窗、长对话状态、生命周期入口、按钮对齐和移动端可达性；
+- `services/api/main.py`：workspace、upload、chat、workflow、artifact、export、provider status/consent、diagnostics API 边界；
+- `services/chat/core.py`：Intent Router、Local Fallback Dialogue、provider-backed reply selection、tool safety；
+- `services/chat/context.py` 或等价模块：Long Context Manager，包含 recent window、rolling summary、workspace context snapshot、retrieved context blocks；
+- `services/llm/`：OpenAI-compatible/MiniMax/DeepSeek provider adapter、timeout、retry、schema validation、redaction；
+- provider runtime/policy 模块：Provider Policy Gate，检查 consent、API Key、脱敏、预算、失败降级；
+- tool/provider invocation storage：Provider Invocation Log，只记录脱敏元数据；
+- workspace storage/lifecycle 模块：backup、export、cleanup dry-run、migration dry-run；
+- diagnostics/report 模块：脱敏诊断报告和安全扫描；
+- `docs/reports/` 与截图脚本：P6/P7 HTML 验收报告、真实界面截图和 PRD 规格检视。
 
 禁止关系：
 
-- Chatbox 直接调用 provider；
-- Chatbox 直接写 SQLite；
-- Provider raw output 未校验即写入 artifact；
+- Chatbox 直接保存 API Key 或直连 provider；
+- provider configured 被写成 provider called；
+- 未确认真实外呼；
+- provider raw response 未校验直接写 artifact；
+- 普通聊天写 artifact；
 - Export Service 绕过 blocking confirmation；
-- Evidence 报告写入完整真实资料或 API Key。
+- diagnostics/report 写入完整真实资料、API Key 或 provider raw response；
+- workspace cleanup/migration apply 默认执行。
 
-## 第 4 页 - P5 开发及验收计划
+## 第 4 页 - P6+P7 开发及验收计划
 
 执行顺序：
 
 ```text
-P5-M0 文档 / drawio / 风险边界锁定
-→ P5-M1 真实资料本地导入与解析 UX（自动化候选通过）
-→ P5-M2 JD 导入、解析和缺失信息恢复（自动化候选通过）
-→ P5-M3 事实确认与 questions_to_confirm 闭环（自动化候选通过）
-→ P5-M4 申请包生成、编辑、再生成和导出 preflight（自动化候选通过）
-→ P5-FC 围绕资料/JD/申请包的本地多轮追问（自动化候选通过）
-→ P5-M5 脱敏自动化验收报告、截图证据和 PRD 规格检视（自动化候选通过）
-→ P5-REAL 真实授权资料脱敏复核（待用户提供路径）
-→ P5-Freeze 回归复验、人工体验记录、final closure audit 和阶段冻结（未完成）
+P6P7-DOC-M0 文档 / drawio / 风险边界锁定
+→ P6P7-DOC-M0-SPEC Provider Policy Gate / Long Context / Invocation Log / P7 lifecycle 执行细则
+→ P6-M0 启动审计和详细开发计划
+→ P6-M1 Provider opt-in UX 与模型设置
+→ P6-M2 Provider-backed Chat Adapter
+→ P6-M3 Long Context Manager
+→ P6-M4 Tool Safety 与 Artifact/Export Guard 复验
+→ P6-M5 Privacy / Redaction / Invocation Log
+→ P6-M6 Visual Acceptance 与 P6-Freeze
+→ P7-M0 Beta 启动审计
+→ P7-M1 Workspace Lifecycle
+→ P7-M2 Diagnostics / Release / Rollback
+→ P7-M3 Beta Support / Privacy Audit / P7-Freeze
+→ P7-post P5-REAL/P5-Freeze 复验
 ```
 
-当前最新候选证据为 P5 HTML 报告、多视口真实截图、`.venv/bin/python -m pytest` 88 passed, 1 warning、前端 build 通过、drawio parse 通过和三身份合成资料 Chrome/CDP 可视化验收通过。出现隐私泄露、默认外呼、虚假验收或 P0-P4 基线退化时必须打回计划。
+每个子阶段必须先写验收标准和开发计划，再进入实质开发；完成后必须有端到端验收、PRD 规格检视和打回条件检查。
 
-P5 当前采用路线 A：复用现有本地工具链并逐步加固。路线 B“P5 直接引入真实外部 provider”转入 P6 opt-in；路线 C“大规模重构前端/状态架构”仅在现有结构阻塞 P5-M1/M2 后局部采用。
+2026-06-29 复审后，P6-M0/P7-M0 的开发前细则已集中补入 `19_P6_PROVIDER_BACKED_LONG_CONTEXT_CHAT_PLAN.md` 第 9 节，包括 provider 状态机、外呼确认 UX、long context 持久化模型、invocation log schema、P6 子阶段验收 checklist、P7 子阶段验收 checklist 和高风险打回条件。后续无需继续扩大主文档，但每个实质开发子阶段仍必须生成短启动审计。
 
-## 第 5 页 - P5 项目里程碑、验收门槛与出门条件
+## 第 5 页 - 项目里程碑、验收门槛与出门条件
 
-P5 门槛：
+P6 门槛：
 
-1. P0-P4 冻结基线不退化；
-2. 真实资料本地导入可理解；
-3. JD 解析与缺失信息恢复成立；
-4. 事实确认闭环可执行；
-5. 申请包生成、编辑、再生成和导出可信；
-6. 本地多轮追问不误触发工具；
-7. 隐私、provider 和报告不误导；
-8. 多视口体验和证据完整。
+1. P0-P5 本地基线不退化；
+2. Provider opt-in 默认安全；
+3. Provider-backed chat 可控且可降级；
+4. 长程连续对话 20-50 轮成立；
+5. Tool Safety 和产物边界不被 provider 绕过；
+6. 隐私、日志和报告脱敏；
+7. P6 可视化验收证据完整。
 
-自动化矩阵必须覆盖：
+P7 门槛：
 
-- P5 real data local flow；
-- JD gap recovery；
-- confirmation gate；
-- application package edit/regenerate loop；
-- export preflight；
-- local dialogue；
-- privacy redaction；
-- HTML acceptance report；
-- drawio/docs consistency。
+1. Workspace 生命周期可用；
+2. 诊断、发布、部署和回滚可复现；
+3. Beta 使用说明、支持流程和隐私审计完整；
+4. P7 报告不声称 SaaS、ASR、会议平台、自动投递或真实个人资料默认路径通过。
 
-最终出门条件：
+P7-post P5 复验门槛：
+
+- 用户明确提供真实/脱敏资料路径和允许展示字段；
+- 只读取用户指定路径；
+- 报告和截图默认脱敏；
+- 不能用 synthetic personas、examples 或脱敏 fixture 替代。
+
+最终出门体验：
 
 ```text
-导入资料 → 解析资料 → 导入 JD → 解析岗位 → 确认事实
-→ 生成申请包 → 编辑/重新生成 → 导出 → 围绕当前资料继续追问
+本地 Chatbox 可用
+→ 真实 provider 仅 opt-in 调用
+→ 长程连续对话可恢复、可降级、可解释上下文
+→ provider-backed chat 不绕过产物确认和导出门槛
+→ workspace 生命周期、诊断、发布/回滚和支持流程具备 Beta 证据
+→ P7 完成后执行 P5-REAL/P5-Freeze 复验
 ```
 
-P5 完成只代表真实资料本地闭环通过；不代表真实外部 provider 默认路径、SaaS、ASR、会议平台、自动投递或最终产品化发布已通过。
+## 第 6 页 - 安全边界、状态标记、证据和 P7-post 复验
 
-## 第 6 页 - 安全边界、状态标记、证据和后续阶段
+证据包：
 
-P5 证据包：
-
-- P5 HTML 自动化验收报告；
+- P6/P7 中文 HTML 自动化验收报告；
 - 1200/1440/1600/1920/720/390 多视口真实界面截图；
-- 资料导入、JD 解析、事实确认、申请包、编辑再生成、导出、多轮追问截图；
-- pytest 88 passed, 1 warning、frontend build、drawio XML parse、三身份合成资料 Chrome/CDP 可视化验收；
-- README/TODO/active docs 同步；
-- PRD 规格检视和虚假验收风险清单。
+- 默认不外呼、模型设置、调用前确认、provider-backed 回复、长对话摘要、刷新恢复、失败降级、tool safety、workspace lifecycle、diagnostics、release/rollback 截图；
+- pytest、frontend build、drawio XML parse；
+- PRD 规格检视、隐私审计和虚假验收风险清单。
 
 高风险边界：
 
+- 真实 provider 必须 opt-in；
+- API Key 不得进入仓库、报告、日志或截图；
 - 真实个人资料必须用户授权；
 - 自动化报告必须脱敏；
-- 真实外部 provider 必须进入 P6 opt-in；
-- API Key 不得进入仓库、报告、日志或截图；
-- ASR、会议平台、自动投递、SaaS、MCP/CLI 不是 P5 出门条件；
+- workspace 删除和迁移 apply 默认不执行；
+- ASR、会议平台、自动投递、SaaS、多租户、Billing、MCP/CLI 不是本阶段出门条件；
 - 文档通过不等于实现通过，drawio 方向认可不等于功能验收通过。

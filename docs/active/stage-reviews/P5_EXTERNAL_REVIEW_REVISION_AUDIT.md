@@ -4,6 +4,8 @@
 阶段：P5 真实资料本地闭环 / 文档开发阶段
 状态：已落盘为后续自动化开发和真实资料验收的前置审计依据
 
+当前状态附注（2026-06-27）：本文件是 P5 外部意见修订的历史审计。用户已确认 P5-REAL/P5-Freeze 冻结延期到 P7 完成后复验；当前主线已切换为 P6+P7 文档规划和后续开发，不得继续把本文件写成 P5 当前冻结执行入口。
+
 ## 1. 输入意见
 
 用户给出的外部意见与约束如下：
@@ -22,7 +24,7 @@
 | 新增合成资料审核页 | `docs/reports/P5_SYNTHETIC_PROFILE_REVIEW.html` | 已完成。页面明确标注人物、公司、联系方式和项目均为合成示例，不代表真实个人资料验收通过。 |
 | 新增外部意见修订审计 | `docs/active/stage-reviews/P5_EXTERNAL_REVIEW_REVISION_AUDIT.md` | 已完成。记录本轮外部意见、采纳方式、风险边界和审计包。 |
 | 新增 P5 文档覆盖复审 | `docs/active/stage-reviews/P5_DOCUMENTATION_COVERAGE_REAUDIT.md` | 已完成。重新评估 PRD、目标架构、验收门槛、drawio 和 P5 final closure plan 的支撑度。 |
-| 更新索引 | `README.md`、`TODO.md`、`docs/active/00_README.md` | 已完成。增加新文档入口，维持 P5 尚未冻结、P5-REAL 待授权的口径。 |
+| 更新索引 | `README.md`、`TODO.md`、`docs/active/00_README.md` | 历史动作已完成。当前口径已进一步调整为 P5-REAL/P5-Freeze 冻结延期到 P7-post 复验。 |
 
 ## 3. 采纳矩阵
 

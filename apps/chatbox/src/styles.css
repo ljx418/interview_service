@@ -317,6 +317,31 @@ input:disabled {
   line-height: 1.25;
 }
 
+.context-section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.context-icon-button {
+  display: inline-flex;
+  width: 30px;
+  height: 30px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--primary);
+  cursor: pointer;
+}
+
+.context-icon-button:disabled {
+  cursor: wait;
+  opacity: 0.55;
+}
+
 .context-section p {
   color: var(--text-muted);
   font-size: 13px;
@@ -398,6 +423,112 @@ input:disabled {
 .context-checklist svg {
   margin-top: 2px;
   color: var(--primary);
+}
+
+.memory-section,
+.operations-section {
+  display: grid;
+  gap: 10px;
+}
+
+.memory-card,
+.ops-result {
+  display: grid;
+  gap: 10px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #ffffff;
+  padding: 12px;
+}
+
+.memory-metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.memory-metrics span {
+  display: grid;
+  gap: 2px;
+  border-radius: 10px;
+  background: #eef3f1;
+  padding: 9px;
+}
+
+.memory-metrics strong {
+  color: var(--text-main);
+  font-size: 16px;
+}
+
+.memory-metrics small,
+.ops-result small {
+  color: var(--text-muted);
+  font-size: 11px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.memory-card p {
+  margin: 0;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.memory-card ul {
+  display: grid;
+  gap: 5px;
+  margin: 0;
+  padding-left: 16px;
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.ops-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.ops-grid button {
+  display: inline-flex;
+  min-height: 38px;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #ffffff;
+  color: var(--text-main);
+  font-size: 12px;
+  font-weight: 760;
+  cursor: pointer;
+}
+
+.ops-grid button:hover:not(:disabled) {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.ops-grid button:disabled {
+  cursor: wait;
+  opacity: 0.55;
+}
+
+.ops-result strong {
+  color: var(--text-main);
+  font-size: 13px;
+}
+
+.ops-result span {
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.ops-result.warning {
+  border-color: #d9c3a4;
+  background: #fff8ee;
 }
 
 .conversation-plane {
@@ -1642,9 +1773,14 @@ input:disabled {
 
 .settings-actions {
   display: flex;
+  flex-wrap: wrap;
   justify-content: flex-end;
   gap: 8px;
   margin-top: 18px;
+}
+
+.settings-actions button {
+  min-width: 112px;
 }
 
 .drawer-overlay,

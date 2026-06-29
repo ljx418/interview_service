@@ -28,7 +28,9 @@
 
 P0 已冻结并完成 M5、M7、M8、M9/M13 维护和 PiAgent 编排接入。P1 已完成本地工程闭环和可见验收。P2 已完成 examples-guided Chatbox 端到端体验，并补充 MiniMax opt-in 真实 provider 受控验收。P3 已完成本地自动化验收：真实用户 Chatbox 体验、对话响应闭环、对话区/推进台分离、响应式 UX、截图证据和 HTML 报告已落地；真实个人资料和真实外部调用仍需人工确认。人工审查认可 P3 验收报告的大部分内容，但对当前用户体验不完全认同，当前 P4 阶段优先做 UX 体验强化。P4B 已把全尺寸桌面体验列为 hard gate：1200px、1440px、1600px、1920px 不能出现布局错误造成的大面积空白，截图脚本也不能污染人工审查浏览器 viewport。
 
-P4B 自动化开发闭环已完成：Chatbox suggested prompts、loading/error recovery、产物卡可读性、provider 隐私语义、全尺寸桌面三栏工作台、移动端推进台抽屉、截图脚本隔离、P4/P4B HTML 报告和 PRD 规格检视均已落地。P4C-FC 本地/mock 连续对话开发闭环已完成：自由聊两轮、状态查询、显式工具触发、会话恢复、390px 移动端按钮可达性、Chrome/CDP 截图报告、pytest 和前端 build 均已通过。P4 final closure 自动化审计已完成，当前证据为 71 passed、前端 build 通过、drawio 解析通过和最终 HTML 截图报告。2026-06-25 人工体验审查认可 P4B/P4C 本地 Chatbox 体验，P4 冻结复验通过：`.venv/bin/python -m pytest` 71 passed、`npm --prefix apps/chatbox run build` 通过、drawio XML parse 通过。当前主线处于 P5 真实资料本地闭环自动化验收候选阶段：本地/mock + 脱敏 fixture 路径已通过 P5 自动化报告、多视口截图和回归测试，最新全量回归为 `88 passed, 1 warning`；真实个人资料路径、真实外部 provider 默认路径、P5 人工体验记录和 P5 final closure audit 仍未验收。
+P4B 自动化开发闭环已完成：Chatbox suggested prompts、loading/error recovery、产物卡可读性、provider 隐私语义、全尺寸桌面三栏工作台、移动端推进台抽屉、截图脚本隔离、P4/P4B HTML 报告和 PRD 规格检视均已落地。P4C-FC 本地/mock 连续对话开发闭环已完成：自由聊两轮、状态查询、显式工具触发、会话恢复、390px 移动端按钮可达性、Chrome/CDP 截图报告、pytest 和前端 build 均已通过。P4 final closure 自动化审计已完成，当前证据为 71 passed、前端 build 通过、drawio 解析通过和最终 HTML 截图报告。2026-06-25 人工体验审查认可 P4B/P4C 本地 Chatbox 体验，P4 冻结复验通过：`.venv/bin/python -m pytest` 71 passed、`npm --prefix apps/chatbox run build` 通过、drawio XML parse 通过。P5 本地/mock + 脱敏 fixture 自动化候选路径已通过 P5 自动化报告、多视口截图和回归测试，最新全量回归为 `88 passed, 1 warning`；用户已确认 P5-REAL/P5-Freeze 标记为冻结延期复验，后续在 P7 完成后再执行 P7-post 真实资料复验。当前主线切换为 P6+P7：真实 provider opt-in、长程连续对话和产品化 Beta 文档规划。
+
+2026-06-27 用户再次确认 P4 冻结方向和当前体验基本 OK；下一阶段期望纳入“长程连续对话”和“真实 provider 聊天”。该目标已落盘为 P6 provider opt-in 规划。2026-06-27 用户进一步确认 P5-REAL/P5-Freeze 冻结延期到 P7 后复验，P6+P7 作为本阶段目标制定开发及验收计划；不得写成 P5 已完成、真实个人资料路径已通过或默认外呼已通过。
 
 ## 当前剩余风险
 
@@ -112,7 +114,7 @@ P1 冻结说明：
 - [ ] P4C-EP：如需真实外部 provider + 脱敏个人资料验收，必须先按 `docs/active/stage-reviews/P4C_EXTERNAL_PROVIDER_DESENSITIZED_ACCEPTANCE_PLAN.md` 确认数据路径、允许字段、provider、调用次数和报告脱敏范围；该路径默认转入 P6 opt-in，不属于 P5 默认验收。
 - [x] P4-Freeze：人工认可 P4B 后已补齐冻结记录，并再次运行 `.venv/bin/python -m pytest`、`npm --prefix apps/chatbox run build` 和 drawio XML parse，均通过。
 
-## P5 当前计划
+## P5 自动化候选与冻结延期复验状态
 
 文档开发阶段：
 
@@ -126,8 +128,8 @@ P1 冻结说明：
 - [x] P5-M4：申请包生成、编辑后重新阻塞、确认后 Markdown/DOCX 导出 preflight 已通过自动化 eval；重新生成/版本 UI 仍需在人工体验中复核。
 - [x] P5-FC：围绕当前资料/JD/申请包的本地多轮追问已覆盖普通追问不写 artifact、目标 JD 申请包路由不误判。
 - [x] P5-M5：P5 脱敏自动化验收报告已生成：`docs/reports/P5_LOCAL_DATA_CLOSURE_ACCEPTANCE_REPORT.html`，含真实界面截图、PRD 规格检视和未验证范围。
-- [ ] P5-REAL：等待用户提供明确本地脱敏真实资料路径和允许展示字段；不得擅自搜索个人资料目录，不得声称真实个人资料路径已通过。
-- [ ] P5-Freeze：完成真实授权资料审查、P5 人工体验记录、最终 pytest/frontend build/drawio parse 和阶段冻结审计。
+- [x] P5-REAL：冻结延期复验。当前不读取真实个人资料，不擅自搜索个人资料目录，不声称真实个人资料路径已通过；P7 完成后按 P7-post 复验计划重新执行。
+- [x] P5-Freeze：冻结延期复验。当前只保留 P5 自动化候选证据和合成资料增强证据，不生成 P5 通过结论；P7 完成后再执行最终回归、人工体验记录和 closure audit。
 
 文档收口状态：
 
@@ -139,12 +141,24 @@ P1 冻结说明：
 - [x] P5-REAL-PLAN：新增 `docs/active/stage-reviews/P5_REAL_DATA_DEVELOPMENT_AND_ACCEPTANCE_PLAN.md` 和 `scripts/generate_p5_real_data_acceptance.py`，真实资料执行前必须通过路径授权、文本抽取质量和脱敏摘要边界检查。
 - [x] P5-SYNTHETIC-REALISM：新增 `examples/p5_synthetic_personas/`、`scripts/generate_p5_synthetic_realism_acceptance.py` 和 `docs/active/stage-reviews/P5_SYNTHETIC_REALISM_ACCEPTANCE_AUDIT.md`，用多身份合成资料加强自动化验收真实性；不能替代 P5-REAL，不能声称真实个人资料路径已通过。
 - [x] P5-STAGE-VISUAL-AUDIT：重新基于 PRD 执行代码检视、文档审计、功能检查、全量回归和三身份合成资料 Chrome/CDP 可视化验收；报告为 `docs/reports/P5_STAGE_SYNTHETIC_VISUAL_ACCEPTANCE_REPORT.html`，审计为 `docs/active/stage-reviews/P5_STAGE_SYNTHETIC_VISUAL_ACCEPTANCE_AUDIT.md`，不替代 P5-REAL 或 P5-Freeze。
-- [ ] P5-FINAL-AUDIT：真实资料授权验收完成后，更新 P5 final closure audit，不得用当前自动化候选报告替代最终冻结结论。
+- [x] P5-FINAL-AUDIT：冻结延期到 P7-post。当前不得用自动化候选报告替代最终冻结结论；P7 完成后再生成 P5-REAL/P5-Freeze 复验审计。
 - [ ] P5.5-Candidate：P5 冻结后单独规划职业画像与能力评估，包含 CandidateProfile、能力矩阵、项目可信度、岗位短板和 source refs 画像面板；不得写成 P5 已完成。
 
-## P6+ 候选
+## P6+P7 当前阶段计划
 
-- [ ] P6-M0：真实外部 provider opt-in、provider-backed 自由智能聊天、API Key 边界、日志脱敏和失败降级验收规划。
+- [x] P6-M0-PLAN：新增 `docs/active/19_P6_PROVIDER_BACKED_LONG_CONTEXT_CHAT_PLAN.md`，把长程连续对话、真实 provider opt-in、API Key 边界、日志脱敏、失败降级和验收场景落盘。
+- [x] P6P7-DOC-M0：制定 P6+P7 一体 PRD、目标架构、里程碑、验收门槛、追踪矩阵和 drawio gap 图，明确 P5-REAL/P5-Freeze 为 P7-post 复验。
+- [x] P6P7-DOC-M0-SPEC：补齐 P6-M0/P7-M0 开发前执行细则，覆盖 Provider Policy Gate 状态机、Long Context Manager 持久化模型、Provider Invocation Log schema、外呼确认 UX、P6/P7 子阶段验收 checklist 和打回条件。
+- [x] P6-M0：进入具体代码开发前，为 P6-M1 输出短启动审计，确认 Provider opt-in UX、本轮外呼确认和报告脱敏规格无重大偏差。
+- [x] P6-M1：实现模型设置和 provider opt-in UX，默认不外呼；配置 provider 但未确认本次调用时仍走本地/mock。当前已完成状态/偏好/consent 接口、前端授权入口和 eval；不代表 provider-backed 聊天已完成。
+- [x] P6-M2：实现 provider-backed chat adapter 自动化候选路径，覆盖 fake provider success、timeout fallback、redaction、tool intent safety 和脱敏 provider_chat_invocation log；真实 provider 质量仍未验收。
+- [x] P6-M3：实现 Long Context Manager 本地只读基线和前端可视化，支持 recent window、rolling summary、workspace context snapshot、retrieved blocks 和 provider context envelope。
+- [x] P6-FC：实现 provider-backed 自由智能聊天 opt-in 自动化候选，使用 fake provider 覆盖 20 轮长程连续对话、授权、刷新上下文、fallback 和普通聊天不写 artifact；真实 provider 仍需单独确认。
+- [x] P7-M0：制定产品化 Beta 启动审计，锁定 workspace 生命周期、备份/迁移、诊断报告、发布/部署/回滚和隐私审计边界。
+- [x] P7-M1：实现 workspace 生命周期和本地数据管理基线，覆盖 backup manifest、cleanup dry-run 和 migration dry-run；删除和迁移 apply 仍未实现且必须高风险确认。
+- [x] P7-M2：实现产品化运行证据基线，覆盖脱敏 diagnostics report、前端诊断入口和报告截图证据。
+- [x] P7-M3：完成本地 Beta 使用说明、支持流程、隐私审计、P6/P7 中文可视化验收报告和 final freeze 候选审计；不代表 SaaS GA、真实 provider 或真实资料通过。
+- [ ] P7-POST-P5-REAL：P7 完成后重新执行 P5-REAL/P5-Freeze 复验；若用户仍不提供真实资料，只能保持“未执行”，不得用合成资料替代。
 - [ ] MCP Server wrapper。
 - [ ] CLI 命令。
 - [ ] 本地 Whisper / ASR adapter。

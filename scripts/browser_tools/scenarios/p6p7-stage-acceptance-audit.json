@@ -1,0 +1,106 @@
+{
+  "name": "P6+P7 阶段性审计与自动化验收报告",
+  "goal": "基于原始 PRD 和当前 P6+P7 文档，验证当前代码、文档、功能、测试和可视化证据是否支持本地 P6+P7 自动化候选结论。",
+  "url": "http://127.0.0.1:5173/?workspace_root=/tmp/jobpilot-p6p7-stage-audit-workspace",
+  "targetArchitecture": [
+    "Chatbox Experience Shell 展示 provider 状态、授权、长对话上下文、workspace 生命周期和推进台",
+    "FastAPI 提供 provider status/preferences/consent、chat message、chat context、workspace lifecycle 和 diagnostics routes",
+    "Chat Orchestrator 仅在 provider_opt_in 且 consent 有效时进入 provider-backed free chat，否则 local fallback",
+    "Provider Policy Gate 默认拒绝未授权外呼；configured、consented、called、failed、fallback 不混淆",
+    "Long Context Manager 通过 recent window、rolling summary、workspace snapshot 和 retrieved blocks 保持 bounded context",
+    "Workspace Lifecycle 仅执行 metadata-only backup、cleanup dry-run、migration dry-run 和 redacted diagnostics"
+  ],
+  "currentImplementation": [
+    "P6-M1 provider 设置和授权入口已在 UI 与 API 中可见",
+    "P6-M2 本轮验收使用 JOBPILOT_ENABLE_FAKE_PROVIDER_CHAT=1，不执行真实 MiniMax/DeepSeek/OpenAI-compatible 外呼",
+    "P6-M3 Long context 面板展示消息计数、滚动摘要、workspace 产物计数和隐私边界",
+    "P6-M4/M5 provider_chat_invocation 记录脱敏元数据，普通聊天不写 artifact，工具意图回到 Domain Tools",
+    "P7 Workspace ops 面板可触发备份清单、清理预演、迁移预演和脱敏诊断",
+    "本报告不证明真实个人资料路径、真实 provider 质量、SaaS GA、workspace 删除或迁移 apply"
+  ],
+  "viewports": [
+    { "name": "desktop", "width": 1440, "height": 960 },
+    { "name": "wide", "width": 1920, "height": 1080 },
+    { "name": "mobile", "width": 390, "height": 900 }
+  ],
+  "steps": [
+    { "viewport": "desktop", "name": "打开 Chatbox 工作台", "action": "goto" },
+    { "viewport": "desktop", "name": "等待首页渲染", "action": "waitText", "text": "求职材料工作台", "timeoutMs": 15000 },
+    { "viewport": "desktop", "name": "桌面初始状态与目标工作台", "action": "screenshot", "file": "stage-desktop-initial.png" },
+    { "viewport": "desktop", "name": "打开模型设置", "action": "clickText", "text": "模型设置" },
+    { "viewport": "desktop", "name": "等待模型设置弹窗", "action": "waitText", "text": "模型供应商设置", "timeoutMs": 8000 },
+    { "viewport": "desktop", "name": "模型设置展示 configured/consent 边界", "action": "screenshot", "file": "stage-provider-settings.png" },
+    { "viewport": "desktop", "name": "授权本轮外呼", "action": "clickText", "text": "授权本轮外呼" },
+    { "viewport": "desktop", "name": "等待授权提示", "action": "waitText", "text": "已授权本会话外呼范围", "timeoutMs": 8000 },
+    { "viewport": "desktop", "name": "Provider 已授权但未必调用", "action": "screenshot", "file": "stage-provider-consented.png" },
+    { "viewport": "desktop", "name": "关闭模型设置", "action": "clickText", "text": "取消" },
+    { "viewport": "desktop", "name": "输入 provider-backed 自由聊天", "action": "fill", "selector": "textarea", "value": "继续聊聊我的前端求职定位，不要生成材料。" },
+    { "viewport": "desktop", "name": "发送 provider-backed 自由聊天", "action": "clickText", "text": "发送任务" },
+    { "viewport": "desktop", "name": "等待 fake provider 回复", "action": "waitText", "text": "Fake provider", "timeoutMs": 10000 },
+    { "viewport": "desktop", "name": "Fake provider-backed 回复与 Long context", "action": "screenshot", "file": "stage-fake-provider-chat.png" },
+    { "viewport": "desktop", "name": "生成备份清单", "action": "clickText", "text": "备份清单" },
+    { "viewport": "desktop", "name": "等待备份清单", "action": "waitText", "text": "备份清单已生成", "timeoutMs": 8000 },
+    { "viewport": "desktop", "name": "Workspace backup manifest-only", "action": "screenshot", "file": "stage-workspace-backup.png" },
+    { "viewport": "desktop", "name": "执行清理预演", "action": "clickText", "text": "清理预演" },
+    { "viewport": "desktop", "name": "等待清理预演", "action": "waitText", "text": "清理预演完成", "timeoutMs": 8000 },
+    { "viewport": "desktop", "name": "Cleanup dry-run 证据", "action": "screenshot", "file": "stage-cleanup-dry-run.png" },
+    { "viewport": "desktop", "name": "执行迁移预演", "action": "clickText", "text": "迁移预演" },
+    { "viewport": "desktop", "name": "等待迁移预演", "action": "waitText", "text": "迁移预演完成", "timeoutMs": 8000 },
+    { "viewport": "desktop", "name": "Migration dry-run 证据", "action": "screenshot", "file": "stage-migration-dry-run.png" },
+    { "viewport": "desktop", "name": "生成诊断报告", "action": "clickText", "text": "诊断报告" },
+    { "viewport": "desktop", "name": "等待诊断报告", "action": "waitText", "text": "脱敏诊断已生成", "timeoutMs": 8000 },
+    { "viewport": "desktop", "name": "Diagnostics metadata-only 证据", "action": "screenshot", "file": "stage-diagnostics.png" },
+    { "viewport": "wide", "name": "宽屏重新打开", "action": "goto" },
+    { "viewport": "wide", "name": "等待宽屏首页", "action": "waitText", "text": "求职材料工作台", "timeoutMs": 15000 },
+    { "viewport": "wide", "name": "1920px 宽屏可视度", "action": "screenshot", "file": "stage-wide-1920.png" },
+    { "viewport": "mobile", "name": "移动端重新打开", "action": "goto" },
+    { "viewport": "mobile", "name": "等待移动端首页", "action": "waitText", "text": "求职材料工作台", "timeoutMs": 15000 },
+    { "viewport": "mobile", "name": "390px 移动端可视度", "action": "screenshot", "file": "stage-mobile-390.png" }
+  ],
+  "acceptanceCriteria": [
+    "默认不把 provider configured 写成 called",
+    "授权外呼和真实调用状态可区分",
+    "fake provider-backed 普通聊天不写 artifact",
+    "Long context 面板展示 recent window、rolling summary、workspace snapshot 和隐私边界",
+    "workspace backup/cleanup/migration/diagnostics 均不执行删除或迁移 apply",
+    "中文报告包含目标架构、当前实现、用户路径、截图证据、测试结果、PRD 规格检视和未验证范围"
+  ],
+  "commandResults": [
+    { "command": ".venv/bin/python -m pytest", "status": "passed", "evidence": "100 passed, 1 warning in 89.72s" },
+    { "command": "npm --prefix apps/chatbox run build", "status": "passed", "evidence": "tsc && vite build passed" },
+    { "command": "git diff --check", "status": "passed", "evidence": "no whitespace errors" },
+    { "command": "drawio XML parse", "status": "passed", "evidence": "drawio parse ok" },
+    { "command": "concept consistency scan", "status": "passed", "evidence": "no positive false-acceptance claims found; matches are boundary/negative statements" }
+  ],
+  "prdReview": [
+    { "requirement": "原始 PRD：本地优先求职 Agent 能完成资料、JD、匹配、申请材料和面试准备路径", "evidence": "100 passed 全量回归覆盖 P0-P5 基线；本轮未破坏既有导入、解析、匹配、导出和会话恢复测试", "status": "pass" },
+    { "requirement": "P6 provider 默认安全", "evidence": "provider opt-in 测试、模型设置截图、consent_required fallback；configured_is_called=false", "status": "pass" },
+    { "requirement": "P6 provider-backed chat 可控且可降级", "evidence": "fake provider 成功、timeout fallback、20 轮 bounded context 测试；真实 provider 未执行", "status": "pass for fake provider path" },
+    { "requirement": "P6 Tool Safety", "evidence": "普通 provider-backed chat artifacts=[]；JD 工具意图 skipped_tool_intent 并走 Domain Tools", "status": "pass" },
+    { "requirement": "P6 Privacy / Redaction", "evidence": "provider_chat_invocation 不含 API Key、完整 prompt、完整资料或 raw response；报告列出未验证范围", "status": "pass" },
+    { "requirement": "P7 Workspace Lifecycle", "evidence": "backup manifest-only、cleanup dry-run、migration dry-run、diagnostics metadata-only 测试与截图", "status": "pass for non-destructive path" },
+    { "requirement": "P7-post P5-REAL 复验边界", "evidence": "文档和报告均声明未读取真实个人资料，synthetic/examples 不能替代真实资料复验", "status": "not executed by design" }
+  ],
+  "codeReview": [
+    { "area": "Provider-backed chat", "finding": "adapter 默认 fake/disabled；真实 provider chat 需要显式环境开关、有效 consent 和后端配置，未发现默认外呼路径。", "severity": "pass" },
+    { "area": "Provider logs", "finding": "provider_chat_invocation 记录脱敏元数据、状态、fallback、错误类型和 token 估算；不记录 API Key 或 raw response。", "severity": "pass" },
+    { "area": "Tool safety", "finding": "自由聊天和工具意图分支分离；普通 provider-backed chat 不写 artifact，工具意图回到 Domain Tools。", "severity": "pass" },
+    { "area": "Workspace lifecycle", "finding": "backup 为 manifest-only；cleanup/migration 均为 dry-run；未实现 destructive apply。", "severity": "pass" },
+    { "area": "Residual risk", "finding": "真实 provider 输出质量、真实个人资料复验和 destructive workspace 操作仍未验证，应保持高风险确认门。", "severity": "warning" }
+  ],
+  "documentationAudit": [
+    { "area": "原始 PRD 与 active PRD", "finding": "当前文档保留 v1.0 产品背景，并将 P6/P7 明确限定为本地优先、opt-in provider 和 Beta 基线。", "status": "pass" },
+    { "area": "概念一致性", "finding": "configured、consented、called、fallback、P5-REAL、P7 Beta、SaaS GA 的概念边界在 README/TODO/active docs/report 中保持区分。", "status": "pass" },
+    { "area": "虚假验收防护", "finding": "文档明确 fake provider 不代表真实 provider 质量，合成资料不代表真实个人资料路径。", "status": "pass" },
+    { "area": "未验证范围", "finding": "报告列出真实 provider、真实资料、workspace delete/apply、SaaS/ASR/会议平台/自动投递未验证。", "status": "pass" }
+  ],
+  "unverifiedScope": [
+    "未执行真实 MiniMax、DeepSeek 或 OpenAI-compatible provider 外呼",
+    "未读取或验收用户真实个人资料",
+    "未执行 workspace 删除、清空、cleanup apply 或 migration apply",
+    "未实现 SaaS、多租户、Billing、ASR、会议平台、自动投递、MCP/CLI",
+    "未声明真正无限 token、无限上下文或无限成本对话",
+    "未进行人工体验评分，本报告只支持自动化候选进入人工审查"
+  ],
+  "auditOpinion": "阶段性验收结论：自动化候选通过，可进入人工体验审查；现实评价为本地 P6+P7 Beta 候选 READY FOR HUMAN REVIEW，不是 production/SaaS ready。"
+}

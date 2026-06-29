@@ -1,8 +1,114 @@
-# JobPilot AI P5 真实资料本地闭环阶段 PRD
+# JobPilot AI P6+P7 长程对话与产品化 Beta 阶段 PRD
 
-## 0. P5 当前阶段目标
+## -1. 当前阶段状态与决策
 
-P4 已在 2026-06-25 完成本地/mock Chatbox 体验冻结。P5 的目标不是引入 SaaS、ASR、会议平台、自动投递或默认真实外部 provider，而是在 P4 已冻结的 Chatbox 工作台上，把用户自己的求职资料和目标 JD 组织成一条可确认、可编辑、可导出的本地闭环。
+P4 已在 2026-06-25 完成本地/mock Chatbox 体验冻结。P5 本地/mock + 脱敏 fixture 自动化候选已完成，证据包括 P5 HTML 报告、多视口真实界面截图、三身份合成资料可视化验收、`.venv/bin/python -m pytest` 88 passed, 1 warning、前端 build 通过和 drawio XML parse 通过。
+
+用户已确认：
+
+- P5-REAL 标记为冻结延期复验，不在当前阶段读取真实个人资料；
+- P5-Freeze 标记为冻结延期复验，不把 P5 自动化候选写成最终通过；
+- P5-REAL/P5-Freeze 在 P7 完成后作为 P7-post 复验重新执行；
+- 当前阶段目标为 P6+P7 一体规划：先实现真实 provider opt-in 与长程连续对话，再完成产品化 Beta 基础，最后回头复验 P5-REAL/P5-Freeze。
+
+本 PRD 的当前有效目标是 P6+P7。后续 P5 章节作为历史基线和 P7-post 复验依据保留。
+
+## -0. P6+P7 当前阶段目标
+
+P6 解决的问题：
+
+```text
+当前 Chatbox 已能在本地/mock 中连续对话和完成求职材料闭环
+但用户仍无法在受控、安全、可恢复的前提下使用真实 provider 自由聊天
+长对话也没有明确的上下文压缩、刷新恢复、provider 失败降级和外呼证据链
+如果直接进入产品化，会放大 API Key 泄露、隐私外发、费用失控和虚假验收风险
+```
+
+P7 解决的问题：
+
+```text
+当前项目仍是本地工程原型和可验收工作台
+缺少 Beta 用户持续使用所需的 workspace 生命周期、备份/迁移、诊断报告、发布/部署/回滚、安全隐私审计和支持流程
+如果不补齐这些产品化基础，即使 P6 provider 聊天可用，也不能称为 Beta 体验
+```
+
+P6 目标体验路径：
+
+```text
+用户打开本地 Chatbox
+→ 页面明确显示 provider 模式、模型、隐私边界和本轮是否会外呼
+→ 默认仍走本地/mock，不因配置了 provider 就自动调用
+→ 用户在模型设置中选择 MiniMax、DeepSeek 或 OpenAI-compatible provider
+→ 用户在发送前或首次调用前确认本轮外呼和数据边界
+→ 系统使用 Provider Policy Gate 检查授权、API Key、脱敏、预算和安全边界
+→ 用户围绕求职方向、个人资料、JD、申请包和面试准备连续追问 20-50 轮
+→ Long Context Manager 维护近期消息窗口、滚动摘要、workspace context snapshot 和相关 artifact/JD/profile 检索
+→ 刷新页面后会话、摘要、关键上下文和当前 workspace 状态可恢复
+→ provider 超时、429、结构错误或不可用时降级到本地连续对话基线
+→ 普通聊天不写 artifact；明确要求解析、生成、重新生成或导出时才进入工具确认或工具执行
+```
+
+P7 目标体验路径：
+
+```text
+用户使用已具备 P6 provider opt-in 的本地 JobPilot
+→ 可以创建、恢复、导出、清理和备份 workspace
+→ 可以查看本地数据生命周期、隐私边界和诊断报告
+→ 可以执行迁移 dry-run，并在不可逆迁移或删除前获得明确确认
+→ 开发者可以按文档启动、部署、回滚和收集脱敏错误诊断
+→ Beta 验收报告展示真实界面路径、测试结果、安全隐私审计和未验证范围
+→ P7 通过后，再按 P7-post 计划执行 P5-REAL/P5-Freeze 复验
+```
+
+P6 必须产出的用户结果：
+
+- 用户能明确判断“本轮是否调用真实外部 provider”；
+- provider 默认不外呼，配置 provider 也不等于已调用；
+- 真实 provider 调用前必须有确认和隐私/费用提示；
+- API Key 不进入仓库、日志、报告、截图说明或测试 fixture；
+- 长程连续对话支持 20-50 轮、刷新恢复、滚动摘要和上下文快照；
+- provider 失败时不丢会话、不阻塞 UI，并能降级到本地连续对话；
+- provider-backed 回复不能伪造不存在的履历事实，不能绕过 `questions_to_confirm`、artifact confirmation 或 export preflight；
+- 自动化报告必须区分 mock/fake provider、受控真实 provider 和未验证范围。
+
+P7 必须产出的用户结果：
+
+- workspace 生命周期清楚：创建、恢复、导出、清理、备份、迁移 dry-run；
+- 本地/远端数据边界、保留策略、删除确认和不可逆操作风险可读；
+- 诊断报告、错误追踪和日志脱敏可用，不暴露 API Key 或完整个人资料；
+- 发布、部署、启动、回滚和故障排查文档可复现；
+- Beta 使用说明和支持流程可独立阅读；
+- P7 final acceptance report 能列出目标架构、当前实现、真实界面路径、测试证据、隐私审计和未验证范围；
+- P7 完成后有单独 P7-post P5-REAL/P5-Freeze 复验计划和打回条件。
+
+P6+P7 非目标：
+
+- 真正无限 token、无限上下文、无限成本的对话；
+- 默认外呼真实 provider；
+- 未经确认把真实个人资料发送给外部 provider；
+- 自动读取用户个人目录；
+- 把 synthetic personas、examples 或脱敏 fixture 写成真实个人资料验收；
+- SaaS 登录、多租户、Billing；
+- ASR、会议平台、自动投递；
+- MCP Server、CLI 产品入口；
+- 隐蔽式面试辅助、逐字代答或敏感属性分析；
+- 不经用户确认的 workspace 删除、不可逆迁移或外部同步。
+
+## -0.1 P6+P7 规格约束
+
+- P6/P7 默认仍以本地 workspace 为安全边界；
+- 真实 provider 必须 opt-in，且每轮外呼有可审计确认或会话级明确授权；
+- Provider Policy Gate 必须拦截未授权外呼、缺 API Key、未脱敏真实资料、超预算、provider 配置错误和不安全请求；
+- Long Context Manager 不能把完整历史、完整简历、完整 JD 或完整 provider raw response 无边界塞入模型；
+- Provider Invocation Log 只记录脱敏元数据、provider/model、耗时、状态、错误类型、token 估算和 redaction 摘要；
+- Chatbox 仍是薄入口，不生成求职内容、不直接写 SQLite、不直接保存 API Key；
+- Domain Tools、Artifact Service、Export Service、Storage 和 Provider Runtime 继续承担业务写入、版本、导出、持久化和外呼边界；
+- P7 不引入 SaaS 多租户或远端账号体系，除非另行立项；
+- P7-post P5-REAL 复验必须由用户明确提供资料路径和允许展示字段；若用户不提供，结论只能保持未执行。
+
+## 0. P5 历史阶段目标与 P7-post 复验依据
+
+本节作为历史基线和 P7-post 复验依据保留。P4 已在 2026-06-25 完成本地/mock Chatbox 体验冻结。P5 的目标不是引入 SaaS、ASR、会议平台、自动投递或默认真实外部 provider，而是在 P4 已冻结的 Chatbox 工作台上，把用户自己的求职资料和目标 JD 组织成一条可确认、可编辑、可导出的本地闭环。
 
 P5 的核心问题：
 
@@ -17,7 +123,7 @@ P5 当前状态：
 
 - 本地/mock + 脱敏 fixture 的自动化候选路径已通过，覆盖资料导入、JD 解析、事实确认、申请包生成、编辑后重新阻塞、确认后导出、本地多轮追问和多视口截图；
 - 最新工程证据为 `.venv/bin/python -m pytest` 88 passed, 1 warning、前端 build 通过、drawio XML parse 通过、`docs/reports/P5_LOCAL_DATA_CLOSURE_ACCEPTANCE_REPORT.html`，以及 `docs/reports/P5_STAGE_SYNTHETIC_VISUAL_ACCEPTANCE_REPORT.html`；
-- P5 尚未冻结：真实授权资料路径、允许展示字段、人工体验审查清单和 P5 final closure audit 仍未完成；
+- P5-REAL/P5-Freeze 已按用户确认冻结延期到 P7 后复验：真实授权资料路径、允许展示字段、人工体验审查清单和 P5 final closure audit 仍未完成，不得写成通过；
 - 当前 PRD 后续只允许指导 P5-REAL 与 P5-Freeze 收口，不得把真实外部 provider、provider-backed 自由智能聊天或产品化发布写成 P5 已完成。
 
 P5 目标体验路径：

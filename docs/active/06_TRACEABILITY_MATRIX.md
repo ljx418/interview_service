@@ -1,6 +1,84 @@
-# JobPilot AI P5 真实资料本地闭环追踪矩阵
+# JobPilot AI P6+P7 长程对话与产品化 Beta 追踪矩阵
 
-## 0. P5 当前阶段追踪矩阵
+## -1. P6+P7 当前阶段追踪矩阵
+
+| P6/P7 目标 | 实现区域 | 主要文件 / 模块 | 证据 | 验收门槛 |
+| --- | --- | --- | --- | --- |
+| P0-P5 本地基线不退化 | 全路径回归 | `services/`, `apps/chatbox/`, `tests/` | `.venv/bin/python -m pytest`, frontend build | P6+P7 门槛 0 |
+| Provider 默认安全 | Provider status / consent / policy | `services/api/main.py`, provider runtime/policy, `apps/chatbox/src/main.tsx` | 默认不外呼截图、configured/consented/called 状态 eval | P6 门槛 1 |
+| 模型设置和调用前确认 | Chatbox Model Settings / Provider Consent UI | `apps/chatbox/src/main.tsx`, `apps/chatbox/src/styles.css`, provider preferences route | 模型设置、调用前确认、取消确认截图 | P6 门槛 1 |
+| Provider-backed chat | Provider-backed Dialogue Adapter | `services/llm/`, `services/chat/core.py` | fake provider eval、受控真实 provider E2E 记录 | P6 门槛 2 |
+| 失败降级 | Local Fallback Dialogue / Error Recovery | `services/chat/core.py`, provider runtime, message UI | timeout/429/schema error 降级截图和测试 | P6 门槛 2 |
+| 长程连续对话 | Long Context Manager | 建议新增 `services/chat/context.py`, chat session storage, message UI | 20-50 轮 eval、rolling summary、refresh recovery 截图 | P6 门槛 3 |
+| 上下文来源边界 | Context Snapshot / Retrieval | artifact/JD/profile retrieval, workspace snapshot | source refs、summary、context snapshot 报告 | P6 门槛 3 / 5 |
+| Tool Safety | Intent Router / Artifact Guard / Export Guard | `services/chat/core.py`, artifact/export services | 普通聊天不写 artifact、blocking export 拦截测试 | P6 门槛 4 |
+| Provider invocation 脱敏 | Invocation Log / Redaction | tool/provider logs, redaction helpers | configured/called/failed/fallback 脱敏日志、敏感扫描 | P6 门槛 5 |
+| P6 可视化验收 | Browser evidence / HTML report | screenshot scripts, `docs/reports/` | 中文 HTML 报告、多视口真实截图、PRD 规格检视 | P6 门槛 6 |
+| Workspace 生命周期 | Workspace lifecycle service / routes | SQLite workspace、本地文件目录、workspace routes | backup/export/cleanup dry-run/migration dry-run 测试和截图 | P7 门槛 7 |
+| 不可逆操作确认 | Cleanup / Migration confirm UI | workspace lifecycle routes, Chatbox UI | 删除/迁移 apply 前确认截图 | P7 门槛 7 |
+| 诊断报告 | Diagnostics service / report generator | diagnostics route, redaction, report scripts | 脱敏诊断报告、敏感扫描 | P7 门槛 8 |
+| 发布部署回滚 | Release docs / scripts / checklist | README、RELEASE_CHECKLIST、scripts | 启动、部署、回滚文档审计 | P7 门槛 8 |
+| Beta 支持流程 | User guide / support runbook | docs active/reports | Beta 使用说明、支持流程、故障排查 | P7 门槛 9 |
+| P7 隐私审计 | Privacy audit | provider/workspace/diagnostics/export/report | 安全隐私审计记录 | P7 门槛 9 |
+| P7-post P5 复验 | P5-REAL acceptance scripts/reports | `scripts/generate_p5_real_data_acceptance.py`, P5 stage reviews | 用户授权路径后的 P5-REAL 报告和 final audit | P7-post 门槛 |
+| 文档和 drawio 同步 | Active Docs / Drawio | `docs/active/`, drawio | XML parse、文本镜像、README/TODO sync | P6+P7 门槛 |
+
+## -0. P6+P7 防止过度计划的边界
+
+以下内容不能作为 P6+P7 出门条件或已完成能力：
+
+- 真正无限 token、无限上下文或无限成本；
+- 默认真实外部 provider；
+- 未经确认的真实个人资料外发；
+- SaaS 登录、多租户、Billing；
+- ASR / Whisper、系统音频、会议平台；
+- 自动投递、岗位数据源聚合、Offer 分析；
+- MCP Server 或 CLI 产品入口；
+- 未授权真实个人资料自动验收；
+- workspace 删除或迁移 apply 的默认执行。
+
+## -0.1 P6+P7 防止规格不足的边界
+
+缺少以下任一项，不能认为 P6+P7 完成：
+
+- 用户能判断 provider configured、consented、called、failed、fallback；
+- 未确认不外呼；
+- API Key 不进入前端、仓库、日志、报告、截图说明或 fixture；
+- provider 失败能降级并保留会话；
+- 20-50 轮长程连续对话有 rolling summary、context snapshot 和 refresh recovery；
+- 普通聊天不写 artifact，provider-backed chat 不绕过 confirmation/export preflight；
+- workspace backup/export/cleanup dry-run/migration dry-run 可验收；
+- diagnostics report 脱敏；
+- release/deploy/rollback/support 文档可复现；
+- P7 后 P5-REAL/P5-Freeze 复验路径不被 synthetic personas 替代；
+- README/TODO/active docs/drawio 口径一致。
+
+## -0.2 P6+P7 自动化开发任务映射
+
+| 开发任务 | 代码边界 | 建议测试 | 截图 / 报告证据 |
+| --- | --- | --- | --- |
+| P6-M1 Provider opt-in UX | Chatbox 模型设置、provider status/consent routes、policy gate | provider default safety eval | 默认不外呼、模型设置、调用前确认、取消确认 |
+| P6-M2 Provider-backed adapter | provider runtime、chat adapter、redaction、retry/timeout | fake provider eval、受控真实 provider 记录 | provider-backed 回复、失败降级 |
+| P6-M3 Long Context Manager | chat context module、session storage、summary/retrieval | long conversation eval | 20-50 轮、rolling summary、refresh recovery |
+| P6-M4 Tool Safety | intent router、artifact/export guards | chat/artifact/export safety eval | 普通聊天不写 artifact、blocking export 拦截 |
+| P6-M5 Privacy / Invocation Log | provider invocation log、redaction helpers、report filters | sensitive scan eval | configured/called/failed/fallback 脱敏日志 |
+| P6-M6 Visual Acceptance | browser evidence script、HTML report | acceptance report eval | 中文报告、真实界面截图、多视口 |
+| P7-M1 Workspace lifecycle | workspace lifecycle service/routes、Chatbox lifecycle UI | lifecycle eval | backup/export/cleanup dry-run/migration dry-run |
+| P7-M2 Diagnostics / Release | diagnostics service、release docs/scripts | diagnostics/report/docs eval | 脱敏诊断报告、启动/部署/回滚证据 |
+| P7-M3 Beta closure | guide、support runbook、privacy audit、final report | P7 acceptance report eval | Beta 使用说明、支持流程、隐私审计 |
+| P7-post P5 revalidation | P5-REAL scripts/reports/stage review | P5 real data revalidation eval | 用户授权资料路径后的脱敏复验报告 |
+
+## -0.3 P6+P7 文档支撑与开发准入结论
+
+当前文档在补齐 P6+P7 PRD、目标架构、里程碑、验收门槛、追踪矩阵、roadmap 和 drawio 后，可以支撑下一阶段自动化开发，前提是开发严格遵守以下边界：
+
+- P6 真实 provider 必须 opt-in，不默认外呼；
+- “无限对话”统一写成“长程连续对话”，以 20-50 轮、滚动摘要、刷新恢复和失败降级验收；
+- P7 只做产品化 Beta 基础，不混入 SaaS、多租户、Billing、ASR、会议平台或自动投递；
+- P5-REAL/P5-Freeze 只在 P7 完成后复验，且必须用户提供真实/脱敏资料路径；
+- 每个子阶段先完成开发计划、验收标准和启动审计，再进入实质开发。
+
+## 0. P5 历史追踪矩阵与 P7-post 复验依据
 
 | P5 目标 | 实现区域 | 主要文件 / 模块 | 证据 | 验收门槛 |
 | --- | --- | --- | --- | --- |
@@ -67,7 +145,7 @@
 | P5-FC 多轮追问 | 普通追问不写 artifact、目标 JD 申请包路由 eval | 自动化通过 | 人工复核连续对话体验 |
 | P5-M5 报告 | `docs/reports/P5_LOCAL_DATA_CLOSURE_ACCEPTANCE_REPORT.html`、1200/1440/1600/1920/720/390 截图 | 自动化候选通过 | 真实资料脱敏复核 |
 | P5-REAL | 待用户提供明确本地脱敏真实资料路径和允许展示字段 | 未执行 | 只读用户指定路径，完成真实资料/JD 局部片段复核 |
-| P5-Freeze | `88 passed, 1 warning`、frontend build passed、drawio parse passed、三身份合成资料 Chrome/CDP 可视化验收通过，可作为候选证据 | 未冻结 | 真实资料路径、人工体验清单、final closure audit |
+| P5-Freeze | `88 passed, 1 warning`、frontend build passed、drawio parse passed、三身份合成资料 Chrome/CDP 可视化验收通过，可作为候选证据 | 冻结延期到 P7-post | 真实资料路径、人工体验清单、final closure audit 需 P7 后复验 |
 
 ## 0.4 P5 文档支撑与冻结前审计结论
 

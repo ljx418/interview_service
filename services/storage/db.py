@@ -289,6 +289,24 @@ CREATE TABLE IF NOT EXISTS provider_invocation (
   created_at TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS provider_chat_invocation (
+  id TEXT PRIMARY KEY,
+  workspace_id TEXT NOT NULL,
+  session_id TEXT,
+  provider_name TEXT NOT NULL,
+  model TEXT,
+  consent_id TEXT,
+  consent_scope TEXT,
+  status TEXT NOT NULL,
+  error_code TEXT,
+  latency_ms INTEGER NOT NULL DEFAULT 0,
+  token_estimate INTEGER NOT NULL DEFAULT 0,
+  input_summary TEXT NOT NULL DEFAULT '{}',
+  redaction_summary TEXT NOT NULL DEFAULT '{}',
+  fallback_used INTEGER NOT NULL DEFAULT 0,
+  created_at TEXT NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS artifact_version (
   id TEXT PRIMARY KEY,
   artifact_id TEXT NOT NULL,
@@ -315,6 +333,7 @@ def connect(db_path: Path) -> sqlite3.Connection:
     conn.execute("PRAGMA busy_timeout = 10000")
     conn.executescript(SCHEMA)
     migrate_p1_artifact_versions(conn)
+    migrate_p6_provider_chat_invocations(conn)
     return conn
 
 
@@ -382,6 +401,30 @@ def migrate_p1_artifact_versions(conn: sqlite3.Connection) -> None:
             ),
         )
         conn.execute("UPDATE artifact SET current_version_id=? WHERE id=?", (version_id, artifact["id"]))
+
+
+def migrate_p6_provider_chat_invocations(conn: sqlite3.Connection) -> None:
+    conn.execute(
+        """
+        CREATE TABLE IF NOT EXISTS provider_chat_invocation (
+          id TEXT PRIMARY KEY,
+          workspace_id TEXT NOT NULL,
+          session_id TEXT,
+          provider_name TEXT NOT NULL,
+          model TEXT,
+          consent_id TEXT,
+          consent_scope TEXT,
+          status TEXT NOT NULL,
+          error_code TEXT,
+          latency_ms INTEGER NOT NULL DEFAULT 0,
+          token_estimate INTEGER NOT NULL DEFAULT 0,
+          input_summary TEXT NOT NULL DEFAULT '{}',
+          redaction_summary TEXT NOT NULL DEFAULT '{}',
+          fallback_used INTEGER NOT NULL DEFAULT 0,
+          created_at TEXT NOT NULL
+        )
+        """
+    )
 
 
 def row_to_dict(row: sqlite3.Row | None) -> dict[str, Any] | None:

@@ -1,8 +1,8 @@
 # JobPilot AI 产品化后续开发路线图
 
 日期：2026-06-25
-状态：P4 本地/mock examples 路径已冻结；P5 真实资料本地闭环已进入当前阶段规划；真实外部 provider 路径仍待 P6 单独确认
-用途：把当前到产品化 Beta / SaaS 之前的开发目标落盘，并作为 P5 真实资料本地闭环的阶段规划入口。
+状态：P4 本地/mock examples 路径已冻结；P5 本地/mock + 脱敏 fixture 自动化候选已完成；P5-REAL/P5-Freeze 已冻结延期到 P7 后复验；当前主线为 P6+P7 一体规划
+用途：把当前到产品化 Beta / SaaS 之前的开发目标落盘，并作为 P6 真实 provider opt-in、长程连续对话和 P7 产品化 Beta 的阶段规划入口。
 
 ## 1. 当前真实状态
 
@@ -25,14 +25,23 @@
 - 真实外部 provider / API Key / 外部模型调用已通过；
 - ASR、会议平台、自动投递、SaaS、多租户、Billing 已进入验收范围。
 
-P4 冻结证据：
+P4/P5 基线证据：
 
 ```text
 2026-06-25 人工体验评分：26/26
 .venv/bin/python -m pytest：71 passed, 1 warning
 npm --prefix apps/chatbox run build：通过
 drawio XML parse：5 diagrams
+P5 自动化候选：88 passed, 1 warning + P5 HTML 报告 + 三身份合成资料可视化验收
 ```
+
+P5-REAL/P5-Freeze 当前口径：
+
+- 冻结延期到 P7 后复验；
+- 不读取真实个人资料；
+- 不声明真实个人资料路径通过；
+- 不声明真实外部 provider 默认路径通过；
+- synthetic personas、examples 和脱敏 fixture 只能作为候选和增强证据，不能替代 P5-REAL。
 
 ## 2. 产品化差距评估
 
@@ -46,14 +55,15 @@ drawio XML parse：5 diagrams
 
 这些百分比是开发规划估算，不是验收结论。
 
-## 3. P4 冻结后当前主线
+## 3. P4/P5 基线后的当前主线
 
-P4 已完成本地/mock examples 路径冻结。当前主线已选择为 P5：真实资料本地闭环。P6/P7/P8+ 仍作为后续阶段，不能混入 P5 出门条件：
+P4 已完成本地/mock examples 路径冻结。P5 已完成本地/mock + 脱敏 fixture 自动化候选，但 P5-REAL/P5-Freeze 冻结延期到 P7 后复验。当前主线已选择为 P6+P7：
 
 ```text
-P5：真实资料本地闭环（当前阶段）
-P6：真实外部 provider opt-in
-P7：产品化 Beta
+P5：真实资料本地闭环自动化候选完成；P5-REAL/P5-Freeze 冻结延期复验
+P6：真实外部 provider opt-in + 长程连续对话（当前阶段）
+P7：产品化 Beta（当前阶段）
+P7-post：P5-REAL/P5-Freeze 复验
 P8+：SaaS / ASR / 会议平台 / 自动投递等高风险能力
 ```
 
@@ -62,10 +72,10 @@ P8+：SaaS / ASR / 会议平台 / 自动投递等高风险能力
 ```text
 docs/active/17_PRODUCTIZATION_DEVELOPMENT_ROADMAP.md
 docs/active/18_FREE_CHATBOX_CONTINUOUS_DIALOGUE_PLAN.md
-docs/active/stage-reviews/P4C_EXTERNAL_PROVIDER_DESENSITIZED_ACCEPTANCE_PLAN.md
+docs/active/19_P6_PROVIDER_BACKED_LONG_CONTEXT_CHAT_PLAN.md
 ```
 
-P5 实质开发前必须先完成 P5 PRD、目标架构、验收门槛、风险确认和 drawio gap 文档。P6/P7/P8+ 仍必须在各自启动前单独制定规划和验收边界。
+P6/P7 实质开发前必须先完成 P6+P7 PRD、目标架构、验收门槛、风险确认和 drawio gap 文档。P8+ 仍必须在各自启动前单独制定规划和验收边界。
 
 ## 4. P4C 候选：人工体验微调
 
@@ -100,9 +110,9 @@ P4C 出门条件：
 - 未把真实个人资料或真实 provider 写成已通过。
 - 未把 provider-backed 自由智能聊天写成当前已完成；该能力必须进入 P6 opt-in。
 
-## 5. P5 当前阶段：真实资料本地闭环
+## 5. P5 冻结延期复验：真实资料本地闭环
 
-目标：把当前示例路径推进到真实用户资料的受控本地闭环。P5 默认仍是本地 workspace 和 mock/local provider 路径；真实外部 provider 不属于 P5 默认验收。
+状态：本地/mock + 脱敏 fixture 自动化候选已完成；P5-REAL/P5-Freeze 冻结延期到 P7 后复验。P5 默认仍是本地 workspace 和 mock/local provider 路径；真实外部 provider 不属于 P5 默认验收。
 
 理想体验路径：
 
@@ -117,17 +127,19 @@ P4C 出门条件：
 → 导出简历、cover letter、申请说明或面试准备
 ```
 
-当前工作包：
+当前工作包状态：
 
 | 工作包 | 目标 | 验收证据 |
 | --- | --- | --- |
-| P5-M0 | 制定 P5 PRD、目标架构、验收门槛和风险确认 | P5 active docs、drawio、文本镜像 |
-| P5-M1 | 真实资料导入和解析 UX | 上传/粘贴/解析截图和 eval |
-| P5-M2 | 真实 JD 导入、解析和缺失项提示 | JD 解析截图、错误恢复测试 |
-| P5-M3 | 事实确认与待补充信息闭环 | questions_to_confirm UI 和 tests |
-| P5-M4 | 真实资料申请包生成和编辑 | 本地真实感资料验收报告 |
-| P5-M5 | 导出路径人工审查 | Markdown/DOCX 文件和截图 |
-| P5-FC | 围绕真实资料的本地多轮追问 | 会话恢复、上下文追问、非执行型对话测试 |
+| P5-M0 | 制定 P5 PRD、目标架构、验收门槛和风险确认 | 已完成 |
+| P5-M1 | 真实资料导入和解析 UX | 脱敏 fixture 自动化候选通过 |
+| P5-M2 | 真实 JD 导入、解析和缺失项提示 | 自动化候选通过 |
+| P5-M3 | 事实确认与待补充信息闭环 | 自动化候选通过 |
+| P5-M4 | 真实资料申请包生成和编辑 | 自动化候选通过 |
+| P5-M5 | 脱敏自动化报告和导出路径证据 | 自动化候选通过 |
+| P5-FC | 围绕资料/JD/申请包的本地多轮追问 | 自动化候选通过 |
+| P5-REAL | 真实资料路径复验 | 冻结延期到 P7-post |
+| P5-Freeze | 人工体验记录和 final closure audit | 冻结延期到 P7-post |
 
 P5 非目标：
 
@@ -137,9 +149,9 @@ P5 非目标：
 - 不做 ASR/会议平台。
 - 不做 provider-backed 自由智能聊天默认路径。
 
-## 6. P6 候选：外部 provider 受控接入
+## 6. P6 当前阶段：外部 provider 受控接入和长程连续对话
 
-目标：在用户明确确认后，验证真实外部模型调用的产品路径。
+目标：在用户明确确认后，验证真实外部模型调用的产品路径，并把“长程连续对话”作为 P6 的核心体验目标。P6 不承诺真正无限 token，而是通过会话持久化、滚动摘要、上下文快照和检索实现可验收的长程连续聊天。
 
 必须具备：
 
@@ -149,36 +161,48 @@ P5 非目标：
 - timeout、retry、schema validation、redaction；
 - provider invocation 记录脱敏；
 - mock provider 仍可作为默认离线基线。
+- 长对话上下文不能把全部历史逐字塞进 provider，必须有压缩和来源边界；
+- provider-backed 回复不能绕过 artifact confirmation、questions_to_confirm 或 export preflight。
 
 建议工作包：
 
 | 工作包 | 目标 | 验收证据 |
 | --- | --- | --- |
-| P6-M0 | 制定 provider 风险确认和验收门槛 | P6 PRD/acceptance gates |
-| P6-M1 | 外部调用确认 UX | 调用前确认截图 |
-| P6-M2 | 真实 provider 路径最小 E2E | 用户授权后的受控验收记录 |
+| P6-M0 | 启动审计、Provider Policy Gate、Long Context Manager 和 invocation schema | P6 plan/audit |
+| P6-M1 | 外部调用确认 UX 和模型设置 | 调用前确认截图、默认不外呼 eval |
+| P6-M2 | provider-backed chat adapter | fake provider eval、用户授权后的受控真实 provider 验收记录 |
 | P6-M3 | provider 失败/超时/结构错误恢复 | 自动化和人工截图 |
-| P6-M4 | 日志脱敏和密钥边界复查 | eval gates 和审计记录 |
-| P6-FC | provider-backed 自由智能聊天 opt-in | 调用前确认、脱敏日志、失败降级、本地基线对照 |
+| P6-M4 | Tool Safety 与 Artifact/Export Guard 复验 | 普通聊天不写 artifact、blocking export 拦截 |
+| P6-M5 | 日志脱敏、密钥边界和长程上下文管理 | 20-50 轮连续对话、刷新恢复、滚动摘要和 context snapshot 证据 |
+| P6-Freeze | provider-backed 自由智能聊天 opt-in 出门审计 | 调用前确认、脱敏日志、失败降级、本地基线对照、HTML 报告 |
 
 P6 出门条件：
 
 - 用户授权后才可验收真实 provider；
 - 不在仓库、报告、日志里写入真实 API Key；
 - 真实 provider 的成功和失败路径都要有证据。
+- 报告不得把长程连续对话写成真正无限上下文；
+- provider 失败时必须能降级到本地连续对话基线。
 
-## 7. P7 候选：产品化 Beta
+入口文档：
+
+```text
+docs/active/19_P6_PROVIDER_BACKED_LONG_CONTEXT_CHAT_PLAN.md
+```
+
+## 7. P7 当前阶段：产品化 Beta
 
 目标：从本地工具走向可被真实用户持续使用的 Beta。
 
 建议能力：
 
-- workspace 管理和历史恢复；
-- 用户数据安全边界和本地/远端存储策略；
-- 错误追踪、日志脱敏、诊断报告；
-- 备份、导出、清理和迁移策略；
-- 发布脚本、部署说明和回滚计划；
-- Beta 使用说明和支持流程。
+| 工作包 | 目标 | 验收证据 |
+| --- | --- | --- |
+| P7-M0 | Beta 启动审计和产品化边界锁定 | P7 plan/audit |
+| P7-M1 | workspace 管理、历史恢复、导出、备份、清理 dry-run、迁移 dry-run | lifecycle eval、截图 |
+| P7-M2 | 用户数据安全边界、错误追踪、日志脱敏、诊断报告 | diagnostics report、敏感扫描 |
+| P7-M3 | 发布脚本、部署说明、回滚计划、Beta 使用说明和支持流程 | release checklist、support runbook、HTML 报告 |
+| P7-POST | P5-REAL/P5-Freeze 复验 | 用户授权真实资料路径后的脱敏报告和 closure audit |
 
 P7 出门条件：
 
@@ -204,11 +228,12 @@ P7 出门条件：
 
 ## 9. 回到当前主线
 
-当前 P4 已冻结，P5 已被确认为当前阶段目标。执行顺序是先完成 P5 文档、drawio、验收门槛和风险确认，再进入 P5 实质开发：
+当前 P4 已冻结，P5-REAL/P5-Freeze 已冻结延期到 P7 后复验，P6+P7 已被确认为当前阶段目标。执行顺序是先完成 P6+P7 文档、drawio、验收门槛和风险确认，再进入实质开发：
 
 1. P5-M0：完成真实资料本地闭环 PRD、目标架构、验收门槛、脱敏策略、drawio 和人工确认点；
-2. P5-M1 到 P5-FC：按 P5 文档逐步实现资料导入、JD 解析、事实确认、申请包、导出和本地多轮追问；
-3. P5-Freeze：通过自动化验收、脱敏截图报告、PRD 规格检视和人工体验记录后冻结；
-4. 若进入 P6，重新制定真实外部 provider opt-in 方案、调用前确认、API Key 边界、日志脱敏和失败降级验收；
-5. 若进入 P7，重新制定发布、部署、数据生命周期、备份/迁移、监控和隐私审计计划；
-6. 任何真实个人资料、真实外部 provider、自动投递、会议平台或不可逆迁移操作，都必须先暂停并获得用户确认。
+2. P5-M1 到 P5-FC：已按 P5 文档完成自动化候选；
+3. P5-REAL/P5-Freeze：冻结延期到 P7-post，不作为当前阶段阻塞项，也不得写成通过；
+4. P6-M0 到 P6-Freeze：真实外部 provider opt-in、调用前确认、API Key 边界、长程连续对话、日志脱敏、失败降级和可视化验收；
+5. P7-M0 到 P7-Freeze：发布、部署、数据生命周期、备份/迁移 dry-run、诊断报告、回滚、支持流程和隐私审计；
+6. P7-post：在用户提供真实资料路径后执行 P5-REAL/P5-Freeze 复验；
+7. 任何真实个人资料、真实外部 provider、自动投递、会议平台、workspace 删除或不可逆迁移操作，都必须先暂停并获得用户确认。

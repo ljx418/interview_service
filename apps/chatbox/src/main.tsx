@@ -1,10 +1,14 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
+  Activity,
   AlertCircle,
+  Archive,
   CheckCircle2,
+  Database,
   Download,
   Eye,
+  FileCog,
   FileText,
   FileUp,
   ListChecks,
@@ -34,6 +38,21 @@ type ProviderStatus = {
   timeout_seconds?: number;
   max_retries?: number;
   runtime_only?: boolean;
+  p6_state?: "mock_default" | "configured" | "consented" | "called" | "failed" | "fallback" | "policy_denied";
+  configured_is_called?: boolean;
+  called_in_workspace?: boolean;
+  called_in_session?: boolean;
+  consented?: boolean;
+  consent?: {
+    consent_id: string;
+    scope: string;
+    allowed_data_classes: string[];
+    expires_at: string;
+  } | null;
+  last_error?: string | null;
+  fallback_used?: boolean;
+  external_call_requires_consent?: boolean;
+  api_key_redacted?: boolean;
 };
 
 type ProviderRuntimeConfig = {
@@ -51,6 +70,38 @@ type Message = {
   content: string;
   tone?: "normal" | "notice" | "error" | "plan";
   artifacts?: unknown[];
+};
+
+type ChatContext = {
+  recent_count: number;
+  total_message_count: number;
+  rolling_summary: {
+    summary_text: string;
+    covered_message_count: number;
+    source_digest: string;
+  };
+  workspace_snapshot: {
+    latest_job?: { title?: string; company?: string } | null;
+    latest_package?: unknown | null;
+    artifact_count: number;
+    pending_confirmation_count: number;
+    artifact_types: string[];
+  };
+  retrieved_blocks: Array<{ artifact_type?: string; redacted_excerpt?: string; risk_label?: string }>;
+  privacy_boundary: {
+    contains_api_key: boolean;
+    raw_provider_response_included: boolean;
+    full_history_included: boolean;
+    redacted: boolean;
+  };
+};
+
+type LifecycleResult = {
+  kind: "backup" | "cleanup" | "migration" | "diagnostics";
+  title: string;
+  summary: string;
+  detail: string;
+  status: "safe" | "warning";
 };
 
 type StoredChatMessage = {
@@ -168,13 +219,25 @@ function compactFileName(path: string, maxLength = 30) {
 
 function providerLabel(providerStatus: ProviderStatus | null) {
   if (!providerStatus) return "Provider 检查中";
-  if (providerStatus.provider === "mock") return "Mock 本地模式（不外呼）";
-  if (providerStatus.external_calls_enabled) {
+  if (providerStatus.p6_state === "called") return "本会话已发生外部 provider 调用";
+  if (providerStatus.p6_state === "fallback") return "Provider 已降级到本地回复";
+  if (providerStatus.p6_state === "policy_denied") return "外部调用被策略拦截";
+  if (providerStatus.p6_state === "failed") return "外部 provider 调用失败，可本地降级";
+  if (providerStatus.p6_state === "consented") return "已授权本轮外呼（未必已调用）";
+  if (providerStatus.provider === "mock" || providerStatus.p6_state === "mock_default") return "Mock 本地模式（不外呼）";
+  if (providerStatus.configured || providerStatus.external_calls_enabled) {
     const preset = providerStatus.preset ? `${providerStatus.preset} · ` : "";
-    return `${preset}${providerStatus.model ?? "OpenAI-compatible"} 已配置`;
+    return `${preset}${providerStatus.model ?? "OpenAI-compatible"} 已配置，待授权`;
   }
   if (providerStatus.provider === "openai_compatible") return "外部 provider 未配置完整";
   return "外部模型未调用（隐私安全）";
+}
+
+function providerTone(providerStatus: ProviderStatus | null): "ok" | "warning" | "neutral" {
+  if (!providerStatus) return "neutral";
+  if (providerStatus.p6_state === "failed" || providerStatus.p6_state === "configured" || providerStatus.p6_state === "fallback" || providerStatus.p6_state === "policy_denied") return "warning";
+  if (providerStatus.p6_state === "called" || providerStatus.p6_state === "consented") return "ok";
+  return "neutral";
 }
 
 function defaultProviderConfig(preset: ProviderPreset = ""): ProviderRuntimeConfig {
@@ -635,14 +698,31 @@ function ConversationHeader({
   );
 }
 
+function shortSummary(value: string | undefined, max = 120) {
+  if (!value) return "尚未形成摘要";
+  return value.length > max ? `${value.slice(0, max)}...` : value;
+}
+
 function DesktopContextPanel({
   dataMode,
   workflowResult,
   artifactCount,
+  chatContext,
+  contextLoading,
+  lifecycleResult,
+  lifecycleBusy,
+  onRefreshContext,
+  onWorkspaceAction,
 }: {
   dataMode: DataMode;
   workflowResult: WorkflowResult | null;
   artifactCount: number;
+  chatContext: ChatContext | null;
+  contextLoading: boolean;
+  lifecycleResult: LifecycleResult | null;
+  lifecycleBusy: boolean;
+  onRefreshContext: () => void;
+  onWorkspaceAction: (kind: LifecycleResult["kind"]) => void;
 }) {
   const completed = workflowResult?.steps?.filter((step) => step.status === "completed").length ?? 0;
   const total = workflowResult?.steps?.length ?? 0;
@@ -703,6 +783,56 @@ function DesktopContextPanel({
           </li>
         </ul>
       </section>
+
+      <section className="context-section memory-section">
+        <div className="context-section-title">
+          <span className="eyebrow">Long context</span>
+          <button className="context-icon-button" type="button" onClick={onRefreshContext} disabled={contextLoading} aria-label="刷新长对话上下文">
+            <RefreshCcw size={14} />
+          </button>
+        </div>
+        <div className="memory-card">
+          <div className="memory-metrics">
+            <span>
+              <strong>{chatContext?.total_message_count ?? 0}</strong>
+              <small>历史消息</small>
+            </span>
+            <span>
+              <strong>{chatContext?.recent_count ?? 0}</strong>
+              <small>近期窗口</small>
+            </span>
+          </div>
+          <p>{contextLoading ? "正在读取上下文..." : shortSummary(chatContext?.rolling_summary.summary_text)}</p>
+          <ul>
+            <li>摘要覆盖：{chatContext?.rolling_summary.covered_message_count ?? 0} 条旧消息</li>
+            <li>产物：{chatContext?.workspace_snapshot.artifact_count ?? 0} 个，待确认 {chatContext?.workspace_snapshot.pending_confirmation_count ?? 0} 个</li>
+            <li>隐私：{chatContext?.privacy_boundary.contains_api_key ? "发现风险" : "不含 API Key"} / {chatContext?.privacy_boundary.full_history_included ? "含完整历史" : "不含完整历史"}</li>
+          </ul>
+        </div>
+      </section>
+
+      <section className="context-section operations-section">
+        <span className="eyebrow">Workspace ops</span>
+        <div className="ops-grid" aria-label="workspace 生命周期操作">
+          <button type="button" disabled={lifecycleBusy} onClick={() => onWorkspaceAction("backup")}>
+            <Archive size={14} /> 备份清单
+          </button>
+          <button type="button" disabled={lifecycleBusy} onClick={() => onWorkspaceAction("cleanup")}>
+            <FileCog size={14} /> 清理预演
+          </button>
+          <button type="button" disabled={lifecycleBusy} onClick={() => onWorkspaceAction("migration")}>
+            <Database size={14} /> 迁移预演
+          </button>
+          <button type="button" disabled={lifecycleBusy} onClick={() => onWorkspaceAction("diagnostics")}>
+            <Activity size={14} /> 诊断报告
+          </button>
+        </div>
+        <div className={`ops-result ${lifecycleResult?.status ?? "safe"}`}>
+          <strong>{lifecycleResult?.title ?? "仅执行 metadata-only / dry-run 操作"}</strong>
+          <span>{lifecycleBusy ? "操作执行中..." : lifecycleResult?.summary ?? "不会删除文件，不执行迁移 apply，不上传外部服务。"}</span>
+          {lifecycleResult?.detail && <small>{lifecycleResult.detail}</small>}
+        </div>
+      </section>
     </aside>
   );
 }
@@ -713,22 +843,28 @@ function ProviderSettingsModal({
   config,
   saving,
   checking,
+  consenting,
   checkMessage,
+  canConsent,
   onClose,
   onChange,
   onSave,
   onCheck,
+  onConsent,
 }: {
   open: boolean;
   status: ProviderStatus | null;
   config: ProviderRuntimeConfig;
   saving: boolean;
   checking: boolean;
+  consenting: boolean;
   checkMessage: string;
+  canConsent: boolean;
   onClose: () => void;
   onChange: (config: ProviderRuntimeConfig) => void;
   onSave: () => void;
   onCheck: (confirmExternalCall: boolean) => void;
+  onConsent: () => void;
 }) {
   const [confirmExternalCall, setConfirmExternalCall] = useState(false);
   if (!open) return null;
@@ -818,8 +954,9 @@ function ProviderSettingsModal({
 
         <div className="settings-status" role="note">
           <strong>当前状态：{providerLabel(status)}</strong>
-          <span>{configured ? "API Key 已配置或已输入。" : "尚未配置 API Key。"}</span>
-          <span>保存后会把当前 workspace 的 provider 切换为所选模式；真实外呼仍只发生在你明确执行外部工具或勾选测试时。</span>
+          <span>{configured ? "API Key 已配置或已输入；界面和报告只显示脱敏状态。" : "尚未配置 API Key。"}</span>
+          <span>保存配置、授权外呼、真实调用是三个不同状态；配置 provider 不等于已经调用 provider。</span>
+          {status?.consent && <span>当前授权范围：{status.consent.allowed_data_classes.join(" / ")}，过期时间 {new Date(status.consent.expires_at).toLocaleTimeString()}。</span>}
         </div>
 
         <label className="settings-confirm">
@@ -835,6 +972,9 @@ function ProviderSettingsModal({
           </button>
           <button className="btn-secondary-action" type="button" disabled={checking || !externalMode} onClick={() => onCheck(confirmExternalCall)}>
             {checking ? "检查中..." : confirmExternalCall ? "测试连接" : "检查配置"}
+          </button>
+          <button className="btn-secondary-action" type="button" disabled={consenting || !externalMode || !canConsent} onClick={onConsent}>
+            {consenting ? "授权中..." : "授权本轮外呼"}
           </button>
           <button className="btn-primary-action" type="button" disabled={saving} onClick={onSave}>
             {saving ? "保存中..." : "保存设置"}
@@ -1169,7 +1309,12 @@ function App() {
   const [providerSettingsOpen, setProviderSettingsOpen] = useState(false);
   const [providerSaving, setProviderSaving] = useState(false);
   const [providerChecking, setProviderChecking] = useState(false);
+  const [providerConsenting, setProviderConsenting] = useState(false);
   const [providerCheckMessage, setProviderCheckMessage] = useState("");
+  const [chatContext, setChatContext] = useState<ChatContext | null>(null);
+  const [contextLoading, setContextLoading] = useState(false);
+  const [lifecycleResult, setLifecycleResult] = useState<LifecycleResult | null>(null);
+  const [lifecycleBusy, setLifecycleBusy] = useState(false);
   const [workflowResult, setWorkflowResult] = useState<WorkflowResult | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const autorunStarted = useRef(false);
@@ -1233,6 +1378,12 @@ function App() {
   }, []);
 
   useEffect(() => {
+    if (!workspaceId || !sessionId) return;
+    refreshProviderStatus().catch(() => undefined);
+    refreshChatContext().catch(() => undefined);
+  }, [workspaceId, sessionId]);
+
+  useEffect(() => {
     const messageList = messagesListRef.current;
     if (messageList) messageList.scrollTop = messageList.scrollHeight;
   }, [messages, busy]);
@@ -1287,10 +1438,26 @@ function App() {
   }
 
   async function refreshProviderStatus() {
-    const status = await api<ProviderStatus>("/api/provider/runtime-config");
+    const query =
+      workspaceId && sessionId
+        ? `?workspace_id=${encodeURIComponent(workspaceId)}&session_id=${encodeURIComponent(sessionId)}`
+        : "";
+    const status = await api<ProviderStatus>(`/api/provider/runtime-config${query}`);
     setProviderStatus(status);
     setProviderConfig(configFromStatus(status));
     return status;
+  }
+
+  async function refreshChatContext() {
+    if (!workspaceId || !sessionId) return null;
+    setContextLoading(true);
+    try {
+      const context = await api<ChatContext>(`/api/chat/session/${encodeURIComponent(sessionId)}/context?workspace_id=${encodeURIComponent(workspaceId)}`);
+      setChatContext(context);
+      return context;
+    } finally {
+      setContextLoading(false);
+    }
   }
 
   async function saveProviderSettings() {
@@ -1342,6 +1509,32 @@ function App() {
     }
   }
 
+  async function requestProviderConsent() {
+    if (!workspaceId || !sessionId) {
+      setProviderCheckMessage("本地 workspace 和会话尚未初始化，暂不能授权外呼。");
+      return;
+    }
+    setProviderConsenting(true);
+    setProviderCheckMessage("");
+    try {
+      const status = await api<ProviderStatus>("/api/provider/consent", {
+        workspace_id: workspaceId,
+        session_id: sessionId,
+        scope: "chat_session",
+        ttl_seconds: 900,
+        allowed_data_classes: ["recent_messages", "rolling_summary", "workspace_summary", "artifact_summary"],
+        confirm_external_call: true,
+      });
+      setProviderStatus(status);
+      setProviderCheckMessage(status.consented ? "已授权本会话外呼范围；是否真实调用仍由具体操作和 Provider Policy Gate 决定。" : "授权未生效。");
+      notice("已记录本会话外呼授权范围。普通聊天当前仍保持本地基线；后续 provider-backed chat 会继续通过 Policy Gate。", "notice");
+    } catch (error) {
+      setProviderCheckMessage(formatError(error, "授权外呼失败"));
+    } finally {
+      setProviderConsenting(false);
+    }
+  }
+
   async function sendText(rawText?: string) {
     const text = (rawText ?? input).trim();
     if (!text) {
@@ -1359,16 +1552,24 @@ function App() {
     setMessages((current) => [...current, { role: "user", content: text }]);
     setBusy(true);
     try {
-      const result = await api<any>("/api/chat/message", { workspace_id: workspaceId, session_id: sessionId, message: text });
+      const providerMode = providerStatus?.consented && providerStatus.provider !== "mock" ? "provider_opt_in" : "local_default";
+      const result = await api<any>("/api/chat/message", { workspace_id: workspaceId, session_id: sessionId, message: text, provider_mode: providerMode });
+      const providerNote =
+        result.provider_invocation_status === "called"
+          ? "（已按授权使用 provider-backed 路径；普通聊天未写入产物。）"
+          : result.fallback_used
+            ? "（provider 未调用或已降级，本轮使用本地连续对话。）"
+            : "";
       setMessages((current) => [
         ...current,
         {
           role: "assistant",
-          content: result.message,
+          content: providerNote ? `${result.message}\n${providerNote}` : result.message,
           artifacts: result.artifacts,
           tone: inferAssistantTone(result.message, result.artifacts),
         },
       ]);
+      await Promise.allSettled([refreshProviderStatus(), refreshChatContext()]);
     } catch (error) {
       setMessages((current) => [...current, { role: "assistant", tone: "error", content: formatError(error, "请求失败") }]);
     } finally {
@@ -1390,6 +1591,7 @@ function App() {
         ...current,
         { role: "assistant", content: `已导入 ${file.name}。下一步可以发送“整理资料”或粘贴 JD。`, artifacts: [{ type: "document", data: json.data }], tone: "notice" },
       ]);
+      await refreshChatContext();
     } catch (error) {
       setMessages((current) => [...current, { role: "assistant", tone: "error", content: formatError(error, "上传失败") }]);
     } finally {
@@ -1413,6 +1615,7 @@ function App() {
           content: `示例路径已完成：${result.steps.length} 个步骤，导出 ${result.exports?.length ?? 0} 个文件。请检查推进台里的待确认项和导出状态。`,
         },
       ]);
+      await refreshChatContext();
     } catch (error) {
       setMessages((current) => [...current, { role: "assistant", tone: "error", content: formatError(error, "示例工作流执行失败") }]);
     } finally {
@@ -1427,6 +1630,60 @@ function App() {
     autorunStarted.current = true;
     runGuidedDemo();
   }, [workspaceId]);
+
+  async function runWorkspaceAction(kind: LifecycleResult["kind"]) {
+    if (!workspaceId) return;
+    setLifecycleBusy(true);
+    try {
+      if (kind === "backup") {
+        const result = await api<any>("/api/workspace/backup", { workspace_id: workspaceId });
+        setLifecycleResult({
+          kind,
+          title: "备份清单已生成",
+          summary: `metadata-only，文件数 ${result.file_count}，不包含文件内容。`,
+          detail: result.manifest_path,
+          status: "safe",
+        });
+      } else if (kind === "cleanup") {
+        const result = await api<any>("/api/workspace/cleanup/plan", { workspace_id: workspaceId, rules: { include_exports: true } });
+        setLifecycleResult({
+          kind,
+          title: "清理预演完成",
+          summary: `dry-run=true，影响 ${result.affected_count} 个文件，未删除任何内容。`,
+          detail: result.message,
+          status: "warning",
+        });
+      } else if (kind === "migration") {
+        const result = await api<any>("/api/workspace/migrate/plan", { workspace_id: workspaceId, target_version: "p7-beta" });
+        setLifecycleResult({
+          kind,
+          title: "迁移预演完成",
+          summary: `目标版本 ${result.target_version}，dry-run=true，apply 仍需人工确认。`,
+          detail: result.rollback_notes,
+          status: "warning",
+        });
+      } else {
+        const result = await api<any>("/api/diagnostics/report", { workspace_id: workspaceId, include_provider: true });
+        setLifecycleResult({
+          kind,
+          title: "脱敏诊断已生成",
+          summary: `artifacts=${result.counts.artifacts}，sessions=${result.counts.chat_sessions}，provider=${result.provider.provider}。`,
+          detail: result.redaction_status,
+          status: "safe",
+        });
+      }
+    } catch (error) {
+      setLifecycleResult({
+        kind,
+        title: "操作失败",
+        summary: formatError(error, "workspace 操作失败"),
+        detail: "未执行删除、迁移 apply 或外部上传。",
+        status: "warning",
+      });
+    } finally {
+      setLifecycleBusy(false);
+    }
+  }
 
   return (
     <main className="app-shell">
@@ -1447,7 +1704,7 @@ function App() {
               我的资料
             </button>
           </div>
-          <StatusBadge tone="neutral" shield>
+          <StatusBadge tone={providerTone(providerStatus)} shield>
             {providerLabel(providerStatus)}
           </StatusBadge>
           <button className="provider-settings-button" type="button" onClick={() => setProviderSettingsOpen(true)}>
@@ -1462,6 +1719,14 @@ function App() {
           dataMode={dataMode}
           workflowResult={workflowResult}
           artifactCount={artifacts.length + workflowArtifactCount}
+          chatContext={chatContext}
+          contextLoading={contextLoading}
+          lifecycleResult={lifecycleResult}
+          lifecycleBusy={lifecycleBusy}
+          onRefreshContext={() => {
+            refreshChatContext().catch(() => undefined);
+          }}
+          onWorkspaceAction={runWorkspaceAction}
         />
         <section className="workstream conversation-area" aria-label="对话区">
           <section className="conversation-plane" aria-label="对话与任务区">
@@ -1564,11 +1829,14 @@ function App() {
         config={providerConfig}
         saving={providerSaving}
         checking={providerChecking}
+        consenting={providerConsenting}
         checkMessage={providerCheckMessage}
+        canConsent={Boolean(workspaceId && sessionId)}
         onClose={() => setProviderSettingsOpen(false)}
         onChange={setProviderConfig}
         onSave={saveProviderSettings}
         onCheck={checkProvider}
+        onConsent={requestProviderConsent}
       />
     </main>
   );

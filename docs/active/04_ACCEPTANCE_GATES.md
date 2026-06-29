@@ -1,4 +1,177 @@
-# JobPilot AI P5 真实资料本地闭环验收门槛
+# JobPilot AI P6+P7 长程对话与产品化 Beta 验收门槛
+
+## P6+P7 验收门槛 0 - P0-P5 本地基线不退化
+
+通过条件：
+
+- P0/P1/P2/P3/P4 本地 mock/examples 路径继续可运行；
+- P5 本地/mock + 脱敏 fixture 自动化候选路径继续可运行；
+- Chatbox 仍是薄入口，不生成求职内容、不直接写 SQLite、不保存 API Key、不直连 provider；
+- Artifact version、edit、regenerate、Markdown/DOCX export 和 export preflight 不退化；
+- P4/P5 本地连续对话和普通追问不写 artifact 的约束不退化。
+
+最低证据：
+
+```bash
+.venv/bin/python -m pytest
+npm --prefix apps/chatbox run build
+```
+
+## P6 验收门槛 1 - Provider opt-in 默认安全
+
+通过条件：
+
+- 默认进入 Chatbox 时不调用真实外部 provider；
+- provider configured、consented、called、failed、fallback 状态可区分；
+- 配置 provider 但未确认本次调用时仍不外呼；
+- 用户能看到 provider、model、隐私/费用提示和本轮是否外呼；
+- 用户取消或缺少确认时，系统回到本地/mock 连续对话。
+
+不通过条件：
+
+- 配置 `.env` 后自动外呼；
+- 报告把 provider configured 写成 provider called；
+- 前端展示或保存 API Key；
+- 用户无法判断本轮是否调用外部模型。
+
+## P6 验收门槛 2 - Provider-backed 聊天可控且可降级
+
+通过条件：
+
+- 用户确认后可以完成 provider-backed 普通求职方向聊天；
+- provider 调用经过 timeout、retry、schema validation、redaction；
+- provider 超时、429、结构错误、网络错误时有可理解失败反馈并降级到本地连续对话；
+- provider invocation log 只记录脱敏元数据；
+- provider raw response 不直接写 artifact、报告或日志。
+
+不通过条件：
+
+- 未授权请求发生真实外呼；
+- provider 失败导致 Chatbox 卡死、丢 session 或无法继续本地对话；
+- 日志出现 API Key、完整 prompt、完整真实资料或完整 raw response。
+
+## P6 验收门槛 3 - 长程连续对话成立
+
+通过条件：
+
+- 连续 20-50 轮聊天后，UI 不明显卡死，上下文不完全丢失；
+- Long Context Manager 维护 recent messages、rolling summary、workspace context snapshot 和相关 artifact/JD/profile 摘要；
+- 刷新页面后能恢复消息、摘要、当前 workspace 状态和 pending confirmations；
+- 报告明确这不是无限 token 或无限成本；
+- 上下文构造不把完整历史、完整简历或完整 JD 无边界发送给 provider。
+
+不通过条件：
+
+- 把 20-50 轮验收写成真正无限聊天；
+- 刷新后丢失关键上下文；
+- 长对话普通追问误写 artifact；
+- 上下文包含未授权完整个人资料。
+
+## P6 验收门槛 4 - Tool Safety 和产物边界不被 provider 绕过
+
+通过条件：
+
+- 普通聊天不生成 artifact；
+- 明确“解析 / 生成 / 重新生成 / 导出”才进入工具确认或 Domain Tools；
+- provider-backed 回复不能绕过 `questions_to_confirm`；
+- blocking confirmation 未处理时仍不得导出正式申请材料；
+- source refs、artifact version、export path 和 preflight 状态可追踪。
+
+不通过条件：
+
+- provider 聊天直接覆盖 artifact；
+- 用户说“先别生成”仍触发生成；
+- export preflight 被绕过。
+
+## P6 验收门槛 5 - 隐私、日志和报告脱敏
+
+通过条件：
+
+- API Key、完整真实资料、完整 provider raw response 不进入仓库、报告、日志、截图说明或 fixture；
+- Provider Invocation Log 能区分 configured/called/failed/fallback；
+- 自动化报告明确 mock/fake provider、受控真实 provider 和未验证范围；
+- 真实个人资料发送给外部 provider 前必须单独确认数据范围；
+- 敏感信息扫描通过。
+
+## P6 验收门槛 6 - P6 可视化验收证据完整
+
+通过条件：
+
+- 中文 HTML 报告可读，列出目标架构、当前架构实现、用户路径、截图证据、测试结果、PRD 规格检视和未验证范围；
+- 截图至少覆盖：默认不外呼、模型设置、调用前确认、provider-backed 回复、20-50 轮长对话摘要、刷新恢复、失败降级、普通聊天不写 artifact、blocking export 仍拦截；
+- 多视口至少覆盖 1200px、1440px、1600px、1920px、720px、390px；
+- 自动化截图、焦点抢占或弹窗前必须提前告知用户。
+
+## P7 验收门槛 7 - Workspace 生命周期可用
+
+通过条件：
+
+- 用户可以创建、恢复、导出、备份 workspace；
+- 清理和迁移默认先 dry-run，列出影响文件、风险标签和确认需求；
+- 删除、迁移 apply、workspace 清空等不可逆操作必须高风险确认；
+- workspace 操作不写允许目录外路径；
+- 用户能理解本地数据在哪里、如何备份、如何清理。
+
+## P7 验收门槛 8 - 诊断、发布、部署和回滚可复现
+
+通过条件：
+
+- 有脱敏诊断报告，包含版本、配置摘要、错误摘要、provider 状态和 workspace 健康检查；
+- 有可复现启动、部署、回滚和故障排查文档；
+- 错误追踪和日志脱敏不泄露 API Key、完整个人资料或 raw response；
+- release checklist 可执行；
+- 失败状态有恢复建议。
+
+## P7 验收门槛 9 - Beta 使用说明、支持流程和隐私审计完整
+
+通过条件：
+
+- Beta 使用说明能让用户完成最小体验路径；
+- 支持流程和故障排查可独立阅读；
+- 安全隐私审计覆盖 provider、workspace、diagnostics、report、export 和不可逆操作；
+- P7 HTML 报告展示真实界面截图、测试证据和未验证范围；
+- P7 不声称 SaaS、ASR、会议平台、自动投递或真实个人资料默认路径通过。
+
+## P7-post P5-REAL / P5-Freeze 复验门槛
+
+通过条件：
+
+- 用户明确提供真实/脱敏资料路径和允许展示字段；
+- 只读取用户指定路径，不擅自搜索个人目录；
+- 真实资料报告和截图默认遮蔽联系方式、账号、私密链接、API Key 和未授权长原文；
+- P5-REAL 复验完成后再执行 P5 人工体验记录和 final closure audit；
+- 若用户不提供真实资料，结论只能保持“未执行”，不能用 synthetic personas、examples 或脱敏 fixture 替代。
+
+## P6+P7 自动化验收矩阵
+
+| 验收项 | 建议测试 / 报告 | 必须证明 | 不得声称 |
+| --- | --- | --- | --- |
+| 本地基线回归 | `.venv/bin/python -m pytest` | P0-P5 本地路径不退化 | 不代表 P6/P7 已通过 |
+| 前端可构建 | `npm --prefix apps/chatbox run build` | P6/P7 UI 能成功构建 | 不代表人类体验通过 |
+| Provider 默认安全 | provider policy eval | configured 不等于 called，未确认不外呼 | 不代表真实 provider 质量 |
+| Provider-backed chat | fake provider + 受控真实 provider 记录 | 授权后可调用，失败可降级 | 不代表默认外呼 |
+| Long Context Manager | long conversation eval | 20-50 轮、滚动摘要、刷新恢复 | 不代表无限上下文 |
+| Tool Safety | chat/artifact/export eval | 普通聊天不写 artifact，blocking 仍拦截导出 | 不代表自动投递或 SaaS |
+| Privacy / Redaction | sensitive scan eval | API Key、完整资料、raw response 不泄露 | 不代表真实资料外发已授权 |
+| Workspace lifecycle | lifecycle eval | backup/export/cleanup dry-run/migration dry-run | 不代表执行删除或迁移 apply |
+| Diagnostics / Release | diagnostics and docs eval | 脱敏诊断、启动、部署、回滚可复现 | 不代表 SaaS 运行 |
+| Visual acceptance | P6/P7 HTML 报告 eval | 中文报告、真实界面截图、未验证范围 | 不代表未执行路径通过 |
+| Drawio/docs | XML parse + rg 口径检查 | 页数不超过 8，文档和图一致 | 不代表功能已实现 |
+
+## P6+P7 最终出门条件
+
+P6+P7 完成后，项目应达到：
+
+```text
+本地 Chatbox 可用
+→ 真实 provider 仅 opt-in 调用
+→ 长程连续对话 20-50 轮可恢复、可降级、可解释上下文
+→ provider-backed chat 不绕过产物确认和导出门槛
+→ workspace 生命周期、诊断报告、发布/部署/回滚和支持流程具备 Beta 验收证据
+→ P7 完成后进入 P7-post P5-REAL/P5-Freeze 复验
+```
+
+P6+P7 完成不代表 SaaS、ASR、会议平台、自动投递、MCP/CLI 或真实个人资料默认路径通过。
 
 ## P5 验收门槛 0 - P0-P4 冻结基线不退化
 

@@ -1,8 +1,111 @@
-# JobPilot AI P5 真实资料本地闭环目标架构
+# JobPilot AI P6+P7 长程对话与产品化 Beta 目标架构
 
-## 0. P5 当前阶段架构增补
+## -1. P6+P7 当前阶段架构主线
 
-P5 在 P4 已冻结的 Chatbox 工作台、FastAPI、ChatCore、Domain Tools、Artifact/Export 和本地 workspace 基线上增加“真实资料本地闭环平面”。目标不是重写后端或默认启用外部 provider，而是让真实资料、真实 JD、事实确认、产物编辑、导出和多轮追问都沿同一条可审计链路闭合。
+P6+P7 在 P4 已冻结 Chatbox 工作台和 P5 自动化候选本地资料闭环基线上推进。P5-REAL/P5-Freeze 当前为冻结延期复验，不作为 P6/P7 开发前置；P7 完成后再执行 P7-post 真实资料复验。
+
+当前目标不是重写系统，也不是把外部 provider 变成默认路径，而是在现有本地优先架构中增加四个可审计平面：
+
+```text
+User
+→ Chatbox Experience Shell
+  → Model Settings / Provider Consent UI
+  → Conversation Plane
+  → Long-running Chat State View
+  → Workbench and Artifact Review Plane
+→ FastAPI Agent Service
+  → Chat Routes
+  → Provider Status / Consent Routes
+  → Workspace Lifecycle Routes
+  → Diagnostics Routes
+  → Artifact / Export Routes
+→ Chat Orchestrator
+  → Intent Router
+  → Long Context Manager
+  → Provider-backed Dialogue Adapter
+  → Local Fallback Dialogue
+  → Tool Intent Confirmation
+→ Provider Policy Gate
+  → Opt-in authorization
+  → API Key availability check
+  → Redaction boundary
+  → Budget / timeout / retry policy
+  → External-call denial by default
+→ Domain Tool Layer
+  → Profile / Project / Job / Match / Application / Interview Tools
+→ Artifact / Export / Storage Layer
+  → Artifact Service
+  → Export Service
+  → SQLite Workspace
+  → Workspace Backup / Cleanup / Migration Dry-run
+→ Evidence and Operations Layer
+  → Provider Invocation Log
+  → Diagnostics Report
+  → Visual Acceptance Report
+  → Privacy / Redaction Audit
+```
+
+## -0. P6+P7 代码实体与职责
+
+| 层级 | 具体代码实体 | P6/P7 状态 | 当前阶段职责 | 禁止职责 |
+| --- | --- | --- | --- | --- |
+| Chatbox UI | `apps/chatbox/src/main.tsx`, `apps/chatbox/src/styles.css` | 待新增/修改 | 展示模型设置、provider opt-in、外呼确认、长对话状态、上下文摘要、失败降级、workspace 生命周期入口 | 不保存 API Key；不直连 provider；不伪造 provider called |
+| API 边界 | `services/api/main.py` | 待新增/修改 | 增加 provider consent/status、chat provider mode、workspace backup/cleanup/diagnostics 等最小路由 | 不回传密钥；不允许未确认外呼；不执行不可逆操作默认确认 |
+| Chat Orchestrator | `services/chat/core.py` | 待重构强化 | 统一自由聊天、状态查询、澄清、工具意图、provider-backed 回复和 local fallback | 普通聊天不写 artifact；不绕过 tool confirmation |
+| Long Context Manager | 建议新增 `services/chat/context.py` 或等价模块 | 待新增 | 管理 recent message window、rolling summary、workspace context snapshot、artifact/JD/profile retrieval | 不把完整历史或完整个人资料无边界发送给 provider |
+| Provider Adapter | `services/llm/` provider runtime 及新增 chat adapter | 待修改 | 接入 OpenAI-compatible/MiniMax/DeepSeek 类 provider，支持 timeout/retry/schema validation | 不在缺 consent 时调用；不把 raw response 直接写入 artifact |
+| Provider Policy Gate | provider policy/runtime 相关模块 | 待强化 | 校验 opt-in、API Key、provider/model、脱敏、预算、外呼次数和失败降级策略 | 不把 provider configured 当作 provider called |
+| Provider Invocation Log | tool invocation / provider log 相关存储 | 待强化 | 记录脱敏元数据、耗时、状态、错误类型、token 估算和 redaction 摘要 | 不记录 API Key、完整 prompt、完整个人资料、完整 raw response |
+| Local Fallback Dialogue | `services/chat/core.py` | 已有基线，需接入降级 | provider 不可用时保持本地连续对话、状态查询和下一步建议 | 不声称 provider-backed 质量 |
+| Artifact/Export Guard | artifact/export 相关服务 | 已有基线，需复验 | 确保 provider-backed chat 不绕过 confirmation、source refs、version 和 export preflight | 不允许 blocking confirmation 未处理仍正式导出 |
+| Workspace Lifecycle | SQLite workspace、本地文件目录、建议新增 lifecycle service | 待新增 | 支持恢复、导出、清理、备份、迁移 dry-run 和不可逆操作确认 | 不默认删除 workspace；不写 workspace 外路径 |
+| Diagnostics | 建议新增 diagnostics/report service | 待新增 | 生成脱敏诊断包、错误摘要、版本信息和本地环境检查 | 不包含密钥、完整个人资料或 provider raw response |
+| Evidence | `docs/reports/`, screenshot/test scripts | 待新增报告 | 生成 P6/P7 中文 HTML 报告、真实界面截图、PRD 规格检视和未验证范围 | 不做虚假验收；不抢占焦点前静默截图 |
+
+## -0.1 P6+P7 当前架构与目标差距
+
+| 当前实现 | P6/P7 目标 | 状态 | 验收证据 |
+| --- | --- | --- | --- |
+| P4/P5 本地 Chatbox 可用，mock/local 默认 | 支持 provider opt-in 且默认不外呼 | 待开发 | 初始页、模型设置、调用前确认截图 |
+| P1 已有 OpenAI-compatible provider 基础 | provider-backed 自由聊天 adapter，覆盖 MiniMax/DeepSeek/OpenAI-compatible 配置 | 待开发 | fake provider eval、受控真实 provider 验收记录 |
+| P4C/P5-FC 已有本地连续对话 | Long Context Manager 支持 20-50 轮、滚动摘要、刷新恢复 | 待开发 | 20-50 轮 eval、刷新恢复截图 |
+| provider invocation/tool log 已有基础 | 脱敏 invocation log 明确 configured/called/failed/fallback | 待强化 | 日志脱敏 eval、报告扫描 |
+| Artifact/Export guard 已支撑 P5 | provider-backed chat 不绕过 confirmation/export preflight | 待复验 | 普通聊天不写 artifact、blocking 仍拦截导出 |
+| workspace 可初始化和恢复 | 生命周期管理、备份、导出、清理、迁移 dry-run | 待开发 | workspace lifecycle eval、不可逆确认截图 |
+| 报告和截图链路成熟 | P6/P7 可视化验收报告，覆盖 provider、长对话、生命周期、诊断 | 待开发 | 中文 HTML 报告、真实截图证据 |
+| P5-REAL/P5-Freeze 未真实执行 | P7 后按 P7-post 重新复验真实资料路径 | 冻结延期 | P7-post P5 复验计划和审计 |
+
+## -0.2 P6+P7 架构不变量
+
+- 默认路径永远是 local/mock，不得因 `.env` 中配置了 provider 就自动外呼；
+- 真实外呼必须经过 Provider Policy Gate，并产生脱敏 Provider Invocation Log；
+- API Key 只允许从本地环境读取，不进入前端 bundle、仓库、报告、截图说明、日志或 fixture；
+- Long Context Manager 只发送必要上下文，必须优先使用摘要、source refs、artifact/JD/profile 摘要和近期消息窗口；
+- provider-backed 回复不得绕过 `questions_to_confirm`、Artifact Service、Export Service 或 workspace 沙箱；
+- Workspace cleanup、delete、migration apply 等不可逆操作必须显式确认；P7 默认只允许 dry-run 验收；
+- Diagnostics report 必须先脱敏再落盘；
+- 自动化截图、焦点抢占或弹窗必须提前告知用户；
+- P7 完成不自动代表 P5-REAL 通过，P5 复验必须单独执行。
+
+## -0.3 P6+P7 最小可执行接口契约
+
+| 用户动作 | 默认接口 / 模块 | 输入 | 必须返回或产生 | 约束 |
+| --- | --- | --- | --- | --- |
+| 查看 provider 状态 | `GET /api/provider/status` 或现有 provider status 路由 | workspace_id | configured、selected_provider、selected_model、called_in_session、last_error | configured 不等于 called |
+| 保存模型偏好 | `POST /api/provider/preferences` | provider、model、base_url preset、mode | preference saved，redacted display | 不保存 API Key；只保存非敏感偏好 |
+| 确认本轮外呼 | `POST /api/provider/consent` | workspace_id、session_id、scope、ttl、allowed_data_classes | consent token / policy snapshot | scope 必须可审计，可撤销或过期 |
+| 发送 provider-backed 聊天 | `POST /api/chat/message` | workspace_id、session_id、message、provider_mode | assistant message、context summary、invocation status、fallback status | 未授权时必须走 local/mock 或返回确认请求 |
+| 获取长对话摘要 | `GET /api/chat/session/{id}/context` | workspace_id、session_id | recent_count、rolling_summary、context_snapshot、source refs | 不返回完整敏感原文 |
+| 刷新恢复会话 | `GET /api/chat/session/{id}` | workspace_id、session_id | messages、summary、artifacts、pending confirmations | 恢复后不重复外呼 |
+| 导出诊断报告 | `POST /api/diagnostics/report` | workspace_id、include options | redacted diagnostics zip/html/json | 不含密钥、完整简历、raw response |
+| workspace 备份 | `POST /api/workspace/backup` | workspace_id、target | backup path、manifest、redaction status | 只写允许路径 |
+| workspace 清理 dry-run | `POST /api/workspace/cleanup/plan` | workspace_id、rules | affected files、risk labels、confirmation required | 不删除文件 |
+| workspace 迁移 dry-run | `POST /api/workspace/migrate/plan` | workspace_id、target_version | migration plan、rollback notes | apply 必须另行确认 |
+| P7-post P5 复验 | stage review script/report | 用户明确资料路径和允许展示字段 | P5-REAL report、closure audit | 未提供资料则保持未执行 |
+
+## 0. P5 历史架构增补与 P7-post 复验依据
+
+本节作为历史基线和 P7-post 复验依据保留。P5 在 P4 已冻结的 Chatbox 工作台、FastAPI、ChatCore、Domain Tools、Artifact/Export 和本地 workspace 基线上增加“真实资料本地闭环平面”。目标不是重写后端或默认启用外部 provider，而是让真实资料、真实 JD、事实确认、产物编辑、导出和多轮追问都沿同一条可审计链路闭合。
 
 P5 架构主线：
 

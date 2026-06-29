@@ -33,6 +33,23 @@ class ProviderRuntimeConfigRequest(BaseModel):
     max_retries: int = 1
 
 
+class ProviderPreferencesRequest(BaseModel):
+    provider: Literal["mock", "openai_compatible", "openai"] = "mock"
+    preset: Literal["", "minimax", "deepseek"] = ""
+    base_url: str = ""
+    model: str = ""
+    mode: Literal["mock_default", "provider_opt_in"] = "mock_default"
+
+
+class ProviderConsentRequest(BaseModel):
+    workspace_id: str
+    session_id: str
+    scope: Literal["current_message", "chat_session"] = "current_message"
+    ttl_seconds: int = 900
+    allowed_data_classes: list[str] = Field(default_factory=lambda: ["recent_messages", "workspace_summary"])
+    confirm_external_call: bool = False
+
+
 class ExtractFactsRequest(BaseModel):
     workspace_id: str
     document_ids: list[str] | None = None
@@ -129,6 +146,7 @@ class ChatMessageRequest(BaseModel):
     workspace_id: str
     message: str
     session_id: str | None = None
+    provider_mode: Literal["local_default", "provider_opt_in"] = "local_default"
 
 
 class ArtifactUpdateRequest(BaseModel):
@@ -154,3 +172,23 @@ class P2DemoWorkflowRequest(BaseModel):
     workspace_id: str | None = None
     reset_workspace: bool = False
     data_mode: Literal["example", "my_data"] = "example"
+
+
+class WorkspaceBackupRequest(BaseModel):
+    workspace_id: str
+    target: str | None = None
+
+
+class WorkspaceCleanupPlanRequest(BaseModel):
+    workspace_id: str
+    rules: dict[str, Any] = Field(default_factory=dict)
+
+
+class WorkspaceMigrationPlanRequest(BaseModel):
+    workspace_id: str
+    target_version: str
+
+
+class DiagnosticsReportRequest(BaseModel):
+    workspace_id: str
+    include_provider: bool = True
