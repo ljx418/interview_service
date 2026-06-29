@@ -1,10 +1,105 @@
-# JobPilot AI P6+P7 长程对话与产品化 Beta 目标架构
+# JobPilot AI P5.5 Candidate Profile 目标架构
 
-## -1. P6+P7 当前阶段架构主线
+## -2. P5.5 当前阶段架构主线
 
-P6+P7 在 P4 已冻结 Chatbox 工作台和 P5 自动化候选本地资料闭环基线上推进。P5-REAL/P5-Freeze 当前为冻结延期复验，不作为 P6/P7 开发前置；P7 完成后再执行 P7-post 真实资料复验。
+P5.5 在 P5 本地资料闭环和 P6/P7 本地 Beta 自动化候选基线上推进。目标不是重写系统，也不是引入外部画像服务，而是在现有本地优先架构中增加一个可审查的 Candidate Profile 平面：
 
-当前目标不是重写系统，也不是把外部 provider 变成默认路径，而是在现有本地优先架构中增加四个可审计平面：
+```text
+User
+→ Chatbox Experience Shell
+  → Conversation Plane
+  → Candidate Profile Workbench
+  → Capability Matrix View
+  → Project Credibility View
+  → Job Gap View
+→ FastAPI Agent Service
+  → Profile Aggregation Routes
+  → Artifact / Chat / Job / Workspace Routes
+→ Profile Orchestrator
+  → CandidateProfile Aggregator
+  → Evidence Scorer
+  → Project Credibility Evaluator
+  → Job Gap Analyzer
+  → Profile Refresh Guard
+→ Domain Data Layer
+  → candidate_profile
+  → career_fact
+  → skill_evidence
+  → tech_project
+  → job / match_report
+  → artifact / artifact_version / source_refs
+→ Evidence Layer
+  → P5.5 Visual Acceptance Report
+  → PRD Spec Review
+  → Privacy and Fantasy-claim Audit
+```
+
+## -1. P5.5 代码实体与职责
+
+| 层级 | 具体代码实体 | 当前状态 | P5.5 职责 | 禁止职责 |
+| --- | --- | --- | --- | --- |
+| Chatbox UI | `apps/chatbox/src/main.tsx`, `apps/chatbox/src/styles.css` | 已实现自动化候选 | 展示画像概览、能力矩阵、项目可信度、岗位短板、source refs 和下一步建议 | 不直接推断敏感属性；不保存 API Key；不直连 provider |
+| API 边界 | `services/api/main.py`, `services/api/schemas.py` | 已实现最小路由/Schema | 暴露 profile summary、capability matrix、project credibility、gap analysis 的读取/刷新入口 | 不返回完整未授权资料；不把缺证据写成已证实 |
+| Profile Aggregator | `services/profile/candidate.py` | 已实现自动化候选 | 从 career_fact、skill_evidence、tech_project、job、match_report 聚合 CandidateProfile | 不引入复杂外部画像服务 |
+| Evidence Scorer | `services/profile/candidate.py` | 已实现自动化候选 | 给技能和经历标注 strong / usable / weak / missing 或等价等级 | 不做人格、潜力或敏感属性评分 |
+| Project Credibility Evaluator | `services/profile/candidate.py` | 已实现自动化候选 | 评估本人贡献、技术难点、可验证材料、量化结果缺口和风险标签 | 不把未确认贡献写成事实 |
+| Job Gap Analyzer | `services/profile/candidate.py` | 已实现自动化候选 | 将能力矩阵与 JD must/nice requirements 对齐，输出短板和补强行动 | 不输出不可行动的否定性评价 |
+| Storage | `candidate_profile`, `career_fact`, `skill_evidence`, `tech_project`, `job`, `match_report`, `artifact` | 基础表已存在 | 作为画像事实和证据来源；必要时写入 profile artifact/version | 不写 workspace 外路径；不丢 source refs |
+| ChatCore | `services/chat/core.py` | 已复验自动化候选 | 支持画像状态查询和普通追问；明确画像刷新才触发工具 | 普通聊天不写画像 artifact |
+| Evidence | `docs/reports/`, browser evidence scripts | 已生成 P5.5 报告 | 生成 P5.5 中文 HTML 报告、多视口截图、PRD 规格检视 | 不把合成资料写成真实个人资料通过 |
+
+## -0.0.1 P5.5 最小接口和数据契约
+
+P5.5 v1 采用最小可逆路线：新增 profile 读取/刷新 API，复用既有 SQLite 表和 artifact/version，不新增数据库表。
+
+| 用户动作 | 默认接口 / 模块 | 输入 | 必须返回或产生 | 约束 |
+| --- | --- | --- | --- | --- |
+| 查看画像 | `GET /api/profile/candidate` | `workspace_id`, 可选 `job_id` | profile summary、capability matrix、project credibility、job gaps、source refs、artifact ref | 只读；无画像时返回空态和下一步 |
+| 刷新画像 | `POST /api/profile/candidate/refresh` | `workspace_id`, 可选 `job_id`, `target_role` | 更新 `candidate_profile`，写入 `artifact_type=candidate_profile` artifact/version | 不访问 workspace 外路径；不调用真实 provider |
+| 追问画像 | `POST /api/chat/message` | 普通自然语言问题 | 基于当前 profile/artifact 的解释性回复 | 普通追问不写画像 artifact |
+
+`candidate_profile` 行保存摘要字段；完整能力矩阵、项目可信度、岗位短板和证据链保存为 `candidate_profile` artifact 的 `content_json`，并继承 artifact/version/source refs/confirmation 机制。
+
+默认证据等级：
+
+- `strong`：有 source refs 且用户确认或有明确项目/文档证据；
+- `usable`：有来源但缺量化结果或本人贡献确认；
+- `weak`：只有单一线索或表达模糊；
+- `missing`：JD 要求中出现但 workspace 没有可追踪证据。
+
+默认项目可信度：
+
+- `verified`：本人贡献、技术难点、可验证材料均有来源；
+- `plausible`：有项目来源但缺量化结果或验证材料；
+- `needs_evidence`：缺本人贡献或技术细节；
+- `risky`：存在未确认贡献、夸大风险或与 JD 表达冲突。
+
+## -0.1 P5.5 当前架构与目标差距
+
+| 当前实现 | P5.5 目标 | 状态 | 验收证据 |
+| --- | --- | --- | --- |
+| 已有 `candidate_profile` 表，P5.5 已形成用户可见画像闭环 | CandidateProfile 聚合并在 Workbench 可读展示 | 已完成自动化候选 | profile summary API/UI 截图 |
+| `career_fact` 可保存事实和技能线索 | 专业背景画像和经历可信边界 | 已完成自动化候选 | source refs 和待确认项截图 |
+| `skill_evidence` 可保存技能证据 | 能力矩阵、证据强度、岗位相关性 | 已完成自动化候选 | capability matrix eval |
+| `tech_project` 可保存项目卡 | 项目可信度、本人贡献、技术难点、验证材料缺口 | 已完成自动化候选 | project credibility eval |
+| `job` / `match_report` 已有岗位解析和匹配 | 岗位短板、补强建议和优先级 | 已完成自动化候选 | gap analysis eval |
+| Artifact/Export 已保留版本和 source refs | 画像 artifact 可追溯、可刷新、可报告 | 已复验自动化候选 | artifact/source refs eval |
+| P5/P6/P7 报告链路成熟 | P5.5 可视化验收报告 | 已完成自动化候选 | 中文 HTML 报告和真实界面截图 |
+
+## -0.2 P5.5 架构不变量
+
+- source refs 是画像判断的核心，不得隐藏；
+- 缺少证据时必须输出 missing / weak / needs confirmation，而不是补全事实；
+- 能力评估只评价证据强弱、岗位相关性和补强行动，不评价人格、身份或敏感属性；
+- 普通连续聊天不得误写画像产物；
+- 真实个人资料和真实 provider 仍需用户确认；
+- P5.5 完成不代表 P5-REAL、SaaS、ASR、会议平台、自动投递或 MCP/CLI 已通过。
+
+## -1. P6+P7 自动化候选基线架构主线
+
+以下 P6+P7 内容作为已完成自动化候选和后续复验边界保留。P6+P7 在 P4 已冻结 Chatbox 工作台和 P5 自动化候选本地资料闭环基线上推进。P5-REAL/P5-Freeze 当前为冻结延期复验，不作为 P6/P7 开发前置；P7 完成后再执行 P7-post 真实资料复验。
+
+该历史阶段的目标不是重写系统，也不是把外部 provider 变成默认路径，而是在现有本地优先架构中增加四个可审计平面。P6+P7 已作为自动化候选基线保留，不是当前 P5.5 的新增开发目标：
 
 ```text
 User

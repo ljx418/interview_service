@@ -28,7 +28,7 @@
 
 P0 已冻结并完成 M5、M7、M8、M9/M13 维护和 PiAgent 编排接入。P1 已完成本地工程闭环和可见验收。P2 已完成 examples-guided Chatbox 端到端体验，并补充 MiniMax opt-in 真实 provider 受控验收。P3 已完成本地自动化验收：真实用户 Chatbox 体验、对话响应闭环、对话区/推进台分离、响应式 UX、截图证据和 HTML 报告已落地；真实个人资料和真实外部调用仍需人工确认。人工审查认可 P3 验收报告的大部分内容，但对当前用户体验不完全认同，当前 P4 阶段优先做 UX 体验强化。P4B 已把全尺寸桌面体验列为 hard gate：1200px、1440px、1600px、1920px 不能出现布局错误造成的大面积空白，截图脚本也不能污染人工审查浏览器 viewport。
 
-P4B 自动化开发闭环已完成：Chatbox suggested prompts、loading/error recovery、产物卡可读性、provider 隐私语义、全尺寸桌面三栏工作台、移动端推进台抽屉、截图脚本隔离、P4/P4B HTML 报告和 PRD 规格检视均已落地。P4C-FC 本地/mock 连续对话开发闭环已完成：自由聊两轮、状态查询、显式工具触发、会话恢复、390px 移动端按钮可达性、Chrome/CDP 截图报告、pytest 和前端 build 均已通过。P4 final closure 自动化审计已完成，当前证据为 71 passed、前端 build 通过、drawio 解析通过和最终 HTML 截图报告。2026-06-25 人工体验审查认可 P4B/P4C 本地 Chatbox 体验，P4 冻结复验通过：`.venv/bin/python -m pytest` 71 passed、`npm --prefix apps/chatbox run build` 通过、drawio XML parse 通过。P5 本地/mock + 脱敏 fixture 自动化候选路径已通过 P5 自动化报告、多视口截图和回归测试，最新全量回归为 `88 passed, 1 warning`；用户已确认 P5-REAL/P5-Freeze 标记为冻结延期复验，后续在 P7 完成后再执行 P7-post 真实资料复验。当前主线切换为 P6+P7：真实 provider opt-in、长程连续对话和产品化 Beta 文档规划。
+P4B 自动化开发闭环已完成：Chatbox suggested prompts、loading/error recovery、产物卡可读性、provider 隐私语义、全尺寸桌面三栏工作台、移动端推进台抽屉、截图脚本隔离、P4/P4B HTML 报告和 PRD 规格检视均已落地。P4C-FC 本地/mock 连续对话开发闭环已完成：自由聊两轮、状态查询、显式工具触发、会话恢复、390px 移动端按钮可达性、Chrome/CDP 截图报告、pytest 和前端 build 均已通过。P4 final closure 自动化审计已完成，当前证据为 71 passed、前端 build 通过、drawio 解析通过和最终 HTML 截图报告。2026-06-25 人工体验审查认可 P4B/P4C 本地 Chatbox 体验，P4 冻结复验通过：`.venv/bin/python -m pytest` 71 passed、`npm --prefix apps/chatbox run build` 通过、drawio XML parse 通过。P5 本地/mock + 脱敏 fixture 自动化候选路径已通过 P5 自动化报告、多视口截图和回归测试，最新全量回归为 `88 passed, 1 warning`；用户已确认 P5-REAL/P5-Freeze 标记为冻结延期复验，后续在 P7 完成后再执行 P7-post 真实资料复验。P6+P7 自动化候选已完成并作为基线保留。P5.5 Candidate Profile 自动化开发候选已完成，覆盖候选人画像、能力矩阵、项目可信度、岗位短板、Workbench 画像面板、eval 和中文 HTML 截图报告；不代表真实资料或真实 provider 通过。
 
 2026-06-27 用户再次确认 P4 冻结方向和当前体验基本 OK；下一阶段期望纳入“长程连续对话”和“真实 provider 聊天”。该目标已落盘为 P6 provider opt-in 规划。2026-06-27 用户进一步确认 P5-REAL/P5-Freeze 冻结延期到 P7 后复验，P6+P7 作为本阶段目标制定开发及验收计划；不得写成 P5 已完成、真实个人资料路径已通过或默认外呼已通过。
 
@@ -142,9 +142,25 @@ P1 冻结说明：
 - [x] P5-SYNTHETIC-REALISM：新增 `examples/p5_synthetic_personas/`、`scripts/generate_p5_synthetic_realism_acceptance.py` 和 `docs/active/stage-reviews/P5_SYNTHETIC_REALISM_ACCEPTANCE_AUDIT.md`，用多身份合成资料加强自动化验收真实性；不能替代 P5-REAL，不能声称真实个人资料路径已通过。
 - [x] P5-STAGE-VISUAL-AUDIT：重新基于 PRD 执行代码检视、文档审计、功能检查、全量回归和三身份合成资料 Chrome/CDP 可视化验收；报告为 `docs/reports/P5_STAGE_SYNTHETIC_VISUAL_ACCEPTANCE_REPORT.html`，审计为 `docs/active/stage-reviews/P5_STAGE_SYNTHETIC_VISUAL_ACCEPTANCE_AUDIT.md`，不替代 P5-REAL 或 P5-Freeze。
 - [x] P5-FINAL-AUDIT：冻结延期到 P7-post。当前不得用自动化候选报告替代最终冻结结论；P7 完成后再生成 P5-REAL/P5-Freeze 复验审计。
-- [ ] P5.5-Candidate：P5 冻结后单独规划职业画像与能力评估，包含 CandidateProfile、能力矩阵、项目可信度、岗位短板和 source refs 画像面板；不得写成 P5 已完成。
+- [x] P5.5-Candidate 阶段规划：P5.5 已作为独立阶段规划并完成自动化开发候选，包含 CandidateProfile、能力矩阵、项目可信度、岗位短板和 source refs 画像面板；不得写成 P5-REAL 或真实资料验收已完成。
 
-## P6+P7 当前阶段计划
+## P5.5 自动化开发候选完成状态
+
+- [x] P5.5-DOC-M0：将 P5.5 Candidate Profile 设为当前阶段目标，完成文档、drawio、开发计划和验收门槛锁定。
+- [x] P5.5-PRD：补齐职业画像与能力评估 PRD，覆盖专业背景、项目背景、能力矩阵、项目可信度、岗位短板和 source refs 画像面板。
+- [x] P5.5-ARCH：补齐目标架构和当前架构差异，绑定 `candidate_profile`、`career_fact`、`skill_evidence`、`tech_project`、`match_report`、Artifact/Export、ChatCore 和 Chatbox Workbench。
+- [x] P5.5-MILESTONES：补齐 P5.5-M0 到 P5.5-M6 开发及验收计划、门槛、出门条件和打回规则。
+- [x] P5.5-DRAWIO：更新 drawio gap 图和文本镜像，保持 6 页、不超过 8 页，用颜色标注已实现、待新增、需修改、高风险和后续能力。
+- [x] P5.5-DOC-AUDIT：新增文档覆盖审计，结论为当前文档可支撑后续 P5.5 自动化开发；真实资料、真实 provider、敏感属性分析和 P8+ 能力仍不在本阶段。
+- [x] P5.5-M1：实现 `services/profile/candidate.py`、`GET /api/profile/candidate` 和 `POST /api/profile/candidate/refresh`，刷新画像写入 `candidate_profile` 与 `artifact_type=candidate_profile`。
+- [x] P5.5-M2：实现能力矩阵，覆盖 strong / usable / weak / missing 和 source refs / 待确认项。
+- [x] P5.5-M3：实现项目可信度标签，覆盖 verified / plausible / needs_evidence / risky，不把未确认贡献写成事实。
+- [x] P5.5-M4：实现 JD 短板分析，输出 gap_level、impact、next_action 和 source refs。
+- [x] P5.5-M5：Chatbox Workbench 新增候选人画像面板和“生成画像”显式入口，桌面、宽屏、720px、390px 截图可读。
+- [x] P5.5-M6：生成 `docs/reports/P5_5_CANDIDATE_PROFILE_ACCEPTANCE_REPORT.html`，完成 PRD 规格检视、未验证范围说明和报告 eval。
+- [x] P5.5-Stage-Audit：重新基于原始 PRD 和 active P5.5 文档完成代码检视、文档审计、功能覆盖检查、全量回归、Headless 可视化验收和阶段评价；审计为 `docs/active/stage-reviews/P5_5_STAGE_ACCEPTANCE_AUDIT.md`。
+
+## P6+P7 自动化候选完成状态
 
 - [x] P6-M0-PLAN：新增 `docs/active/19_P6_PROVIDER_BACKED_LONG_CONTEXT_CHAT_PLAN.md`，把长程连续对话、真实 provider opt-in、API Key 边界、日志脱敏、失败降级和验收场景落盘。
 - [x] P6P7-DOC-M0：制定 P6+P7 一体 PRD、目标架构、里程碑、验收门槛、追踪矩阵和 drawio gap 图，明确 P5-REAL/P5-Freeze 为 P7-post 复验。

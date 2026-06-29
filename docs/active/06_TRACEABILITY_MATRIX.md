@@ -1,6 +1,43 @@
-# JobPilot AI P6+P7 长程对话与产品化 Beta 追踪矩阵
+# JobPilot AI P5.5 Candidate Profile 追踪矩阵
 
-## -1. P6+P7 当前阶段追踪矩阵
+## -2. P5.5 当前阶段追踪矩阵
+
+| P5.5 目标 | 实现区域 | 主要文件 / 模块 | 证据 | 验收门槛 |
+| --- | --- | --- | --- | --- |
+| 文档和边界完整 | Active Docs / Drawio | `docs/active/`, drawio | XML parse、文本镜像、README/TODO sync | P5.5 门槛 0 |
+| 专业背景画像 | CandidateProfile Aggregator | `candidate_profile`, `career_fact`, profile module | 画像摘要、source refs、待确认项 | P5.5 门槛 1 |
+| 能力矩阵 | Evidence Scorer | `skill_evidence`, `career_fact`, artifact source refs | skill matrix eval、截图 | P5.5 门槛 2 |
+| 项目可信度 | Project Credibility Evaluator | `tech_project`, artifact/version, source refs | project credibility eval、风险标签截图 | P5.5 门槛 3 |
+| 岗位短板 | Job Gap Analyzer | `job`, `match_report`, capability matrix | gap analysis eval、补强建议截图 | P5.5 门槛 4 |
+| 画像 Workbench | Candidate Profile Workbench | `apps/chatbox/src/main.tsx`, `styles.css` | 桌面/移动端截图 | P5.5 门槛 5 |
+| 普通聊天边界 | ChatCore / Intent Router | `services/chat/core.py` | 普通追问不写画像 artifact eval | P5.5 门槛 5 |
+| 可视化验收报告 | Browser evidence / HTML report | screenshot scripts, `docs/reports/` | 中文 HTML 报告、PRD 检视、未验证范围 | P5.5 门槛 6 |
+
+## -1. P5.5 防止过度计划的边界
+
+以下内容不能作为 P5.5 出门条件或已完成能力：
+
+- 真实个人资料默认验收；
+- 真实 provider 默认外呼或真实 provider 质量通过；
+- 敏感属性、人格、年龄、性别、健康、政治、家庭、民族等分析；
+- 背景调查、社交媒体画像或隐私画像；
+- workspace 删除、cleanup apply、migration apply；
+- SaaS、多租户、Billing、ASR、会议平台、自动投递、MCP/CLI。
+
+## -0.1 P5.5 自动化开发任务映射
+
+| 开发任务 | 代码边界 | 建议测试 | 截图 / 报告证据 |
+| --- | --- | --- | --- |
+| P5.5-M1 CandidateProfile 聚合 | profile module、profile routes、candidate_profile/artifact | `test_p5_5_candidate_profile_eval.py` | 画像概览、source refs |
+| P5.5-M2 能力矩阵 | skill_evidence、career_fact、evidence scorer | `test_p5_5_capability_matrix_eval.py` | 能力矩阵、证据等级 |
+| P5.5-M3 项目可信度 | tech_project、artifact source refs、credibility evaluator | `test_p5_5_project_credibility_eval.py` | 项目风险标签、待确认项 |
+| P5.5-M4 岗位短板 | job、match_report、gap analyzer | `test_p5_5_gap_analysis_eval.py` | JD 短板、补强行动 |
+| P5.5-M5 Workbench | Chatbox Profile Workbench、responsive CSS | browser scenario | 桌面/移动端画像面板 |
+| P5.5-M6 报告 | browser acceptance、HTML report eval | `test_p5_5_acceptance_report_eval.py` | 中文报告、未验证范围 |
+
+## -1. P6+P7 自动化候选基线追踪矩阵
+
+以下 P6+P7 内容作为已完成自动化候选和后续复验边界保留。
 
 | P6/P7 目标 | 实现区域 | 主要文件 / 模块 | 证据 | 验收门槛 |
 | --- | --- | --- | --- | --- |
@@ -70,7 +107,7 @@
 
 ## -0.3 P6+P7 文档支撑与开发准入结论
 
-当前文档在补齐 P6+P7 PRD、目标架构、里程碑、验收门槛、追踪矩阵、roadmap 和 drawio 后，可以支撑下一阶段自动化开发，前提是开发严格遵守以下边界：
+该历史审计结论说明：文档在补齐 P6+P7 PRD、目标架构、里程碑、验收门槛、追踪矩阵、roadmap 和 drawio 后，已经支撑 P6+P7 自动化候选开发。该结论作为基线保留，不替代当前 P5.5 Candidate Profile 的开发准入。P6+P7 相关复验仍必须遵守以下边界：
 
 - P6 真实 provider 必须 opt-in，不默认外呼；
 - “无限对话”统一写成“长程连续对话”，以 20-50 轮、滚动摘要、刷新恢复和失败降级验收；

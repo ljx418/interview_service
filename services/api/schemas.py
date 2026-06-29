@@ -66,6 +66,12 @@ class SkillEvidenceRequest(BaseModel):
     skill_names: list[str] | None = None
 
 
+class CandidateProfileRefreshRequest(BaseModel):
+    workspace_id: str
+    job_id: str | None = None
+    target_role: str | None = None
+
+
 class ProjectCardRequest(BaseModel):
     workspace_id: str
     project_name: str | None = None

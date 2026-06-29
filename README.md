@@ -2,7 +2,7 @@
 
 JobPilot AI 是一个面向转行程序员的本地优先、免费开源 AI 求职 Agent 服务。默认入口是极简 Chatbox，但真正的核心是后端 Agent Tool Service：同一套能力后续可以被 Chatbox、HTTP API、CLI、MCP Client 或外部 Agent 调用。
 
-## 当前 MVP / P6+P7 自动化候选阶段
+## 当前 MVP / P5.5 自动化开发候选完成阶段
 
 当前骨架已经具备：
 
@@ -34,19 +34,21 @@ P4B 自动化开发闭环已完成：全尺寸桌面三栏工作台、720px/390p
 
 当前 P5 已按用户决策进入“冻结延期复验”状态：P5 本地/mock + 脱敏 fixture 自动化候选、三身份合成资料可视化验收和 P4 冻结体验均已作为后续基线保留；P5-REAL 和 P5-Freeze 不再作为当前阶段继续推进，也不得写成真实个人资料路径或真实外部 provider 默认路径已通过。P5-REAL/P5-Freeze 将在 P7 完成后作为 P7-post 复验项目重新执行。
 
-当前主线切换为 P6+P7 一体规划：P6 负责真实 provider opt-in、长程连续对话、Provider Policy Gate、Long Context Manager、Provider Invocation Log、隐私脱敏和失败降级；P7 负责产品化 Beta，包括 workspace 生命周期、备份/迁移、诊断报告、发布/部署/回滚、安全隐私审计和 Beta 使用支持流程。任何真实 API Key、真实个人资料、真实外部 provider 调用、workspace 删除、不可逆迁移、ASR/会议平台/自动投递/SaaS 操作仍必须先暂停并获得用户确认。
+P6+P7 一体规划和自动化候选已完成并作为当前后续基线保留：P6 负责真实 provider opt-in、长程连续对话、Provider Policy Gate、Long Context Manager、Provider Invocation Log、隐私脱敏和失败降级；P7 负责产品化 Beta，包括 workspace 生命周期、备份/迁移、诊断报告、发布/部署/回滚、安全隐私审计和 Beta 使用支持流程。任何真实 API Key、真实个人资料、真实外部 provider 调用、workspace 删除、不可逆迁移、ASR/会议平台/自动投递/SaaS 操作仍必须先暂停并获得用户确认。
 
 2026-06-29 P6+P7 自动化候选实现已完成：provider-backed free chat 当前通过 fake provider 验收，覆盖 opt-in consent、20 轮长程连续对话、失败 fallback、tool safety 和脱敏 provider chat log；Chatbox 已展示 Long context 与 Workspace ops；P7 backup manifest、cleanup dry-run、migration dry-run 和 diagnostics metadata-only 已有 UI、API、测试和中文 HTML 报告证据。该结论不代表真实 MiniMax/DeepSeek/OpenAI-compatible provider 质量通过，不代表真实个人资料路径通过，也不代表 SaaS GA、workspace 删除或迁移 apply 通过。
+
+当前 P5.5 Candidate Profile 自动化开发候选已完成：在 P5 本地资料闭环、P6/P7 自动化候选基线上，新增候选人画像聚合、能力矩阵、项目可信度、岗位短板、source refs 画像面板、显式“生成画像”入口、P5.5 eval 和中文 HTML 自动化验收报告。该结论只证明 examples / synthetic-style workspace + mock provider 路径，不分析敏感属性、不默认调用真实 provider、不读取未授权真实个人资料，也不把合成资料写成 P5-REAL 通过。
 
 ## 当前阶段设计文档
 
 当前阶段的执行依据在 `docs/active/`。
 
 - `docs/active/00_README.md` - 阅读顺序和当前阶段基线。
-- `docs/active/01_STAGE_PRD.md` - P6+P7 当前阶段 PRD、P5 冻结延期复验口径和历史阶段基线。
-- `docs/active/02_TARGET_ARCHITECTURE.md` - P6+P7 目标架构、当前架构差异和具体代码实体关系。
+- `docs/active/01_STAGE_PRD.md` - P5.5 当前阶段 PRD、P6+P7 自动化候选基线和历史阶段边界。
+- `docs/active/02_TARGET_ARCHITECTURE.md` - P5.5 目标架构、当前架构差异和具体代码实体关系。
 - `docs/active/03_MILESTONES_AND_DELIVERY_PLAN.md` - 里程碑和出门条件。
-- `docs/active/04_ACCEPTANCE_GATES.md` - P6+P7 验收门槛、P7-post P5-REAL 复验条件和最终出门条件。
+- `docs/active/04_ACCEPTANCE_GATES.md` - P5.5 验收门槛、P7-post P5-REAL 复验条件和最终出门条件。
 - `docs/active/05_IMPLEMENTATION_SPEC.md` - P0 强化实现规格基线。
 - `docs/active/06_TRACEABILITY_MATRIX.md` - 目标、模块、证据、测试和验收追踪矩阵。
 - `docs/active/07_REMAINING_DEVELOPMENT_AND_ACCEPTANCE_PLAN.md` - P0 完成范围和历史验收基线。
@@ -58,9 +60,10 @@ P4B 自动化开发闭环已完成：全尺寸桌面三栏工作台、720px/390p
 - `docs/active/13_P2_END_TO_END_EXPERIENCE_PLAN_AND_AUDIT.md` - P2 端到端用户体验开发计划、验收门槛和启动审计。
 - `docs/active/15_P3_REAL_USER_CHATBOX_EXPERIENCE_PLAN.md` - P3 真实用户 Chatbox 体验开发及验收计划。
 - `docs/active/16_P4_UX_EXPERIENCE_HARDENING_PLAN.md` - P4 UX 体验强化开发及验收计划。
-- `docs/active/17_PRODUCTIZATION_DEVELOPMENT_ROADMAP.md` - P5 冻结延期复验口径、P6/P7 当前阶段和 P8+ 产品化路线图。
+- `docs/active/17_PRODUCTIZATION_DEVELOPMENT_ROADMAP.md` - P5.5 当前阶段、P5 冻结延期复验口径、P6/P7 自动化候选和 P8+ 产品化路线图。
 - `docs/active/18_FREE_CHATBOX_CONTINUOUS_DIALOGUE_PLAN.md` - 自由 Chatbox、不中断连续多轮对话、本地连续对话基线和 provider-backed 后续目标分层计划。
 - `docs/active/19_P6_PROVIDER_BACKED_LONG_CONTEXT_CHAT_PLAN.md` - P6 真实 provider opt-in、长程连续对话、上下文压缩、隐私边界、P6-M0/P7-M0 开发前执行细则和验收计划。
+- `docs/active/20_P5_5_CANDIDATE_PROFILE_PLAN.md` - P5.5 候选人画像、能力矩阵、项目可信度、岗位短板、source refs 和验收计划。
 - `docs/active/stage-reviews/P4C_FC_PLAN_AND_START_AUDIT.md` - P4C-FC 本地连续对话开发计划和启动审计。
 - `docs/active/stage-reviews/P4C_FC_FINAL_AUDIT_AND_PRD_REVIEW.md` - P4C-FC 最终审计、PRD 规格检视和验收结论。
 - `docs/active/stage-reviews/P4C_EXTERNAL_PROVIDER_DESENSITIZED_ACCEPTANCE_PLAN.md` - 真实外部 provider + 脱敏资料验收的高风险确认计划。
@@ -81,16 +84,18 @@ P4B 自动化开发闭环已完成：全尺寸桌面三栏工作台、720px/390p
 - `docs/active/stage-reviews/P7_M1_M2_WORKSPACE_LIFECYCLE_AND_DIAGNOSTICS_AUDIT.md` - P7 workspace lifecycle 与 diagnostics 基线审计；只覆盖 backup manifest、dry-run 和脱敏诊断。
 - `docs/active/stage-reviews/P6P7_AUTOMATED_ACCEPTANCE_AND_PRD_REVIEW.md` - P6+P7 自动化验收与 PRD 规格检视。
 - `docs/active/stage-reviews/P7_M3_BETA_CLOSURE_AUDIT.md` - P7 本地 Beta 使用说明、支持流程和隐私审计。
+- `docs/active/stage-reviews/P5_5_STAGE_ACCEPTANCE_AUDIT.md` - P5.5 阶段性代码检视、文档审计、功能覆盖和可视化验收评价。
 - `docs/reports/P6P7_AUTOMATED_ACCEPTANCE_REPORT.html` - P6+P7 中文自动化验收报告和真实界面截图证据入口。
 - `docs/reports/P4_FINAL_CLOSURE_AUTOMATED_ACCEPTANCE_REPORT.html` - P4 final closure 自动化 HTML 验收报告和截图证据入口。
 - `docs/reports/P5_LOCAL_DATA_CLOSURE_ACCEPTANCE_REPORT.html` - P5 本地/mock + 脱敏 fixture 自动化 HTML 验收报告和截图证据入口。
 - `docs/reports/P5_SYNTHETIC_PROFILE_REVIEW.html` - P5-REAL 前置合成简历与背景资料审核页；不代表真实个人资料验收通过。
 - `docs/reports/P5_STAGE_SYNTHETIC_VISUAL_ACCEPTANCE_REPORT.html` - P5 三身份合成资料 Chrome/CDP 可视化验收聚合报告；不代表 P5-REAL 通过。
+- `docs/reports/P5_5_CANDIDATE_PROFILE_ACCEPTANCE_REPORT.html` - P5.5 Candidate Profile 中文自动化验收报告和截图证据入口；只覆盖 examples / synthetic-style workspace + mock provider。
 - `docs/active/stage-reviews/P4B_HUMAN_EXPERIENCE_REVIEW_CHECKLIST.md` - P4B 人工体验审查清单和 P4C backlog 入口。
 - `docs/active/stage-reviews/P4B_DOCUMENTATION_COVERAGE_AUDIT.md` - P4B 开发文档覆盖度审计。
 - `docs/gemini-frontend-review-package/` - 可交给 Gemini 独立审查的前端页面方案和静态原型。
 - `docs/active/stage-reviews/` - P2/P3 子阶段审计记录；P1 阶段审计已归档到 `docs/archive/stage-reviews/p1/`。
-- `docs/active/jobpilot-stage-gap-and-acceptance.drawio` - P6+P7 目标架构、当前差距、代码实体关系、开发验收计划、里程碑、门槛和出门条件图。
+- `docs/active/jobpilot-stage-gap-and-acceptance.drawio` - P5.5 目标架构、当前差距、代码实体关系、开发验收计划、里程碑、门槛和出门条件图。
 - `RELEASE_CHECKLIST.md` - P1 发布前检查清单。
 
 原始 v1.0 产品文档包仍保留在 `docs/jobpilot_ai_agent_docs_v1_0/`，作为背景资料。

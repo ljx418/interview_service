@@ -96,6 +96,50 @@ type ChatContext = {
   };
 };
 
+type CandidateProfile = {
+  empty?: boolean;
+  profile_summary?: {
+    target_roles?: string[];
+    background_summary?: string;
+    transition_goal?: string;
+    current_level?: string;
+    source_refs?: unknown[];
+  };
+  capability_matrix?: Array<{
+    skill: string;
+    category?: string;
+    evidence_level: "strong" | "usable" | "weak" | "missing";
+    target_role_relevance?: string;
+    source_refs?: unknown[];
+    questions_to_confirm?: unknown[];
+  }>;
+  project_credibility?: Array<{
+    project_name: string;
+    credibility_label: "verified" | "plausible" | "needs_evidence" | "risky";
+    evidence_gaps?: string[];
+    source_refs?: unknown[];
+    questions_to_confirm?: unknown[];
+  }>;
+  job_gaps?: Array<{
+    requirement: string;
+    requirement_type?: "must" | "nice";
+    gap_level: "covered" | "partial" | "missing";
+    impact?: string;
+    next_action?: string;
+    source_refs?: unknown[];
+  }>;
+  source_refs?: unknown[];
+  questions_to_confirm?: unknown[];
+  artifact_ref?: {
+    artifact_id?: string;
+    artifact_type?: string;
+    status?: string;
+    current_version_id?: string;
+  } | null;
+  next_actions?: string[];
+  unverified_scope?: string[];
+};
+
 type LifecycleResult = {
   kind: "backup" | "cleanup" | "migration" | "diagnostics";
   title: string;
@@ -334,6 +378,7 @@ function readableType(type: string) {
     match_report: "匹配报告",
     application_package: "申请包草稿",
     career_facts: "职业事实",
+    candidate_profile: "候选人画像",
     interview_prep: "面试准备",
     document: "资料文件",
   };
@@ -358,6 +403,11 @@ function artifactSummary(type: string, data: any) {
   if (type === "career_facts") {
     const facts = Array.isArray(data?.facts) ? data.facts : [];
     return facts.length > 0 ? `已抽取 ${facts.length} 条职业事实，建议先确认低置信内容。` : "职业事实已准备。";
+  }
+  if (type === "candidate_profile") {
+    const matrix = Array.isArray(data?.capability_matrix) ? data.capability_matrix.length : 0;
+    const gaps = Array.isArray(data?.job_gaps) ? data.job_gaps.length : 0;
+    return `画像已生成：能力矩阵 ${matrix} 项，岗位短板 ${gaps} 项。`;
   }
   if (type === "interview_prep") {
     return `问题 ${data?.questions?.length ?? 0} 个，故事卡 ${data?.story_cards?.length ?? 0} 张。`;
@@ -391,6 +441,13 @@ function artifactHighlights(type: string, data: any) {
       data?.resume_title ? { label: "简历标题", value: String(data.resume_title) } : undefined,
       data?.recruiter_message ? { label: "沟通稿", value: "已生成" } : undefined,
     ].filter(Boolean) as Array<{ label: string; value: string }>;
+  }
+  if (type === "candidate_profile") {
+    return [
+      { label: "能力", value: `${data?.capability_matrix?.length ?? 0} 项` },
+      { label: "项目", value: `${data?.project_credibility?.length ?? 0} 个` },
+      { label: "短板", value: `${data?.job_gaps?.length ?? 0} 项` },
+    ];
   }
   if (type === "interview_prep") {
     return [
@@ -1219,6 +1276,136 @@ function WorkflowPanel({ result, busy, workspaceId, onRunExample }: { result: Wo
   );
 }
 
+function evidenceLabel(level: string | undefined) {
+  return (
+    {
+      strong: "强证据",
+      usable: "可使用",
+      weak: "弱证据",
+      missing: "缺证据",
+      verified: "已验证",
+      plausible: "基本可信",
+      needs_evidence: "需补证据",
+      risky: "有风险",
+      covered: "已覆盖",
+      partial: "部分覆盖",
+    } as Record<string, string>
+  )[level ?? ""] ?? "待确认";
+}
+
+function CandidateProfilePanel({
+  profile,
+  loading,
+  refreshing,
+  onRefresh,
+}: {
+  profile: CandidateProfile | null;
+  loading: boolean;
+  refreshing: boolean;
+  onRefresh: () => void;
+}) {
+  const summary = profile?.profile_summary;
+  const matrix = profile?.capability_matrix ?? [];
+  const credibility = profile?.project_credibility ?? [];
+  const gaps = profile?.job_gaps ?? [];
+  const sourceCount = profile?.source_refs?.length ?? summary?.source_refs?.length ?? 0;
+
+  return (
+    <section className={`candidate-profile-panel ${profile?.empty ? "is-empty" : ""}`} aria-label="候选人画像">
+      <div className="profile-panel-header">
+        <div>
+          <span className="eyebrow">Candidate Profile</span>
+          <h3>候选人画像</h3>
+        </div>
+        <button type="button" className="btn-secondary-action" onClick={onRefresh} disabled={loading || refreshing}>
+          <RefreshCcw size={14} /> {refreshing ? "生成中" : profile?.empty ? "生成画像" : "刷新画像"}
+        </button>
+      </div>
+
+      {loading ? (
+        <p className="profile-empty-copy">正在读取画像状态...</p>
+      ) : profile?.empty || !profile ? (
+        <div className="profile-empty-copy">
+          <p>还没有生成候选人画像。请先导入资料并解析 JD，然后点击“生成画像”。</p>
+          <span>不会读取真实个人目录，也不会调用真实外部 provider。</span>
+        </div>
+      ) : (
+        <>
+          <div className="profile-summary-card">
+            <p>{summary?.background_summary || "已有资料不足，建议先补充项目和技能证据。"}</p>
+            <div className="profile-metrics">
+              <span>
+                <strong>{matrix.length}</strong>
+                <small>能力项</small>
+              </span>
+              <span>
+                <strong>{credibility.length}</strong>
+                <small>项目</small>
+              </span>
+              <span>
+                <strong>{gaps.length}</strong>
+                <small>短板</small>
+              </span>
+              <span>
+                <strong>{sourceCount}</strong>
+                <small>来源</small>
+              </span>
+            </div>
+          </div>
+
+          <div className="profile-section">
+            <h4>能力矩阵</h4>
+            <div className="profile-chip-grid">
+              {matrix.slice(0, 8).map((item) => (
+                <span key={item.skill} className={`profile-chip level-${item.evidence_level}`}>
+                  <strong>{item.skill}</strong>
+                  <small>{evidenceLabel(item.evidence_level)}</small>
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div className="profile-section">
+            <h4>项目可信度</h4>
+            <div className="profile-list">
+              {credibility.slice(0, 4).map((item) => (
+                <article key={item.project_name} className={`profile-list-item level-${item.credibility_label}`}>
+                  <strong>{item.project_name}</strong>
+                  <span>{evidenceLabel(item.credibility_label)}</span>
+                  {item.evidence_gaps?.length ? <p>{item.evidence_gaps.slice(0, 2).join("；")}</p> : null}
+                </article>
+              ))}
+            </div>
+          </div>
+
+          <div className="profile-section">
+            <h4>岗位短板</h4>
+            <div className="profile-list">
+              {gaps.slice(0, 5).map((item) => (
+                <article key={`${item.requirement}-${item.requirement_type}`} className={`profile-list-item gap-${item.gap_level}`}>
+                  <strong>{item.requirement}</strong>
+                  <span>{item.requirement_type === "must" ? "Must" : "Nice"} · {evidenceLabel(item.gap_level)}</span>
+                  <p>{item.next_action}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+
+          <details className="profile-source-details">
+            <summary>查看 source refs 与未验证范围</summary>
+            <p>source refs：{sourceCount} 条；待确认项：{profile.questions_to_confirm?.length ?? 0} 项。</p>
+            <ul>
+              {(profile.unverified_scope ?? ["未使用真实个人资料", "未调用真实外部 provider"]).map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </details>
+        </>
+      )}
+    </section>
+  );
+}
+
 function ResultRail({
   artifacts,
   workflowArtifacts,
@@ -1254,9 +1441,13 @@ function Workbench({
   artifacts,
   busy,
   workspaceId,
+  candidateProfile,
+  profileLoading,
+  profileRefreshing,
   open,
   onClose,
   onRunExample,
+  onRefreshProfile,
   onNotice,
   onArtifactStatus,
 }: {
@@ -1264,9 +1455,13 @@ function Workbench({
   artifacts: any[];
   busy: boolean;
   workspaceId: string;
+  candidateProfile: CandidateProfile | null;
+  profileLoading: boolean;
+  profileRefreshing: boolean;
   open: boolean;
   onClose: () => void;
   onRunExample: () => void;
+  onRefreshProfile: () => void;
   onNotice: (message: string, tone?: Message["tone"]) => void;
   onArtifactStatus: (artifactId: string, status: string) => void;
 }) {
@@ -1290,6 +1485,7 @@ function Workbench({
         </div>
         <div className="workbench-body">
           <WorkflowPanel result={result} busy={busy} workspaceId={workspaceId} onRunExample={onRunExample} />
+          <CandidateProfilePanel profile={candidateProfile} loading={profileLoading} refreshing={profileRefreshing} onRefresh={onRefreshProfile} />
           <ResultRail artifacts={artifacts} workflowArtifacts={workflowArtifacts} workspaceId={workspaceId} onNotice={onNotice} onArtifactStatus={onArtifactStatus} />
         </div>
       </div>
@@ -1313,6 +1509,9 @@ function App() {
   const [providerCheckMessage, setProviderCheckMessage] = useState("");
   const [chatContext, setChatContext] = useState<ChatContext | null>(null);
   const [contextLoading, setContextLoading] = useState(false);
+  const [candidateProfile, setCandidateProfile] = useState<CandidateProfile | null>(null);
+  const [profileLoading, setProfileLoading] = useState(false);
+  const [profileRefreshing, setProfileRefreshing] = useState(false);
   const [lifecycleResult, setLifecycleResult] = useState<LifecycleResult | null>(null);
   const [lifecycleBusy, setLifecycleBusy] = useState(false);
   const [workflowResult, setWorkflowResult] = useState<WorkflowResult | null>(null);
@@ -1381,6 +1580,7 @@ function App() {
     if (!workspaceId || !sessionId) return;
     refreshProviderStatus().catch(() => undefined);
     refreshChatContext().catch(() => undefined);
+    loadCandidateProfile().catch(() => undefined);
   }, [workspaceId, sessionId]);
 
   useEffect(() => {
@@ -1457,6 +1657,40 @@ function App() {
       return context;
     } finally {
       setContextLoading(false);
+    }
+  }
+
+  async function loadCandidateProfile() {
+    if (!workspaceId) return null;
+    setProfileLoading(true);
+    try {
+      const profile = await api<CandidateProfile>(`/api/profile/candidate?workspace_id=${encodeURIComponent(workspaceId)}`);
+      setCandidateProfile(profile);
+      return profile;
+    } finally {
+      setProfileLoading(false);
+    }
+  }
+
+  async function refreshCandidateProfile() {
+    if (!workspaceId) {
+      notice("本地 workspace 尚未初始化，暂不能生成画像。", "notice");
+      return;
+    }
+    setProfileRefreshing(true);
+    try {
+      const profile = await api<CandidateProfile>("/api/profile/candidate/refresh", {
+        workspace_id: workspaceId,
+        target_role: "Junior Frontend Developer",
+      });
+      setCandidateProfile(profile);
+      setDrawerOpen(true);
+      notice(profile.empty ? "还没有足够资料生成画像，请先导入资料并解析 JD。" : "候选人画像已刷新。请在右侧查看能力矩阵、项目可信度和岗位短板。", "notice");
+      await refreshChatContext();
+    } catch (error) {
+      notice(formatError(error, "画像刷新失败"), "error");
+    } finally {
+      setProfileRefreshing(false);
     }
   }
 
@@ -1569,7 +1803,7 @@ function App() {
           tone: inferAssistantTone(result.message, result.artifacts),
         },
       ]);
-      await Promise.allSettled([refreshProviderStatus(), refreshChatContext()]);
+      await Promise.allSettled([refreshProviderStatus(), refreshChatContext(), loadCandidateProfile()]);
     } catch (error) {
       setMessages((current) => [...current, { role: "assistant", tone: "error", content: formatError(error, "请求失败") }]);
     } finally {
@@ -1592,6 +1826,7 @@ function App() {
         { role: "assistant", content: `已导入 ${file.name}。下一步可以发送“整理资料”或粘贴 JD。`, artifacts: [{ type: "document", data: json.data }], tone: "notice" },
       ]);
       await refreshChatContext();
+      await loadCandidateProfile();
     } catch (error) {
       setMessages((current) => [...current, { role: "assistant", tone: "error", content: formatError(error, "上传失败") }]);
     } finally {
@@ -1616,6 +1851,7 @@ function App() {
         },
       ]);
       await refreshChatContext();
+      await loadCandidateProfile();
     } catch (error) {
       setMessages((current) => [...current, { role: "assistant", tone: "error", content: formatError(error, "示例工作流执行失败") }]);
     } finally {
@@ -1778,6 +2014,9 @@ function App() {
                 <button type="button" onClick={() => fillPrompt("基于当前申请包，帮我准备面试问题和 STAR 故事。")} disabled={!appReady || busy}>
                   <CheckCircle2 size={14} /> 准备面试
                 </button>
+                <button type="button" onClick={refreshCandidateProfile} disabled={!appReady || busy || profileRefreshing}>
+                  <RefreshCcw size={14} /> 生成画像
+                </button>
                 <button type="button" onClick={runGuidedDemo} disabled={!workspaceId || busy}>
                   <Sparkles size={14} /> 示例路径
                 </button>
@@ -1811,9 +2050,13 @@ function App() {
           artifacts={artifacts}
           busy={busy}
           workspaceId={workspaceId}
+          candidateProfile={candidateProfile}
+          profileLoading={profileLoading}
+          profileRefreshing={profileRefreshing}
           open={drawerOpen}
           onClose={() => setDrawerOpen(false)}
           onRunExample={runGuidedDemo}
+          onRefreshProfile={refreshCandidateProfile}
           onNotice={notice}
           onArtifactStatus={updateArtifactStatus}
         />

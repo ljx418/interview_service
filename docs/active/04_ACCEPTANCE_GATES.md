@@ -1,6 +1,86 @@
-# JobPilot AI P6+P7 长程对话与产品化 Beta 验收门槛
+# JobPilot AI P5.5 Candidate Profile 验收门槛
+
+当前自动化候选证据：
+
+- 后端/API/边界 eval：`tests/evals/test_p5_5_candidate_profile_eval.py`、`test_p5_5_capability_matrix_eval.py`、`test_p5_5_project_credibility_eval.py`、`test_p5_5_gap_analysis_eval.py`、`test_p5_5_chat_boundary_eval.py`；
+- 前端构建：`npm --prefix apps/chatbox run build`；
+- 浏览器证据：`docs/reports/evidence/p5_5_candidate_profile/`；
+- 中文可视化验收报告：`docs/reports/P5_5_CANDIDATE_PROFILE_ACCEPTANCE_REPORT.html`；
+- 报告断言：`tests/evals/test_p5_5_acceptance_report_eval.py`。
+
+这些证据只支持 P5.5 examples / synthetic-style workspace + mock provider 自动化候选，不支持 P5-REAL、真实 provider 质量、真实个人资料路径或人工体验冻结结论。
+
+## P5.5 验收门槛 0 - 文档和边界完整
+
+通过条件：
+
+- PRD、目标架构、里程碑、验收门槛、追踪矩阵、drawio 和 TODO 均已同步为 P5.5 当前阶段；
+- drawio 不超过 8 页，且包含目标体验、目标架构、代码实体、开发计划、出门门槛和安全边界；
+- 文档明确 P5.5 不等于 P5-REAL、真实 provider 复验或 P8+；
+- 文档明确禁止敏感属性分析、人格判断、背景调查和未授权真实资料验收。
+
+## P5.5 验收门槛 1 - CandidateProfile 可追溯
+
+通过条件：
+
+- 专业背景画像只能基于 `career_fact`、`skill_evidence`、`tech_project`、`job`、`match_report` 或 artifact；
+- `POST /api/profile/candidate/refresh` 必须更新或创建 `candidate_profile` 行，并写入 `artifact_type=candidate_profile` artifact/version；
+- `GET /api/profile/candidate` 必须能返回可读空态或完整画像，不允许前端只能依赖裸 SQLite/内部 id；
+- 每条画像判断都有 source refs、证据强度或待确认项；
+- 缺少证据时显示 missing / weak / needs confirmation，不自动补全事实。
+
+不通过条件：
+
+- 画像结论没有来源；
+- 将合成资料写成真实个人资料；
+- 将推断写成事实。
+
+## P5.5 验收门槛 2 - 能力矩阵可解释
+
+通过条件：
+
+- 能力矩阵至少包含技能、类别、证据类型、证据强度、岗位相关性、待确认状态；
+- 证据强度必须使用 `strong`、`usable`、`weak`、`missing` 或等价等级，并在报告中解释含义；
+- 能力等级解释为证据强弱和岗位匹配度，不评价人格或潜力；
+- 用户能看到哪些能力可用于申请材料，哪些需要补证据。
+
+## P5.5 验收门槛 3 - 项目可信度不夸大
+
+通过条件：
+
+- 项目可信度展示本人贡献、技术难点、可验证材料、量化结果缺口和风险标签；
+- 项目可信度必须使用 `verified`、`plausible`、`needs_evidence`、`risky` 或等价标签，并保留 source refs；
+- 未确认本人贡献必须保持 blocking / warning；
+- 项目可用于申请材料前必须保留 source refs 和待确认项。
+
+## P5.5 验收门槛 4 - 岗位短板可行动
+
+通过条件：
+
+- 岗位短板对应 JD must-have / nice-to-have；
+- 每个短板都有证据、影响说明和补强行动；
+- 系统不输出羞辱性、不可行动或敏感属性相关评价。
+
+## P5.5 验收门槛 5 - Chatbox / Workbench 体验成立
+
+通过条件：
+
+- 用户能在 Workbench 中看到画像概览、能力矩阵、项目可信度和岗位短板；
+- 普通追问不写画像 artifact；
+- 明确要求刷新画像、生成画像报告或重新评估才进入工具路径；
+- 多视口截图证明桌面和移动端可读。
+
+## P5.5 验收门槛 6 - 可视化验收报告完整
+
+通过条件：
+
+- 中文 HTML 报告列出目标架构、当前实现、用户路径、截图证据、测试结果、PRD 规格检视和未验证范围；
+- 报告不得包含完整真实个人资料、API Key、provider raw response 或未授权长原文；
+- 报告明确 P5.5 未验证真实资料路径、真实 provider 质量、SaaS、ASR、会议平台、自动投递、MCP/CLI。
 
 ## P6+P7 验收门槛 0 - P0-P5 本地基线不退化
+
+以下 P6+P7 内容作为已完成自动化候选和后续复验边界保留。
 
 通过条件：
 

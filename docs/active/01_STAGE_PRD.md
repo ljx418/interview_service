@@ -1,19 +1,74 @@
-# JobPilot AI P6+P7 长程对话与产品化 Beta 阶段 PRD
+# JobPilot AI P5.5 Candidate Profile 阶段 PRD
+
+## -2. P5.5 当前阶段状态与决策
+
+P4 本地/mock Chatbox 体验已冻结，P5 本地/mock + 脱敏 fixture 自动化候选已完成，P6+P7 本地 Beta 自动化候选已完成。用户已确认优先对 P5.5 进行细致开发，把“个人专业背景、项目背景、各项能力评估和画像绘制”作为本阶段目标；当前 P5.5 自动化开发候选已完成。
+
+当前 P5.5 结论只覆盖 examples / synthetic-style workspace + mock provider 自动化路径。P5.5 不代表 P5-REAL 通过，不读取用户真实个人资料，不默认调用真实 provider，不实现 SaaS/ASR/会议平台/自动投递/MCP/CLI。
+
+P5.5 要解决的问题：
+
+```text
+P5 已能导入资料、解析 JD、生成申请包
+P6/P7 已具备 provider opt-in 和本地 Beta 自动化候选
+但用户仍缺少一个可审查、可追溯、可行动的候选人画像
+无法快速判断自己的专业背景是否可信、项目是否有证据、能力强弱在哪里、目标岗位短板是什么
+如果直接继续生成申请材料，系统可能放大未经确认的经历、弱证据技能或岗位不匹配风险
+```
+
+P5.5 目标体验路径：
+
+```text
+用户打开本地 Chatbox
+→ 导入或粘贴简历、项目说明、经历材料和目标 JD
+→ 系统基于已有 career_facts / skill_evidence / tech_project / job / match_report 汇总 CandidateProfile
+→ Workbench 展示专业背景画像、能力矩阵、项目可信度、岗位短板和补强建议
+→ 用户能展开每个判断的 source refs、证据强度、待确认项和风险原因
+→ 用户围绕画像继续追问“我适合什么岗位 / 哪些项目最可信 / 还缺什么证据 / 下一步补什么”
+→ 普通追问不写 artifact；明确要求刷新画像或生成材料时才进入工具路径
+```
+
+P5.5 必须产出的用户结果：
+
+- 专业背景画像：目标岗位、转型路径、当前层级、主要经历线索和可信边界；
+- 能力矩阵：技能名称、类别、证据类型、证据强度、岗位相关性和待确认状态；
+- 项目可信度：本人贡献、技术难点、可验证材料、量化结果缺口和风险标签；
+- 岗位短板：must-have / nice-to-have 缺口、表达风险、补强行动和优先级；
+- source refs 面板：每条画像判断都能追溯到资料、项目、JD、match_report 或 artifact；
+- 可视化验收报告：中文 HTML 报告展示目标架构、当前实现、用户路径、截图证据、未验证范围和 PRD 检视。
+
+P5.5 非目标：
+
+- 真实个人资料默认读取或验收；
+- 默认外呼真实 MiniMax、DeepSeek 或 OpenAI-compatible provider；
+- 敏感属性、人格、年龄、性别、健康、政治、家庭、民族等分析；
+- 背景调查、社交媒体画像、隐私画像或不可解释评分；
+- workspace 删除、cleanup apply、migration apply 或外部同步；
+- SaaS、多租户、Billing、ASR、会议平台、自动投递、MCP/CLI。
+
+P5.5 规格约束：
+
+- 画像结论必须来自 `career_fact`、`skill_evidence`、`tech_project`、`job`、`match_report` 或 artifact source refs；
+- “能力强/弱”必须解释为证据强弱和岗位相关性，不得写成人格或潜力判断；
+- 项目可信度必须区分“资料已证明”“用户待确认”“证据不足”；
+- 岗位短板必须可行动，不能只输出否定性评价；
+- 普通聊天不写画像 artifact，明确画像刷新/生成才允许写入；
+- 报告不得包含完整真实个人资料、API Key、provider raw response 或未授权长原文。
 
 ## -1. 当前阶段状态与决策
 
-P4 已在 2026-06-25 完成本地/mock Chatbox 体验冻结。P5 本地/mock + 脱敏 fixture 自动化候选已完成，证据包括 P5 HTML 报告、多视口真实界面截图、三身份合成资料可视化验收、`.venv/bin/python -m pytest` 88 passed, 1 warning、前端 build 通过和 drawio XML parse 通过。
+以下 P6+P7 内容作为已完成自动化候选和后续复验边界保留。P4 已在 2026-06-25 完成本地/mock Chatbox 体验冻结。P5 本地/mock + 脱敏 fixture 自动化候选已完成，证据包括 P5 HTML 报告、多视口真实界面截图、三身份合成资料可视化验收、`.venv/bin/python -m pytest` 88 passed, 1 warning、前端 build 通过和 drawio XML parse 通过。
 
 用户已确认：
 
 - P5-REAL 标记为冻结延期复验，不在当前阶段读取真实个人资料；
 - P5-Freeze 标记为冻结延期复验，不把 P5 自动化候选写成最终通过；
 - P5-REAL/P5-Freeze 在 P7 完成后作为 P7-post 复验重新执行；
-- 当前阶段目标为 P6+P7 一体规划：先实现真实 provider opt-in 与长程连续对话，再完成产品化 Beta 基础，最后回头复验 P5-REAL/P5-Freeze。
+- P6+P7 一体规划和自动化候选已完成并作为后续基线保留；P5-REAL/P5-Freeze 仍需真实资料授权后复验。
 
-本 PRD 的当前有效目标是 P6+P7。后续 P5 章节作为历史基线和 P7-post 复验依据保留。
+本 PRD 的当前有效目标是 P5.5 Candidate Profile。以下 P6+P7 章节作为已完成自动化候选基线和后续复验边界保留；后续 P5 章节作为历史基线和 P7-post 复验依据保留。
 
-## -0. P6+P7 当前阶段目标
+## -0. P6+P7 自动化候选基线目标
 
 P6 解决的问题：
 

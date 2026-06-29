@@ -17,6 +17,7 @@ from services.api.schemas import (
     ApplicationPackageRequest,
     ChatMessageRequest,
     ChatSessionCreateRequest,
+    CandidateProfileRefreshRequest,
     DiagnosticsReportRequest,
     ExportPackageRequest,
     ExtractFactsRequest,
@@ -47,6 +48,7 @@ from services.chat.context import build_chat_context
 from services.chat.provider_backed import handle_provider_backed_message
 from services.llm.contracts import JobParseOutput
 from services.llm.provider import ProviderError, get_provider, normalize_provider_name, provider_status
+from services.profile import get_candidate_profile, refresh_candidate_profile
 from services.storage.db import rows_to_dicts
 from services.storage.workspace import safe_child
 from services.storage.workspace import get_workspace, init_workspace, workspace_conn
@@ -383,6 +385,16 @@ def profile_update_fact(fact_id: str, req: UpdateFactRequest):
 @app.post("/api/profile/build-skill-evidence")
 def profile_skill_evidence(req: SkillEvidenceRequest):
     return run_tool(jobpilot.build_skill_evidence, req.workspace_id, req.skill_names)
+
+
+@app.get("/api/profile/candidate")
+def profile_candidate_get(workspace_id: str, job_id: str | None = None):
+    return run_tool(get_candidate_profile, workspace_id, job_id)
+
+
+@app.post("/api/profile/candidate/refresh")
+def profile_candidate_refresh(req: CandidateProfileRefreshRequest):
+    return run_tool(refresh_candidate_profile, req.workspace_id, req.job_id, req.target_role)
 
 
 @app.post("/api/project/create-card")
