@@ -3,6 +3,18 @@
 日期：2026-06-30  
 状态：阶段性自动化验收通过；仅支持 examples / synthetic-style workspace + mock provider 自动化候选。
 
+## 0. 复核结论和打回修复记录
+
+本文件在首次生成后被复核为“不足以让第三方完整审计本阶段自动化开发工作”，原因如下：
+
+- 缺少从原始 PRD / active PRD / acceptance gates 到代码、测试、截图的逐项映射；
+- 缺少证据文件清单、尺寸和 hash，第三方无法确认报告引用的截图是否就是本轮证据；
+- 缺少人工审计操作步骤，读者只能相信结论，不能按文档独立复验；
+- 缺少失败条件和虚假验收拦截项，无法判断哪些情况必须打回；
+- 缺少代码实体和接口行号，人工审计时定位成本过高。
+
+本次修复后，本文件的定位是“P5.5 人工审计入口文档”：人类审计者可以只从本文开始，定位代码、报告、截图、测试和未验证范围，并决定本阶段自动化候选是否可以接受。
+
 ## 1. 审计范围
 
 本轮重新基于原始 PRD 和当前 active P5.5 文档执行阶段性审计：
@@ -14,6 +26,32 @@
 - 追踪矩阵：`docs/active/06_TRACEABILITY_MATRIX.md`
 - P5.5 计划：`docs/active/20_P5_5_CANDIDATE_PROFILE_PLAN.md`
 - 可视化报告：`docs/reports/P5_5_CANDIDATE_PROFILE_ACCEPTANCE_REPORT.html`
+- Git 提交：`30576ce feat: complete P5.5 candidate profile acceptance`
+- 报告证据目录：`docs/reports/evidence/p5_5_candidate_profile/`
+
+## 1.1 人工审计操作步骤
+
+第三方审计者应按以下顺序复验，不需要推断隐藏前提：
+
+1. 打开 `docs/active/01_STAGE_PRD.md`，确认 P5.5 当前目标是 Candidate Profile，且未把真实资料、真实 provider、SaaS、ASR、会议平台、自动投递或 MCP/CLI 写入本阶段通过范围。
+2. 打开 `docs/active/02_TARGET_ARCHITECTURE.md`，确认 P5.5 代码实体是 Chatbox、profile API、`services/profile/candidate.py`、既有 SQLite 表和 artifact/version/source refs。
+3. 打开 `docs/active/04_ACCEPTANCE_GATES.md`，逐项核对 P5.5 Gate 0-6。
+4. 打开 `docs/reports/P5_5_CANDIDATE_PROFILE_ACCEPTANCE_REPORT.html`，确认报告为中文、状态为 passed、包含目标架构、当前实现、自动化步骤、命令结果、PRD 规格检视、代码检视、文档审计、截图证据和未验证范围。
+5. 检查 `docs/reports/evidence/p5_5_candidate_profile/` 中 8 张截图，确认图片非空、能看到真实 Chatbox 界面、Candidate Profile 面板、岗位短板和 source refs 展开。
+6. 运行或核对以下命令结果：P5.5 定向 pytest、全量 pytest、前端 build、drawio XML parse、Headless Chrome/CDP 报告生成、报告断言测试。
+7. 检查 Git 提交 `30576ce`，确认变更集中在 P5.5 代码、文档、测试、报告和截图证据，没有 `.env`、真实 API Key 或真实个人资料。
+
+## 1.2 关键代码入口
+
+| 审计对象 | 文件和行号 | 人工审计重点 |
+| --- | --- | --- |
+| 读取画像 API | `services/api/main.py:390` | `GET /api/profile/candidate` 只读返回空态或画像态 |
+| 刷新画像 API | `services/api/main.py:395` | `POST /api/profile/candidate/refresh` 显式刷新画像 |
+| 读取画像实现 | `services/profile/candidate.py:226` | 从 artifact / candidate_profile 读取结构化画像 |
+| 刷新画像实现 | `services/profile/candidate.py:259` | 写入 `candidate_profile` 和 `artifact_type=candidate_profile`，保留 source refs |
+| 前端画像面板 | `apps/chatbox/src/main.tsx:1296` | 展示画像概览、能力矩阵、项目可信度、岗位短板 |
+| 前端刷新动作 | `apps/chatbox/src/main.tsx:1675` | 画像刷新由显式用户动作触发 |
+| 画像样式 | `apps/chatbox/src/styles.css:1250` | 多视口下保持画像面板可读 |
 
 ## 2. 代码检视结论
 
@@ -42,12 +80,14 @@
 
 | PRD / Gate 功能点 | 覆盖证据 | 结论 |
 | --- | --- | --- |
-| 专业背景画像可追溯 | `test_p5_5_candidate_profile_eval.py`、报告截图、artifact source refs | 通过 |
+| 原始 PRD 的本地优先、可审查、可追溯求职 Agent 方向 | `docs/jobpilot_ai_agent_docs_v1_0/docs/01_PRD_JobPilot_AI_Agent_Service_v1.0.md`、active P5.5 PRD、HTML 报告 PRD 规格检视 | 通过，仅限 local/mock |
+| 专业背景画像可追溯 | `test_p5_5_candidate_profile_eval.py`、`p5_5_profile_overview.png`、artifact source refs | 通过 |
 | 能力矩阵解释证据强弱 | `test_p5_5_capability_matrix_eval.py`、`p5_5_profile_overview.png` | 通过 |
-| 项目可信度不夸大 | `test_p5_5_project_credibility_eval.py`、项目可信度截图 | 通过 |
-| 岗位短板可行动 | `test_p5_5_gap_analysis_eval.py`、岗位短板截图 | 通过 |
+| 项目可信度不夸大 | `test_p5_5_project_credibility_eval.py`、`p5_5_profile_overview.png` / `p5_5_source_refs.png` | 通过 |
+| 岗位短板可行动 | `test_p5_5_gap_analysis_eval.py`、`p5_5_source_refs.png` | 通过 |
 | 普通聊天不误写画像产物 | `test_p5_5_chat_boundary_eval.py` | 通过 |
 | 中文 HTML 报告和截图证据 | `test_p5_5_acceptance_report_eval.py`、`docs/reports/evidence/p5_5_candidate_profile/` | 通过 |
+| 多视口可读性 | `p5_5_profile_1200.png`、`p5_5_profile_1600.png`、`p5_5_profile_1920.png`、`p5_5_profile_720.png`、`p5_5_profile_mobile_390.png` | 通过，但只证明 P5.5 画像路径 |
 
 ## 5. 自动化验收结果
 
@@ -64,14 +104,47 @@
 
 截图目录：`docs/reports/evidence/p5_5_candidate_profile/`
 
-- `p5_5_initial_desktop.png`
-- `p5_5_profile_overview.png`
-- `p5_5_source_refs.png`
-- `p5_5_profile_1200.png`
-- `p5_5_profile_1600.png`
-- `p5_5_profile_1920.png`
-- `p5_5_profile_720.png`
-- `p5_5_profile_mobile_390.png`
+| 证据文件 | 大小 | SHA-256 | 证明内容 |
+| --- | ---: | --- | --- |
+| `p5_5_initial_desktop.png` | 194251 bytes | `403fddb8c1d86c0296a06b909fdb6ec705fb6c22024498a85fe108eaadb04fff` | 初始桌面状态、本地/mock 边界和入口 |
+| `p5_5_profile_overview.png` | 166559 bytes | `80d5409bf75d246e1e3cba0977f7bb815458fd9d64d50d05d2f9b7359a67bb55` | 画像刷新后 Workbench 可见，展示能力矩阵、项目可信度和岗位短板 |
+| `p5_5_source_refs.png` | 164483 bytes | `edbe2d4f31f5f7c6abe242cfa94b401644037b0037f5ad48444e55fdcde4c9d4` | source refs 与未验证范围展开可见 |
+| `p5_5_profile_1200.png` | 154316 bytes | `92a74ca0c6dc8f6b41975b95517a55d5eec30ea1e000b3a52d90f811bc0c8f28` | 1200px 视口画像路径可读 |
+| `p5_5_profile_1600.png` | 172003 bytes | `677d4581e8f3d89b342b28de33a58b37ebe3c9203c1db958297d76f4917ec005` | 1600px 视口画像路径可读 |
+| `p5_5_profile_1920.png` | 189232 bytes | `f0c16588da2477025df1ecbe9e0b3c65bb1d097343c3a83976a758ecc8e4182d` | 1920px 视口画像路径可读 |
+| `p5_5_profile_720.png` | 67994 bytes | `f7ad5ee84c069bd3060a3b05eed4c83505735a285fa09ed37d1ddd2f11111680` | 720px 窄屏画像路径可读 |
+| `p5_5_profile_mobile_390.png` | 60158 bytes | `240e207d7c290f699249f0021c048808bbe1cc23b5bb0154e7e4abb286e9f41e` | 390px 移动端画像路径可读 |
+
+HTML 报告 hash：
+
+- `docs/reports/P5_5_CANDIDATE_PROFILE_ACCEPTANCE_REPORT.html`
+- SHA-256：`9e6d9ffdf97e61ab07c836bd2cb30573912cac117bb8bd15cf6eb304715cf5b0`
+
+## 6.1 自动化场景复验说明
+
+报告由以下两步生成：
+
+```bash
+JOBPILOT_LLM_PROVIDER=mock .venv/bin/python scripts/generate_p5_5_candidate_profile_acceptance.py
+node scripts/browser_tools/browser-acceptance.mjs \
+  --start-chrome \
+  --scenario .tmp/p5-5-candidate-profile.scenario.json \
+  --output-dir docs/reports/evidence/p5_5_candidate_profile \
+  --report docs/reports/P5_5_CANDIDATE_PROFILE_ACCEPTANCE_REPORT.html \
+  --port 9235
+```
+
+`scripts/browser_tools/browser-acceptance.mjs` 使用 `--headless=new` 启动 Chrome。若未来改为可见 Chrome 或会抢占焦点，必须提前告知用户。
+
+## 6.2 人工截图核对要求
+
+审计者不应只看文件存在，必须实际打开截图并确认：
+
+- `p5_5_profile_overview.png` 中右侧 Workbench 出现候选人画像内容，而不是空白占位；
+- `p5_5_source_refs.png` 中 source refs 与未验证范围展开可见；
+- 多视口截图不是同一张图复制，且宽度布局确实不同；
+- 图片中没有真实姓名、联系方式、真实账号、API Key 或 provider raw response；
+- 截图只证明可视路径，不单独证明后端写入正确，后端写入由 pytest 和 artifact/source refs 断言证明。
 
 ## 7. 未验证范围
 
@@ -81,8 +154,43 @@
 - 未验证 SaaS、ASR、会议平台、自动投递、MCP/CLI；
 - 未声明人工体验冻结或最终产品化发布通过。
 
+## 7.1 必须打回的情况
+
+出现以下任一情况，不能接受本阶段审计结论：
+
+- 报告或文档出现“真实个人资料路径已通过”“真实 provider 默认路径已通过”“P5-REAL 已通过”等扩展结论；
+- `docs/reports/evidence/p5_5_candidate_profile/` 缺少任一截图，或截图无法打开、为空白、与报告不对应；
+- `test_p5_5_chat_boundary_eval.py` 失败，说明普通聊天可能写入画像 artifact；
+- `test_p5_5_candidate_profile_eval.py` 失败，说明 profile row、artifact/version 或 source refs 不能被证明；
+- 全量 pytest 或前端 build 失败，说明 P5.5 可能破坏既有本地基线；
+- drawio 超过 8 页或 XML 无法解析，说明架构审计图不可复验；
+- 发现 `.env`、真实 API Key、真实个人资料、workspace 数据库或未脱敏 raw provider response 被提交。
+
+## 7.2 仍需后续补证的内容
+
+以下不是 P5.5 自动化候选的失败项，但必须在后续阶段单独补证：
+
+- 用户真实个人资料的脱敏导入、解析和人工复核；
+- MiniMax / DeepSeek / OpenAI-compatible 真实 provider 的 opt-in 调用质量；
+- 长程真实 provider 连续对话的费用、隐私、失败降级和日志审计；
+- SaaS、多租户、Billing、ASR、会议平台、自动投递、MCP/CLI；
+- 人工体验认可和最终产品化发布。
+
 ## 8. 验收评价
 
 P5.5 Candidate Profile 阶段性自动化验收通过。当前代码、文档、测试和截图证据能够支撑“本地/mock + examples/synthetic-style workspace 下可生成并审查候选人画像、能力矩阵、项目可信度、岗位短板和 source refs”的结论。
 
 该结论不能扩展为真实个人资料路径、真实 provider 质量、P5-REAL、SaaS 或最终产品化通过。若进入下一阶段，应继续把真实资料和真实 provider 作为高风险 opt-in 流程单独验收。
+
+## 9. 人工审计最终勾选表
+
+审计者完成以下勾选后，才能接受本阶段自动化候选：
+
+- [ ] 已打开 HTML 报告并确认状态为 passed；
+- [ ] 已打开至少 `p5_5_profile_overview.png`、`p5_5_source_refs.png`、`p5_5_profile_mobile_390.png` 三张截图；
+- [ ] 已确认报告和截图没有真实个人资料、真实 API Key 或 provider raw response；
+- [ ] 已核对 P5.5 Gate 0-6 均有测试或截图证据；
+- [ ] 已确认普通聊天不写画像 artifact 的测试存在并通过；
+- [ ] 已确认全量 pytest、前端 build、drawio parse 均通过；
+- [ ] 已确认 Git 提交 `30576ce` 的变更范围与 P5.5 相关；
+- [ ] 已确认未验证范围没有被写成已完成能力。
