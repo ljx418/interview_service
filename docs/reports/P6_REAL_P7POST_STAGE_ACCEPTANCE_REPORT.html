@@ -28,8 +28,15 @@
   <section class="hero">
     <h1>P6-REAL / P7-post 阶段自动化验收报告</h1>
     <p>P6-REAL 已完成 gate-only 门禁自动化验收；真实 provider 未授权未执行。</p>
-    <p>报告路径：docs/reports/P6_REAL_P7POST_STAGE_ACCEPTANCE_REPORT.html；生成时间：2026-07-01T05:09:00.215863+00:00</p>
+    <p>报告路径：docs/reports/P6_REAL_P7POST_STAGE_ACCEPTANCE_REPORT.html；生成时间：2026-07-01T05:13:48.899398+00:00</p>
   </section>
+
+  <h2>审计对象版本</h2>
+  <p>本节把报告绑定到仓库版本。由于报告文件本身会被提交，生成时 HEAD 可能早于包含本报告的最终提交；人工审计时应同时查看最近提交链和仓库最新提交。</p>
+  <table><tr><th>项目</th><th>值</th><th>说明</th></tr><tr><td>当前分支</td><td>main</td><td>报告生成时所在 Git 分支。</td></tr>
+<tr><td>生成时 HEAD</td><td>36cde1e</td><td>报告生成时的代码版本；若本报告随后被提交，最新提交以 git log 为准。</td></tr>
+<tr><td>工作树状态</td><td>dirty: report generated with local changes</td><td>dirty 通常表示报告本身刚生成或补强，需结合后续提交记录审计。</td></tr>
+<tr><td>最近提交链</td><td><code>36cde1e docs: add audit flow and residual risk evidence</code><br><code>e13cebf docs: add audit package index to stage report</code><br><code>d37c6fd docs: improve stage audit report completeness</code><br><code>b14f477 test: add stage acceptance audit evidence</code><br><code>b4ff0f9 docs: strengthen P5.5 audit evidence</code><br><code>30576ce feat: complete P5.5 candidate profile acceptance</code></td><td>用于把报告、脚本、测试和证据提交串联起来。</td></tr></table>
 
   <h2>审计材料索引</h2>
   <p>本节列出人工审计本阶段自动化开发必须打开的最小材料集合。审计者不需要搜索仓库即可定位主报告、截图、结构化 evidence、生成脚本和防退化 eval。</p>

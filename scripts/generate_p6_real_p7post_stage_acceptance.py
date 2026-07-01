@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import html
 import json
+import subprocess
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -70,6 +71,30 @@ def _status_badge(status: str) -> str:
         "needs-review": "#fff2cc",
     }
     return f"<span class='badge' style='background:{colors.get(status, '#eee')}'>{_escape(status)}</span>"
+
+
+def _git_value(args: list[str], default: str = "unknown") -> str:
+    try:
+        return subprocess.check_output(["git", *args], cwd=ROOT, text=True, stderr=subprocess.DEVNULL).strip()
+    except Exception:
+        return default
+
+
+def _version_rows() -> str:
+    branch = _git_value(["branch", "--show-current"])
+    head = _git_value(["rev-parse", "--short", "HEAD"])
+    status = _git_value(["status", "--short"], "unknown")
+    status_label = "clean" if status == "" else "dirty: report generated with local changes"
+    commits = _git_value(["log", "-6", "--oneline"], "")
+    commit_lines = commits.splitlines() if commits else []
+    commit_html = "<br>".join(f"<code>{_escape(line)}</code>" for line in commit_lines)
+    rows = [
+        ("当前分支", branch, "报告生成时所在 Git 分支。"),
+        ("生成时 HEAD", head, "报告生成时的代码版本；若本报告随后被提交，最新提交以 git log 为准。"),
+        ("工作树状态", status_label, "dirty 通常表示报告本身刚生成或补强，需结合后续提交记录审计。"),
+        ("最近提交链", commit_html, "用于把报告、脚本、测试和证据提交串联起来。"),
+    ]
+    return "\n".join(f"<tr><td>{_escape(name)}</td><td>{value if name == '最近提交链' else _escape(value)}</td><td>{_escape(note)}</td></tr>" for name, value, note in rows)
 
 
 def _image_rows() -> str:
@@ -291,6 +316,10 @@ def render(report_path: Path, command_results: dict[str, str]) -> str:
     <p>{_escape(conclusion)}</p>
     <p>报告路径：{_escape(final_rel)}；生成时间：{_escape(generated)}</p>
   </section>
+
+  <h2>审计对象版本</h2>
+  <p>本节把报告绑定到仓库版本。由于报告文件本身会被提交，生成时 HEAD 可能早于包含本报告的最终提交；人工审计时应同时查看最近提交链和仓库最新提交。</p>
+  <table><tr><th>项目</th><th>值</th><th>说明</th></tr>{_version_rows()}</table>
 
   <h2>审计材料索引</h2>
   <p>本节列出人工审计本阶段自动化开发必须打开的最小材料集合。审计者不需要搜索仓库即可定位主报告、截图、结构化 evidence、生成脚本和防退化 eval。</p>

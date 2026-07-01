@@ -122,6 +122,9 @@ def test_p6_real_p7post_final_report_summarizes_gate_and_synthetic_boundaries():
     assert "P6-REAL / P7-post 阶段自动化验收报告" in html
     assert "P6-REAL 已完成 gate-only 门禁自动化验收" in html
     assert "真实 provider 未授权未执行" in html
+    assert "审计对象版本" in html
+    assert "生成时 HEAD" in html
+    assert "最近提交链" in html
     assert "审计材料索引" in html
     assert "复现命令" in html
     assert "人工最小审计流程" in html
