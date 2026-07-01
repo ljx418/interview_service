@@ -1,8 +1,10 @@
 import json
 import os
+import re
 import subprocess
 import sys
 from pathlib import Path
+from urllib.parse import unquote
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -170,3 +172,14 @@ def test_p6_real_p7post_final_report_summarizes_gate_and_synthetic_boundaries():
     assert "真实 LLM 接入已通过" not in html
     assert "fake-local-key-never-exposed" not in html
     assert "Bearer " not in html
+
+    hrefs = re.findall(r"href=['\"]([^'\"]+)['\"]", html)
+    assert hrefs, "final report must expose clickable audit material links"
+    missing_links = []
+    for href in hrefs:
+        if href.startswith(("http://", "https://", "mailto:", "#")):
+            continue
+        target = (FINAL_REPORT.parent / unquote(href.split("#", 1)[0])).resolve()
+        if not target.exists():
+            missing_links.append(href)
+    assert missing_links == []

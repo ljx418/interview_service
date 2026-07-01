@@ -61,6 +61,16 @@ def _rel(path: Path, base: Path) -> str:
         return path.as_posix()
 
 
+def _href_for_repo_path(path: Path, report_path: Path) -> str:
+    return _rel(path, report_path.parent)
+
+
+def _repo_link(path: Path, report_path: Path, label: str | None = None) -> str:
+    text = label or _rel(path, ROOT)
+    href = _href_for_repo_path(path, report_path)
+    return f"<a href='{_escape(href)}'><code>{_escape(text)}</code></a>"
+
+
 def _status_badge(status: str) -> str:
     colors = {
         "pass": "#d5e8d4",
@@ -97,13 +107,14 @@ def _version_rows() -> str:
     return "\n".join(f"<tr><td>{_escape(name)}</td><td>{value if name == '最近提交链' else _escape(value)}</td><td>{_escape(note)}</td></tr>" for name, value, note in rows)
 
 
-def _image_rows() -> str:
+def _image_rows(report_path: Path) -> str:
     rows = []
     for title, name in P5_5_SCREENSHOTS:
         path = P5_5_EVIDENCE_DIR / name
         status = "pass" if path.exists() and path.stat().st_size > 0 else "blocked"
+        link = _repo_link(path, report_path)
         rows.append(
-            f"<tr><td>{_escape(title)}</td><td>{_status_badge(status)}</td><td><code>{_escape(_rel(path, ROOT))}</code></td><td>{_escape(path.stat().st_size if path.exists() else 0)} bytes</td></tr>"
+            f"<tr><td>{_escape(title)}</td><td>{_status_badge(status)}</td><td>{link}</td><td>{_escape(path.stat().st_size if path.exists() else 0)} bytes</td></tr>"
         )
     return "\n".join(rows)
 
@@ -167,32 +178,35 @@ def _prd_gate_rows() -> str:
     )
 
 
-def _journey_rows() -> str:
+def _journey_rows(report_path: Path) -> str:
+    def img_link(name: str) -> str:
+        return _repo_link(P5_5_EVIDENCE_DIR / name, report_path, name)
+
     rows = [
-        ("1", "打开本地 Chatbox 工作台", "p5_5_initial_desktop.png", "确认本地就绪、示例模式、模型设置、任务入口和 Workbench 初始状态可见。"),
-        ("2", "导入 examples 简历和项目资料，解析事实", "p5_5_profile_overview.png", "确认候选人画像已刷新，能力矩阵、项目可信度和岗位短板可见。"),
-        ("3", "展开 source refs 与未验证范围", "p5_5_source_refs.png", "确认画像判断可追溯，缺证据项不会被写成事实。"),
-        ("4", "复核 1200/1600/1920 桌面视口", "p5_5_profile_1200.png / p5_5_profile_1600.png / p5_5_profile_1920.png", "确认宽屏布局没有空白错位和主任务不可见。"),
-        ("5", "复核 720px 与 390px 移动路径", "p5_5_profile_720.png / p5_5_profile_mobile_390.png", "确认移动端 Workbench 抽屉可达，短板和 source refs 入口可读。"),
-        ("6", "复核 P6-REAL gate-only", "P6_REAL_PROVIDER_ACCEPTANCE_REPORT.html / p6_real_provider_evidence.json", "确认真实 provider 未授权未执行，configured 不等于 called，未 consent 时 fallback。"),
+        ("1", "打开本地 Chatbox 工作台", img_link("p5_5_initial_desktop.png"), "确认本地就绪、示例模式、模型设置、任务入口和 Workbench 初始状态可见。"),
+        ("2", "导入 examples 简历和项目资料，解析事实", img_link("p5_5_profile_overview.png"), "确认候选人画像已刷新，能力矩阵、项目可信度和岗位短板可见。"),
+        ("3", "展开 source refs 与未验证范围", img_link("p5_5_source_refs.png"), "确认画像判断可追溯，缺证据项不会被写成事实。"),
+        ("4", "复核 1200/1600/1920 桌面视口", " / ".join([img_link("p5_5_profile_1200.png"), img_link("p5_5_profile_1600.png"), img_link("p5_5_profile_1920.png")]), "确认宽屏布局没有空白错位和主任务不可见。"),
+        ("5", "复核 720px 与 390px 移动路径", " / ".join([img_link("p5_5_profile_720.png"), img_link("p5_5_profile_mobile_390.png")]), "确认移动端 Workbench 抽屉可达，短板和 source refs 入口可读。"),
+        ("6", "复核 P6-REAL gate-only", f"{_repo_link(P6_REPORT, report_path, P6_REPORT.name)} / {_repo_link(P6_EVIDENCE, report_path, P6_EVIDENCE.name)}", "确认真实 provider 未授权未执行，configured 不等于 called，未 consent 时 fallback。"),
     ]
-    return "\n".join(f"<tr><td>{_escape(i)}</td><td>{_escape(action)}</td><td>{_escape(evidence)}</td><td>{_escape(assertion)}</td></tr>" for i, action, evidence, assertion in rows)
+    return "\n".join(f"<tr><td>{_escape(i)}</td><td>{_escape(action)}</td><td>{evidence}</td><td>{_escape(assertion)}</td></tr>" for i, action, evidence, assertion in rows)
 
 
-def _audit_package_rows() -> str:
+def _audit_package_rows(report_path: Path) -> str:
     rows = [
-        ("主审计报告", "docs/reports/P6_REAL_P7POST_STAGE_ACCEPTANCE_REPORT.html", "本页，阶段性自动化开发总审计入口。"),
-        ("P5.5 可视化报告", "docs/reports/P5_5_CANDIDATE_PROFILE_ACCEPTANCE_REPORT.html", "候选人画像、截图、多背景 20 轮对话 transcript。"),
-        ("P6/P7 历史自动化报告", "docs/reports/P6P7_AUTOMATED_ACCEPTANCE_REPORT.html", "P6 fake provider、长上下文、P7 workspace dry-run 和 diagnostics 的历史自动化证据入口。"),
-        ("P6/P7 阶段审计报告", "docs/reports/P6P7_STAGE_ACCEPTANCE_AUDIT_REPORT.html", "P6/P7 自动化候选阶段审计与 PRD 规格检视。"),
-        ("P6-REAL gate-only 报告", "docs/reports/P6_REAL_PROVIDER_ACCEPTANCE_REPORT.html", "真实 provider 未授权时的门禁、fallback、configured/called 边界。"),
-        ("P6-REAL evidence JSON", "docs/reports/evidence/p6_real_provider_acceptance/p6_real_provider_evidence.json", "provider gate-only 结构化证据。"),
-        ("截图目录", "docs/reports/evidence/p5_5_candidate_profile/", "8 张真实 Chatbox 截图和多轮对话 JSON。"),
-        ("阶段最终审计", "docs/active/stage-reviews/P6_REAL_P7POST_FINAL_ACCEPTANCE_AUDIT.md", "命令、结论、PRD 检视和后续触发条件。"),
-        ("报告生成器", "scripts/generate_p6_real_p7post_stage_acceptance.py", "生成本报告并执行禁止词自检。"),
-        ("报告 eval", "tests/evals/test_p6_real_provider_acceptance_eval.py", "防止报告结构、边界、证据引用退化。"),
+        ("主审计报告", DEFAULT_REPORT, "本页，阶段性自动化开发总审计入口。"),
+        ("P5.5 可视化报告", P5_5_REPORT, "候选人画像、截图、多背景 20 轮对话 transcript。"),
+        ("P6/P7 历史自动化报告", P6P7_REPORT, "P6 fake provider、长上下文、P7 workspace dry-run 和 diagnostics 的历史自动化证据入口。"),
+        ("P6/P7 阶段审计报告", P6P7_AUDIT_REPORT, "P6/P7 自动化候选阶段审计与 PRD 规格检视。"),
+        ("P6-REAL gate-only 报告", P6_REPORT, "真实 provider 未授权时的门禁、fallback、configured/called 边界。"),
+        ("P6-REAL evidence JSON", P6_EVIDENCE, "provider gate-only 结构化证据。"),
+        ("截图目录", P5_5_EVIDENCE_DIR, "8 张真实 Chatbox 截图和多轮对话 JSON。"),
+        ("阶段最终审计", ROOT / "docs/active/stage-reviews/P6_REAL_P7POST_FINAL_ACCEPTANCE_AUDIT.md", "命令、结论、PRD 检视和后续触发条件。"),
+        ("报告生成器", ROOT / "scripts/generate_p6_real_p7post_stage_acceptance.py", "生成本报告并执行禁止词自检。"),
+        ("报告 eval", ROOT / "tests/evals/test_p6_real_provider_acceptance_eval.py", "防止报告结构、边界、证据引用退化。"),
     ]
-    return "\n".join(f"<tr><td>{_escape(name)}</td><td><code>{_escape(path)}</code></td><td>{_escape(note)}</td></tr>" for name, path, note in rows)
+    return "\n".join(f"<tr><td>{_escape(name)}</td><td>{_repo_link(path, report_path)}</td><td>{_escape(note)}</td></tr>" for name, path, note in rows)
 
 
 def _reproduction_rows() -> str:
@@ -267,7 +281,7 @@ def render(report_path: Path, command_results: dict[str, str]) -> str:
     for path in SYNTHETIC_REPORTS:
         status = "pass" if path.exists() else "blocked"
         synthetic_rows.append(
-            f"<tr><td>{_escape(path.name)}</td><td>{_status_badge(status)}</td><td>{_escape(path.as_posix())}</td></tr>"
+            f"<tr><td>{_escape(path.name)}</td><td>{_status_badge(status)}</td><td>{_repo_link(path, report_path)}</td></tr>"
         )
 
     conclusion = (
@@ -307,6 +321,8 @@ def render(report_path: Path, command_results: dict[str, str]) -> str:
     pre {{ white-space:pre-wrap; word-break:break-word; font-size:12px; }}
     .badge {{ display:inline-block; padding:4px 9px; border:1px solid rgba(0,0,0,.12); border-radius:999px; font-weight:700; }}
     .warn {{ border-left:5px solid #b85450; background:#fff7f6; padding:12px 14px; }}
+    a {{ color:#245f56; text-decoration:none; border-bottom:1px solid rgba(36,95,86,.35); }}
+    a:hover {{ border-bottom-color:#245f56; }}
   </style>
 </head>
 <body>
@@ -323,7 +339,7 @@ def render(report_path: Path, command_results: dict[str, str]) -> str:
 
   <h2>审计材料索引</h2>
   <p>本节列出人工审计本阶段自动化开发必须打开的最小材料集合。审计者不需要搜索仓库即可定位主报告、截图、结构化 evidence、生成脚本和防退化 eval。</p>
-  <table><tr><th>材料</th><th>路径</th><th>用途</th></tr>{_audit_package_rows()}</table>
+  <table><tr><th>材料</th><th>路径</th><th>用途</th></tr>{_audit_package_rows(report_path)}</table>
 
   <h2>复现命令</h2>
   <p>以下命令是本轮证据的可复现路径。真实 provider real mode 和真实个人资料复验不在这些命令中，必须另行授权。</p>
@@ -360,20 +376,20 @@ def render(report_path: Path, command_results: dict[str, str]) -> str:
   <h2>阶段结论</h2>
   <table>
     <tr><th>项目</th><th>状态</th><th>证据</th><th>不得声称</th></tr>
-    <tr><td>P6-REAL gate-only</td><td>{_status_badge(p6_status)}</td><td>{_escape(p6_report_rel)}</td><td>不得声称真实 provider 质量已通过</td></tr>
+    <tr><td>P6-REAL gate-only</td><td>{_status_badge(p6_status)}</td><td>{_repo_link(P6_REPORT, report_path, p6_report_rel)}</td><td>不得声称真实 provider 质量已通过</td></tr>
     <tr><td>P6-REAL real mode</td><td>{_status_badge('not-executed' if not p6_real_authorized else 'evidence')}</td><td>{_escape('未授权执行' if not p6_real_authorized else '查看 P6 evidence')}</td><td>未授权时不得声称真实外呼已发生</td></tr>
-    <tr><td>P5.5 visual evidence</td><td>{_status_badge('pass' if P5_5_REPORT.exists() else 'blocked')}</td><td>{_escape(p5_report_rel)}；截图目录：{_escape(_rel(P5_5_EVIDENCE_DIR, ROOT))}</td><td>不得替代真实个人资料复验</td></tr>
+    <tr><td>P5.5 visual evidence</td><td>{_status_badge('pass' if P5_5_REPORT.exists() else 'blocked')}</td><td>{_repo_link(P5_5_REPORT, report_path, p5_report_rel)}；截图目录：{_repo_link(P5_5_EVIDENCE_DIR, report_path)}</td><td>不得替代真实个人资料复验</td></tr>
     <tr><td>P7-post synthetic</td><td>{_status_badge('pass')}</td><td>三身份合成资料报告；20 轮对话补证：{_escape(dialogue['status'])} / cases={_escape(dialogue['cases'])} / turns={_escape(dialogue['turns'])}</td><td>不得替代 P5-REAL 真实资料复验</td></tr>
     <tr><td>P5-REAL</td><td>{_status_badge('not-executed')}</td><td>用户未提供真实资料路径，本轮未读取</td><td>不得声称真实个人资料复验通过</td></tr>
   </table>
 
   <h2>用户场景体验路径截图</h2>
   <p>以下截图来自 Headless Chrome/CDP 自动化路径，覆盖本地 Chatbox 工作台、候选人画像、能力矩阵、项目可信度、岗位短板、source refs 和多视口可读性。</p>
-  <table><tr><th>#</th><th>用户动作</th><th>证据</th><th>人工审计要点</th></tr>{_journey_rows()}</table>
+  <table><tr><th>#</th><th>用户动作</th><th>证据</th><th>人工审计要点</th></tr>{_journey_rows(report_path)}</table>
   <div class="screens">{_image_gallery(report_path)}</div>
 
   <h2>截图证据清单</h2>
-  <table><tr><th>截图</th><th>状态</th><th>路径</th><th>大小</th></tr>{_image_rows()}</table>
+  <table><tr><th>截图</th><th>状态</th><th>路径</th><th>大小</th></tr>{_image_rows(report_path)}</table>
 
   <h2>命令结果</h2>
   <table><tr><th>命令</th><th>本轮结果</th></tr>{command_rows}</table>
