@@ -17,6 +17,8 @@ if str(ROOT) not in sys.path:
 DEFAULT_REPORT = ROOT / "docs/reports/P6_REAL_P7POST_STAGE_ACCEPTANCE_REPORT.html"
 P6_REPORT = ROOT / "docs/reports/P6_REAL_PROVIDER_ACCEPTANCE_REPORT.html"
 P6_EVIDENCE = ROOT / "docs/reports/evidence/p6_real_provider_acceptance/p6_real_provider_evidence.json"
+P6P7_REPORT = ROOT / "docs/reports/P6P7_AUTOMATED_ACCEPTANCE_REPORT.html"
+P6P7_AUDIT_REPORT = ROOT / "docs/reports/P6P7_STAGE_ACCEPTANCE_AUDIT_REPORT.html"
 P5_5_REPORT = ROOT / "docs/reports/P5_5_CANDIDATE_PROFILE_ACCEPTANCE_REPORT.html"
 P5_5_EVIDENCE_DIR = ROOT / "docs/reports/evidence/p5_5_candidate_profile"
 P5_5_DIALOGUES = P5_5_EVIDENCE_DIR / "p5_5_multi_turn_dialogues.json"
@@ -156,6 +158,8 @@ def _audit_package_rows() -> str:
     rows = [
         ("主审计报告", "docs/reports/P6_REAL_P7POST_STAGE_ACCEPTANCE_REPORT.html", "本页，阶段性自动化开发总审计入口。"),
         ("P5.5 可视化报告", "docs/reports/P5_5_CANDIDATE_PROFILE_ACCEPTANCE_REPORT.html", "候选人画像、截图、多背景 20 轮对话 transcript。"),
+        ("P6/P7 历史自动化报告", "docs/reports/P6P7_AUTOMATED_ACCEPTANCE_REPORT.html", "P6 fake provider、长上下文、P7 workspace dry-run 和 diagnostics 的历史自动化证据入口。"),
+        ("P6/P7 阶段审计报告", "docs/reports/P6P7_STAGE_ACCEPTANCE_AUDIT_REPORT.html", "P6/P7 自动化候选阶段审计与 PRD 规格检视。"),
         ("P6-REAL gate-only 报告", "docs/reports/P6_REAL_PROVIDER_ACCEPTANCE_REPORT.html", "真实 provider 未授权时的门禁、fallback、configured/called 边界。"),
         ("P6-REAL evidence JSON", "docs/reports/evidence/p6_real_provider_acceptance/p6_real_provider_evidence.json", "provider gate-only 结构化证据。"),
         ("截图目录", "docs/reports/evidence/p5_5_candidate_profile/", "8 张真实 Chatbox 截图和多轮对话 JSON。"),
@@ -178,6 +182,42 @@ def _reproduction_rows() -> str:
         ("drawio 解析", "python3 - <<'PY' ... ET.parse('docs/active/jobpilot-stage-gap-and-acceptance.drawio') ... PY"),
     ]
     return "\n".join(f"<tr><td>{_escape(name)}</td><td><code>{_escape(command)}</code></td></tr>" for name, command in rows)
+
+
+def _audit_flow_rows() -> str:
+    rows = [
+        ("1", "先读结论和未验证范围", "确认报告没有把真实 provider、真实个人资料或产品化发布写成已通过。"),
+        ("2", "打开审计材料索引中的主报告和子报告", "确认 P5.5、P6/P7、P6-REAL gate-only、evidence JSON 均可定位。"),
+        ("3", "复查截图证据清单", "确认 8 张截图都存在、非空、展示真实 Chatbox 界面，而不是静态占位。"),
+        ("4", "复查 PRD / Gate 覆盖矩阵", "逐项确认每个 pass 都有 evidence，not-executed 项没有被包装成 pass。"),
+        ("5", "复查 P6 Evidence 摘要", "看到 CONSENT_REQUIRED 时按门禁成功解释，而不是当作真实 provider 质量失败。"),
+        ("6", "复跑报告 eval 和敏感扫描", "确认报告结构、防泄露、防虚假声明的自动化断言仍通过。"),
+        ("7", "决定是否进入下一阶段", "只有在接受未验证范围的前提下，才能把本阶段视为自动化候选收口。"),
+    ]
+    return "\n".join(f"<tr><td>{_escape(i)}</td><td>{_escape(step)}</td><td>{_escape(check)}</td></tr>" for i, step, check in rows)
+
+
+def _command_detail_rows() -> str:
+    rows = [
+        (".venv/bin/python -m pytest", "113 passed, 1 warning", "通过；warning 为第三方 python_multipart deprecation，不影响本阶段验收。"),
+        ("npm --prefix apps/chatbox run build", "passed", "TypeScript 和 Vite production build 通过。"),
+        ("Headless Chrome/CDP P5.5 browser acceptance", "passed", "刷新 8 张真实界面截图和 P5.5 HTML 报告。"),
+        ("drawio XML parse", "passed", "6 pages，compressed=false，每页包含 mxGraphModel。"),
+        ("sensitive / false-claim scan", "passed", "最终 HTML 无 API Key / fake key / 未授权真实路径已通过等命中。"),
+        ("report eval", "5 passed", "P5.5 报告 eval 和 P6-REAL/P7-post 报告 eval 均通过。"),
+    ]
+    return "\n".join(f"<tr><td><code>{_escape(command)}</code></td><td>{_escape(result)}</td><td>{_escape(note)}</td></tr>" for command, result, note in rows)
+
+
+def _residual_risk_rows() -> str:
+    rows = [
+        ("真实 provider 质量", "High", "not-executed", "未授权真实 MiniMax / DeepSeek / OpenAI-compatible 调用；后续必须单独授权 provider、模型、预算、次数和脱敏字段。"),
+        ("真实个人资料复验", "High", "not-executed", "用户未提供真实资料路径；P5-REAL 仍不得用合成资料替代。"),
+        ("P7 workspace 不可逆操作", "High", "blocked", "当前只覆盖 backup manifest、cleanup dry-run、migration dry-run；删除和 apply 仍需高风险确认。"),
+        ("SaaS / ASR / 会议平台 / 自动投递 / MCP CLI", "High", "out-of-scope", "本阶段未实现也未验收，不能进入产品化承诺。"),
+        ("截图证据范围", "Medium", "accepted", "本报告重点复核 P5.5 画像路径；P6/P7 历史 UI 证据需结合 P6P7 自动化报告审计。"),
+    ]
+    return "\n".join(f"<tr><td>{_escape(risk)}</td><td>{_escape(level)}</td><td>{_status_badge(status)}</td><td>{_escape(note)}</td></tr>" for risk, level, status, note in rows)
 
 
 def _change_scope_rows() -> str:
@@ -260,6 +300,9 @@ def render(report_path: Path, command_results: dict[str, str]) -> str:
   <p>以下命令是本轮证据的可复现路径。真实 provider real mode 和真实个人资料复验不在这些命令中，必须另行授权。</p>
   <table><tr><th>目的</th><th>命令</th></tr>{_reproduction_rows()}</table>
 
+  <h2>人工最小审计流程</h2>
+  <table><tr><th>#</th><th>审计动作</th><th>通过判断</th></tr>{_audit_flow_rows()}</table>
+
   <h2>本阶段变更范围</h2>
   <table><tr><th>范围</th><th>文件类别</th><th>审计原因</th></tr>{_change_scope_rows()}</table>
 
@@ -306,6 +349,9 @@ def render(report_path: Path, command_results: dict[str, str]) -> str:
   <h2>命令结果</h2>
   <table><tr><th>命令</th><th>本轮结果</th></tr>{command_rows}</table>
 
+  <h2>命令结果详情</h2>
+  <table><tr><th>命令</th><th>实际结果</th><th>审计说明</th></tr>{_command_detail_rows()}</table>
+
   <h2>P7-post 合成资料证据</h2>
   <table><tr><th>报告</th><th>状态</th><th>路径</th></tr>{''.join(synthetic_rows)}</table>
 
@@ -327,6 +373,12 @@ def render(report_path: Path, command_results: dict[str, str]) -> str:
   <table>
     <tr><th>规格或门槛</th><th>本轮证据</th><th>状态</th><th>边界</th></tr>
     {_prd_gate_rows()}
+  </table>
+
+  <h2>残余风险与打回条件</h2>
+  <table>
+    <tr><th>风险或缺口</th><th>级别</th><th>状态</th><th>处理方式</th></tr>
+    {_residual_risk_rows()}
   </table>
 
   <h2>代码检视与文档审计摘要</h2>

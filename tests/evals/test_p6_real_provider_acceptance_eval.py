@@ -124,6 +124,7 @@ def test_p6_real_p7post_final_report_summarizes_gate_and_synthetic_boundaries():
     assert "真实 provider 未授权未执行" in html
     assert "审计材料索引" in html
     assert "复现命令" in html
+    assert "人工最小审计流程" in html
     assert "本阶段变更范围" in html
     assert "人工审计结论" in html
     assert "代码实体与证据关系" in html
@@ -133,15 +134,22 @@ def test_p6_real_p7post_final_report_summarizes_gate_and_synthetic_boundaries():
     assert "CONSENT_REQUIRED" in html
     assert "用户场景体验路径截图" in html
     assert "命令结果" in html
+    assert "命令结果详情" in html
+    assert "残余风险与打回条件" in html
     assert "代码检视与文档审计摘要" in html
     assert "P5.5 visual evidence" in html
     assert "apps/chatbox/src/main.tsx" in html
     assert "services/profile/candidate.py" in html
     assert "services/chat/provider_backed.py" in html
     assert "docs/reports/P5_5_CANDIDATE_PROFILE_ACCEPTANCE_REPORT.html" in html
+    assert "docs/reports/P6P7_AUTOMATED_ACCEPTANCE_REPORT.html" in html
+    assert "docs/reports/P6P7_STAGE_ACCEPTANCE_AUDIT_REPORT.html" in html
     assert "docs/reports/evidence/p6_real_provider_acceptance/p6_real_provider_evidence.json" in html
     assert "JOBPILOT_LLM_PROVIDER=mock .venv/bin/python scripts/generate_p5_5_candidate_profile_acceptance.py" in html
     assert "scripts/generate_p6_real_p7post_stage_acceptance.py" in html
+    assert "113 passed, 1 warning" in html
+    assert "真实 provider 质量" in html
+    assert "P7 workspace 不可逆操作" in html
     assert "P5.5 Gate 1 CandidateProfile 可追溯" in html
     assert "P6 Gate 1 Provider opt-in 默认安全" in html
     assert "真实 provider real mode" in html

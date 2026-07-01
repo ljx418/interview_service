@@ -28,13 +28,15 @@
   <section class="hero">
     <h1>P6-REAL / P7-post 阶段自动化验收报告</h1>
     <p>P6-REAL 已完成 gate-only 门禁自动化验收；真实 provider 未授权未执行。</p>
-    <p>报告路径：docs/reports/P6_REAL_P7POST_STAGE_ACCEPTANCE_REPORT.html；生成时间：2026-07-01T05:05:27.949104+00:00</p>
+    <p>报告路径：docs/reports/P6_REAL_P7POST_STAGE_ACCEPTANCE_REPORT.html；生成时间：2026-07-01T05:09:00.215863+00:00</p>
   </section>
 
   <h2>审计材料索引</h2>
   <p>本节列出人工审计本阶段自动化开发必须打开的最小材料集合。审计者不需要搜索仓库即可定位主报告、截图、结构化 evidence、生成脚本和防退化 eval。</p>
   <table><tr><th>材料</th><th>路径</th><th>用途</th></tr><tr><td>主审计报告</td><td><code>docs/reports/P6_REAL_P7POST_STAGE_ACCEPTANCE_REPORT.html</code></td><td>本页，阶段性自动化开发总审计入口。</td></tr>
 <tr><td>P5.5 可视化报告</td><td><code>docs/reports/P5_5_CANDIDATE_PROFILE_ACCEPTANCE_REPORT.html</code></td><td>候选人画像、截图、多背景 20 轮对话 transcript。</td></tr>
+<tr><td>P6/P7 历史自动化报告</td><td><code>docs/reports/P6P7_AUTOMATED_ACCEPTANCE_REPORT.html</code></td><td>P6 fake provider、长上下文、P7 workspace dry-run 和 diagnostics 的历史自动化证据入口。</td></tr>
+<tr><td>P6/P7 阶段审计报告</td><td><code>docs/reports/P6P7_STAGE_ACCEPTANCE_AUDIT_REPORT.html</code></td><td>P6/P7 自动化候选阶段审计与 PRD 规格检视。</td></tr>
 <tr><td>P6-REAL gate-only 报告</td><td><code>docs/reports/P6_REAL_PROVIDER_ACCEPTANCE_REPORT.html</code></td><td>真实 provider 未授权时的门禁、fallback、configured/called 边界。</td></tr>
 <tr><td>P6-REAL evidence JSON</td><td><code>docs/reports/evidence/p6_real_provider_acceptance/p6_real_provider_evidence.json</code></td><td>provider gate-only 结构化证据。</td></tr>
 <tr><td>截图目录</td><td><code>docs/reports/evidence/p5_5_candidate_profile/</code></td><td>8 张真实 Chatbox 截图和多轮对话 JSON。</td></tr>
@@ -52,6 +54,15 @@
 <tr><td>全量回归</td><td><code>.venv/bin/python -m pytest</code></td></tr>
 <tr><td>前端构建</td><td><code>npm --prefix apps/chatbox run build</code></td></tr>
 <tr><td>drawio 解析</td><td><code>python3 - &lt;&lt;&#x27;PY&#x27; ... ET.parse(&#x27;docs/active/jobpilot-stage-gap-and-acceptance.drawio&#x27;) ... PY</code></td></tr></table>
+
+  <h2>人工最小审计流程</h2>
+  <table><tr><th>#</th><th>审计动作</th><th>通过判断</th></tr><tr><td>1</td><td>先读结论和未验证范围</td><td>确认报告没有把真实 provider、真实个人资料或产品化发布写成已通过。</td></tr>
+<tr><td>2</td><td>打开审计材料索引中的主报告和子报告</td><td>确认 P5.5、P6/P7、P6-REAL gate-only、evidence JSON 均可定位。</td></tr>
+<tr><td>3</td><td>复查截图证据清单</td><td>确认 8 张截图都存在、非空、展示真实 Chatbox 界面，而不是静态占位。</td></tr>
+<tr><td>4</td><td>复查 PRD / Gate 覆盖矩阵</td><td>逐项确认每个 pass 都有 evidence，not-executed 项没有被包装成 pass。</td></tr>
+<tr><td>5</td><td>复查 P6 Evidence 摘要</td><td>看到 CONSENT_REQUIRED 时按门禁成功解释，而不是当作真实 provider 质量失败。</td></tr>
+<tr><td>6</td><td>复跑报告 eval 和敏感扫描</td><td>确认报告结构、防泄露、防虚假声明的自动化断言仍通过。</td></tr>
+<tr><td>7</td><td>决定是否进入下一阶段</td><td>只有在接受未验证范围的前提下，才能把本阶段视为自动化候选收口。</td></tr></table>
 
   <h2>本阶段变更范围</h2>
   <table><tr><th>范围</th><th>文件类别</th><th>审计原因</th></tr><tr><td>阶段设计文档</td><td>docs/active/*.md、docs/active/stage-reviews/*.md、drawio 文本镜像和 drawio 文件</td><td>同步 P6-REAL / P7-post 状态口径、出门条件和验收门槛。</td></tr>
@@ -130,6 +141,14 @@
 <tr><td><code>Headless Chrome/CDP P5.5 browser acceptance</code></td><td><span class='badge' style='background:#d5e8d4'>passed</span></td></tr>
 <tr><td><code>drawio XML parse</code></td><td><span class='badge' style='background:#d5e8d4'>passed</span></td></tr>
 <tr><td><code>sensitive / false-claim scan</code></td><td><span class='badge' style='background:#d5e8d4'>passed</span></td></tr></table>
+
+  <h2>命令结果详情</h2>
+  <table><tr><th>命令</th><th>实际结果</th><th>审计说明</th></tr><tr><td><code>.venv/bin/python -m pytest</code></td><td>113 passed, 1 warning</td><td>通过；warning 为第三方 python_multipart deprecation，不影响本阶段验收。</td></tr>
+<tr><td><code>npm --prefix apps/chatbox run build</code></td><td>passed</td><td>TypeScript 和 Vite production build 通过。</td></tr>
+<tr><td><code>Headless Chrome/CDP P5.5 browser acceptance</code></td><td>passed</td><td>刷新 8 张真实界面截图和 P5.5 HTML 报告。</td></tr>
+<tr><td><code>drawio XML parse</code></td><td>passed</td><td>6 pages，compressed=false，每页包含 mxGraphModel。</td></tr>
+<tr><td><code>sensitive / false-claim scan</code></td><td>passed</td><td>最终 HTML 无 API Key / fake key / 未授权真实路径已通过等命中。</td></tr>
+<tr><td><code>report eval</code></td><td>5 passed</td><td>P5.5 报告 eval 和 P6-REAL/P7-post 报告 eval 均通过。</td></tr></table>
 
   <h2>P7-post 合成资料证据</h2>
   <table><tr><th>报告</th><th>状态</th><th>路径</th></tr><tr><td>P5_SYNTHETIC_REALISM_ACCEPTANCE_ops_to_frontend.html</td><td><span class='badge' style='background:#d5e8d4'>pass</span></td><td>/mnt/c/workspace/interview_service/docs/reports/P5_SYNTHETIC_REALISM_ACCEPTANCE_ops_to_frontend.html</td></tr><tr><td>P5_SYNTHETIC_REALISM_ACCEPTANCE_qa_to_fullstack.html</td><td><span class='badge' style='background:#d5e8d4'>pass</span></td><td>/mnt/c/workspace/interview_service/docs/reports/P5_SYNTHETIC_REALISM_ACCEPTANCE_qa_to_fullstack.html</td></tr><tr><td>P5_SYNTHETIC_REALISM_ACCEPTANCE_teacher_to_edtech.html</td><td><span class='badge' style='background:#d5e8d4'>pass</span></td><td>/mnt/c/workspace/interview_service/docs/reports/P5_SYNTHETIC_REALISM_ACCEPTANCE_teacher_to_edtech.html</td></tr></table>
@@ -267,6 +286,16 @@
 <tr><td>P6 Gate 5 隐私、日志和报告脱敏</td><td>敏感扫描无命中；provider evidence redacted</td><td><span class='badge' style='background:#d5e8d4'>pass</span></td><td>不含 API Key、未脱敏模型输入、未脱敏资料全文或 provider 原始响应。</td></tr>
 <tr><td>P7-post P5-REAL 复验</td><td>本轮未授权真实资料</td><td><span class='badge' style='background:#f8cecc'>not-executed</span></td><td>不得用 synthetic personas 替代。</td></tr>
 <tr><td>真实 provider real mode</td><td>本轮未授权真实外呼</td><td><span class='badge' style='background:#f8cecc'>not-executed</span></td><td>不得声称真实 provider 质量通过。</td></tr>
+  </table>
+
+  <h2>残余风险与打回条件</h2>
+  <table>
+    <tr><th>风险或缺口</th><th>级别</th><th>状态</th><th>处理方式</th></tr>
+    <tr><td>真实 provider 质量</td><td>High</td><td><span class='badge' style='background:#f8cecc'>not-executed</span></td><td>未授权真实 MiniMax / DeepSeek / OpenAI-compatible 调用；后续必须单独授权 provider、模型、预算、次数和脱敏字段。</td></tr>
+<tr><td>真实个人资料复验</td><td>High</td><td><span class='badge' style='background:#f8cecc'>not-executed</span></td><td>用户未提供真实资料路径；P5-REAL 仍不得用合成资料替代。</td></tr>
+<tr><td>P7 workspace 不可逆操作</td><td>High</td><td><span class='badge' style='background:#fff2cc'>blocked</span></td><td>当前只覆盖 backup manifest、cleanup dry-run、migration dry-run；删除和 apply 仍需高风险确认。</td></tr>
+<tr><td>SaaS / ASR / 会议平台 / 自动投递 / MCP CLI</td><td>High</td><td><span class='badge' style='background:#eee'>out-of-scope</span></td><td>本阶段未实现也未验收，不能进入产品化承诺。</td></tr>
+<tr><td>截图证据范围</td><td>Medium</td><td><span class='badge' style='background:#eee'>accepted</span></td><td>本报告重点复核 P5.5 画像路径；P6/P7 历史 UI 证据需结合 P6P7 自动化报告审计。</td></tr>
   </table>
 
   <h2>代码检视与文档审计摘要</h2>
