@@ -1,5 +1,55 @@
 # JobPilot AI P5.5 Candidate Profile 验收门槛
 
+## 当前阶段文档门槛 - P6-REAL / P7-post 准入
+
+这些门槛只验收文档和架构方向是否足以支撑后续执行，不代表真实 provider、真实个人资料或最终产品化已通过。
+
+### 文档门槛 A - 状态口径一致
+
+通过条件：
+
+- PRD、目标架构、里程碑、追踪矩阵、roadmap、P6 计划、drawio 和文本镜像都区分 `已实现自动化候选`、`待真实验收`、`后续独立阶段`；
+- fake provider、多身份合成资料、examples、脱敏 fixture 和 dry-run 只作为自动化候选证据；
+- 文档没有使用“真实 LLM 已通过”“真实 provider 质量已验收”“真实个人资料路径已通过”等未执行结论；
+- P6/P7 旧的“待开发/待新增/待强化”描述已改为明确状态，不造成实现状态冲突。
+
+### 文档门槛 B - P6-REAL 真实 provider 授权完整
+
+通过条件：
+
+- 真实 provider 执行前必须有用户确认的 provider、model、base_url preset、API Key 本地配置方式；
+- 必须限制最大调用次数、最大预算或等价费用边界、timeout、retry、失败降级和报告展示字段；
+- 必须明确本次发送给 provider 的数据类别：近期消息、rolling summary、workspace 摘要、JD 摘要、artifact/profile 摘要；
+- 必须区分 configured、consented、called、failed、fallback；
+- API Key、完整 prompt、完整真实资料、完整 provider raw response 不得进入仓库、日志、截图说明或报告。
+
+不通过条件：
+
+- 配置了 provider 就被写成已调用；
+- fake provider transcript 被写成真实 LLM 质量证据；
+- 未给出费用、次数、数据范围或报告展示边界；
+- 文档允许默认真实外呼。
+
+### 文档门槛 C - P7-post P5-REAL 真实资料授权完整
+
+通过条件：
+
+- 真实资料复验必须由用户提供明确路径，至少包括简历/背景资料、项目资料或作品说明、目标 JD；
+- 只读取用户指定路径，不扫描用户个人目录、聊天软件目录、下载目录或全盘；
+- 报告默认脱敏联系方式、账号、私密链接、完整长原文和任何密钥；
+- 允许展示字段和禁止展示字段必须在执行前确认；
+- 若用户不提供真实资料，P5-REAL 结论必须保持未执行，不能用 synthetic personas、examples 或脱敏 fixture 替代。
+
+### 文档门槛 D - drawio 和审计可读
+
+通过条件：
+
+- drawio 不超过 8 页；
+- 图中每个架构条目都是具体代码实体、数据表、路由、脚本、报告或验收证据；
+- 颜色语义明确：已实现自动化候选、当前待真实验收、高风险需确认、后续独立阶段；
+- 文本镜像与 drawio 页结构一致；
+- 阶段审计说明本轮只做文档开发，未触发真实外呼、未读取真实资料、未进入代码实现。
+
 当前自动化候选证据：
 
 - 后端/API/边界 eval：`tests/evals/test_p5_5_candidate_profile_eval.py`、`test_p5_5_capability_matrix_eval.py`、`test_p5_5_project_credibility_eval.py`、`test_p5_5_gap_analysis_eval.py`、`test_p5_5_chat_boundary_eval.py`；
@@ -229,7 +279,7 @@ npm --prefix apps/chatbox run build
 | 本地基线回归 | `.venv/bin/python -m pytest` | P0-P5 本地路径不退化 | 不代表 P6/P7 已通过 |
 | 前端可构建 | `npm --prefix apps/chatbox run build` | P6/P7 UI 能成功构建 | 不代表人类体验通过 |
 | Provider 默认安全 | provider policy eval | configured 不等于 called，未确认不外呼 | 不代表真实 provider 质量 |
-| Provider-backed chat | fake provider + 受控真实 provider 记录 | 授权后可调用，失败可降级 | 不代表默认外呼 |
+| Provider-backed chat | fake provider 记录已具备；受控真实 provider 记录待用户授权后生成 | 授权后可调用，失败可降级 | 不代表默认外呼或真实 provider 质量已通过 |
 | Long Context Manager | long conversation eval | 20-50 轮、滚动摘要、刷新恢复 | 不代表无限上下文 |
 | Tool Safety | chat/artifact/export eval | 普通聊天不写 artifact，blocking 仍拦截导出 | 不代表自动投递或 SaaS |
 | Privacy / Redaction | sensitive scan eval | API Key、完整资料、raw response 不泄露 | 不代表真实资料外发已授权 |

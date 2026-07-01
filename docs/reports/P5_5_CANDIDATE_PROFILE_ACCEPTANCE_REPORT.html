@@ -24,6 +24,11 @@
     figure { margin: 0; border: 1px solid #d9e2ec; border-radius: 8px; overflow: hidden; background: #fff; }
     img { display: block; width: 100%; height: auto; border-bottom: 1px solid #d9e2ec; }
     figcaption { padding: 10px 12px; color: #52606d; font-size: 13px; }
+    h3 { margin: 18px 0 8px; font-size: 17px; }
+    h4 { margin: 18px 0 8px; font-size: 15px; color: #334e68; }
+    details { border: 1px solid #d9e2ec; border-radius: 6px; padding: 10px 12px; margin: 8px 0; background: #fbfdff; }
+    details p { margin: 10px 0 0; color: #334e68; }
+    .dialogue-case { border: 1px solid #bcccdc; border-radius: 8px; padding: 14px; margin: 14px 0; background: #fff; }
     pre { white-space: pre-wrap; overflow-wrap: anywhere; background: #fff4f4; color: #7f1d1d; padding: 12px; border-radius: 6px; }
   </style>
 </head>
@@ -32,14 +37,14 @@
     <h1>P5.5 Candidate Profile 自动化验收报告</h1>
     <p><span class="badge">passed</span></p>
     <p class="meta">验证 JobPilot 在本地/mock 边界内，可以基于 examples 真实感资料生成候选人画像、能力矩阵、项目可信度、岗位短板和 source refs；不声明真实个人资料或真实 provider 默认路径通过。</p>
-    <p class="meta">Started: 2026-06-29T18:38:09.912Z · Ended: 2026-06-29T18:38:14.565Z · Report: <code>/mnt/c/workspace/interview_service/docs/reports/P5_5_CANDIDATE_PROFILE_ACCEPTANCE_REPORT.html</code></p>
+    <p class="meta">Started: 2026-07-01T04:43:59.306Z · Ended: 2026-07-01T04:44:07.780Z · Report: <code>/mnt/c/workspace/interview_service/docs/reports/P5_5_CANDIDATE_PROFILE_ACCEPTANCE_REPORT.html</code></p>
   </header>
   <main>
     <section>
       <h2>目标架构</h2>
-      <ul><li>Chatbox Workbench：展示 Candidate Profile、能力矩阵、项目可信度、岗位短板和 source refs。</li><li>FastAPI Profile Routes：GET /api/profile/candidate 与 POST /api/profile/candidate/refresh。</li><li>Profile Orchestrator：聚合 candidate_profile、career_fact、skill_evidence、tech_project、job、match_report。</li><li>Artifact Layer：刷新画像写入 artifact_type=candidate_profile 和 artifact_version。</li><li>Evidence Layer：Chrome/CDP 截图、中文 HTML 报告、PRD 规格检视和未验证范围。</li></ul>
+      <ul><li>Chatbox Workbench：展示 Candidate Profile、能力矩阵、项目可信度、岗位短板和 source refs。</li><li>FastAPI Profile Routes：GET /api/profile/candidate 与 POST /api/profile/candidate/refresh。</li><li>Profile Orchestrator：聚合 candidate_profile、career_fact、skill_evidence、tech_project、job、match_report。</li><li>Artifact Layer：刷新画像写入 artifact_type=candidate_profile 和 artifact_version。</li><li>Evidence Layer：Chrome/CDP 截图、中文 HTML 报告、PRD 规格检视和未验证范围。</li><li>P6 对话补证层：Provider Consent、fake provider adapter、Long Context Manager、provider_chat_invocation 脱敏日志和 20 轮 transcript 汇总。</li></ul>
       <h2>当前实现</h2>
-      <ul><li>P5.5 使用 examples 和 synthetic-style workspace，不读取用户真实个人资料。</li><li>画像刷新通过显式按钮触发，普通聊天不写 candidate_profile artifact。</li><li>能力矩阵使用 strong/usable/weak/missing，项目可信度使用 verified/plausible/needs_evidence/risky。</li><li>岗位短板对齐 JD must/nice 要求，并给出 next_action。</li><li>报告使用 Headless Chrome/CDP 进行自动化截图，不执行真实 MiniMax、DeepSeek 或 OpenAI-compatible provider 外呼。</li></ul>
+      <ul><li>P5.5 使用 examples 和 synthetic-style workspace，不读取用户真实个人资料。</li><li>画像刷新通过显式按钮触发，普通聊天不写 candidate_profile artifact。</li><li>能力矩阵使用 strong/usable/weak/missing，项目可信度使用 verified/plausible/needs_evidence/risky。</li><li>岗位短板对齐 JD must/nice 要求，并给出 next_action。</li><li>报告使用 Headless Chrome/CDP 进行自动化截图，不执行真实 MiniMax、DeepSeek 或 OpenAI-compatible provider 外呼。</li><li>多背景 20 轮对话补证使用 fake provider opt-in 执行，证明长程对话边界和日志脱敏；它不是真实 LLM 质量验收。</li></ul>
     </section>
     <section>
       <h2>自动化步骤</h2>
@@ -63,12 +68,13 @@
     </section>
     <section>
       <h2>验收标准</h2>
-      <ul><li>GET /api/profile/candidate 可返回空态和画像态。</li><li>POST /api/profile/candidate/refresh 写入 candidate_profile 行与 candidate_profile artifact/version。</li><li>Workbench 展示画像概览、能力矩阵、项目可信度、岗位短板和 source refs。</li><li>桌面、宽屏、720px 和 390px 视口均有截图证据。</li><li>报告明确未验证真实个人资料、真实 provider、SaaS、ASR、会议平台、自动投递和 MCP/CLI。</li></ul>
+      <ul><li>GET /api/profile/candidate 可返回空态和画像态。</li><li>POST /api/profile/candidate/refresh 写入 candidate_profile 行与 candidate_profile artifact/version。</li><li>Workbench 展示画像概览、能力矩阵、项目可信度、岗位短板和 source refs。</li><li>桌面、宽屏、720px 和 390px 视口均有截图证据。</li><li>报告明确未验证真实个人资料、真实 provider、SaaS、ASR、会议平台、自动投递和 MCP/CLI。</li><li>报告成对汇总至少 3 个不同技术背景的合成资料和每个案例 20 轮 provider-opt-in fake 对话 transcript。</li></ul>
     </section>
     <section>
       <h2>命令结果</h2>
       <table><thead><tr><th>命令</th><th>状态</th><th>证据</th></tr></thead><tbody><tr><td><code>.venv/bin/python -m pytest tests/evals/test_p5_5_candidate_profile_eval.py tests/evals/test_p5_5_capability_matrix_eval.py tests/evals/test_p5_5_project_credibility_eval.py tests/evals/test_p5_5_gap_analysis_eval.py tests/evals/test_p5_5_chat_boundary_eval.py -q</code></td><td class="passed">passed</td><td>P5.5 M1-M4 和普通聊天边界 eval 通过。</td></tr>
 <tr><td><code>.venv/bin/python -m pytest -q</code></td><td class="passed">passed</td><td>阶段性全量端到端回归通过；具体结果以本轮审计记录和终端输出为准。</td></tr>
+<tr><td><code>.venv/bin/python -m pytest tests/evals/test_p6_provider_backed_chat_eval.py tests/evals/test_p6_long_context_manager_eval.py -q</code></td><td class="passed">passed</td><td>P6 fake provider opt-in、20 轮 bounded context、隐私边界和失败降级 eval 通过。</td></tr>
 <tr><td><code>npm --prefix apps/chatbox run build</code></td><td class="passed">passed</td><td>TypeScript 与 Vite build 通过。</td></tr>
 <tr><td><code>drawio XML parse</code></td><td class="passed">passed</td><td>P5.5 gap 图可解析且分页不超过 8 页。</td></tr></tbody></table>
     </section>
@@ -79,20 +85,278 @@
 <tr><td>能力矩阵必须解释证据强弱。</td><td>能力矩阵截图和 eval 覆盖 strong/usable/weak/missing。</td><td class="passed">PASS</td></tr>
 <tr><td>项目可信度不能夸大。</td><td>项目可信度保留 needs_evidence/risky 和待确认项。</td><td class="passed">PASS</td></tr>
 <tr><td>岗位短板必须可行动。</td><td>Job gap 每项包含 gap_level 和 next_action。</td><td class="passed">PASS</td></tr>
-<tr><td>普通聊天不写画像 artifact。</td><td>test_p5_5_chat_boundary_eval.py 覆盖。</td><td class="passed">PASS</td></tr></tbody></table>
+<tr><td>普通聊天不写画像 artifact。</td><td>test_p5_5_chat_boundary_eval.py 覆盖。</td><td class="passed">PASS</td></tr>
+<tr><td>长程多轮对话必须有上下文边界、隐私边界和真实 provider 未验收说明。</td><td>三组合成背景各 20 轮 fake provider opt-in transcript、provider_chat_invocation 计数和 rolling summary 指标。</td><td class="passed">PASS for fake provider path</td></tr></tbody></table>
     </section>
     <section>
       <h2>代码检视</h2>
       <table><thead><tr><th>区域</th><th>结论</th><th>级别</th></tr></thead><tbody><tr><td>services/profile/candidate.py</td><td>复用现有表和 artifact/version，不新增数据库表；画像判断保留 source refs 和缺证据状态。</td><td class="pass">pass</td></tr>
 <tr><td>services/api/main.py</td><td>新增 profile read/refresh 最小 API，未扩大到真实 provider 或不可逆操作。</td><td class="pass">pass</td></tr>
 <tr><td>apps/chatbox/src/main.tsx</td><td>显式刷新画像，普通聊天只读画像状态；Workbench 展示能力矩阵、项目可信度和岗位短板。</td><td class="pass">pass</td></tr>
-<tr><td>tests/evals/test_p5_5_*.py</td><td>覆盖画像聚合、API contract、能力矩阵、项目可信度、岗位短板、普通聊天边界和报告断言。</td><td class="pass">pass</td></tr></tbody></table>
+<tr><td>tests/evals/test_p5_5_*.py</td><td>覆盖画像聚合、API contract、能力矩阵、项目可信度、岗位短板、普通聊天边界和报告断言。</td><td class="pass">pass</td></tr>
+<tr><td>services/chat/provider_backed.py / services/chat/context.py</td><td>fake provider opt-in 只在 consent 后记录 provider_chat_invocation；20 轮对话使用 bounded recent window 和 rolling summary，不写求职产物。</td><td class="pass">pass</td></tr></tbody></table>
     </section>
     <section>
       <h2>文档审计</h2>
       <table><thead><tr><th>区域</th><th>结论</th><th>状态</th></tr></thead><tbody><tr><td>Original PRD / Active P5.5 PRD</td><td>P5.5 只声明本地/mock 可追溯画像能力；不把真实资料、真实 provider 或 P8+ 能力写成通过。</td><td class="pass">pass</td></tr>
 <tr><td>P5.5 Architecture / Gates</td><td>文档已将真实资料、真实 provider、敏感属性和 P8+ 能力排除在 P5.5 外，并同步自动化候选完成状态。</td><td class="pass">pass</td></tr>
 <tr><td>Acceptance boundary</td><td>本报告只证明 examples/synthetic 自动化路径，不替代 P5-REAL。</td><td class="pass">pass</td></tr></tbody></table>
+    </section>
+    <section>
+      <h2>多背景多轮对话补证</h2>
+      <p class="meta">以下 transcript 来自合成资料和 fake provider opt-in 自动化路径，用于证明长程对话、上下文边界、脱敏日志和不同背景覆盖；未覆盖真实 LLM/provider 的回复质量、成本、稳定性或可用性验收。</p>
+      <article class="dialogue-case">
+        <h3>周亦然（合成） · Junior Frontend Developer</h3>
+        <p class="meta">技术背景：运营数据分析和流程自动化转前端工程；provider 路径：fake provider opt-in；真实 provider 调用：否</p>
+        <table><tbody>
+          <tr><th>轮次</th><td>20 轮用户消息 / 40 条会话消息</td></tr>
+          <tr><th>provider 记录</th><td>20 条 called 记录；recent window=12；rolling summary covered=28</td></tr>
+          <tr><th>隐私边界</th><td>API Key=false；raw provider response=false；full history=false</td></tr>
+          <tr><th>关注点</th><td>React/TypeScript 表达 / 运营自动化项目可信度 / 本地优先产品经验</td></tr>
+        </tbody></table>
+        <h4>虚拟资料</h4>
+        <details><summary>合成简历：<code>examples/p5_synthetic_personas/ops_to_frontend/resume.md</code></summary><p># 合成简历：周亦然
+&gt; 本文件是 JobPilot P5 自动化验收使用的合成资料，不属于真实个人资料。
+## 基本信息
+- 姓名：周亦然（合成）
+- 联系方式：hidden@example.invalid
+- 目标岗位：Junior Frontend Developer
+- 当前背景：3 年运营数据分析和流程自动化经验，过去 10 个月系统学习 React、TypeScript、FastAPI 和自动化测试。
+## 专业背景
+- 在本地生活服务团队负责订单转化漏斗、活动复盘和客服工单指标。
+- 使用 SQL、表格脚本和轻量 Python 自动化整理每周运营报表。
+- 能把业务问题拆成数据口径、流程节点和可验证改进动作。
+## 技术能力
+- React、TypeScript、Vite、HTML/CSS、基础可访问性。
+- Python、FastAPI、SQLite、REST API、pytest。
+- Playwright、Chrome/CDP 截图、Markdown 报告。
+## 项目经历
+### JobPilot Local Materials Workbench
+- 搭建本地优先的求职材料工作台，支持资料导入、JD ...</p></details><details><summary>合成项目资料：<code>examples/p5_synthetic_personas/ops_to_frontend/project.md</code></summary><p># 合成项目资料：JobPilot Local Materials Workbench
+&gt; 本文件是 JobPilot P5 自动化验收使用的合成项目资料，不属于真实项目背调材料。
+## 项目目标
+把求职者的简历、项目说明和目标 JD 放入本地 workspace，生成可确认、可编辑、可导出的申请材料。
+## 技术栈
+- React、TypeScript、Vite
+- FastAPI、SQLite
+- pytest、Chrome/CDP、Markdown/DOCX export
+## 个人贡献
+- 设计 Conversation / Workbench / Artifact 三栏工作台。
+- 实现申请包导出前 blocking confirmation 拦截。
+- 编写多视口自动化截图场景和中文 HTML 验收报告。
+- 处理导出失败后的恢复提示，让用户知道需要先确认事实。
+## 可验证证据
+- README、截图报告、pytest 输出、前端 build 输出。
+- source refs 与 questions_to_confirm 保留在 artifact 中。
+## 风险与缺口
+- 文本质量默认使用本地 mock 规...</p></details><details><summary>合成 JD：<code>examples/p5_synthetic_personas/ops_to_frontend/jd.md</code></summary><p># 合成 JD：Junior Frontend Developer
+&gt; 本 JD 为合成岗位文本，仅用于 JobPilot P5 自动化验收。
+## Company
+LocalFirst Tools Studio
+## Title
+Junior Frontend Developer
+## Requirements
+- 熟悉 React、TypeScript、HTML/CSS。
+- 能与 FastAPI 或 REST API 协作。
+- 能关注用户体验、状态反馈和响应式布局。
+- 能写基础自动化测试，理解 pytest 或 Playwright。
+## Nice to have
+- 本地优先隐私产品经验。
+- Markdown/DOCX 导出或报告生成经验。
+- 数据看板、运营工具或 AI 应用经验。</p></details>
+        <h4>20 轮对话 transcript</h4>
+        <table><thead><tr><th>#</th><th>用户消息</th><th>助手回复</th><th>状态</th><th>产物数</th></tr></thead><tbody><tr><td>1</td><td>第 1 轮：我是运营数据分析和流程自动化转前端工程候选人，先讨论目标岗位定位，保持对话，不执行材料任务。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>2</td><td>第 2 轮：我是运营数据分析和流程自动化转前端工程候选人，我该优先强调哪一类经历，保持对话，不执行材料任务。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>3</td><td>第 3 轮：我是运营数据分析和流程自动化转前端工程候选人，项目可信度最容易被质疑的地方是什么，保持对话。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>4</td><td>第 4 轮：我是运营数据分析和流程自动化转前端工程候选人，如何解释转行路径中的连续性，保持对话。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>5</td><td>第 5 轮：我是运营数据分析和流程自动化转前端工程候选人，哪些技能可以作为强证据，保持对话。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>6</td><td>第 6 轮：我是运营数据分析和流程自动化转前端工程候选人，哪些技能只能算可用或弱证据，保持对话。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>7</td><td>第 7 轮：我是运营数据分析和流程自动化转前端工程候选人，简历摘要应该突出什么主线，保持对话。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>8</td><td>第 8 轮：我是运营数据分析和流程自动化转前端工程候选人，面向初级岗位时应该降低哪些过度承诺，保持对话。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>9</td><td>第 9 轮：我是运营数据分析和流程自动化转前端工程候选人，如何把业务背景翻译成工程贡献，保持对话。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>10</td><td>第 10 轮：我是运营数据分析和流程自动化转前端工程候选人，如果面试官追问项目真实性，我应该如何回答，保持对话。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>11</td><td>第 11 轮：我是运营数据分析和流程自动化转前端工程候选人，当前资料里哪些地方需要补充截图或 README，保持对话。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>12</td><td>第 12 轮：我是运营数据分析和流程自动化转前端工程候选人，如何说明自己不是只会做 demo，保持对话。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>13</td><td>第 13 轮：我是运营数据分析和流程自动化转前端工程候选人，如何把测试和验收能力写得更可信，保持对话。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>14</td><td>第 14 轮：我是运营数据分析和流程自动化转前端工程候选人，如果岗位要求后端协作，我该怎么表达，保持对话。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>15</td><td>第 15 轮：我是运营数据分析和流程自动化转前端工程候选人，怎样说明我能和产品或业务方协作，保持对话。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>16</td><td>第 16 轮：我是运营数据分析和流程自动化转前端工程候选人，有什么必须避免写进材料的夸大表述，保持对话。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>17</td><td>第 17 轮：我是运营数据分析和流程自动化转前端工程候选人，如果本轮只补一项证据，应该补什么，保持对话。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>18</td><td>第 18 轮：我是运营数据分析和流程自动化转前端工程候选人，怎样组织作品集顺序，保持对话。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>19</td><td>第 19 轮：我是运营数据分析和流程自动化转前端工程候选人，如何准备一段 90 秒自我介绍，保持对话。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>20</td><td>第 20 轮：我是运营数据分析和流程自动化转前端工程候选人，总结一下本次讨论的下一步，不执行材料任务。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr></tbody></table>
+      </article>
+<article class="dialogue-case">
+        <h3>林澈（合成） · QA Automation Engineer / Full-stack Assistant</h3>
+        <p class="meta">技术背景：手工测试转自动化测试和轻量全栈；provider 路径：fake provider opt-in；真实 provider 调用：否</p>
+        <table><tbody>
+          <tr><th>轮次</th><td>20 轮用户消息 / 40 条会话消息</td></tr>
+          <tr><th>provider 记录</th><td>20 条 called 记录；recent window=12；rolling summary covered=28</td></tr>
+          <tr><th>隐私边界</th><td>API Key=false；raw provider response=false；full history=false</td></tr>
+          <tr><th>关注点</th><td>pytest/Playwright 证据 / 缺陷复现能力 / 前后端联调表达</td></tr>
+        </tbody></table>
+        <h4>虚拟资料</h4>
+        <details><summary>合成简历：<code>examples/p5_synthetic_personas/qa_to_fullstack/resume.md</code></summary><p># 合成简历：林澈
+&gt; 本文件是 JobPilot P5 自动化验收使用的合成资料，不属于真实个人资料。
+## 基本信息
+- 姓名：林澈（合成）
+- 联系方式：hidden@example.invalid
+- 目标岗位：QA Automation Engineer / Full-stack Assistant
+- 当前背景：2 年手工测试和缺陷管理经验，正在转向自动化测试和全栈开发。
+## 专业背景
+- 负责 Web 应用回归测试、缺陷复现、测试用例维护和发布前验收。
+- 熟悉需求评审、边界条件、复现步骤和测试报告。
+- 能把模糊用户反馈转化为可执行的验收场景。
+## 技术能力
+- Python、pytest、Playwright、Chrome DevTools。
+- JavaScript、React、基础 TypeScript。
+- FastAPI、SQLite、REST API、Git。
+## 项目经历
+### Acceptance Evidence Hub
+- 搭建自动化验收证据中心，保存多视口截图、测试结果和 HTML 报告。
+- 编写 Playwright 脚本覆盖登录态、表单输入、错误提示和移动端布局。
+- 与后...</p></details><details><summary>合成项目资料：<code>examples/p5_synthetic_personas/qa_to_fullstack/project.md</code></summary><p># 合成项目资料：Acceptance Evidence Hub
+&gt; 本文件是 JobPilot P5 自动化验收使用的合成项目资料，不属于真实项目背调材料。
+## 项目目标
+把浏览器自动化验收过程变成可审计报告，让开发者、测试和产品都能快速看到测试覆盖了哪些真实界面状态。
+## 技术栈
+- Python、pytest
+- Playwright、Chrome DevTools Protocol
+- FastAPI、SQLite
+- Markdown、HTML report
+## 个人贡献
+- 设计截图命名规范和报告结构。
+- 编写多视口截图脚本，覆盖 1440、720、390 三类视口。
+- 增加失败截图、错误堆栈和测试命令摘要。
+- 处理等待条件不稳定导致的 flaky 测试。
+## 可验证证据
+- 自动化测试输出、HTML 报告、失败截图、复现命令。
+- 缺陷记录中保留需求链接和复现步骤。
+## 风险与缺口
+- 需要补充 CI 运行证据。
+- 需要说明哪些测试是本人独立编写，哪些是团队维护。</p></details><details><summary>合成 JD：<code>examples/p5_synthetic_personas/qa_to_fullstack/jd.md</code></summary><p># 合成 JD：QA Automation / Full-stack Assistant
+&gt; 本 JD 为合成岗位文本，仅用于 JobPilot P5 自动化验收。
+## Company
+EvidenceOps Lab
+## Title
+QA Automation Engineer / Full-stack Assistant
+## Requirements
+- 熟悉 Python、pytest、Playwright 或类似自动化测试工具。
+- 能阅读前端页面和 REST API，定位测试失败原因。
+- 具备基础 JavaScript、React 或 TypeScript 能力。
+- 能写清晰的测试报告和缺陷复现步骤。
+## Nice to have
+- FastAPI、SQLite 或轻量全栈工具经验。
+- 多视口截图、HTML 报告或 CI 经验。
+- 对产品验收和 PRD 规格检视有理解。</p></details>
+        <h4>20 轮对话 transcript</h4>
+        <table><thead><tr><th>#</th><th>用户消息</th><th>助手回复</th><th>状态</th><th>产物数</th></tr></thead><tbody><tr><td>1</td><td>第 1 轮：我是手工测试转自动化测试和轻量全栈候选人，先讨论目标岗位定位，保持对话，不执行材料任务。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>2</td><td>第 2 轮：我是手工测试转自动化测试和轻量全栈候选人，我该优先强调哪一类经历，保持对话，不执行材料任务。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>3</td><td>第 3 轮：我是手工测试转自动化测试和轻量全栈候选人，项目可信度最容易被质疑的地方是什么，保持对话。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>4</td><td>第 4 轮：我是手工测试转自动化测试和轻量全栈候选人，如何解释转行路径中的连续性，保持对话。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>5</td><td>第 5 轮：我是手工测试转自动化测试和轻量全栈候选人，哪些技能可以作为强证据，保持对话。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>6</td><td>第 6 轮：我是手工测试转自动化测试和轻量全栈候选人，哪些技能只能算可用或弱证据，保持对话。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>7</td><td>第 7 轮：我是手工测试转自动化测试和轻量全栈候选人，简历摘要应该突出什么主线，保持对话。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>8</td><td>第 8 轮：我是手工测试转自动化测试和轻量全栈候选人，面向初级岗位时应该降低哪些过度承诺，保持对话。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>9</td><td>第 9 轮：我是手工测试转自动化测试和轻量全栈候选人，如何把业务背景翻译成工程贡献，保持对话。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>10</td><td>第 10 轮：我是手工测试转自动化测试和轻量全栈候选人，如果面试官追问项目真实性，我应该如何回答，保持对话。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>11</td><td>第 11 轮：我是手工测试转自动化测试和轻量全栈候选人，当前资料里哪些地方需要补充截图或 README，保持对话。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>12</td><td>第 12 轮：我是手工测试转自动化测试和轻量全栈候选人，如何说明自己不是只会做 demo，保持对话。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>13</td><td>第 13 轮：我是手工测试转自动化测试和轻量全栈候选人，如何把测试和验收能力写得更可信，保持对话。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>14</td><td>第 14 轮：我是手工测试转自动化测试和轻量全栈候选人，如果岗位要求后端协作，我该怎么表达，保持对话。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>15</td><td>第 15 轮：我是手工测试转自动化测试和轻量全栈候选人，怎样说明我能和产品或业务方协作，保持对话。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>16</td><td>第 16 轮：我是手工测试转自动化测试和轻量全栈候选人，有什么必须避免写进材料的夸大表述，保持对话。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>17</td><td>第 17 轮：我是手工测试转自动化测试和轻量全栈候选人，如果本轮只补一项证据，应该补什么，保持对话。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>18</td><td>第 18 轮：我是手工测试转自动化测试和轻量全栈候选人，怎样组织作品集顺序，保持对话。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>19</td><td>第 19 轮：我是手工测试转自动化测试和轻量全栈候选人，如何准备一段 90 秒自我介绍，保持对话。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>20</td><td>第 20 轮：我是手工测试转自动化测试和轻量全栈候选人，总结一下本次讨论的下一步，不执行材料任务。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr></tbody></table>
+      </article>
+<article class="dialogue-case">
+        <h3>陈若宁（合成） · EdTech Frontend Developer</h3>
+        <p class="meta">技术背景：数学教师和课程运营转教育科技前端；provider 路径：fake provider opt-in；真实 provider 调用：否</p>
+        <table><tbody>
+          <tr><th>轮次</th><td>20 轮用户消息 / 40 条会话消息</td></tr>
+          <tr><th>provider 记录</th><td>20 条 called 记录；recent window=12；rolling summary covered=28</td></tr>
+          <tr><th>隐私边界</th><td>API Key=false；raw provider response=false；full history=false</td></tr>
+          <tr><th>关注点</th><td>教育产品信息架构 / ECharts 学习数据可视化 / 学生隐私边界</td></tr>
+        </tbody></table>
+        <h4>虚拟资料</h4>
+        <details><summary>合成简历：<code>examples/p5_synthetic_personas/teacher_to_edtech/resume.md</code></summary><p># 合成简历：陈若宁
+&gt; 本文件是 JobPilot P5 自动化验收使用的合成资料，不属于真实个人资料。
+## 基本信息
+- 姓名：陈若宁（合成）
+- 联系方式：hidden@example.invalid
+- 目标岗位：EdTech Frontend Developer
+- 当前背景：4 年数学教学和课程运营经验，正在转向教育科技产品前端开发。
+## 专业背景
+- 负责初高中数学课程设计、学习反馈整理和家校沟通。
+- 熟悉学习路径、练习反馈、错题归因和内容结构化。
+- 通过自学和项目实践掌握 React、TypeScript、数据可视化和基础后端 API。
+## 技术能力
+- React、TypeScript、HTML/CSS、ECharts。
+- Python、FastAPI、SQLite、REST API。
+- 用户故事、课程内容结构化、可访问性基础。
+## 项目经历
+### StudyPath Coach
+- 为学生生成学习路径、错题标签和复习建议。
+- 使用 React 展示学习进度、错题分类和下一步练习。
+- 使用 FastAPI 保存学生合成数据和练习记录。
+- 设计教师端摘要，让老师快速发现高频薄弱点。
+#...</p></details><details><summary>合成项目资料：<code>examples/p5_synthetic_personas/teacher_to_edtech/project.md</code></summary><p># 合成项目资料：StudyPath Coach
+&gt; 本文件是 JobPilot P5 自动化验收使用的合成项目资料，不属于真实项目背调材料。
+## 项目目标
+帮助教师根据学生的练习记录生成学习路径、错题标签和下一步复习建议。
+## 技术栈
+- React、TypeScript、ECharts
+- FastAPI、SQLite
+- Markdown content pipeline
+## 个人贡献
+- 设计学习路径卡片和错题分类页面。
+- 使用 ECharts 展示知识点掌握度和近期练习趋势。
+- 编写 FastAPI 接口保存合成练习记录。
+- 将课程讲义整理成 Markdown 知识点结构。
+## 可验证证据
+- 合成学生数据、页面截图、接口说明、Markdown 讲义样例。
+- 不使用真实学生隐私数据。
+## 风险与缺口
+- 需要明确真实学生数据未进入项目。
+- 需要补充工程测试和部署说明。</p></details><details><summary>合成 JD：<code>examples/p5_synthetic_personas/teacher_to_edtech/jd.md</code></summary><p># 合成 JD：EdTech Frontend Developer
+&gt; 本 JD 为合成岗位文本，仅用于 JobPilot P5 自动化验收。
+## Company
+Learning Product Studio
+## Title
+EdTech Frontend Developer
+## Requirements
+- 熟悉 React、TypeScript、HTML/CSS。
+- 能把课程、练习、错题和学习反馈组织成清晰界面。
+- 能与 REST API 协作，理解基础数据结构。
+- 关注可访问性、学习体验和信息层级。
+## Nice to have
+- 教育行业、课程运营或教师经验。
+- ECharts、数据可视化或学习分析经验。
+- FastAPI、SQLite 或 Markdown 内容处理经验。</p></details>
+        <h4>20 轮对话 transcript</h4>
+        <table><thead><tr><th>#</th><th>用户消息</th><th>助手回复</th><th>状态</th><th>产物数</th></tr></thead><tbody><tr><td>1</td><td>第 1 轮：我是数学教师和课程运营转教育科技前端候选人，先讨论目标岗位定位，保持对话，不执行材料任务。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>2</td><td>第 2 轮：我是数学教师和课程运营转教育科技前端候选人，我该优先强调哪一类经历，保持对话，不执行材料任务。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>3</td><td>第 3 轮：我是数学教师和课程运营转教育科技前端候选人，项目可信度最容易被质疑的地方是什么，保持对话。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>4</td><td>第 4 轮：我是数学教师和课程运营转教育科技前端候选人，如何解释转行路径中的连续性，保持对话。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>5</td><td>第 5 轮：我是数学教师和课程运营转教育科技前端候选人，哪些技能可以作为强证据，保持对话。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>6</td><td>第 6 轮：我是数学教师和课程运营转教育科技前端候选人，哪些技能只能算可用或弱证据，保持对话。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>7</td><td>第 7 轮：我是数学教师和课程运营转教育科技前端候选人，简历摘要应该突出什么主线，保持对话。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>8</td><td>第 8 轮：我是数学教师和课程运营转教育科技前端候选人，面向初级岗位时应该降低哪些过度承诺，保持对话。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>9</td><td>第 9 轮：我是数学教师和课程运营转教育科技前端候选人，如何把业务背景翻译成工程贡献，保持对话。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>10</td><td>第 10 轮：我是数学教师和课程运营转教育科技前端候选人，如果面试官追问项目真实性，我应该如何回答，保持对话。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>11</td><td>第 11 轮：我是数学教师和课程运营转教育科技前端候选人，当前资料里哪些地方需要补充截图或 README，保持对话。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>12</td><td>第 12 轮：我是数学教师和课程运营转教育科技前端候选人，如何说明自己不是只会做 demo，保持对话。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>13</td><td>第 13 轮：我是数学教师和课程运营转教育科技前端候选人，如何把测试和验收能力写得更可信，保持对话。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>14</td><td>第 14 轮：我是数学教师和课程运营转教育科技前端候选人，如果岗位要求后端协作，我该怎么表达，保持对话。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>15</td><td>第 15 轮：我是数学教师和课程运营转教育科技前端候选人，怎样说明我能和产品或业务方协作，保持对话。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>16</td><td>第 16 轮：我是数学教师和课程运营转教育科技前端候选人，有什么必须避免写进材料的夸大表述，保持对话。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>17</td><td>第 17 轮：我是数学教师和课程运营转教育科技前端候选人，如果本轮只补一项证据，应该补什么，保持对话。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>18</td><td>第 18 轮：我是数学教师和课程运营转教育科技前端候选人，怎样组织作品集顺序，保持对话。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>19</td><td>第 19 轮：我是数学教师和课程运营转教育科技前端候选人，如何准备一段 90 秒自我介绍，保持对话。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr>
+<tr><td>20</td><td>第 20 轮：我是数学教师和课程运营转教育科技前端候选人，总结一下本次讨论的下一步，不执行材料任务。</td><td>（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。</td><td>called / provider_fake</td><td>0</td></tr></tbody></table>
+      </article>
     </section>
     <section>
       <h2>截图证据</h2>
@@ -107,7 +371,7 @@
     </section>
     <section>
       <h2>未验证范围与审计意见</h2>
-      <ul><li>未使用用户真实个人资料。</li><li>未执行真实 MiniMax、DeepSeek 或 OpenAI-compatible provider 外呼。</li><li>未验证 P5-REAL、SaaS、ASR、会议平台、自动投递、MCP/CLI。</li><li>不是人工体验认可，也不是最终产品化发布结论。</li></ul>
+      <ul><li>未使用用户真实个人资料。</li><li>未执行真实 MiniMax、DeepSeek 或 OpenAI-compatible provider 外呼。</li><li>多轮对话 transcript 使用 fake provider opt-in，不代表真实 LLM 回复质量、成本、稳定性或模型能力通过。</li><li>未验证 P5-REAL、SaaS、ASR、会议平台、自动投递、MCP/CLI。</li><li>不是人工体验认可，也不是最终产品化发布结论。</li></ul>
       <p>若本报告步骤全部通过，只能支持 P5.5 Candidate Profile 自动化候选通过；真实资料和真实 provider 仍需单独高风险确认。阶段性验收评价为：P5.5 可进入候选收口，但不能升级为 P5-REAL 或产品化最终验收。</p>
     </section>
   </main>

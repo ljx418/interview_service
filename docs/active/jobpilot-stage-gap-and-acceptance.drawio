@@ -1,351 +1,178 @@
-<mxfile host="Electron" agent="JobPilot AI docs automation" pages="6">
-  <diagram name="1 目标体验与当前差距" id="p55-p1">
-    <mxGraphModel dx="1653" dy="842" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" modified="2026-06-30T00:00:00.000Z" agent="Codex" version="24.7.17" type="device" compressed="false">
+  <diagram name="1 目标体验与当前差距" id="page-1">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1280" pageHeight="720" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="p1_title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;fontSize=22;fontStyle=1;align=left;verticalAlign=middle;" value="1. P5.5 Candidate Profile 目标体验与当前差距" vertex="1">
-          <mxGeometry height="42" width="1080" x="40" y="24" as="geometry" />
+        <mxCell id="1-title" value="1 目标体验与当前差距" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#ffffff;fontSize=14;align=left;verticalAlign=top;spacing=12;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="30" y="10" width="500" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="p1_user" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;spacing=8;fontStyle=1;" value="User&lt;br&gt;转行程序员 / 人工体验审查者&lt;br&gt;目标：快速判断自己的申请材料是否可信、可用、可补强" vertex="1">
-          <mxGeometry height="115" width="190" x="40" y="95" as="geometry" />
+        <mxCell id="1-1" value="目标体验：用户能清楚区分自动化候选、待真实验收和后续高风险能力" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14;align=left;verticalAlign=top;spacing=12;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="520" height="70" as="geometry" />
         </mxCell>
-        <mxCell id="p1_baseline" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;spacing=8;fontStyle=1;" value="已实现基线&lt;br&gt;P4 Chatbox 体验冻结&lt;br&gt;P5 本地资料闭环自动化候选&lt;br&gt;P6+P7 本地 Beta 自动化候选&lt;br&gt;SQLite: candidate_profile / career_fact / skill_evidence / tech_project / match_report" vertex="1">
-          <mxGeometry height="165" width="250" x="275" y="70" as="geometry" />
+        <mxCell id="1-2" value="已实现自动化候选&lt;br&gt;P5.5 Candidate Profile&lt;br&gt;P6 fake provider 20 轮对话&lt;br&gt;P7 workspace dry-run / diagnostics" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=14;align=left;verticalAlign=top;spacing=12;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="40" y="140" width="300" height="140" as="geometry" />
         </mxCell>
-        <mxCell id="p1_ingest" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;spacing=8;fontStyle=1;" value="P5.5 输入体验&lt;br&gt;导入资料 / 粘贴 JD&lt;br&gt;读取职业事实、技能证据、项目经历、岗位匹配&lt;br&gt;默认使用合成资料和本地 workspace 验收" vertex="1">
-          <mxGeometry height="150" width="260" x="580" y="85" as="geometry" />
+        <mxCell id="1-3" value="当前待补齐文档与验收准入&lt;br&gt;P6-REAL 真实 provider 小样本验收&lt;br&gt;P7-post P5-REAL 真实资料复验" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=14;align=left;verticalAlign=top;spacing=12;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="400" y="140" width="320" height="140" as="geometry" />
         </mxCell>
-        <mxCell id="p1_profile" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;spacing=8;fontStyle=1;" value="CandidateProfile 目标输出&lt;br&gt;职业画像摘要&lt;br&gt;能力矩阵 strong / usable / weak / missing&lt;br&gt;项目可信度 verified / plausible / needs_evidence / risky&lt;br&gt;JD must / nice 短板和下一步补强建议" vertex="1">
-          <mxGeometry height="190" width="300" x="820" y="275" as="geometry" />
+        <mxCell id="1-4" value="高风险必须确认&lt;br&gt;真实 API Key / 真实资料路径 / 真实外呼 / 删除或迁移 apply" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=14;align=left;verticalAlign=top;spacing=12;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="780" y="140" width="300" height="140" as="geometry" />
         </mxCell>
-        <mxCell id="p1_workbench" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;spacing=8;fontStyle=1;" value="Profile Workbench&lt;br&gt;画像概览 / 能力矩阵 / 项目可信度 / 岗位短板&lt;br&gt;每条判断可展开 source refs、证据强度、待确认项和风险标签" vertex="1">
-          <mxGeometry height="145" width="300" x="455" y="310" as="geometry" />
+        <mxCell id="1-5" value="P8+ 后续独立阶段&lt;br&gt;SaaS / ASR / 会议平台 / 自动投递 / MCP CLI / Billing" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e5e5e5;strokeColor=#666666;fontSize=14;align=left;verticalAlign=top;spacing=12;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="400" y="340" width="320" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="p1_gap" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;spacing=8;fontStyle=1;" value="当前差距&lt;br&gt;没有独立画像工作台&lt;br&gt;没有能力证据强弱分层&lt;br&gt;没有项目可信度风险标签&lt;br&gt;没有 JD must/nice 短板视图&lt;br&gt;没有 P5.5 专项中文 HTML 截图报告" vertex="1">
-          <mxGeometry height="165" width="280" x="50" y="315" as="geometry" />
-        </mxCell>
-        <mxCell id="p1_risk" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;spacing=8;fontStyle=1;" value="本阶段禁止 / 高风险确认&lt;br&gt;真实个人资料默认验收&lt;br&gt;真实 provider 默认外呼&lt;br&gt;敏感属性 / 人格 / 背景调查&lt;br&gt;workspace 删除 / 迁移 apply&lt;br&gt;SaaS / ASR / 会议平台 / 自动投递 / MCP / CLI" vertex="1">
-          <mxGeometry height="145" width="415" x="660" y="540" as="geometry" />
-        </mxCell>
-        <mxCell id="p1_legend" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#f5f5f5;strokeColor=#666666;fontSize=12;spacing=8;fontStyle=1;" value="颜色语义&lt;br&gt;绿=已实现基线；蓝=本阶段计划新增；黄=需修改/复验；橙=高风险确认；灰=后续；红=禁止/打回。" vertex="1">
-          <mxGeometry height="95" width="520" x="60" y="705" as="geometry" />
-        </mxCell>
-        <mxCell id="p1_report" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;spacing=8;fontStyle=1;" value="P5.5 可视化验收&lt;br&gt;中文 HTML 报告&lt;br&gt;真实界面截图&lt;br&gt;PRD 规格检视&lt;br&gt;未验证范围明确列出" vertex="1">
-          <mxGeometry height="130" width="230" x="365" y="535" as="geometry" />
-        </mxCell>
-        <mxCell id="p1_e1" edge="1" parent="1" source="p1_user" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;strokeWidth=2;strokeColor=#666666;" target="p1_baseline" value="">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="p1_e2" edge="1" parent="1" source="p1_baseline" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;strokeWidth=2;strokeColor=#666666;" target="p1_ingest" value="">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="p1_e3" edge="1" parent="1" source="p1_ingest" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;strokeWidth=2;strokeColor=#666666;" target="p1_profile" value="">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="p1_e4" edge="1" parent="1" source="p1_profile" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;strokeWidth=2;strokeColor=#666666;" target="p1_workbench" value="">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="p1_e5" edge="1" parent="1" source="p1_gap" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;strokeWidth=2;strokeColor=#d79b00;" target="p1_workbench" value="补齐">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="p1_e6" edge="1" parent="1" source="p1_workbench" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;strokeWidth=2;strokeColor=#666666;" target="p1_report" value="">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="p1_e7" edge="1" parent="1" source="p1_report" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;strokeWidth=2;strokeColor=#b85450;" target="p1_risk" value="边界检查">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="1-6" value="虚假验收风险&lt;br&gt;fake provider transcript 不等于真实 LLM 质量&lt;br&gt;synthetic personas 不等于真实个人资料&lt;br&gt;configured 不等于 called" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#999999;fontSize=14;align=left;verticalAlign=top;spacing=12;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="40" y="340" width="300" height="150" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
-  <diagram name="2 当前架构与目标架构" id="p55-p2">
-    <mxGraphModel dx="1653" dy="842" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+  <diagram name="2 当前架构与目标架构" id="page-2">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1280" pageHeight="720" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="p2_title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;fontSize=22;fontStyle=1;align=left;verticalAlign=middle;" value="2. 当前架构与 P5.5 目标架构" vertex="1">
-          <mxGeometry height="42" width="1080" x="40" y="24" as="geometry" />
+        <mxCell id="2-title" value="2 当前架构与目标架构" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#ffffff;fontSize=14;align=left;verticalAlign=top;spacing=12;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="30" y="10" width="500" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="p2_current" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;spacing=8;fontStyle=1;" value="当前已实现基线&lt;br&gt;React Chatbox&lt;br&gt;FastAPI Agent Service&lt;br&gt;ChatCore / PiAgent Adapter&lt;br&gt;Domain Tools&lt;br&gt;Artifact Versioning&lt;br&gt;SQLite Workspace&lt;br&gt;P5/P6/P7 Evidence" vertex="1">
-          <mxGeometry height="235" width="245" x="40" y="95" as="geometry" />
+        <mxCell id="2-1" value="当前自动化候选基线&lt;br&gt;React Chatbox&lt;br&gt;FastAPI Agent Service&lt;br&gt;ChatCore / fake provider adapter&lt;br&gt;Long Context Manager&lt;br&gt;Candidate Profile Aggregator&lt;br&gt;SQLite Workspace / Artifact / Export Guard" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=14;align=left;verticalAlign=top;spacing=12;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="360" height="210" as="geometry" />
         </mxCell>
-        <mxCell id="p2_ui" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;spacing=8;fontStyle=1;" value="新增/改造：Candidate Profile Workbench&lt;br&gt;apps/chatbox/src/main.tsx&lt;br&gt;apps/chatbox/src/styles.css&lt;br&gt;画像概览、能力矩阵、项目可信度、岗位短板、source refs 展开" vertex="1">
-          <mxGeometry height="145" width="330" x="350" y="80" as="geometry" />
+        <mxCell id="2-2" value="P6-REAL 目标验收链路&lt;br&gt;Provider Consent UI&lt;br&gt;Provider Policy Gate&lt;br&gt;Real provider runtime&lt;br&gt;Redacted Provider Invocation Log&lt;br&gt;Controlled HTML report" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=14;align=left;verticalAlign=top;spacing=12;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="480" y="40" width="340" height="190" as="geometry" />
         </mxCell>
-        <mxCell id="p2_routes" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;spacing=8;fontStyle=1;" value="新增：Profile Aggregation Routes&lt;br&gt;services/api/main.py&lt;br&gt;services/api/schemas.py&lt;br&gt;GET /api/profile/candidate&lt;br&gt;POST /api/profile/candidate/refresh" vertex="1">
-          <mxGeometry height="145" width="330" x="810" y="90" as="geometry" />
+        <mxCell id="2-3" value="P7-post P5-REAL 目标验收链路&lt;br&gt;User-authorized source paths&lt;br&gt;Real-data acceptance runner&lt;br&gt;Profile / Project / Job / Match tools&lt;br&gt;Redacted report / closure audit" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=14;align=left;verticalAlign=top;spacing=12;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="480" y="300" width="340" height="190" as="geometry" />
         </mxCell>
-        <mxCell id="p2_orch" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;spacing=8;fontStyle=1;" value="新增：Profile Orchestrator&lt;br&gt;services/profile/ 或等价模块&lt;br&gt;CandidateProfile Aggregator&lt;br&gt;Evidence Scorer&lt;br&gt;Project Credibility Evaluator&lt;br&gt;Job Gap Analyzer&lt;br&gt;Refresh Guard" vertex="1">
-          <mxGeometry height="205" width="330" x="800" y="300" as="geometry" />
+        <mxCell id="2-4" value="目标架构原则&lt;br&gt;本地优先；默认不外呼；只读用户指定路径；报告脱敏；失败可降级" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14;align=left;verticalAlign=top;spacing=12;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="40" y="320" width="360" height="150" as="geometry" />
         </mxCell>
-        <mxCell id="p2_data" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;spacing=8;fontStyle=1;" value="复用/写入：Domain Data Layer&lt;br&gt;services/storage/db.py&lt;br&gt;candidate_profile&lt;br&gt;career_fact / skill_evidence&lt;br&gt;tech_project / job / match_report&lt;br&gt;artifact / artifact_version / source_refs" vertex="1">
-          <mxGeometry height="190" width="330" x="360" y="300" as="geometry" />
-        </mxCell>
-        <mxCell id="p2_artifact" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;spacing=8;fontStyle=1;" value="需修改/复验：Artifact Contract&lt;br&gt;刷新画像写入 candidate_profile 行&lt;br&gt;同时写 artifact_type=candidate_profile&lt;br&gt;matrix / credibility / gaps 进入 content_json&lt;br&gt;P5.5 v1 不新增数据库表" vertex="1">
-          <mxGeometry height="165" width="330" x="20" y="520" as="geometry" />
-        </mxCell>
-        <mxCell id="p2_report" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;spacing=8;fontStyle=1;" value="新增：P5.5 Evidence Layer&lt;br&gt;docs/reports/&lt;br&gt;Playwright/Chrome 截图脚本&lt;br&gt;中文 HTML 自动化验收报告&lt;br&gt;PRD 规格检视和未验证范围" vertex="1">
-          <mxGeometry height="160" width="330" x="410" y="620" as="geometry" />
-        </mxCell>
-        <mxCell id="p2_future" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#e1e1e1;strokeColor=#666666;fontSize=12;spacing=8;fontStyle=1;" value="P8+ 后续能力&lt;br&gt;SaaS / 多租户 / Billing&lt;br&gt;ASR / 会议平台&lt;br&gt;自动投递 / Offer 分析&lt;br&gt;MCP Server / CLI&lt;br&gt;岗位数据源聚合" vertex="1">
-          <mxGeometry height="160" width="290" x="810" y="620" as="geometry" />
-        </mxCell>
-        <mxCell id="p2_e1" edge="1" parent="1" source="p2_current" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;strokeWidth=2;strokeColor=#666666;" target="p2_ui" value="">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="p2_e2" edge="1" parent="1" source="p2_ui" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;strokeWidth=2;strokeColor=#666666;" target="p2_routes" value="">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="p2_e3" edge="1" parent="1" source="p2_routes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;strokeWidth=2;strokeColor=#666666;" target="p2_orch" value="">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="p2_e4" edge="1" parent="1" source="p2_orch" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;strokeWidth=2;strokeColor=#666666;" target="p2_data" value="">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="p2_e5" edge="1" parent="1" source="p2_data" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;strokeWidth=2;strokeColor=#d6b656;" target="p2_artifact" value="写入约束">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="p2_e6" edge="1" parent="1" source="p2_artifact" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;strokeWidth=2;strokeColor=#666666;" target="p2_report" value="">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="p2_e7" edge="1" parent="1" source="p2_report" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;strokeWidth=2;strokeColor=#666666;" target="p2_future" value="非本阶段">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="2-5" value="禁止路径&lt;br&gt;前端保存 API Key&lt;br&gt;未授权外呼&lt;br&gt;扫描用户个人目录&lt;br&gt;完整 prompt/raw response 入报告" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=14;align=left;verticalAlign=top;spacing=12;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="900" y="170" width="280" height="170" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
-  <diagram name="3 代码实体与交互关系" id="p55-p3">
-    <mxGraphModel dx="1653" dy="842" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+  <diagram name="3 代码实体与交互关系" id="page-3">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1280" pageHeight="720" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="p3_title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;fontSize=22;fontStyle=1;align=left;verticalAlign=middle;" value="3. P5.5 代码实体、分层结构与交互关系" vertex="1">
-          <mxGeometry height="42" width="1080" x="40" y="24" as="geometry" />
+        <mxCell id="3-title" value="3 代码实体与交互关系" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#ffffff;fontSize=14;align=left;verticalAlign=top;spacing=12;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="30" y="10" width="500" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="p3_ui" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;spacing=8;fontStyle=1;" value="Chatbox UI&lt;br&gt;apps/chatbox/src/main.tsx&lt;br&gt;styles.css&lt;br&gt;Profile Workbench&lt;br&gt;画像概览 / 矩阵 / 可信度 / 短板 / source refs" vertex="1">
-          <mxGeometry height="145" width="300" x="40" y="95" as="geometry" />
+        <mxCell id="3-1" value="Chatbox UI&lt;br&gt;apps/chatbox/src/main.tsx&lt;br&gt;styles.css&lt;br&gt;模型设置 / consent / 状态机 / Workbench" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14;align=left;verticalAlign=top;spacing=12;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="290" height="130" as="geometry" />
         </mxCell>
-        <mxCell id="p3_api" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;spacing=8;fontStyle=1;" value="FastAPI Boundary&lt;br&gt;services/api/main.py&lt;br&gt;services/api/schemas.py&lt;br&gt;GET /api/profile/candidate&lt;br&gt;POST /api/profile/candidate/refresh&lt;br&gt;response: summary / matrix / credibility / gaps" vertex="1">
-          <mxGeometry height="170" width="320" x="410" y="85" as="geometry" />
+        <mxCell id="3-2" value="FastAPI Boundary&lt;br&gt;services/api/main.py&lt;br&gt;services/api/schemas.py&lt;br&gt;provider status / consent / chat / profile / lifecycle" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14;align=left;verticalAlign=top;spacing=12;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="390" y="40" width="330" height="130" as="geometry" />
         </mxCell>
-        <mxCell id="p3_profile" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;spacing=8;fontStyle=1;" value="Profile Orchestrator&lt;br&gt;services/profile/ 或等价模块&lt;br&gt;CandidateProfile Aggregator&lt;br&gt;Evidence Scorer&lt;br&gt;Project Credibility Evaluator&lt;br&gt;Job Gap Analyzer&lt;br&gt;Refresh Guard" vertex="1">
-          <mxGeometry height="190" width="320" x="805" y="90" as="geometry" />
+        <mxCell id="3-3" value="Chat Orchestrator&lt;br&gt;services/chat/core.py&lt;br&gt;普通聊天不写 artifact&lt;br&gt;local fallback / tool confirmation" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=14;align=left;verticalAlign=top;spacing=12;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="780" y="40" width="310" height="130" as="geometry" />
         </mxCell>
-        <mxCell id="p3_chat" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;spacing=8;fontStyle=1;" value="Chat Boundary&lt;br&gt;services/chat/core.py&lt;br&gt;普通追问可读画像状态&lt;br&gt;普通聊天不得误写 candidate_profile artifact&lt;br&gt;只有明确刷新/生成画像意图进入 profile routes" vertex="1">
-          <mxGeometry height="155" width="300" x="90" y="340" as="geometry" />
+        <mxCell id="3-4" value="Long Context / Provider Adapter&lt;br&gt;services/chat/context.py&lt;br&gt;services/chat/provider_backed.py&lt;br&gt;recent window / rolling summary / fake-real adapter" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=14;align=left;verticalAlign=top;spacing=12;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="40" y="230" width="340" height="150" as="geometry" />
         </mxCell>
-        <mxCell id="p3_artifact" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;spacing=8;fontStyle=1;" value="Artifact Contract&lt;br&gt;artifact_type=candidate_profile&lt;br&gt;artifact_version&lt;br&gt;source_refs&lt;br&gt;content_json: matrix / credibility / gaps / confirmation_items&lt;br&gt;写入前后可追溯" vertex="1">
-          <mxGeometry height="170" width="320" x="1260" y="350" as="geometry" />
+        <mxCell id="3-5" value="Provider Runtime&lt;br&gt;services/llm/&lt;br&gt;Provider Policy Gate&lt;br&gt;OpenAI-compatible / MiniMax / DeepSeek 边界" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=14;align=left;verticalAlign=top;spacing=12;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="430" y="230" width="330" height="150" as="geometry" />
         </mxCell>
-        <mxCell id="p3_report" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;spacing=8;fontStyle=1;" value="Evidence and Report&lt;br&gt;docs/reports/&lt;br&gt;automation screenshot scripts&lt;br&gt;P5.5 中文 HTML 报告&lt;br&gt;桌面/宽屏/移动端截图&lt;br&gt;PRD 规格检视" vertex="1">
-          <mxGeometry height="155" width="320" x="240" y="625" as="geometry" />
+        <mxCell id="3-6" value="Profile / Workspace&lt;br&gt;services/profile/candidate.py&lt;br&gt;services/workspace_lifecycle.py&lt;br&gt;SQLite tables / Artifact / Export Guard" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=14;align=left;verticalAlign=top;spacing=12;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="810" y="230" width="330" height="150" as="geometry" />
         </mxCell>
-        <mxCell id="p3_forbid" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;spacing=8;fontStyle=1;" value="禁止关系&lt;br&gt;无 source refs 判断&lt;br&gt;弱证据写成强能力&lt;br&gt;未确认贡献写成事实&lt;br&gt;敏感属性分析&lt;br&gt;默认真实 provider 外呼&lt;br&gt;合成资料冒充真实资料&lt;br&gt;报告把未实现功能写成已通过" vertex="1">
-          <mxGeometry height="185" width="300" x="630" y="610" as="geometry" />
+        <mxCell id="3-7" value="P7-post Runner&lt;br&gt;scripts/generate_p5_real_data_acceptance.py&lt;br&gt;只读用户指定资料路径&lt;br&gt;脱敏 P5-REAL report" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=14;align=left;verticalAlign=top;spacing=12;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="220" y="440" width="330" height="130" as="geometry" />
         </mxCell>
-        <mxCell id="p3_e1" edge="1" parent="1" source="p3_ui" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;strokeWidth=2;strokeColor=#666666;" target="p3_api" value="">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="p3_e2" edge="1" parent="1" source="p3_api" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;strokeWidth=2;strokeColor=#666666;" target="p3_profile" value="">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="p3_e3" edge="1" parent="1" source="p3_profile" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;strokeWidth=2;strokeColor=#666666;" target="p3_storage" value="聚合读取">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="p3_e4" edge="1" parent="1" source="p3_profile" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;strokeWidth=2;strokeColor=#d6b656;" target="p3_artifact" value="刷新写入">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="p3_e5" edge="1" parent="1" source="p3_chat" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;strokeWidth=2;strokeColor=#d6b656;" target="p3_api" value="只读/显式刷新">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="p3_e6" edge="1" parent="1" source="p3_storage" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;strokeWidth=2;strokeColor=#666666;" target="p3_report" value="">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="p3_e7" edge="1" parent="1" source="p3_report" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;strokeWidth=2;strokeColor=#b85450;" target="p3_forbid" value="审计">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="lapCBJc-0TXKejMNdtoc-1" edge="1" parent="1" source="p3_artifact" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;strokeWidth=2;strokeColor=#666666;" target="p3_storage" value="">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="805" y="425" as="sourcePoint" />
-            <mxPoint x="565" y="625" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="p3_storage" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;spacing=8;fontStyle=1;" value="Storage Layer&lt;br&gt;services/storage/db.py&lt;br&gt;candidate_profile 行保存摘要&lt;br&gt;career_fact / skill_evidence&lt;br&gt;tech_project / job / match_report&lt;br&gt;P5.5 v1 不新增数据库表" vertex="1">
-          <mxGeometry height="170" width="320" x="770" y="360" as="geometry" />
+        <mxCell id="3-8" value="Evidence Layer&lt;br&gt;docs/reports/&lt;br&gt;docs/reports/evidence/&lt;br&gt;HTML reports / screenshots / transcripts / audits" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14;align=left;verticalAlign=top;spacing=12;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="610" y="440" width="330" height="130" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
-  <diagram name="4 开发及验收计划" id="p55-p4">
-    <mxGraphModel dx="1653" dy="842" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+  <diagram name="4 开发及验收计划" id="page-4">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1280" pageHeight="720" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="p4_title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;fontSize=22;fontStyle=1;align=left;verticalAlign=middle;" value="4. P5.5 开发及验收计划" vertex="1">
-          <mxGeometry height="42" width="1080" x="40" y="24" as="geometry" />
+        <mxCell id="4-title" value="4 开发及验收计划" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#ffffff;fontSize=14;align=left;verticalAlign=top;spacing=12;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="30" y="10" width="500" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="p4_doc" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;spacing=8;fontStyle=1;" value="P5.5-DOC-M0&lt;br&gt;PRD / 架构 / 门槛 / traceability / drawio&lt;br&gt;API、artifact、v1 边界已锁定&lt;br&gt;默认合成资料和本地 workspace 验收" vertex="1">
-          <mxGeometry height="125" width="260" x="40" y="90" as="geometry" />
+        <mxCell id="4-1" value="当前仅做文档开发，不进入业务代码实现" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14;align=left;verticalAlign=top;spacing=12;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="380" height="70" as="geometry" />
         </mxCell>
-        <mxCell id="p4_m0" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;spacing=8;fontStyle=1;" value="P5.5-M0 启动审计&lt;br&gt;确认 PRD 规格&lt;br&gt;确认数据合约和打回条件&lt;br&gt;确认无真实资料/真实 provider 默认路径" vertex="1">
-          <mxGeometry height="125" width="250" x="335" y="90" as="geometry" />
+        <mxCell id="4-2" value="REAL-DOC-M0&lt;br&gt;修复 PRD / 架构 / roadmap / traceability 状态口径" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=14;align=left;verticalAlign=top;spacing=12;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="40" y="150" width="280" height="100" as="geometry" />
         </mxCell>
-        <mxCell id="p4_m1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;spacing=8;fontStyle=1;" value="P5.5-M1 CandidateProfile 聚合&lt;br&gt;GET /api/profile/candidate&lt;br&gt;POST /api/profile/candidate/refresh&lt;br&gt;candidate_profile 行 + artifact_type=candidate_profile" vertex="1">
-          <mxGeometry height="135" width="260" x="620" y="90" as="geometry" />
+        <mxCell id="4-3" value="P6-REAL-M1&lt;br&gt;真实 provider 外呼执行单&lt;br&gt;provider / model / API Key 本地配置 / 次数 / 预算 / 数据类别" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=14;align=left;verticalAlign=top;spacing=12;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="370" y="150" width="330" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="p4_m2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;spacing=8;fontStyle=1;" value="P5.5-M2 能力矩阵&lt;br&gt;strong / usable / weak / missing&lt;br&gt;每项含 source refs、证据解释、待确认项&lt;br&gt;弱证据不得被写成强能力" vertex="1">
-          <mxGeometry height="140" width="250" x="905" y="90" as="geometry" />
+        <mxCell id="4-4" value="P6-REAL-M2&lt;br&gt;小样本真实 provider 验收门槛&lt;br&gt;configured / consented / called / failed / fallback" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=14;align=left;verticalAlign=top;spacing=12;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="750" y="150" width="330" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="p4_m3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;spacing=8;fontStyle=1;" value="P5.5-M3 项目可信度&lt;br&gt;verified / plausible / needs_evidence / risky&lt;br&gt;区分本人贡献、缺证据、夸大风险&lt;br&gt;禁止背景调查和敏感属性判断" vertex="1">
-          <mxGeometry height="150" width="250" x="905" y="295" as="geometry" />
+        <mxCell id="4-5" value="P7POST-P5REAL-M1&lt;br&gt;真实资料授权执行单&lt;br&gt;简历 / 项目资料 / JD 路径和脱敏字段" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=14;align=left;verticalAlign=top;spacing=12;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="180" y="350" width="360" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="p4_m4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;spacing=8;fontStyle=1;" value="P5.5-M4 JD 短板分析&lt;br&gt;must / nice 要求对齐&lt;br&gt;缺口原因、优先级、补强建议&lt;br&gt;输出可行动，不伪造达标" vertex="1">
-          <mxGeometry height="145" width="250" x="620" y="300" as="geometry" />
+        <mxCell id="4-6" value="FINAL-DOC-M1&lt;br&gt;drawio &lt;= 8 页&lt;br&gt;文本镜像一致&lt;br&gt;阶段审计落盘&lt;br&gt;无重大规格偏差" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=14;align=left;verticalAlign=top;spacing=12;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="610" y="350" width="320" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="p4_m5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;spacing=8;fontStyle=1;" value="P5.5-M5 Workbench 体验&lt;br&gt;画像概览、矩阵、可信度、短板&lt;br&gt;多视口可读&lt;br&gt;source refs 展开&lt;br&gt;普通聊天不误写 artifact" vertex="1">
-          <mxGeometry height="150" width="250" x="335" y="300" as="geometry" />
-        </mxCell>
-        <mxCell id="p4_m6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;spacing=8;fontStyle=1;" value="P5.5-M6 可视化验收与冻结候选&lt;br&gt;中文 HTML 报告&lt;br&gt;桌面/宽屏/移动端截图&lt;br&gt;pytest / frontend build / drawio parse&lt;br&gt;PRD 规格检视" vertex="1">
-          <mxGeometry height="150" width="260" x="40" y="300" as="geometry" />
-        </mxCell>
-        <mxCell id="p4_rule" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=12;spacing=8;fontStyle=1;" value="每个子阶段执行规则&lt;br&gt;先制定验收标准和详细开发计划 → 启动审计无重大风险 → 实质开发 → E2E 验收 → PRD 规格检视 → 虚假验收风险检查 → 失败打回计划阶段。" vertex="1">
-          <mxGeometry height="120" width="520" x="80" y="560" as="geometry" />
-        </mxCell>
-        <mxCell id="p4_accept" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;spacing=8;fontStyle=1;" value="验收数据口径&lt;br&gt;本阶段可使用多身份合成资料增强真实性&lt;br&gt;不得声称真实资料路径通过&lt;br&gt;不得声称真实外部 provider 默认路径通过&lt;br&gt;报告必须列出未验证范围" vertex="1">
-          <mxGeometry height="130" width="430" x="660" y="555" as="geometry" />
-        </mxCell>
-        <mxCell id="p4_e1" edge="1" parent="1" source="p4_doc" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;strokeWidth=2;strokeColor=#666666;" target="p4_m0" value="">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="p4_e2" edge="1" parent="1" source="p4_m0" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;strokeWidth=2;strokeColor=#666666;" target="p4_m1" value="">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="p4_e3" edge="1" parent="1" source="p4_m1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;strokeWidth=2;strokeColor=#666666;" target="p4_m2" value="">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="p4_e4" edge="1" parent="1" source="p4_m2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;strokeWidth=2;strokeColor=#666666;" target="p4_m3" value="">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="p4_e5" edge="1" parent="1" source="p4_m3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;strokeWidth=2;strokeColor=#666666;" target="p4_m4" value="">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="p4_e6" edge="1" parent="1" source="p4_m4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;strokeWidth=2;strokeColor=#666666;" target="p4_m5" value="">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="p4_e7" edge="1" parent="1" source="p4_m5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;strokeWidth=2;strokeColor=#666666;" target="p4_m6" value="">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="p4_e8" edge="1" parent="1" source="p4_m6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;strokeWidth=2;strokeColor=#d79b00;" target="p4_rule" value="循环门禁">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="4-7" value="进入真实执行前必须暂停确认&lt;br&gt;真实外呼 / 真实资料 / API Key / 删除或迁移 apply" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=14;align=left;verticalAlign=top;spacing=12;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="980" y="260" width="260" height="150" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
-  <diagram name="5 里程碑门槛与出门条件" id="p55-p5">
-    <mxGraphModel dx="1653" dy="842" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+  <diagram name="5 里程碑门槛与出门条件" id="page-5">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1280" pageHeight="720" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="p5_title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;fontSize=22;fontStyle=1;align=left;verticalAlign=middle;" value="5. P5.5 里程碑、验收门槛与出门条件" vertex="1">
-          <mxGeometry height="42" width="1080" x="40" y="24" as="geometry" />
+        <mxCell id="5-title" value="5 里程碑门槛与出门条件" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#ffffff;fontSize=14;align=left;verticalAlign=top;spacing=12;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="30" y="10" width="500" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="p5_g1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;spacing=8;fontStyle=1;" value="Gate 0 文档和边界完整&lt;br&gt;PRD、架构、里程碑、验收门槛、traceability、drawio 一致&lt;br&gt;无未闭合重大规格问题" vertex="1">
-          <mxGeometry height="105" width="250" x="45" y="90" as="geometry" />
+        <mxCell id="5-1" value="文档出门条件 1&lt;br&gt;状态口径一致&lt;br&gt;已实现候选 / 待真实验收 / P8+ 不混淆" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=14;align=left;verticalAlign=top;spacing=12;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="320" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="p5_g2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;spacing=8;fontStyle=1;" value="Gate 1 CandidateProfile 可追溯&lt;br&gt;GET/POST routes 可用&lt;br&gt;candidate_profile 行和 artifact_type=candidate_profile 同步存在&lt;br&gt;source_refs 不丢失" vertex="1">
-          <mxGeometry height="130" width="260" x="330" y="90" as="geometry" />
+        <mxCell id="5-2" value="文档出门条件 2&lt;br&gt;P6-REAL 外呼执行单完整&lt;br&gt;provider / model / 次数 / 预算 / timeout / fallback / 报告字段" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=14;align=left;verticalAlign=top;spacing=12;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="410" y="40" width="360" height="140" as="geometry" />
         </mxCell>
-        <mxCell id="p5_g3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;spacing=8;fontStyle=1;" value="Gate 2 能力矩阵可解释&lt;br&gt;strong / usable / weak / missing 标签稳定&lt;br&gt;每项有证据解释和待确认项&lt;br&gt;弱证据不得夸大" vertex="1">
-          <mxGeometry height="130" width="260" x="620" y="90" as="geometry" />
+        <mxCell id="5-3" value="文档出门条件 3&lt;br&gt;P7-post P5-REAL 执行单完整&lt;br&gt;用户指定路径 / 允许展示字段 / 禁止展示字段 / 脱敏策略" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=14;align=left;verticalAlign=top;spacing=12;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="820" y="40" width="370" height="140" as="geometry" />
         </mxCell>
-        <mxCell id="p5_g4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;spacing=8;fontStyle=1;" value="Gate 3 项目可信度不夸大&lt;br&gt;verified / plausible / needs_evidence / risky&lt;br&gt;本人贡献和证据缺口分开呈现&lt;br&gt;不做背景调查" vertex="1">
-          <mxGeometry height="130" width="250" x="910" y="90" as="geometry" />
+        <mxCell id="5-4" value="后续 P6-REAL 执行体验&lt;br&gt;默认不外呼&lt;br&gt;配置不等于调用&lt;br&gt;确认后小样本调用&lt;br&gt;成功/失败都有脱敏日志&lt;br&gt;fallback 可用" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14;align=left;verticalAlign=top;spacing=12;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="90" y="260" width="360" height="180" as="geometry" />
         </mxCell>
-        <mxCell id="p5_g5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;spacing=8;fontStyle=1;" value="Gate 4 岗位短板可行动&lt;br&gt;JD must/nice 对齐&lt;br&gt;缺口原因、优先级、补强建议明确&lt;br&gt;不伪造达标" vertex="1">
-          <mxGeometry height="120" width="250" x="910" y="290" as="geometry" />
+        <mxCell id="5-5" value="后续 P7-post 执行体验&lt;br&gt;只读指定资料路径&lt;br&gt;资料解析与画像复验&lt;br&gt;报告默认脱敏&lt;br&gt;未授权保持未执行" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14;align=left;verticalAlign=top;spacing=12;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="520" y="260" width="340" height="180" as="geometry" />
         </mxCell>
-        <mxCell id="p5_g6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;spacing=8;fontStyle=1;" value="Gate 5 Workbench 体验成立&lt;br&gt;画像概览、矩阵、可信度、短板均可读&lt;br&gt;source refs 可展开&lt;br&gt;多视口不重叠" vertex="1">
-          <mxGeometry height="120" width="260" x="620" y="290" as="geometry" />
-        </mxCell>
-        <mxCell id="p5_g7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;spacing=8;fontStyle=1;" value="Gate 6 可视化验收完整&lt;br&gt;中文 HTML 报告&lt;br&gt;真实界面截图&lt;br&gt;pytest / build / drawio parse&lt;br&gt;PRD 规格检视和未验证范围" vertex="1">
-          <mxGeometry height="135" width="260" x="330" y="285" as="geometry" />
-        </mxCell>
-        <mxCell id="p5_exit" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;spacing=8;fontStyle=1;" value="最终出门体验&lt;br&gt;用户在本地 Chatbox 看到职业画像、能力矩阵、项目可信度和岗位短板&lt;br&gt;每条判断有 source refs、证据强度、待确认项和风险标签&lt;br&gt;用户知道哪些能力可用于申请材料、哪些项目可信、下一步补什么&lt;br&gt;报告展示真实界面截图、PRD 检视和未验证范围" vertex="1">
-          <mxGeometry height="190" width="515" x="160" y="550" as="geometry" />
-        </mxCell>
-        <mxCell id="p5_fail" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;spacing=8;fontStyle=1;" value="打回条件&lt;br&gt;无 source refs 画像&lt;br&gt;弱证据写成强能力&lt;br&gt;未确认贡献写成事实&lt;br&gt;敏感属性分析&lt;br&gt;合成资料冒充真实资料&lt;br&gt;真实 provider 默认外呼&lt;br&gt;报告把未实现功能写成已通过" vertex="1">
-          <mxGeometry height="190" width="420" x="740" y="540" as="geometry" />
-        </mxCell>
-        <mxCell id="p5_e1" edge="1" parent="1" source="p5_g1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;strokeWidth=2;strokeColor=#666666;" target="p5_g2" value="">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="p5_e2" edge="1" parent="1" source="p5_g2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;strokeWidth=2;strokeColor=#666666;" target="p5_g3" value="">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="p5_e3" edge="1" parent="1" source="p5_g3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;strokeWidth=2;strokeColor=#666666;" target="p5_g4" value="">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="p5_e4" edge="1" parent="1" source="p5_g4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;strokeWidth=2;strokeColor=#666666;" target="p5_g5" value="">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="p5_e5" edge="1" parent="1" source="p5_g5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;strokeWidth=2;strokeColor=#666666;" target="p5_g6" value="">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="p5_e6" edge="1" parent="1" source="p5_g6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;strokeWidth=2;strokeColor=#82b366;" target="p5_exit" value="全部通过">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="p5_e7" edge="1" parent="1" source="p5_g6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;strokeWidth=2;strokeColor=#b85450;" target="p5_fail" value="任一失败">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="5-6" value="打回条件&lt;br&gt;fake provider 写成真实 LLM&lt;br&gt;synthetic personas 写成真实资料&lt;br&gt;API Key 或完整资料入报告&lt;br&gt;默认外呼" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=14;align=left;verticalAlign=top;spacing=12;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="930" y="260" width="300" height="190" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
-  <diagram name="6 安全边界证据与复验" id="p55-p6">
-    <mxGraphModel dx="1653" dy="842" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+  <diagram name="6 安全边界证据与复验" id="page-6">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1280" pageHeight="720" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="p6_title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;fontSize=22;fontStyle=1;align=left;verticalAlign=middle;" value="6. 安全边界、证据、状态标记和后续复验" vertex="1">
-          <mxGeometry height="42" width="1080" x="40" y="24" as="geometry" />
+        <mxCell id="6-title" value="6 安全边界证据与复验" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#ffffff;fontSize=14;align=left;verticalAlign=top;spacing=12;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="30" y="10" width="500" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="p6_evidence" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;spacing=8;fontStyle=1;" value="P5.5 证据包&lt;br&gt;pytest / frontend build&lt;br&gt;drawio XML parse&lt;br&gt;中文 HTML 报告&lt;br&gt;真实界面截图&lt;br&gt;PRD 规格检视&lt;br&gt;隐私和虚假验收审计" vertex="1">
-          <mxGeometry height="185" width="300" x="55" y="95" as="geometry" />
+        <mxCell id="6-1" value="当前证据&lt;br&gt;P5.5 HTML 报告&lt;br&gt;多身份合成资料&lt;br&gt;20 轮 fake provider transcript&lt;br&gt;P6/P7 本地 Beta 自动化候选&lt;br&gt;pytest / build / drawio parse" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=14;align=left;verticalAlign=top;spacing=12;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="340" height="200" as="geometry" />
         </mxCell>
-        <mxCell id="p6_screens" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;spacing=8;fontStyle=1;" value="必须截图的体验路径&lt;br&gt;资料/JD 输入&lt;br&gt;画像概览&lt;br&gt;能力矩阵&lt;br&gt;项目可信度&lt;br&gt;岗位短板&lt;br&gt;source refs 展开&lt;br&gt;普通聊天不写 artifact" vertex="1">
-          <mxGeometry height="200" width="300" x="425" y="95" as="geometry" />
+        <mxCell id="6-2" value="待真实复验&lt;br&gt;MiniMax / DeepSeek / OpenAI-compatible 真实 provider&lt;br&gt;真实 API Key 本地配置&lt;br&gt;真实资料路径&lt;br&gt;P5-REAL closure audit" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=14;align=left;verticalAlign=top;spacing=12;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="440" y="40" width="340" height="180" as="geometry" />
         </mxCell>
-        <mxCell id="p6_high" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;spacing=8;fontStyle=1;" value="高风险必须确认&lt;br&gt;真实个人资料&lt;br&gt;真实 provider / API Key&lt;br&gt;workspace 删除 / 迁移 apply&lt;br&gt;外部同步&lt;br&gt;敏感属性分析禁止进入 P5.5" vertex="1">
-          <mxGeometry height="170" width="300" x="805" y="95" as="geometry" />
+        <mxCell id="6-3" value="必须暂停找用户确认&lt;br&gt;真实外呼&lt;br&gt;真实资料读取&lt;br&gt;workspace 删除&lt;br&gt;迁移 apply&lt;br&gt;ASR / 会议平台 / 自动投递 / SaaS" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=14;align=left;verticalAlign=top;spacing=12;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="840" y="40" width="330" height="190" as="geometry" />
         </mxCell>
-        <mxCell id="p6_audit" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;spacing=8;fontStyle=1;" value="审计口径&lt;br&gt;文档通过不等于实现通过&lt;br&gt;drawio 方向认可不等于功能验收通过&lt;br&gt;P5.5 不替代 P5-REAL&lt;br&gt;合成资料只能做自动化增强，不能替代真实资料复验" vertex="1">
-          <mxGeometry height="145" width="430" x="80" y="390" as="geometry" />
+        <mxCell id="6-4" value="未验证范围&lt;br&gt;SaaS GA&lt;br&gt;多租户 / Billing&lt;br&gt;系统音频 / ASR&lt;br&gt;会议平台&lt;br&gt;自动投递&lt;br&gt;MCP / CLI" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e5e5e5;strokeColor=#666666;fontSize=14;align=left;verticalAlign=top;spacing=12;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="440" y="300" width="340" height="170" as="geometry" />
         </mxCell>
-        <mxCell id="p6_status" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;spacing=8;fontStyle=1;" value="当前状态标记&lt;br&gt;P4 体验冻结：人工 OK&lt;br&gt;P5-REAL / P5-Freeze：冻结延期复验&lt;br&gt;P6+P7：本地 Beta 自动化候选&lt;br&gt;P5.5：当前文档开发和后续自动化开发主线" vertex="1">
-          <mxGeometry height="145" width="430" x="585" y="390" as="geometry" />
-        </mxCell>
-        <mxCell id="p6_later" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#e1e1e1;strokeColor=#666666;fontSize=12;spacing=8;fontStyle=1;" value="P8+ 后续能力&lt;br&gt;SaaS / 多租户 / Billing&lt;br&gt;ASR / 会议平台&lt;br&gt;自动投递 / Offer 分析&lt;br&gt;MCP Server / CLI&lt;br&gt;岗位数据源聚合&lt;br&gt;真实 provider 规模化回归" vertex="1">
-          <mxGeometry height="170" width="300" x="55" y="620" as="geometry" />
-        </mxCell>
-        <mxCell id="p6_retest" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=12;spacing=8;fontStyle=1;" value="复验触发条件&lt;br&gt;用户授权真实资料路径&lt;br&gt;用户确认真实 provider 外呼&lt;br&gt;出现报告证据缺失&lt;br&gt;发现功能声称超过实际实现&lt;br&gt;架构或 PRD 概念冲突" vertex="1">
-          <mxGeometry height="155" width="320" x="425" y="620" as="geometry" />
-        </mxCell>
-        <mxCell id="p6_no" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;spacing=8;fontStyle=1;" value="禁止结论&lt;br&gt;不得声称真实个人资料验收通过&lt;br&gt;不得声称真实外部 provider 默认路径通过&lt;br&gt;不得把合成资料称为真实资料&lt;br&gt;不得在报告隐藏未实现范围" vertex="1">
-          <mxGeometry height="155" width="320" x="805" y="620" as="geometry" />
-        </mxCell>
-        <mxCell id="p6_e1" edge="1" parent="1" source="p6_evidence" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;strokeWidth=2;strokeColor=#666666;" target="p6_screens" value="">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="p6_e2" edge="1" parent="1" source="p6_screens" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;strokeWidth=2;strokeColor=#b85450;" target="p6_high" value="安全检查">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="p6_e3" edge="1" parent="1" source="p6_audit" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;strokeWidth=2;strokeColor=#666666;" target="p6_status" value="">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="p6_e4" edge="1" parent="1" source="p6_later" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;strokeWidth=2;strokeColor=#d79b00;" target="p6_retest" value="">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="p6_e5" edge="1" parent="1" source="p6_retest" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;strokeWidth=2;strokeColor=#b85450;" target="p6_no" value="">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="6-5" value="审计原则&lt;br&gt;文档通过不等于实现通过&lt;br&gt;drawio 方向认可不等于功能验收通过&lt;br&gt;真实 provider 和真实资料必须单独报告" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14;align=left;verticalAlign=top;spacing=12;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="40" y="320" width="340" height="150" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

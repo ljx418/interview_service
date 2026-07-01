@@ -1,10 +1,17 @@
 # JobPilot AI P6 真实 Provider 与长程连续对话计划
 
 日期：2026-06-27
-状态：P6+P7 当前阶段规划入口；尚未进入实质代码开发；任何真实外部 provider 调用仍需用户单独确认。
+状态：P6 fake provider 自动化候选已完成；当前文档阶段准备 P6-REAL 真实 provider 受控验收；任何真实外部 provider 调用仍需用户单独确认。
 适用阶段：P6 provider opt-in / P6-FC 长程连续对话 / P7 产品化 Beta / P7-post P5 复验
 
 ## 1. 背景与产品目标
+
+2026-06-30 状态更新：
+
+- P6 provider-backed 自由聊天已具备 fake provider 自动化候选；
+- P5.5 可视化验收材料已补充多身份合成资料与 20 轮 fake provider 连续对话 transcript；
+- 上述证据只能证明 opt-in 状态机、长程对话边界、脱敏日志、fallback 和报告展示，不代表 MiniMax、DeepSeek、OpenAI-compatible 或其他真实 provider 质量通过；
+- 当前阶段只补齐 P6-REAL 受控外呼执行单、验收门槛和报告边界，不触发真实调用。
 
 用户已认可 P4 本地/mock Chatbox 体验基本 OK，并明确希望下一阶段实现：
 
@@ -155,6 +162,38 @@ P6 不需要一次性引入复杂向量数据库。默认路线是复用 SQLite 
 | P7-M2 Diagnostics and Release | 脱敏诊断报告、启动/部署/回滚文档 | diagnostics report、release checklist | 文档可复现、敏感扫描通过 |
 | P7-M3 Beta Freeze | Beta 使用说明、支持流程、隐私审计、P7 报告 | final audit、HTML 报告 | P7 出门门槛通过 |
 | P7-post P5 Revalidation | P5-REAL/P5-Freeze 复验 | P5-REAL 报告、P5 closure audit | 只在用户提供真实资料路径后执行 |
+
+## 5.1 P6-REAL 受控外呼执行单
+
+真实 provider 验收前必须由用户明确确认以下字段。缺少任一关键字段时，不得执行真实外呼，不得生成真实 provider 通过结论。
+
+| 字段 | 必填 | 说明 |
+| --- | --- | --- |
+| provider | 是 | MiniMax、DeepSeek、OpenAI-compatible 或其他明确 provider |
+| model | 是 | 本次验收使用的模型名 |
+| base_url preset | 视 provider 而定 | 只保存非敏感 preset，不保存 API Key |
+| API Key 配置方式 | 是 | 仅允许本地 `.env` 或运行环境变量；不得写入仓库、报告、日志、截图说明 |
+| 最大调用次数 | 是 | 小样本验收建议先限制为 3-10 次 |
+| 最大预算或费用边界 | 是 | 可用金额、token 估算或人工确认的等价边界 |
+| timeout / retry | 是 | 明确超时、重试次数、失败后 fallback |
+| 允许发送的数据类别 | 是 | 近期消息、rolling summary、workspace 摘要、JD 摘要、profile/artifact 摘要 |
+| 禁止发送的数据类别 | 是 | API Key、联系方式、账号、私密链接、完整简历长原文、完整 provider raw response |
+| 报告允许展示字段 | 是 | provider/model、状态、耗时、脱敏摘要、截图；不得展示密钥和完整原文 |
+| 失败打回条件 | 是 | 未授权外呼、泄露敏感信息、UI 卡死、fallback 不可用、报告虚假声明 |
+
+真实 provider 小样本验收最低路径：
+
+```text
+默认进入 Chatbox，不外呼
+→ 配置 provider 偏好，不外呼
+→ 用户确认本轮数据范围和调用次数
+→ 发送 3-10 轮真实 provider 普通求职对话
+→ 检查 provider called / failed / fallback 证据
+→ 验证普通聊天不写 artifact，导出和工具仍受 confirmation/preflight 约束
+→ 生成脱敏 HTML 报告
+```
+
+报告必须同时展示 fake provider 自动化候选证据和真实 provider 小样本证据，并明确两者不可互相替代。
 
 ## 6. 验收场景
 

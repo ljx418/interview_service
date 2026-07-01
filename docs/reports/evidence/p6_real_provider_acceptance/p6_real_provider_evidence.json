@@ -1,0 +1,108 @@
+{
+  "mode": "gate-only",
+  "generated_at": "2026-07-01T04:44:16.227022+00:00",
+  "workspace_id": "ws_06c58be20b02",
+  "session_id": "chat_55a5761728b4",
+  "authorization": {
+    "real_provider_authorized": false,
+    "max_calls": 3,
+    "allowed_data_classes": [
+      "recent_messages",
+      "rolling_summary",
+      "workspace_summary",
+      "artifact_summary"
+    ],
+    "report_fields": [
+      "provider",
+      "model",
+      "status",
+      "duration_ms",
+      "redaction_summary",
+      "fallback"
+    ]
+  },
+  "steps": [
+    {
+      "name": "default_status",
+      "status": "pass",
+      "evidence": {
+        "p6_state": "mock_default",
+        "provider": "mock",
+        "called_in_session": false
+      }
+    },
+    {
+      "name": "configured_not_called",
+      "status": "pass",
+      "evidence": {
+        "configured": true,
+        "configured_is_called": false,
+        "called_in_session": false
+      }
+    },
+    {
+      "name": "chat_without_consent_fallback",
+      "status": "pass",
+      "evidence": {
+        "provider_invocation_status": "consent_required",
+        "fallback_used": true,
+        "chat_mode": "free_local"
+      }
+    },
+    {
+      "name": "consent_requires_explicit_confirmation",
+      "status": "pass",
+      "evidence": {
+        "consent_required": true,
+        "consented": false
+      }
+    }
+  ],
+  "counts": {
+    "default_chat_invocations": 2,
+    "final_chat_invocations": 3
+  },
+  "final_status": {
+    "p6_state": "failed",
+    "configured": true,
+    "configured_is_called": false,
+    "called_in_session": false,
+    "fallback_used": true,
+    "last_error": "CONSENT_REQUIRED",
+    "api_key_redacted": true
+  },
+  "latest_invocation": {
+    "status": "policy_denied",
+    "error_code": "CONSENT_REQUIRED",
+    "fallback_used": true,
+    "provider_name": "openai_compatible",
+    "model": "deepseek-chat"
+  },
+  "prd_review": [
+    {
+      "requirement": "默认不外呼真实 provider",
+      "status": "pass",
+      "evidence": "默认 provider=status mock，chat invocation count 为 0。"
+    },
+    {
+      "requirement": "configured 不等于 called",
+      "status": "pass",
+      "evidence": "配置 provider 偏好后 configured=true，但 called_in_session=false。"
+    },
+    {
+      "requirement": "未确认外呼必须 fallback",
+      "status": "pass",
+      "evidence": "provider_invocation_status=consent_required，fallback_used=true。"
+    },
+    {
+      "requirement": "报告不得声明真实 LLM 质量通过",
+      "status": "pass",
+      "evidence": "本报告结论为真实 provider 未执行。"
+    }
+  ],
+  "unverified_scope": [
+    "未调用 MiniMax、DeepSeek、OpenAI-compatible 或其他真实 provider。",
+    "未读取真实个人资料。",
+    "未验证真实 LLM 回复质量。"
+  ]
+}

@@ -26,7 +26,8 @@
 - 追踪矩阵：`docs/active/06_TRACEABILITY_MATRIX.md`
 - P5.5 计划：`docs/active/20_P5_5_CANDIDATE_PROFILE_PLAN.md`
 - 可视化报告：`docs/reports/P5_5_CANDIDATE_PROFILE_ACCEPTANCE_REPORT.html`
-- Git 提交：`30576ce feat: complete P5.5 candidate profile acceptance`
+- 实现提交：`30576ce feat: complete P5.5 candidate profile acceptance`
+- 审核证据增强提交：`b4ff0f9 docs: strengthen P5.5 audit evidence`
 - 报告证据目录：`docs/reports/evidence/p5_5_candidate_profile/`
 
 ## 1.1 人工审计操作步骤
@@ -39,7 +40,8 @@
 4. 打开 `docs/reports/P5_5_CANDIDATE_PROFILE_ACCEPTANCE_REPORT.html`，确认报告为中文、状态为 passed、包含目标架构、当前实现、自动化步骤、命令结果、PRD 规格检视、代码检视、文档审计、截图证据和未验证范围。
 5. 检查 `docs/reports/evidence/p5_5_candidate_profile/` 中 8 张截图，确认图片非空、能看到真实 Chatbox 界面、Candidate Profile 面板、岗位短板和 source refs 展开。
 6. 运行或核对以下命令结果：P5.5 定向 pytest、全量 pytest、前端 build、drawio XML parse、Headless Chrome/CDP 报告生成、报告断言测试。
-7. 检查 Git 提交 `30576ce`，确认变更集中在 P5.5 代码、文档、测试、报告和截图证据，没有 `.env`、真实 API Key 或真实个人资料。
+7. 检查实现提交 `30576ce`，确认变更集中在 P5.5 代码、文档、测试、报告和截图证据，没有 `.env`、真实 API Key 或真实个人资料。
+8. 检查审核证据增强提交 `b4ff0f9`，确认该提交只补强人工审计入口、证据 hash、复验步骤、失败条件和未验证范围，没有改变 P5.5 功能行为。
 
 ## 1.2 关键代码入口
 
@@ -106,19 +108,20 @@
 
 | 证据文件 | 大小 | SHA-256 | 证明内容 |
 | --- | ---: | --- | --- |
-| `p5_5_initial_desktop.png` | 194251 bytes | `403fddb8c1d86c0296a06b909fdb6ec705fb6c22024498a85fe108eaadb04fff` | 初始桌面状态、本地/mock 边界和入口 |
-| `p5_5_profile_overview.png` | 166559 bytes | `80d5409bf75d246e1e3cba0977f7bb815458fd9d64d50d05d2f9b7359a67bb55` | 画像刷新后 Workbench 可见，展示能力矩阵、项目可信度和岗位短板 |
-| `p5_5_source_refs.png` | 164483 bytes | `edbe2d4f31f5f7c6abe242cfa94b401644037b0037f5ad48444e55fdcde4c9d4` | source refs 与未验证范围展开可见 |
-| `p5_5_profile_1200.png` | 154316 bytes | `92a74ca0c6dc8f6b41975b95517a55d5eec30ea1e000b3a52d90f811bc0c8f28` | 1200px 视口画像路径可读 |
-| `p5_5_profile_1600.png` | 172003 bytes | `677d4581e8f3d89b342b28de33a58b37ebe3c9203c1db958297d76f4917ec005` | 1600px 视口画像路径可读 |
-| `p5_5_profile_1920.png` | 189232 bytes | `f0c16588da2477025df1ecbe9e0b3c65bb1d097343c3a83976a758ecc8e4182d` | 1920px 视口画像路径可读 |
-| `p5_5_profile_720.png` | 67994 bytes | `f7ad5ee84c069bd3060a3b05eed4c83505735a285fa09ed37d1ddd2f11111680` | 720px 窄屏画像路径可读 |
-| `p5_5_profile_mobile_390.png` | 60158 bytes | `240e207d7c290f699249f0021c048808bbe1cc23b5bb0154e7e4abb286e9f41e` | 390px 移动端画像路径可读 |
+| `p5_5_initial_desktop.png` | 195251 bytes | `d3a6aeec74950fe7edbfe6d5a6653d87bd01d2f69c4734c457f1188784e2e66e` | 初始桌面状态、本地/mock 边界和入口 |
+| `p5_5_profile_overview.png` | 167416 bytes | `4b7ecefb725d1d58c899e2b126cf8263c3dea88ef5d8b9709ead1190b758510a` | 画像刷新后 Workbench 可见，展示能力矩阵、项目可信度和岗位短板 |
+| `p5_5_source_refs.png` | 165300 bytes | `3da8dc9fa87f02976559134f8f0f8dfeba912b76ae83e15cb7f81ae87dc01f48` | source refs 与未验证范围展开可见 |
+| `p5_5_profile_1200.png` | 155088 bytes | `b3601ca0fc40bec21dd6b898a77554a9bf97f1e07c8a2626926434a876c320bf` | 1200px 视口画像路径可读 |
+| `p5_5_profile_1600.png` | 172797 bytes | `dc7f55a5427c4bce895945e40453d179dc33c321abc55a0def011d5c903072ab` | 1600px 视口画像路径可读 |
+| `p5_5_profile_1920.png` | 190054 bytes | `ff3a96bbb7dc83b4cbdf618dc4f680949111c8c42dc803c75099f41e92913fac` | 1920px 视口画像路径可读 |
+| `p5_5_profile_720.png` | 68655 bytes | `2a759f9eb62e453a126cfe19f14e22c8e8237904e1774714c8657ab8bec2819e` | 720px 窄屏画像路径可读 |
+| `p5_5_profile_mobile_390.png` | 60562 bytes | `7ecf1a84c13bba312a295848e5141fda367b687b1a87498f3ebbcf73e9c18fe7` | 390px 移动端画像路径可读 |
+| `p5_5_multi_turn_dialogues.json` | 53919 bytes | `573af6bd046b9aa54bc82bf9d7aba9b8c853701db5ba90f76f5f686f62f54330` | 三个不同技术背景合成候选人的虚拟资料和每组 20 轮 fake provider opt-in transcript |
 
 HTML 报告 hash：
 
 - `docs/reports/P5_5_CANDIDATE_PROFILE_ACCEPTANCE_REPORT.html`
-- SHA-256：`9e6d9ffdf97e61ab07c836bd2cb30573912cac117bb8bd15cf6eb304715cf5b0`
+- SHA-256：`b9ebd796e2c4cff223be7c1e5186418ecae868d45e90f95c062e6f8cf3a08983`
 
 ## 6.1 自动化场景复验说明
 
@@ -192,5 +195,6 @@ P5.5 Candidate Profile 阶段性自动化验收通过。当前代码、文档、
 - [ ] 已核对 P5.5 Gate 0-6 均有测试或截图证据；
 - [ ] 已确认普通聊天不写画像 artifact 的测试存在并通过；
 - [ ] 已确认全量 pytest、前端 build、drawio parse 均通过；
-- [ ] 已确认 Git 提交 `30576ce` 的变更范围与 P5.5 相关；
+- [ ] 已确认实现提交 `30576ce` 的变更范围与 P5.5 相关；
+- [ ] 已确认审核证据增强提交 `b4ff0f9` 只补强审计证据和复验说明；
 - [ ] 已确认未验证范围没有被写成已完成能力。

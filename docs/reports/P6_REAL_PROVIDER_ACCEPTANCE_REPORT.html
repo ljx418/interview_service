@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <title>P6-REAL 真实 Provider 受控验收报告</title>
+  <style>
+    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #17201b; background: #f6f3ec; }
+    main { max-width: 1120px; margin: 0 auto; padding: 32px 24px 56px; }
+    h1 { margin: 0 0 8px; font-size: 30px; }
+    h2 { margin-top: 30px; font-size: 20px; }
+    .hero { background: #ffffff; border: 1px solid #d9e2d8; border-radius: 10px; padding: 24px; box-shadow: 0 14px 40px rgba(36, 50, 41, .08); }
+    .badge { display: inline-block; padding: 5px 10px; border-radius: 999px; background: #fff2cc; border: 1px solid #d6b656; font-weight: 700; }
+    .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+    .card { background: #fff; border: 1px solid #e1ded4; border-radius: 8px; padding: 16px; }
+    table { width: 100%; border-collapse: collapse; background: #fff; }
+    th, td { border: 1px solid #ddd8ca; padding: 10px; text-align: left; vertical-align: top; }
+    th { background: #eff5ee; }
+    pre { margin: 0; white-space: pre-wrap; word-break: break-word; font-size: 12px; }
+    .warn { border-left: 5px solid #b85450; background: #fff7f6; padding: 12px 14px; }
+  </style>
+</head>
+<body>
+<main>
+  <section class="hero">
+    <span class="badge">Gate-only 未授权门禁</span>
+    <h1>P6-REAL 真实 Provider 受控验收报告</h1>
+    <p>真实 provider 未执行；门禁阻塞、configured != called、fallback 和脱敏边界符合预期。</p>
+    <p>生成时间：2026-07-01T04:44:16.227022+00:00</p>
+  </section>
+
+  <h2>目标架构</h2>
+  <div class="grid">
+    <div class="card"><strong>Chatbox</strong><p>展示 provider 状态、调用前确认、长程对话状态和 fallback。</p></div>
+    <div class="card"><strong>Provider Policy Gate</strong><p>拦截未授权外呼、缺密钥、超预算和不允许的数据类别。</p></div>
+    <div class="card"><strong>Evidence Layer</strong><p>仅保存脱敏状态、调用元数据、PRD 检视和未验证范围。</p></div>
+  </div>
+
+  <h2>当前实现与授权边界</h2>
+  <table>
+    <tr><th>字段</th><th>值</th></tr>
+    <tr><td>mode</td><td>gate-only</td></tr>
+    <tr><td>real_provider_authorized</td><td>False</td></tr>
+    <tr><td>max_calls</td><td>3</td></tr>
+    <tr><td>allowed_data_classes</td><td>recent_messages, rolling_summary, workspace_summary, artifact_summary</td></tr>
+    <tr><td>report_fields</td><td>provider, model, status, duration_ms, redaction_summary, fallback</td></tr>
+  </table>
+
+  <h2>用户场景与自动化证据</h2>
+  <table><tr><th>步骤</th><th>状态</th><th>证据</th></tr><tr><td>default_status</td><td>pass</td><td><pre>{
+  &quot;p6_state&quot;: &quot;mock_default&quot;,
+  &quot;provider&quot;: &quot;mock&quot;,
+  &quot;called_in_session&quot;: false
+}</pre></td></tr>
+<tr><td>configured_not_called</td><td>pass</td><td><pre>{
+  &quot;configured&quot;: true,
+  &quot;configured_is_called&quot;: false,
+  &quot;called_in_session&quot;: false
+}</pre></td></tr>
+<tr><td>chat_without_consent_fallback</td><td>pass</td><td><pre>{
+  &quot;provider_invocation_status&quot;: &quot;consent_required&quot;,
+  &quot;fallback_used&quot;: true,
+  &quot;chat_mode&quot;: &quot;free_local&quot;
+}</pre></td></tr>
+<tr><td>consent_requires_explicit_confirmation</td><td>pass</td><td><pre>{
+  &quot;consent_required&quot;: true,
+  &quot;consented&quot;: false
+}</pre></td></tr></table>
+
+  <h2>PRD 规格检视</h2>
+  <table><tr><th>规格</th><th>状态</th><th>证据</th></tr><tr><td>默认不外呼真实 provider</td><td>pass</td><td>默认 provider=status mock，chat invocation count 为 0。</td></tr>
+<tr><td>configured 不等于 called</td><td>pass</td><td>配置 provider 偏好后 configured=true，但 called_in_session=false。</td></tr>
+<tr><td>未确认外呼必须 fallback</td><td>pass</td><td>provider_invocation_status=consent_required，fallback_used=true。</td></tr>
+<tr><td>报告不得声明真实 LLM 质量通过</td><td>pass</td><td>本报告结论为真实 provider 未执行。</td></tr></table>
+
+  <h2>最终状态</h2>
+  <pre>{
+  &quot;p6_state&quot;: &quot;failed&quot;,
+  &quot;configured&quot;: true,
+  &quot;configured_is_called&quot;: false,
+  &quot;called_in_session&quot;: false,
+  &quot;fallback_used&quot;: true,
+  &quot;last_error&quot;: &quot;CONSENT_REQUIRED&quot;,
+  &quot;api_key_redacted&quot;: true
+}</pre>
+
+  <h2>未验证范围</h2>
+  <div class="warn"><ul><li>未调用 MiniMax、DeepSeek、OpenAI-compatible 或其他真实 provider。</li>
+<li>未读取真实个人资料。</li>
+<li>未验证真实 LLM 回复质量。</li></ul></div>
+</main>
+</body>
+</html>

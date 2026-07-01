@@ -1,8 +1,8 @@
 # JobPilot AI 产品化后续开发路线图
 
 日期：2026-06-25
-状态：P4 本地/mock examples 路径已冻结；P5 本地/mock + 脱敏 fixture 自动化候选已完成；P5-REAL/P5-Freeze 已冻结延期到 P7 后复验；当前主线为 P6+P7 一体规划
-用途：把当前到产品化 Beta / SaaS 之前的开发目标落盘，并作为 P6 真实 provider opt-in、长程连续对话和 P7 产品化 Beta 的阶段规划入口。
+状态：P4 本地/mock examples 路径已冻结；P5 本地/mock + 脱敏 fixture 自动化候选已完成；P5.5 Candidate Profile 自动化候选已完成；P6+P7 本地 Beta 自动化候选已完成；当前主线为 P6-REAL 真实 provider 受控验收和 P7-post P5-REAL 真实资料复验准备。
+用途：把当前到产品化 Beta / SaaS 之前的开发目标落盘，并作为 P6-REAL 真实 provider 受控验收、P7-post P5-REAL 真实资料复验和 P8+ 高风险能力拆分的规划入口。
 
 ## 1. 当前真实状态
 
@@ -35,8 +35,11 @@ drawio XML parse：5 diagrams
 P5 自动化候选：88 passed, 1 warning + P5 HTML 报告 + 三身份合成资料可视化验收
 ```
 
-P5-REAL/P5-Freeze 当前口径：
+P5.5 / P6+P7 / P5-REAL 当前口径：
 
+- P5.5 Candidate Profile 自动化候选已完成；
+- P6+P7 本地 Beta 自动化候选已完成；
+- P6 fake provider opt-in、20 轮连续对话和脱敏日志可作为自动化候选证据，但不代表真实 LLM 质量通过；
 - 冻结延期到 P7 后复验；
 - 不读取真实个人资料；
 - 不声明真实个人资料路径通过；
@@ -55,15 +58,16 @@ P5-REAL/P5-Freeze 当前口径：
 
 这些百分比是开发规划估算，不是验收结论。
 
-## 3. P4/P5 基线后的当前主线
+## 3. P4/P5/P5.5/P6/P7 基线后的当前主线
 
-P4 已完成本地/mock examples 路径冻结。P5 已完成本地/mock + 脱敏 fixture 自动化候选，但 P5-REAL/P5-Freeze 冻结延期到 P7 后复验。当前主线已选择为 P6+P7：
+P4 已完成本地/mock examples 路径冻结。P5 已完成本地/mock + 脱敏 fixture 自动化候选。P5.5 已完成职业画像与能力评估自动化候选。P6+P7 已完成本地 Beta 自动化候选。当前主线不是继续扩大自动化候选，而是准备 P6-REAL 和 P7-post P5-REAL 的真实验收准入：
 
 ```text
 P5：真实资料本地闭环自动化候选完成；P5-REAL/P5-Freeze 冻结延期复验
-P6：真实外部 provider opt-in + 长程连续对话（当前阶段）
-P7：产品化 Beta（当前阶段）
-P7-post：P5-REAL/P5-Freeze 复验
+P5.5：职业画像、能力矩阵、项目可信度、岗位短板自动化候选完成
+P6/P7：本地 Beta 自动化候选完成
+P6-REAL：真实外部 provider 受控小样本验收准备（当前文档阶段）
+P7-post：P5-REAL/P5-Freeze 真实资料复验准备（当前文档阶段）
 P8+：SaaS / ASR / 会议平台 / 自动投递等高风险能力
 ```
 
@@ -75,7 +79,7 @@ docs/active/18_FREE_CHATBOX_CONTINUOUS_DIALOGUE_PLAN.md
 docs/active/19_P6_PROVIDER_BACKED_LONG_CONTEXT_CHAT_PLAN.md
 ```
 
-P6/P7 实质开发前必须先完成 P6+P7 PRD、目标架构、验收门槛、风险确认和 drawio gap 文档。P8+ 仍必须在各自启动前单独制定规划和验收边界。
+P6-REAL/P7-post 实质执行前必须先完成授权表、目标架构、验收门槛、风险确认和 drawio gap 文档。P8+ 仍必须在各自启动前单独制定规划和验收边界。
 
 ## 4. P4C 候选：人工体验微调
 
@@ -149,9 +153,9 @@ P5 非目标：
 - 不做 ASR/会议平台。
 - 不做 provider-backed 自由智能聊天默认路径。
 
-## 6. P6 当前阶段：外部 provider 受控接入和长程连续对话
+## 6. P6-REAL 当前准备阶段：外部 provider 受控验收
 
-目标：在用户明确确认后，验证真实外部模型调用的产品路径，并把“长程连续对话”作为 P6 的核心体验目标。P6 不承诺真正无限 token，而是通过会话持久化、滚动摘要、上下文快照和检索实现可验收的长程连续聊天。
+目标：在不默认外呼的前提下，准备真实外部模型调用的受控验收路径，并把“长程连续对话”作为真实 provider 质量复验重点。P6 不承诺真正无限 token，而是通过会话持久化、滚动摘要、上下文快照和检索实现可验收的长程连续聊天。
 
 必须具备：
 
@@ -164,17 +168,13 @@ P5 非目标：
 - 长对话上下文不能把全部历史逐字塞进 provider，必须有压缩和来源边界；
 - provider-backed 回复不能绕过 artifact confirmation、questions_to_confirm 或 export preflight。
 
-建议工作包：
+当前文档工作包：
 
 | 工作包 | 目标 | 验收证据 |
 | --- | --- | --- |
-| P6-M0 | 启动审计、Provider Policy Gate、Long Context Manager 和 invocation schema | P6 plan/audit |
-| P6-M1 | 外部调用确认 UX 和模型设置 | 调用前确认截图、默认不外呼 eval |
-| P6-M2 | provider-backed chat adapter | fake provider eval、用户授权后的受控真实 provider 验收记录 |
-| P6-M3 | provider 失败/超时/结构错误恢复 | 自动化和人工截图 |
-| P6-M4 | Tool Safety 与 Artifact/Export Guard 复验 | 普通聊天不写 artifact、blocking export 拦截 |
-| P6-M5 | 日志脱敏、密钥边界和长程上下文管理 | 20-50 轮连续对话、刷新恢复、滚动摘要和 context snapshot 证据 |
-| P6-Freeze | provider-backed 自由智能聊天 opt-in 出门审计 | 调用前确认、脱敏日志、失败降级、本地基线对照、HTML 报告 |
+| P6-REAL-DOC | 真实 provider 外呼执行单和报告模板 | provider/model、调用次数、预算、数据类别、脱敏字段 |
+| P6-REAL-GATE | 真实 provider 小样本验收门槛 | configured/consented/called/failed/fallback 证据定义 |
+| P6-REAL-AUDIT | 防止 fake provider 替代真实 LLM | 审计记录、虚假验收打回条件 |
 
 P6 出门条件：
 
@@ -190,19 +190,18 @@ P6 出门条件：
 docs/active/19_P6_PROVIDER_BACKED_LONG_CONTEXT_CHAT_PLAN.md
 ```
 
-## 7. P7 当前阶段：产品化 Beta
+## 7. P7-post 当前准备阶段：真实资料复验和 Beta 收口
 
-目标：从本地工具走向可被真实用户持续使用的 Beta。
+目标：在 P6/P7 自动化候选基线上，准备 P7-post P5-REAL/P5-Freeze 真实资料复验和 Beta 收口，不默认读取真实资料、不执行不可逆 workspace 操作。
 
 建议能力：
 
 | 工作包 | 目标 | 验收证据 |
 | --- | --- | --- |
-| P7-M0 | Beta 启动审计和产品化边界锁定 | P7 plan/audit |
-| P7-M1 | workspace 管理、历史恢复、导出、备份、清理 dry-run、迁移 dry-run | lifecycle eval、截图 |
-| P7-M2 | 用户数据安全边界、错误追踪、日志脱敏、诊断报告 | diagnostics report、敏感扫描 |
-| P7-M3 | 发布脚本、部署说明、回滚计划、Beta 使用说明和支持流程 | release checklist、support runbook、HTML 报告 |
-| P7-POST | P5-REAL/P5-Freeze 复验 | 用户授权真实资料路径后的脱敏报告和 closure audit |
+| P7POST-DOC | 真实资料路径授权执行单 | 用户明确资料路径、允许展示字段、禁止展示字段 |
+| P7POST-REDaction | 脱敏报告和截图边界 | 联系方式、账号、私密链接、长原文、密钥默认遮蔽 |
+| P7POST-AUDIT | 防止 synthetic personas 替代真实资料 | P5-REAL 未授权时保持未执行 |
+| P7POST-BETA | Beta 收口和不可逆操作边界 | workspace 删除/迁移 apply 仍需高风险确认 |
 
 P7 出门条件：
 

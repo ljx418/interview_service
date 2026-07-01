@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <title>P6-REAL / P7-post 阶段自动化验收报告</title>
+  <style>
+    body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; background:#f6f3ec; color:#17201b; }
+    main { max-width:1160px; margin:0 auto; padding:34px 24px 60px; }
+    h1 { margin:0 0 8px; font-size:30px; }
+    h2 { margin-top:30px; font-size:21px; }
+    .hero,.card { background:#fff; border:1px solid #ded9ca; border-radius:10px; padding:20px; box-shadow:0 12px 34px rgba(36,50,41,.07); }
+    .grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; }
+    .screens { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:14px; }
+    figure { margin:0; border:1px solid #ddd8ca; border-radius:8px; overflow:hidden; background:#fff; }
+    figure.missing { min-height:120px; display:flex; align-items:center; justify-content:center; }
+    img { display:block; width:100%; height:auto; border-bottom:1px solid #ddd8ca; }
+    figcaption { padding:10px 12px; color:#52605a; font-size:13px; }
+    table { width:100%; border-collapse:collapse; background:#fff; }
+    th,td { border:1px solid #ddd8ca; padding:10px; text-align:left; vertical-align:top; }
+    th { background:#eff5ee; }
+    pre { white-space:pre-wrap; word-break:break-word; font-size:12px; }
+    .badge { display:inline-block; padding:4px 9px; border:1px solid rgba(0,0,0,.12); border-radius:999px; font-weight:700; }
+    .warn { border-left:5px solid #b85450; background:#fff7f6; padding:12px 14px; }
+  </style>
+</head>
+<body>
+<main>
+  <section class="hero">
+    <h1>P6-REAL / P7-post 阶段自动化验收报告</h1>
+    <p>P6-REAL 已完成 gate-only 门禁自动化验收；真实 provider 未授权未执行。</p>
+    <p>报告路径：docs/reports/P6_REAL_P7POST_STAGE_ACCEPTANCE_REPORT.html；生成时间：2026-07-01T04:46:39.933022+00:00</p>
+  </section>
+
+  <h2>目标架构与当前实现</h2>
+  <div class="grid">
+    <div class="card"><strong>P6-REAL</strong><p>Provider Consent UI、Provider Policy Gate、Long Context Manager、Provider Adapter、脱敏 Invocation Log。</p></div>
+    <div class="card"><strong>P7-post</strong><p>本轮只执行 synthetic/fixture 复验，不读取真实个人资料，不声明 P5-REAL 通过。</p></div>
+    <div class="card"><strong>Evidence</strong><p>HTML 报告、JSON evidence、PRD 规格检视、敏感信息扫描和阶段审计。</p></div>
+  </div>
+
+  <h2>阶段结论</h2>
+  <table>
+    <tr><th>项目</th><th>状态</th><th>证据</th><th>不得声称</th></tr>
+    <tr><td>P6-REAL gate-only</td><td><span class='badge' style='background:#d5e8d4'>pass</span></td><td>docs/reports/P6_REAL_PROVIDER_ACCEPTANCE_REPORT.html</td><td>不得声称真实 provider 质量已通过</td></tr>
+    <tr><td>P6-REAL real mode</td><td><span class='badge' style='background:#f8cecc'>not-executed</span></td><td>未授权执行</td><td>未授权时不得声称真实外呼已发生</td></tr>
+    <tr><td>P5.5 visual evidence</td><td><span class='badge' style='background:#d5e8d4'>pass</span></td><td>docs/reports/P5_5_CANDIDATE_PROFILE_ACCEPTANCE_REPORT.html；截图目录：docs/reports/evidence/p5_5_candidate_profile</td><td>不得替代真实个人资料复验</td></tr>
+    <tr><td>P7-post synthetic</td><td><span class='badge' style='background:#d5e8d4'>pass</span></td><td>三身份合成资料报告；20 轮对话补证：present / cases=3 / turns=60</td><td>不得替代 P5-REAL 真实资料复验</td></tr>
+    <tr><td>P5-REAL</td><td><span class='badge' style='background:#f8cecc'>not-executed</span></td><td>用户未提供真实资料路径，本轮未读取</td><td>不得声称真实个人资料复验通过</td></tr>
+  </table>
+
+  <h2>用户场景体验路径截图</h2>
+  <p>以下截图来自 Headless Chrome/CDP 自动化路径，覆盖本地 Chatbox 工作台、候选人画像、能力矩阵、项目可信度、岗位短板、source refs 和多视口可读性。</p>
+  <div class="screens"><figure><img src='evidence/p5_5_candidate_profile/p5_5_initial_desktop.png' alt='初始工作台'><figcaption>初始工作台<br><code>docs/reports/evidence/p5_5_candidate_profile/p5_5_initial_desktop.png</code></figcaption></figure>
+<figure><img src='evidence/p5_5_candidate_profile/p5_5_profile_overview.png' alt='画像总览'><figcaption>画像总览<br><code>docs/reports/evidence/p5_5_candidate_profile/p5_5_profile_overview.png</code></figcaption></figure>
+<figure><img src='evidence/p5_5_candidate_profile/p5_5_source_refs.png' alt='Source refs 展开'><figcaption>Source refs 展开<br><code>docs/reports/evidence/p5_5_candidate_profile/p5_5_source_refs.png</code></figcaption></figure>
+<figure><img src='evidence/p5_5_candidate_profile/p5_5_profile_1200.png' alt='1200px'><figcaption>1200px<br><code>docs/reports/evidence/p5_5_candidate_profile/p5_5_profile_1200.png</code></figcaption></figure>
+<figure><img src='evidence/p5_5_candidate_profile/p5_5_profile_1600.png' alt='1600px'><figcaption>1600px<br><code>docs/reports/evidence/p5_5_candidate_profile/p5_5_profile_1600.png</code></figcaption></figure>
+<figure><img src='evidence/p5_5_candidate_profile/p5_5_profile_1920.png' alt='1920px'><figcaption>1920px<br><code>docs/reports/evidence/p5_5_candidate_profile/p5_5_profile_1920.png</code></figcaption></figure>
+<figure><img src='evidence/p5_5_candidate_profile/p5_5_profile_720.png' alt='720px'><figcaption>720px<br><code>docs/reports/evidence/p5_5_candidate_profile/p5_5_profile_720.png</code></figcaption></figure>
+<figure><img src='evidence/p5_5_candidate_profile/p5_5_profile_mobile_390.png' alt='390px mobile'><figcaption>390px mobile<br><code>docs/reports/evidence/p5_5_candidate_profile/p5_5_profile_mobile_390.png</code></figcaption></figure></div>
+
+  <h2>命令结果</h2>
+  <table><tr><th>命令</th><th>本轮结果</th></tr><tr><td><code>.venv/bin/python -m pytest</code></td><td><span class='badge' style='background:#eee'>passed</span></td></tr>
+<tr><td><code>npm --prefix apps/chatbox run build</code></td><td><span class='badge' style='background:#eee'>passed</span></td></tr>
+<tr><td><code>Headless Chrome/CDP P5.5 browser acceptance</code></td><td><span class='badge' style='background:#eee'>passed</span></td></tr>
+<tr><td><code>drawio XML parse</code></td><td><span class='badge' style='background:#eee'>passed</span></td></tr>
+<tr><td><code>sensitive / false-claim scan</code></td><td><span class='badge' style='background:#eee'>passed</span></td></tr></table>
+
+  <h2>P7-post 合成资料证据</h2>
+  <table><tr><th>报告</th><th>状态</th><th>路径</th></tr><tr><td>P5_SYNTHETIC_REALISM_ACCEPTANCE_ops_to_frontend.html</td><td><span class='badge' style='background:#d5e8d4'>pass</span></td><td>/mnt/c/workspace/interview_service/docs/reports/P5_SYNTHETIC_REALISM_ACCEPTANCE_ops_to_frontend.html</td></tr><tr><td>P5_SYNTHETIC_REALISM_ACCEPTANCE_qa_to_fullstack.html</td><td><span class='badge' style='background:#d5e8d4'>pass</span></td><td>/mnt/c/workspace/interview_service/docs/reports/P5_SYNTHETIC_REALISM_ACCEPTANCE_qa_to_fullstack.html</td></tr><tr><td>P5_SYNTHETIC_REALISM_ACCEPTANCE_teacher_to_edtech.html</td><td><span class='badge' style='background:#d5e8d4'>pass</span></td><td>/mnt/c/workspace/interview_service/docs/reports/P5_SYNTHETIC_REALISM_ACCEPTANCE_teacher_to_edtech.html</td></tr></table>
+
+  <h2>P6 Evidence 摘要</h2>
+  <pre>{
+  &quot;mode&quot;: &quot;gate-only&quot;,
+  &quot;generated_at&quot;: &quot;2026-07-01T04:44:16.227022+00:00&quot;,
+  &quot;workspace_id&quot;: &quot;ws_06c58be20b02&quot;,
+  &quot;session_id&quot;: &quot;chat_55a5761728b4&quot;,
+  &quot;authorization&quot;: {
+    &quot;real_provider_authorized&quot;: false,
+    &quot;max_calls&quot;: 3,
+    &quot;allowed_data_classes&quot;: [
+      &quot;recent_messages&quot;,
+      &quot;rolling_summary&quot;,
+      &quot;workspace_summary&quot;,
+      &quot;artifact_summary&quot;
+    ],
+    &quot;report_fields&quot;: [
+      &quot;provider&quot;,
+      &quot;model&quot;,
+      &quot;status&quot;,
+      &quot;duration_ms&quot;,
+      &quot;redaction_summary&quot;,
+      &quot;fallback&quot;
+    ]
+  },
+  &quot;steps&quot;: [
+    {
+      &quot;name&quot;: &quot;default_status&quot;,
+      &quot;status&quot;: &quot;pass&quot;,
+      &quot;evidence&quot;: {
+        &quot;p6_state&quot;: &quot;mock_default&quot;,
+        &quot;provider&quot;: &quot;mock&quot;,
+        &quot;called_in_session&quot;: false
+      }
+    },
+    {
+      &quot;name&quot;: &quot;configured_not_called&quot;,
+      &quot;status&quot;: &quot;pass&quot;,
+      &quot;evidence&quot;: {
+        &quot;configured&quot;: true,
+        &quot;configured_is_called&quot;: false,
+        &quot;called_in_session&quot;: false
+      }
+    },
+    {
+      &quot;name&quot;: &quot;chat_without_consent_fallback&quot;,
+      &quot;status&quot;: &quot;pass&quot;,
+      &quot;evidence&quot;: {
+        &quot;provider_invocation_status&quot;: &quot;consent_required&quot;,
+        &quot;fallback_used&quot;: true,
+        &quot;chat_mode&quot;: &quot;free_local&quot;
+      }
+    },
+    {
+      &quot;name&quot;: &quot;consent_requires_explicit_confirmation&quot;,
+      &quot;status&quot;: &quot;pass&quot;,
+      &quot;evidence&quot;: {
+        &quot;consent_required&quot;: true,
+        &quot;consented&quot;: false
+      }
+    }
+  ],
+  &quot;counts&quot;: {
+    &quot;default_chat_invocations&quot;: 2,
+    &quot;final_chat_invocations&quot;: 3
+  },
+  &quot;final_status&quot;: {
+    &quot;p6_state&quot;: &quot;failed&quot;,
+    &quot;configured&quot;: true,
+    &quot;configured_is_called&quot;: false,
+    &quot;called_in_session&quot;: false,
+    &quot;fallback_used&quot;: true,
+    &quot;last_error&quot;: &quot;CONSENT_REQUIRED&quot;,
+    &quot;api_key_redacted&quot;: true
+  },
+  &quot;latest_invocation&quot;: {
+    &quot;status&quot;: &quot;policy_denied&quot;,
+    &quot;error_code&quot;: &quot;CONSENT_REQUIRED&quot;,
+    &quot;fallback_used&quot;: true,
+    &quot;provider_name&quot;: &quot;openai_compatible&quot;,
+    &quot;model&quot;: &quot;deepseek-chat&quot;
+  },
+  &quot;prd_review&quot;: [
+    {
+      &quot;requirement&quot;: &quot;默认不外呼真实 provider&quot;,
+      &quot;status&quot;: &quot;pass&quot;,
+      &quot;evidence&quot;: &quot;默认 provider=status mock，chat invocation count 为 0。&quot;
+    },
+    {
+      &quot;requirement&quot;: &quot;configured 不等于 called&quot;,
+      &quot;status&quot;: &quot;pass&quot;,
+      &quot;evidence&quot;: &quot;配置 provider 偏好后 configured=true，但 called_in_session=false。&quot;
+    },
+    {
+      &quot;requirement&quot;: &quot;未确认外呼必须 fallback&quot;,
+      &quot;status&quot;: &quot;pass&quot;,
+      &quot;evidence&quot;: &quot;provider_invocation_status=consent_required，fallback_used=true。&quot;
+    },
+    {
+      &quot;requirement&quot;: &quot;报告不得声明真实 LLM 质量通过&quot;,
+      &quot;status&quot;: &quot;pass&quot;,
+      &quot;evidence&quot;: &quot;本报告结论为真实 provider 未执行。&quot;
+    }
+  ],
+  &quot;unverified_scope&quot;: [
+    &quot;未调用 MiniMax、DeepSeek、OpenAI-compatible 或其他真实 provider。&quot;,
+    &quot;未读取真实个人资料。&quot;,
+    &quot;未验证真实 LLM 回复质量。&quot;
+  ]
+}</pre>
+
+  <h2>PRD 规格检视</h2>
+  <table>
+    <tr><th>规格</th><th>结论</th><th>说明</th></tr>
+    <tr><td>真实 provider 仅 opt-in</td><td>通过 gate-only</td><td>未授权时只验证门禁和 fallback，不发生真实外呼。</td></tr>
+    <tr><td>真实资料必须用户授权</td><td>通过边界</td><td>本轮只使用合成资料，不读取真实资料。</td></tr>
+    <tr><td>报告脱敏</td><td>通过</td><td>报告只展示 provider 状态、脱敏摘要和文件级证据。</td></tr>
+    <tr><td>不做虚假验收</td><td>通过</td><td>未执行路径均保持 not-executed。</td></tr>
+    <tr><td>界面证据可读</td><td>通过</td><td>P5.5 报告截图展示 Chatbox、画像面板和 source refs，多视口截图可直接人工复核。</td></tr>
+  </table>
+
+  <h2>代码检视与文档审计摘要</h2>
+  <table>
+    <tr><th>区域</th><th>结论</th></tr>
+    <tr><td>代码检视</td><td>Profile、Provider Gate、Long Context、Workspace dry-run 和报告脚本均有对应 eval 或截图证据；未发现本轮阻塞级问题。</td></tr>
+    <tr><td>文档审计</td><td>active PRD、目标架构、验收门槛和 drawio 均区分自动化候选、待真实验收和后续独立阶段。</td></tr>
+    <tr><td>功能覆盖</td><td>P5.5 画像、P6 fake/gate-only provider、P7 workspace dry-run 具备自动化证据；真实 provider 与真实资料保持未执行。</td></tr>
+  </table>
+
+  <h2>未验证范围</h2>
+  <div class="warn">
+    <ul>
+      <li>未验证真实 MiniMax、DeepSeek、OpenAI-compatible provider 的回复质量。</li>
+      <li>未读取或验收用户真实个人资料路径。</li>
+      <li>未执行 workspace 删除、cleanup apply 或 migration apply。</li>
+      <li>未实现或验收 SaaS、ASR、会议平台、自动投递、MCP/CLI。</li>
+    </ul>
+  </div>
+</main>
+</body>
+</html>

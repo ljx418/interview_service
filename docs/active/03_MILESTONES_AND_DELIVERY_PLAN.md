@@ -1,5 +1,35 @@
 # JobPilot AI P5.5 Candidate Profile 里程碑与交付计划
 
+## 当前文档开发阶段：P6-REAL / P7-post 准入文档
+
+当前阶段只做文档和验收规格开发，不进入前后端代码实现，不调用真实 provider，不读取真实个人资料。目标是让后续真实 provider 验收和真实资料复验具备可直接执行的计划、门槛、授权表和打回条件。
+
+执行顺序：
+
+```text
+REAL-DOC-M0 文档口径修复
+→ P6-REAL-M1 真实 provider 受控验收计划
+→ P6-REAL-M2 真实 provider 小样本验收门槛和报告模板
+→ P7POST-P5REAL-M1 真实资料授权和脱敏复验计划
+→ FINAL-DOC-M1 drawio / 验收门槛 / 审计收口
+```
+
+| 阶段 | 交付物 | 出门条件 |
+| --- | --- | --- |
+| REAL-DOC-M0 | README、PRD、目标架构、roadmap、追踪矩阵状态口径修复 | 不再把 P6/P7 自动化候选写成“待开发”，也不写成真实验收已通过 |
+| P6-REAL-M1 | 受控真实 provider 外呼执行单 | 明确 provider/model、API Key 本地配置、调用次数、数据类别、预算、超时、失败处理和报告展示字段 |
+| P6-REAL-M2 | 真实 provider 小样本验收门槛和脱敏报告模板 | 明确 configured/consented/called/failed/fallback 证据，fake provider transcript 不替代真实 LLM 质量 |
+| P7POST-P5REAL-M1 | 真实资料授权执行单和脱敏复验计划 | 只读取用户指定简历、项目资料、JD 路径；报告默认脱敏，不扫描个人目录 |
+| FINAL-DOC-M1 | drawio、文本镜像、验收门槛、阶段审计 | drawio 不超过 8 页；审计无新增致命或重大规格偏差 |
+
+本阶段高风险打回条件：
+
+- 文档把 fake provider、多身份合成资料、examples 或脱敏 fixture 写成真实 provider / 真实个人资料通过；
+- 文档缺少 API Key、真实资料、外呼次数、预算、报告展示字段的授权边界；
+- 文档允许默认外呼真实 provider 或默认读取用户个人目录；
+- drawio 出现重复、冲突或不可执行的架构实体；
+- 真实 provider、workspace 删除、迁移 apply、ASR、会议平台、自动投递、SaaS 被写成本阶段已执行或可默认执行。
+
 ## P5.5 当前阶段目标
 
 当前阶段已完成 P5.5 自动化开发候选。职业画像与能力评估已从 TODO 级目标推进到可运行、可截图、可回归的本地/mock + examples/synthetic-style workspace 路径。

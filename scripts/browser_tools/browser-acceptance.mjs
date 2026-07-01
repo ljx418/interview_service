@@ -301,6 +301,30 @@ function renderReport({ scenario, results, artifacts, status, error, startedAt, 
   const documentationAudit = (scenario.documentationAudit || [])
     .map((item) => `<tr><td>${html(item.area)}</td><td>${html(item.finding)}</td><td class="${html(item.status || "")}">${html(item.status || "")}</td></tr>`)
     .join("\n");
+  const multiTurnDialogues = (scenario.multiTurnDialogues || [])
+    .map((dialogue) => {
+      const files = (dialogue.source_files || [])
+        .map((file) => `<details><summary>${html(file.label)}：<code>${html(file.path)}</code></summary><p>${html(file.excerpt)}</p></details>`)
+        .join("");
+      const turns = (dialogue.turns || [])
+        .map((turn) => `<tr><td>${html(turn.turn)}</td><td>${html(turn.user)}</td><td>${html(turn.assistant)}</td><td>${html(turn.provider_invocation_status)} / ${html(turn.chat_mode)}</td><td>${html(turn.artifacts_count)}</td></tr>`)
+        .join("\n");
+      return `<article class="dialogue-case">
+        <h3>${html(dialogue.persona)} · ${html(dialogue.target_role)}</h3>
+        <p class="meta">技术背景：${html(dialogue.technical_background)}；provider 路径：${html(dialogue.provider_path)}；真实 provider 调用：${dialogue.real_provider_called ? "是" : "否"}</p>
+        <table><tbody>
+          <tr><th>轮次</th><td>${html(dialogue.turn_count)} 轮用户消息 / ${html(dialogue.message_count)} 条会话消息</td></tr>
+          <tr><th>provider 记录</th><td>${html(dialogue.provider_called_count)} 条 called 记录；recent window=${html(dialogue.recent_count)}；rolling summary covered=${html(dialogue.rolling_summary_covered)}</td></tr>
+          <tr><th>隐私边界</th><td>API Key=${html(dialogue.privacy_boundary?.contains_api_key)}；raw provider response=${html(dialogue.privacy_boundary?.raw_provider_response_included)}；full history=${html(dialogue.privacy_boundary?.full_history_included)}</td></tr>
+          <tr><th>关注点</th><td>${(dialogue.focus || []).map((item) => html(item)).join(" / ")}</td></tr>
+        </tbody></table>
+        <h4>虚拟资料</h4>
+        ${files}
+        <h4>20 轮对话 transcript</h4>
+        <table><thead><tr><th>#</th><th>用户消息</th><th>助手回复</th><th>状态</th><th>产物数</th></tr></thead><tbody>${turns}</tbody></table>
+      </article>`;
+    })
+    .join("\n");
   const unverifiedScope = (scenario.unverifiedScope || []).map((item) => `<li>${html(item)}</li>`).join("");
   const auditOpinion = scenario.auditOpinion ? `<p>${html(scenario.auditOpinion)}</p>` : "";
   return `<!doctype html>
@@ -329,6 +353,11 @@ function renderReport({ scenario, results, artifacts, status, error, startedAt, 
     figure { margin: 0; border: 1px solid #d9e2ec; border-radius: 8px; overflow: hidden; background: #fff; }
     img { display: block; width: 100%; height: auto; border-bottom: 1px solid #d9e2ec; }
     figcaption { padding: 10px 12px; color: #52606d; font-size: 13px; }
+    h3 { margin: 18px 0 8px; font-size: 17px; }
+    h4 { margin: 18px 0 8px; font-size: 15px; color: #334e68; }
+    details { border: 1px solid #d9e2ec; border-radius: 6px; padding: 10px 12px; margin: 8px 0; background: #fbfdff; }
+    details p { margin: 10px 0 0; color: #334e68; }
+    .dialogue-case { border: 1px solid #bcccdc; border-radius: 8px; padding: 14px; margin: 14px 0; background: #fff; }
     pre { white-space: pre-wrap; overflow-wrap: anywhere; background: #fff4f4; color: #7f1d1d; padding: 12px; border-radius: 6px; }
   </style>
 </head>
@@ -370,6 +399,11 @@ function renderReport({ scenario, results, artifacts, status, error, startedAt, 
     <section>
       <h2>文档审计</h2>
       <table><thead><tr><th>区域</th><th>结论</th><th>状态</th></tr></thead><tbody>${documentationAudit || "<tr><td colspan=\"3\">Scenario did not define documentation audit items.</td></tr>"}</tbody></table>
+    </section>
+    <section>
+      <h2>多背景多轮对话补证</h2>
+      <p class="meta">以下 transcript 来自合成资料和 fake provider opt-in 自动化路径，用于证明长程对话、上下文边界、脱敏日志和不同背景覆盖；未覆盖真实 LLM/provider 的回复质量、成本、稳定性或可用性验收。</p>
+      ${multiTurnDialogues || "<p>Scenario did not define multi-turn dialogue evidence.</p>"}
     </section>
     <section>
       <h2>截图证据</h2>

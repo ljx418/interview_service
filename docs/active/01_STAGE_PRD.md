@@ -1,5 +1,54 @@
 # JobPilot AI P5.5 Candidate Profile 阶段 PRD
 
+## -3. 当前文档开发阶段：P6-REAL 与 P7-post P5-REAL 复验准备
+
+当前最新阶段不是新增业务代码开发，而是把 P6-REAL 真实 provider 受控验收和 P7-post P5-REAL 真实资料复验准备成可执行规格。P5.5 Candidate Profile 已完成本地/mock + synthetic-style workspace 自动化候选；P6+P7 已完成本地 Beta 自动化候选；最新 P5.5 报告已包含多身份合成资料与 fake provider opt-in 的 20 轮连续对话证据。该证据只能证明 fake provider、长程对话边界、画像资料引用和报告展示成立，不能证明真实 LLM 回复质量、真实 provider 可用性或真实个人资料路径通过。
+
+当前文档阶段要解决的问题：
+
+```text
+系统已经具备 P5.5 画像和 P6/P7 自动化候选
+但真实 provider 与真实个人资料仍是未执行高风险路径
+如果直接进入验收或产品化，容易把 fake provider、多身份合成资料或本地脱敏 fixture 误写成真实通过
+因此必须先把授权表、数据边界、真实调用证据、脱敏报告和打回条件写成可执行规格
+```
+
+当前文档阶段目标体验：
+
+```text
+用户打开文档和 drawio
+→ 能快速看清哪些能力已完成自动化候选，哪些仍待真实验收
+→ 能看清 P6-REAL 真实 provider 调用前需要确认哪些 provider、模型、数据范围、次数、预算和报告展示字段
+→ 能看清 P7-post P5-REAL 真实资料复验只读取用户指定路径，不扫描个人目录
+→ 能看清 fake provider 多轮对话、synthetic personas 和真实 provider/真实资料之间的证据差异
+→ 后续一旦用户授权，就能按文档直接执行受控验收并生成脱敏 HTML 报告
+```
+
+当前文档阶段必须产出的结果：
+
+- P6-REAL 受控外呼执行单：provider、model、base_url preset、API Key 本地配置、最大调用次数、数据类别、预算、超时、失败处理、报告展示范围；
+- P7-post P5-REAL 资料授权执行单：简历、项目资料、JD 的明确本地路径、允许展示字段、脱敏级别、禁止展示字段和失败打回条件；
+- 文档状态分层：`已实现自动化候选`、`待真实验收`、`后续独立阶段`；
+- drawio 图：不超过 8 页，用颜色表达已完成、当前待验收、高风险需确认和 P8+；
+- 验收门槛：明确 fake provider transcript 不等于真实 provider 质量，synthetic personas 不等于真实个人资料；
+- 审计记录：说明本轮只做文档开发，不触发真实外呼、不读取真实资料、不进入代码实现。
+
+当前文档阶段非目标：
+
+- 不调用 MiniMax、DeepSeek、OpenAI-compatible 或其他真实外部 provider；
+- 不读取真实简历、真实项目资料、真实 JD 或用户个人目录；
+- 不保存、展示、扫描或迁移 API Key；
+- 不做前后端业务代码实现；
+- 不执行 workspace 删除、cleanup apply、migration apply；
+- 不实现 SaaS、ASR、会议平台、自动投递、MCP/CLI。
+
+当前文档阶段出门标准：
+
+- PRD、目标架构、里程碑、验收门槛、追踪矩阵、roadmap、P6 计划和 drawio 对 P6-REAL/P7-post 的状态口径一致；
+- 所有“待开发/待新增/待强化”旧口径被替换为“自动化候选已实现但真实验收待执行”或明确 P8+ 后续；
+- drawio XML 可解析且页数不超过 8；
+- 文档没有把真实 provider、真实个人资料、最终产品化、SaaS/ASR/会议平台/自动投递写成已通过。
+
 ## -2. P5.5 当前阶段状态与决策
 
 P4 本地/mock Chatbox 体验已冻结，P5 本地/mock + 脱敏 fixture 自动化候选已完成，P6+P7 本地 Beta 自动化候选已完成。用户已确认优先对 P5.5 进行细致开发，把“个人专业背景、项目背景、各项能力评估和画像绘制”作为本阶段目标；当前 P5.5 自动化开发候选已完成。
@@ -66,7 +115,7 @@ P5.5 规格约束：
 - P5-REAL/P5-Freeze 在 P7 完成后作为 P7-post 复验重新执行；
 - P6+P7 一体规划和自动化候选已完成并作为后续基线保留；P5-REAL/P5-Freeze 仍需真实资料授权后复验。
 
-本 PRD 的当前有效目标是 P5.5 Candidate Profile。以下 P6+P7 章节作为已完成自动化候选基线和后续复验边界保留；后续 P5 章节作为历史基线和 P7-post 复验依据保留。
+本 PRD 当前新增目标是 P6-REAL 与 P7-post P5-REAL 复验准备。P5.5 Candidate Profile 作为已完成自动化候选保留；以下 P6+P7 章节作为已完成自动化候选基线和后续真实验收边界保留；后续 P5 章节作为历史基线和 P7-post 复验依据保留。
 
 ## -0. P6+P7 自动化候选基线目标
 

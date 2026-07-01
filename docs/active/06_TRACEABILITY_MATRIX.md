@@ -1,5 +1,23 @@
 # JobPilot AI P5.5 Candidate Profile 追踪矩阵
 
+## -3. 当前文档阶段 P6-REAL / P7-post 追踪矩阵
+
+| 当前目标 | 文档 / 实体边界 | 主要文件 / 模块 | 当前证据 | 验收门槛 |
+| --- | --- | --- | --- | --- |
+| 文档状态口径一致 | Active Docs / Drawio | `docs/active/00_README.md`, `01_STAGE_PRD.md`, `02_TARGET_ARCHITECTURE.md`, `03_MILESTONES_AND_DELIVERY_PLAN.md`, `04_ACCEPTANCE_GATES.md`, `17_PRODUCTIZATION_DEVELOPMENT_ROADMAP.md`, drawio | rg 口径检查、drawio XML parse、阶段审计 | 当前阶段文档门槛 A/D |
+| P6-REAL 真实 provider 验收准备 | Provider Consent / Policy / Runtime | `services/api/main.py`, `services/chat/provider_backed.py`, `services/chat/context.py`, `services/llm/`, `19_P6_PROVIDER_BACKED_LONG_CONTEXT_CHAT_PLAN.md` | fake provider 自动化候选、20 轮合成对话证据、真实 provider 待用户确认 | 当前阶段文档门槛 B |
+| P7-post P5-REAL 真实资料复验准备 | Real-data acceptance runner / profile tools | `scripts/generate_p5_real_data_acceptance.py`, `services/profile/candidate.py`, `services/tools/`, P5 stage reviews | 脱敏 fixture / synthetic personas 候选证据；真实资料待用户路径授权 | 当前阶段文档门槛 C |
+| 证据边界不虚假 | Reports / Evidence | `docs/reports/`, `docs/reports/evidence/`, report evals | P5.5 多身份合成资料与 fake provider transcript，只代表自动化候选 | 当前阶段文档门槛 A/B/C |
+| 架构图和审计收口 | Drawio / Stage review | `jobpilot-stage-gap-and-acceptance.drawio`, `jobpilot-stage-gap-and-acceptance.md`, `stage-reviews/P6_REAL_AND_P7POST_DOCUMENTATION_DEVELOPMENT_AUDIT.md` | 6 页 drawio、文本镜像、审计记录 | 当前阶段文档门槛 D |
+
+当前阶段不得用以下证据替代真实验收：
+
+- fake provider transcript 不替代 MiniMax、DeepSeek 或 OpenAI-compatible 真实 provider 质量；
+- synthetic personas、examples、脱敏 fixture 不替代用户真实个人资料路径；
+- workspace lifecycle dry-run 不替代删除、清理 apply 或迁移 apply；
+- provider configured 不替代 provider called；
+- 文档审计不替代代码实现或真实调用结果。
+
 ## -2. P5.5 当前阶段追踪矩阵
 
 | P5.5 目标 | 实现区域 | 主要文件 / 模块 | 证据 | 验收门槛 |
@@ -44,20 +62,20 @@
 | P0-P5 本地基线不退化 | 全路径回归 | `services/`, `apps/chatbox/`, `tests/` | `.venv/bin/python -m pytest`, frontend build | P6+P7 门槛 0 |
 | Provider 默认安全 | Provider status / consent / policy | `services/api/main.py`, provider runtime/policy, `apps/chatbox/src/main.tsx` | 默认不外呼截图、configured/consented/called 状态 eval | P6 门槛 1 |
 | 模型设置和调用前确认 | Chatbox Model Settings / Provider Consent UI | `apps/chatbox/src/main.tsx`, `apps/chatbox/src/styles.css`, provider preferences route | 模型设置、调用前确认、取消确认截图 | P6 门槛 1 |
-| Provider-backed chat | Provider-backed Dialogue Adapter | `services/llm/`, `services/chat/core.py` | fake provider eval、受控真实 provider E2E 记录 | P6 门槛 2 |
+| Provider-backed chat | Provider-backed Dialogue Adapter | `services/llm/`, `services/chat/core.py` | fake provider eval 已有；受控真实 provider E2E 记录待用户确认后生成 | P6 门槛 2 / 当前阶段文档门槛 B |
 | 失败降级 | Local Fallback Dialogue / Error Recovery | `services/chat/core.py`, provider runtime, message UI | timeout/429/schema error 降级截图和测试 | P6 门槛 2 |
-| 长程连续对话 | Long Context Manager | 建议新增 `services/chat/context.py`, chat session storage, message UI | 20-50 轮 eval、rolling summary、refresh recovery 截图 | P6 门槛 3 |
+| 长程连续对话 | Long Context Manager | `services/chat/context.py` 或等价模块、chat session storage、message UI | 20-50 轮 fake provider / synthetic-style eval；真实 provider 上下文质量待验收 | P6 门槛 3 / 当前阶段文档门槛 B |
 | 上下文来源边界 | Context Snapshot / Retrieval | artifact/JD/profile retrieval, workspace snapshot | source refs、summary、context snapshot 报告 | P6 门槛 3 / 5 |
 | Tool Safety | Intent Router / Artifact Guard / Export Guard | `services/chat/core.py`, artifact/export services | 普通聊天不写 artifact、blocking export 拦截测试 | P6 门槛 4 |
 | Provider invocation 脱敏 | Invocation Log / Redaction | tool/provider logs, redaction helpers | configured/called/failed/fallback 脱敏日志、敏感扫描 | P6 门槛 5 |
 | P6 可视化验收 | Browser evidence / HTML report | screenshot scripts, `docs/reports/` | 中文 HTML 报告、多视口真实截图、PRD 规格检视 | P6 门槛 6 |
-| Workspace 生命周期 | Workspace lifecycle service / routes | SQLite workspace、本地文件目录、workspace routes | backup/export/cleanup dry-run/migration dry-run 测试和截图 | P7 门槛 7 |
+| Workspace 生命周期 | Workspace lifecycle service / routes | SQLite workspace、本地文件目录、workspace routes | backup/export/cleanup dry-run/migration dry-run 测试和截图；删除/迁移 apply 未执行 | P7 门槛 7 |
 | 不可逆操作确认 | Cleanup / Migration confirm UI | workspace lifecycle routes, Chatbox UI | 删除/迁移 apply 前确认截图 | P7 门槛 7 |
 | 诊断报告 | Diagnostics service / report generator | diagnostics route, redaction, report scripts | 脱敏诊断报告、敏感扫描 | P7 门槛 8 |
 | 发布部署回滚 | Release docs / scripts / checklist | README、RELEASE_CHECKLIST、scripts | 启动、部署、回滚文档审计 | P7 门槛 8 |
 | Beta 支持流程 | User guide / support runbook | docs active/reports | Beta 使用说明、支持流程、故障排查 | P7 门槛 9 |
 | P7 隐私审计 | Privacy audit | provider/workspace/diagnostics/export/report | 安全隐私审计记录 | P7 门槛 9 |
-| P7-post P5 复验 | P5-REAL acceptance scripts/reports | `scripts/generate_p5_real_data_acceptance.py`, P5 stage reviews | 用户授权路径后的 P5-REAL 报告和 final audit | P7-post 门槛 |
+| P7-post P5 复验 | P5-REAL acceptance scripts/reports | `scripts/generate_p5_real_data_acceptance.py`, P5 stage reviews | 用户授权路径后的 P5-REAL 报告和 final audit 待执行；synthetic personas 只作候选增强 | P7-post 门槛 / 当前阶段文档门槛 C |
 | 文档和 drawio 同步 | Active Docs / Drawio | `docs/active/`, drawio | XML parse、文本镜像、README/TODO sync | P6+P7 门槛 |
 
 ## -0. P6+P7 防止过度计划的边界

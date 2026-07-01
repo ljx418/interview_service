@@ -1,0 +1,737 @@
+[
+  {
+    "slug": "ops_to_frontend",
+    "persona": "周亦然（合成）",
+    "target_role": "Junior Frontend Developer",
+    "technical_background": "运营数据分析和流程自动化转前端工程",
+    "focus": [
+      "React/TypeScript 表达",
+      "运营自动化项目可信度",
+      "本地优先产品经验"
+    ],
+    "workspace_id": "ws_286d6aae2c81",
+    "session_id": "chat_1f1f62ed3f55",
+    "provider_path": "fake provider opt-in",
+    "real_provider_called": false,
+    "turn_count": 20,
+    "message_count": 40,
+    "recent_count": 12,
+    "rolling_summary_covered": 28,
+    "provider_called_count": 20,
+    "privacy_boundary": {
+      "contains_api_key": false,
+      "raw_provider_response_included": false,
+      "full_history_included": false,
+      "redacted": true
+    },
+    "source_files": [
+      {
+        "label": "合成简历",
+        "path": "examples/p5_synthetic_personas/ops_to_frontend/resume.md",
+        "excerpt": "# 合成简历：周亦然\n> 本文件是 JobPilot P5 自动化验收使用的合成资料，不属于真实个人资料。\n## 基本信息\n- 姓名：周亦然（合成）\n- 联系方式：hidden@example.invalid\n- 目标岗位：Junior Frontend Developer\n- 当前背景：3 年运营数据分析和流程自动化经验，过去 10 个月系统学习 React、TypeScript、FastAPI 和自动化测试。\n## 专业背景\n- 在本地生活服务团队负责订单转化漏斗、活动复盘和客服工单指标。\n- 使用 SQL、表格脚本和轻量 Python 自动化整理每周运营报表。\n- 能把业务问题拆成数据口径、流程节点和可验证改进动作。\n## 技术能力\n- React、TypeScript、Vite、HTML/CSS、基础可访问性。\n- Python、FastAPI、SQLite、REST API、pytest。\n- Playwright、Chrome/CDP 截图、Markdown 报告。\n## 项目经历\n### JobPilot Local Materials Workbench\n- 搭建本地优先的求职材料工作台，支持资料导入、JD ..."
+      },
+      {
+        "label": "合成项目资料",
+        "path": "examples/p5_synthetic_personas/ops_to_frontend/project.md",
+        "excerpt": "# 合成项目资料：JobPilot Local Materials Workbench\n> 本文件是 JobPilot P5 自动化验收使用的合成项目资料，不属于真实项目背调材料。\n## 项目目标\n把求职者的简历、项目说明和目标 JD 放入本地 workspace，生成可确认、可编辑、可导出的申请材料。\n## 技术栈\n- React、TypeScript、Vite\n- FastAPI、SQLite\n- pytest、Chrome/CDP、Markdown/DOCX export\n## 个人贡献\n- 设计 Conversation / Workbench / Artifact 三栏工作台。\n- 实现申请包导出前 blocking confirmation 拦截。\n- 编写多视口自动化截图场景和中文 HTML 验收报告。\n- 处理导出失败后的恢复提示，让用户知道需要先确认事实。\n## 可验证证据\n- README、截图报告、pytest 输出、前端 build 输出。\n- source refs 与 questions_to_confirm 保留在 artifact 中。\n## 风险与缺口\n- 文本质量默认使用本地 mock 规..."
+      },
+      {
+        "label": "合成 JD",
+        "path": "examples/p5_synthetic_personas/ops_to_frontend/jd.md",
+        "excerpt": "# 合成 JD：Junior Frontend Developer\n> 本 JD 为合成岗位文本，仅用于 JobPilot P5 自动化验收。\n## Company\nLocalFirst Tools Studio\n## Title\nJunior Frontend Developer\n## Requirements\n- 熟悉 React、TypeScript、HTML/CSS。\n- 能与 FastAPI 或 REST API 协作。\n- 能关注用户体验、状态反馈和响应式布局。\n- 能写基础自动化测试，理解 pytest 或 Playwright。\n## Nice to have\n- 本地优先隐私产品经验。\n- Markdown/DOCX 导出或报告生成经验。\n- 数据看板、运营工具或 AI 应用经验。"
+      }
+    ],
+    "turns": [
+      {
+        "turn": 1,
+        "user": "第 1 轮：我是运营数据分析和流程自动化转前端工程候选人，先讨论目标岗位定位，保持对话，不执行材料任务。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 0
+      },
+      {
+        "turn": 2,
+        "user": "第 2 轮：我是运营数据分析和流程自动化转前端工程候选人，我该优先强调哪一类经历，保持对话，不执行材料任务。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 2
+      },
+      {
+        "turn": 3,
+        "user": "第 3 轮：我是运营数据分析和流程自动化转前端工程候选人，项目可信度最容易被质疑的地方是什么，保持对话。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 4
+      },
+      {
+        "turn": 4,
+        "user": "第 4 轮：我是运营数据分析和流程自动化转前端工程候选人，如何解释转行路径中的连续性，保持对话。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 6
+      },
+      {
+        "turn": 5,
+        "user": "第 5 轮：我是运营数据分析和流程自动化转前端工程候选人，哪些技能可以作为强证据，保持对话。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 8
+      },
+      {
+        "turn": 6,
+        "user": "第 6 轮：我是运营数据分析和流程自动化转前端工程候选人，哪些技能只能算可用或弱证据，保持对话。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 10
+      },
+      {
+        "turn": 7,
+        "user": "第 7 轮：我是运营数据分析和流程自动化转前端工程候选人，简历摘要应该突出什么主线，保持对话。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 12
+      },
+      {
+        "turn": 8,
+        "user": "第 8 轮：我是运营数据分析和流程自动化转前端工程候选人，面向初级岗位时应该降低哪些过度承诺，保持对话。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 12
+      },
+      {
+        "turn": 9,
+        "user": "第 9 轮：我是运营数据分析和流程自动化转前端工程候选人，如何把业务背景翻译成工程贡献，保持对话。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 12
+      },
+      {
+        "turn": 10,
+        "user": "第 10 轮：我是运营数据分析和流程自动化转前端工程候选人，如果面试官追问项目真实性，我应该如何回答，保持对话。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 12
+      },
+      {
+        "turn": 11,
+        "user": "第 11 轮：我是运营数据分析和流程自动化转前端工程候选人，当前资料里哪些地方需要补充截图或 README，保持对话。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 12
+      },
+      {
+        "turn": 12,
+        "user": "第 12 轮：我是运营数据分析和流程自动化转前端工程候选人，如何说明自己不是只会做 demo，保持对话。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 12
+      },
+      {
+        "turn": 13,
+        "user": "第 13 轮：我是运营数据分析和流程自动化转前端工程候选人，如何把测试和验收能力写得更可信，保持对话。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 12
+      },
+      {
+        "turn": 14,
+        "user": "第 14 轮：我是运营数据分析和流程自动化转前端工程候选人，如果岗位要求后端协作，我该怎么表达，保持对话。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 12
+      },
+      {
+        "turn": 15,
+        "user": "第 15 轮：我是运营数据分析和流程自动化转前端工程候选人，怎样说明我能和产品或业务方协作，保持对话。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 12
+      },
+      {
+        "turn": 16,
+        "user": "第 16 轮：我是运营数据分析和流程自动化转前端工程候选人，有什么必须避免写进材料的夸大表述，保持对话。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 12
+      },
+      {
+        "turn": 17,
+        "user": "第 17 轮：我是运营数据分析和流程自动化转前端工程候选人，如果本轮只补一项证据，应该补什么，保持对话。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 12
+      },
+      {
+        "turn": 18,
+        "user": "第 18 轮：我是运营数据分析和流程自动化转前端工程候选人，怎样组织作品集顺序，保持对话。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 12
+      },
+      {
+        "turn": 19,
+        "user": "第 19 轮：我是运营数据分析和流程自动化转前端工程候选人，如何准备一段 90 秒自我介绍，保持对话。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 12
+      },
+      {
+        "turn": 20,
+        "user": "第 20 轮：我是运营数据分析和流程自动化转前端工程候选人，总结一下本次讨论的下一步，不执行材料任务。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 12
+      }
+    ]
+  },
+  {
+    "slug": "qa_to_fullstack",
+    "persona": "林澈（合成）",
+    "target_role": "QA Automation Engineer / Full-stack Assistant",
+    "technical_background": "手工测试转自动化测试和轻量全栈",
+    "focus": [
+      "pytest/Playwright 证据",
+      "缺陷复现能力",
+      "前后端联调表达"
+    ],
+    "workspace_id": "ws_d50cbe59ae27",
+    "session_id": "chat_27aa9fc07a74",
+    "provider_path": "fake provider opt-in",
+    "real_provider_called": false,
+    "turn_count": 20,
+    "message_count": 40,
+    "recent_count": 12,
+    "rolling_summary_covered": 28,
+    "provider_called_count": 20,
+    "privacy_boundary": {
+      "contains_api_key": false,
+      "raw_provider_response_included": false,
+      "full_history_included": false,
+      "redacted": true
+    },
+    "source_files": [
+      {
+        "label": "合成简历",
+        "path": "examples/p5_synthetic_personas/qa_to_fullstack/resume.md",
+        "excerpt": "# 合成简历：林澈\n> 本文件是 JobPilot P5 自动化验收使用的合成资料，不属于真实个人资料。\n## 基本信息\n- 姓名：林澈（合成）\n- 联系方式：hidden@example.invalid\n- 目标岗位：QA Automation Engineer / Full-stack Assistant\n- 当前背景：2 年手工测试和缺陷管理经验，正在转向自动化测试和全栈开发。\n## 专业背景\n- 负责 Web 应用回归测试、缺陷复现、测试用例维护和发布前验收。\n- 熟悉需求评审、边界条件、复现步骤和测试报告。\n- 能把模糊用户反馈转化为可执行的验收场景。\n## 技术能力\n- Python、pytest、Playwright、Chrome DevTools。\n- JavaScript、React、基础 TypeScript。\n- FastAPI、SQLite、REST API、Git。\n## 项目经历\n### Acceptance Evidence Hub\n- 搭建自动化验收证据中心，保存多视口截图、测试结果和 HTML 报告。\n- 编写 Playwright 脚本覆盖登录态、表单输入、错误提示和移动端布局。\n- 与后..."
+      },
+      {
+        "label": "合成项目资料",
+        "path": "examples/p5_synthetic_personas/qa_to_fullstack/project.md",
+        "excerpt": "# 合成项目资料：Acceptance Evidence Hub\n> 本文件是 JobPilot P5 自动化验收使用的合成项目资料，不属于真实项目背调材料。\n## 项目目标\n把浏览器自动化验收过程变成可审计报告，让开发者、测试和产品都能快速看到测试覆盖了哪些真实界面状态。\n## 技术栈\n- Python、pytest\n- Playwright、Chrome DevTools Protocol\n- FastAPI、SQLite\n- Markdown、HTML report\n## 个人贡献\n- 设计截图命名规范和报告结构。\n- 编写多视口截图脚本，覆盖 1440、720、390 三类视口。\n- 增加失败截图、错误堆栈和测试命令摘要。\n- 处理等待条件不稳定导致的 flaky 测试。\n## 可验证证据\n- 自动化测试输出、HTML 报告、失败截图、复现命令。\n- 缺陷记录中保留需求链接和复现步骤。\n## 风险与缺口\n- 需要补充 CI 运行证据。\n- 需要说明哪些测试是本人独立编写，哪些是团队维护。"
+      },
+      {
+        "label": "合成 JD",
+        "path": "examples/p5_synthetic_personas/qa_to_fullstack/jd.md",
+        "excerpt": "# 合成 JD：QA Automation / Full-stack Assistant\n> 本 JD 为合成岗位文本，仅用于 JobPilot P5 自动化验收。\n## Company\nEvidenceOps Lab\n## Title\nQA Automation Engineer / Full-stack Assistant\n## Requirements\n- 熟悉 Python、pytest、Playwright 或类似自动化测试工具。\n- 能阅读前端页面和 REST API，定位测试失败原因。\n- 具备基础 JavaScript、React 或 TypeScript 能力。\n- 能写清晰的测试报告和缺陷复现步骤。\n## Nice to have\n- FastAPI、SQLite 或轻量全栈工具经验。\n- 多视口截图、HTML 报告或 CI 经验。\n- 对产品验收和 PRD 规格检视有理解。"
+      }
+    ],
+    "turns": [
+      {
+        "turn": 1,
+        "user": "第 1 轮：我是手工测试转自动化测试和轻量全栈候选人，先讨论目标岗位定位，保持对话，不执行材料任务。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 0
+      },
+      {
+        "turn": 2,
+        "user": "第 2 轮：我是手工测试转自动化测试和轻量全栈候选人，我该优先强调哪一类经历，保持对话，不执行材料任务。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 2
+      },
+      {
+        "turn": 3,
+        "user": "第 3 轮：我是手工测试转自动化测试和轻量全栈候选人，项目可信度最容易被质疑的地方是什么，保持对话。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 4
+      },
+      {
+        "turn": 4,
+        "user": "第 4 轮：我是手工测试转自动化测试和轻量全栈候选人，如何解释转行路径中的连续性，保持对话。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 6
+      },
+      {
+        "turn": 5,
+        "user": "第 5 轮：我是手工测试转自动化测试和轻量全栈候选人，哪些技能可以作为强证据，保持对话。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 8
+      },
+      {
+        "turn": 6,
+        "user": "第 6 轮：我是手工测试转自动化测试和轻量全栈候选人，哪些技能只能算可用或弱证据，保持对话。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 10
+      },
+      {
+        "turn": 7,
+        "user": "第 7 轮：我是手工测试转自动化测试和轻量全栈候选人，简历摘要应该突出什么主线，保持对话。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 12
+      },
+      {
+        "turn": 8,
+        "user": "第 8 轮：我是手工测试转自动化测试和轻量全栈候选人，面向初级岗位时应该降低哪些过度承诺，保持对话。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 12
+      },
+      {
+        "turn": 9,
+        "user": "第 9 轮：我是手工测试转自动化测试和轻量全栈候选人，如何把业务背景翻译成工程贡献，保持对话。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 12
+      },
+      {
+        "turn": 10,
+        "user": "第 10 轮：我是手工测试转自动化测试和轻量全栈候选人，如果面试官追问项目真实性，我应该如何回答，保持对话。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 12
+      },
+      {
+        "turn": 11,
+        "user": "第 11 轮：我是手工测试转自动化测试和轻量全栈候选人，当前资料里哪些地方需要补充截图或 README，保持对话。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 12
+      },
+      {
+        "turn": 12,
+        "user": "第 12 轮：我是手工测试转自动化测试和轻量全栈候选人，如何说明自己不是只会做 demo，保持对话。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 12
+      },
+      {
+        "turn": 13,
+        "user": "第 13 轮：我是手工测试转自动化测试和轻量全栈候选人，如何把测试和验收能力写得更可信，保持对话。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 12
+      },
+      {
+        "turn": 14,
+        "user": "第 14 轮：我是手工测试转自动化测试和轻量全栈候选人，如果岗位要求后端协作，我该怎么表达，保持对话。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 12
+      },
+      {
+        "turn": 15,
+        "user": "第 15 轮：我是手工测试转自动化测试和轻量全栈候选人，怎样说明我能和产品或业务方协作，保持对话。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 12
+      },
+      {
+        "turn": 16,
+        "user": "第 16 轮：我是手工测试转自动化测试和轻量全栈候选人，有什么必须避免写进材料的夸大表述，保持对话。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 12
+      },
+      {
+        "turn": 17,
+        "user": "第 17 轮：我是手工测试转自动化测试和轻量全栈候选人，如果本轮只补一项证据，应该补什么，保持对话。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 12
+      },
+      {
+        "turn": 18,
+        "user": "第 18 轮：我是手工测试转自动化测试和轻量全栈候选人，怎样组织作品集顺序，保持对话。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 12
+      },
+      {
+        "turn": 19,
+        "user": "第 19 轮：我是手工测试转自动化测试和轻量全栈候选人，如何准备一段 90 秒自我介绍，保持对话。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 12
+      },
+      {
+        "turn": 20,
+        "user": "第 20 轮：我是手工测试转自动化测试和轻量全栈候选人，总结一下本次讨论的下一步，不执行材料任务。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 12
+      }
+    ]
+  },
+  {
+    "slug": "teacher_to_edtech",
+    "persona": "陈若宁（合成）",
+    "target_role": "EdTech Frontend Developer",
+    "technical_background": "数学教师和课程运营转教育科技前端",
+    "focus": [
+      "教育产品信息架构",
+      "ECharts 学习数据可视化",
+      "学生隐私边界"
+    ],
+    "workspace_id": "ws_492def1ef66f",
+    "session_id": "chat_c9db921b5cfc",
+    "provider_path": "fake provider opt-in",
+    "real_provider_called": false,
+    "turn_count": 20,
+    "message_count": 40,
+    "recent_count": 12,
+    "rolling_summary_covered": 28,
+    "provider_called_count": 20,
+    "privacy_boundary": {
+      "contains_api_key": false,
+      "raw_provider_response_included": false,
+      "full_history_included": false,
+      "redacted": true
+    },
+    "source_files": [
+      {
+        "label": "合成简历",
+        "path": "examples/p5_synthetic_personas/teacher_to_edtech/resume.md",
+        "excerpt": "# 合成简历：陈若宁\n> 本文件是 JobPilot P5 自动化验收使用的合成资料，不属于真实个人资料。\n## 基本信息\n- 姓名：陈若宁（合成）\n- 联系方式：hidden@example.invalid\n- 目标岗位：EdTech Frontend Developer\n- 当前背景：4 年数学教学和课程运营经验，正在转向教育科技产品前端开发。\n## 专业背景\n- 负责初高中数学课程设计、学习反馈整理和家校沟通。\n- 熟悉学习路径、练习反馈、错题归因和内容结构化。\n- 通过自学和项目实践掌握 React、TypeScript、数据可视化和基础后端 API。\n## 技术能力\n- React、TypeScript、HTML/CSS、ECharts。\n- Python、FastAPI、SQLite、REST API。\n- 用户故事、课程内容结构化、可访问性基础。\n## 项目经历\n### StudyPath Coach\n- 为学生生成学习路径、错题标签和复习建议。\n- 使用 React 展示学习进度、错题分类和下一步练习。\n- 使用 FastAPI 保存学生合成数据和练习记录。\n- 设计教师端摘要，让老师快速发现高频薄弱点。\n#..."
+      },
+      {
+        "label": "合成项目资料",
+        "path": "examples/p5_synthetic_personas/teacher_to_edtech/project.md",
+        "excerpt": "# 合成项目资料：StudyPath Coach\n> 本文件是 JobPilot P5 自动化验收使用的合成项目资料，不属于真实项目背调材料。\n## 项目目标\n帮助教师根据学生的练习记录生成学习路径、错题标签和下一步复习建议。\n## 技术栈\n- React、TypeScript、ECharts\n- FastAPI、SQLite\n- Markdown content pipeline\n## 个人贡献\n- 设计学习路径卡片和错题分类页面。\n- 使用 ECharts 展示知识点掌握度和近期练习趋势。\n- 编写 FastAPI 接口保存合成练习记录。\n- 将课程讲义整理成 Markdown 知识点结构。\n## 可验证证据\n- 合成学生数据、页面截图、接口说明、Markdown 讲义样例。\n- 不使用真实学生隐私数据。\n## 风险与缺口\n- 需要明确真实学生数据未进入项目。\n- 需要补充工程测试和部署说明。"
+      },
+      {
+        "label": "合成 JD",
+        "path": "examples/p5_synthetic_personas/teacher_to_edtech/jd.md",
+        "excerpt": "# 合成 JD：EdTech Frontend Developer\n> 本 JD 为合成岗位文本，仅用于 JobPilot P5 自动化验收。\n## Company\nLearning Product Studio\n## Title\nEdTech Frontend Developer\n## Requirements\n- 熟悉 React、TypeScript、HTML/CSS。\n- 能把课程、练习、错题和学习反馈组织成清晰界面。\n- 能与 REST API 协作，理解基础数据结构。\n- 关注可访问性、学习体验和信息层级。\n## Nice to have\n- 教育行业、课程运营或教师经验。\n- ECharts、数据可视化或学习分析经验。\n- FastAPI、SQLite 或 Markdown 内容处理经验。"
+      }
+    ],
+    "turns": [
+      {
+        "turn": 1,
+        "user": "第 1 轮：我是数学教师和课程运营转教育科技前端候选人，先讨论目标岗位定位，保持对话，不执行材料任务。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 0
+      },
+      {
+        "turn": 2,
+        "user": "第 2 轮：我是数学教师和课程运营转教育科技前端候选人，我该优先强调哪一类经历，保持对话，不执行材料任务。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 2
+      },
+      {
+        "turn": 3,
+        "user": "第 3 轮：我是数学教师和课程运营转教育科技前端候选人，项目可信度最容易被质疑的地方是什么，保持对话。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 4
+      },
+      {
+        "turn": 4,
+        "user": "第 4 轮：我是数学教师和课程运营转教育科技前端候选人，如何解释转行路径中的连续性，保持对话。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 6
+      },
+      {
+        "turn": 5,
+        "user": "第 5 轮：我是数学教师和课程运营转教育科技前端候选人，哪些技能可以作为强证据，保持对话。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 8
+      },
+      {
+        "turn": 6,
+        "user": "第 6 轮：我是数学教师和课程运营转教育科技前端候选人，哪些技能只能算可用或弱证据，保持对话。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 10
+      },
+      {
+        "turn": 7,
+        "user": "第 7 轮：我是数学教师和课程运营转教育科技前端候选人，简历摘要应该突出什么主线，保持对话。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 12
+      },
+      {
+        "turn": 8,
+        "user": "第 8 轮：我是数学教师和课程运营转教育科技前端候选人，面向初级岗位时应该降低哪些过度承诺，保持对话。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 12
+      },
+      {
+        "turn": 9,
+        "user": "第 9 轮：我是数学教师和课程运营转教育科技前端候选人，如何把业务背景翻译成工程贡献，保持对话。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 12
+      },
+      {
+        "turn": 10,
+        "user": "第 10 轮：我是数学教师和课程运营转教育科技前端候选人，如果面试官追问项目真实性，我应该如何回答，保持对话。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 12
+      },
+      {
+        "turn": 11,
+        "user": "第 11 轮：我是数学教师和课程运营转教育科技前端候选人，当前资料里哪些地方需要补充截图或 README，保持对话。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 12
+      },
+      {
+        "turn": 12,
+        "user": "第 12 轮：我是数学教师和课程运营转教育科技前端候选人，如何说明自己不是只会做 demo，保持对话。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 12
+      },
+      {
+        "turn": 13,
+        "user": "第 13 轮：我是数学教师和课程运营转教育科技前端候选人，如何把测试和验收能力写得更可信，保持对话。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 12
+      },
+      {
+        "turn": 14,
+        "user": "第 14 轮：我是数学教师和课程运营转教育科技前端候选人，如果岗位要求后端协作，我该怎么表达，保持对话。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 12
+      },
+      {
+        "turn": 15,
+        "user": "第 15 轮：我是数学教师和课程运营转教育科技前端候选人，怎样说明我能和产品或业务方协作，保持对话。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 12
+      },
+      {
+        "turn": 16,
+        "user": "第 16 轮：我是数学教师和课程运营转教育科技前端候选人，有什么必须避免写进材料的夸大表述，保持对话。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 12
+      },
+      {
+        "turn": 17,
+        "user": "第 17 轮：我是数学教师和课程运营转教育科技前端候选人，如果本轮只补一项证据，应该补什么，保持对话。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 12
+      },
+      {
+        "turn": 18,
+        "user": "第 18 轮：我是数学教师和课程运营转教育科技前端候选人，怎样组织作品集顺序，保持对话。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 12
+      },
+      {
+        "turn": 19,
+        "user": "第 19 轮：我是数学教师和课程运营转教育科技前端候选人，如何准备一段 90 秒自我介绍，保持对话。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 12
+      },
+      {
+        "turn": 20,
+        "user": "第 20 轮：我是数学教师和课程运营转教育科技前端候选人，总结一下本次讨论的下一步，不执行材料任务。",
+        "assistant": "（Fake provider · deepseek-chat）当前岗位上下文是 Junior Frontend Developer，其中 5 个需要确认。我会基于最近对话、滚动摘要和 workspace 摘要继续回答，不会把这次普通聊天写成产物。如果你要执行解析、生成或导出，请明确发出对应任务。",
+        "chat_mode": "provider_fake",
+        "provider_invocation_status": "called",
+        "fallback_used": false,
+        "artifacts_count": 0,
+        "recent_count": 12
+      }
+    ]
+  }
+]
