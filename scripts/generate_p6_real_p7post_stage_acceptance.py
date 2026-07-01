@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import html
 import json
+import os
 import subprocess
 import sys
 from datetime import datetime, timezone
@@ -62,7 +63,17 @@ def _rel(path: Path, base: Path) -> str:
 
 
 def _href_for_repo_path(path: Path, report_path: Path) -> str:
-    return _rel(path, report_path.parent)
+    resolved = path.resolve()
+    base = report_path.parent.resolve()
+    try:
+        return resolved.relative_to(base).as_posix()
+    except ValueError:
+        pass
+    try:
+        resolved.relative_to(ROOT)
+        return os.path.relpath(resolved, base).replace(os.sep, "/")
+    except ValueError:
+        return resolved.as_posix()
 
 
 def _repo_link(path: Path, report_path: Path, label: str | None = None) -> str:

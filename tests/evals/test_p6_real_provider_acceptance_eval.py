@@ -179,6 +179,8 @@ def test_p6_real_p7post_final_report_summarizes_gate_and_synthetic_boundaries():
     for href in hrefs:
         if href.startswith(("http://", "https://", "mailto:", "#")):
             continue
+        assert not href.startswith("/mnt/"), href
+        assert not re.match(r"^[A-Za-z]:", href), href
         target = (FINAL_REPORT.parent / unquote(href.split("#", 1)[0])).resolve()
         if not target.exists():
             missing_links.append(href)

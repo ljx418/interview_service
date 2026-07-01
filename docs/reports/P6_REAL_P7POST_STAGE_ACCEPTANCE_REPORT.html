@@ -30,15 +30,15 @@
   <section class="hero">
     <h1>P6-REAL / P7-post 阶段自动化验收报告</h1>
     <p>P6-REAL 已完成 gate-only 门禁自动化验收；真实 provider 未授权未执行。</p>
-    <p>报告路径：docs/reports/P6_REAL_P7POST_STAGE_ACCEPTANCE_REPORT.html；生成时间：2026-07-01T06:03:20.026259+00:00</p>
+    <p>报告路径：docs/reports/P6_REAL_P7POST_STAGE_ACCEPTANCE_REPORT.html；生成时间：2026-07-01T06:07:31.592498+00:00</p>
   </section>
 
   <h2>审计对象版本</h2>
   <p>本节把报告绑定到仓库版本。由于报告文件本身会被提交，生成时 HEAD 可能早于包含本报告的最终提交；人工审计时应同时查看最近提交链和仓库最新提交。</p>
   <table><tr><th>项目</th><th>值</th><th>说明</th></tr><tr><td>当前分支</td><td>main</td><td>报告生成时所在 Git 分支。</td></tr>
-<tr><td>生成时 HEAD</td><td>4f9044e</td><td>报告生成时的代码版本；若本报告随后被提交，最新提交以 git log 为准。</td></tr>
+<tr><td>生成时 HEAD</td><td>a3cc659</td><td>报告生成时的代码版本；若本报告随后被提交，最新提交以 git log 为准。</td></tr>
 <tr><td>工作树状态</td><td>dirty: report generated with local changes</td><td>dirty 通常表示报告本身刚生成或补强，需结合后续提交记录审计。</td></tr>
-<tr><td>最近提交链</td><td><code>4f9044e docs: add audit version anchor to stage report</code><br><code>36cde1e docs: add audit flow and residual risk evidence</code><br><code>e13cebf docs: add audit package index to stage report</code><br><code>d37c6fd docs: improve stage audit report completeness</code><br><code>b14f477 test: add stage acceptance audit evidence</code><br><code>b4ff0f9 docs: strengthen P5.5 audit evidence</code></td><td>用于把报告、脚本、测试和证据提交串联起来。</td></tr></table>
+<tr><td>最近提交链</td><td><code>a3cc659 docs: make stage audit links verifiable</code><br><code>4f9044e docs: add audit version anchor to stage report</code><br><code>36cde1e docs: add audit flow and residual risk evidence</code><br><code>e13cebf docs: add audit package index to stage report</code><br><code>d37c6fd docs: improve stage audit report completeness</code><br><code>b14f477 test: add stage acceptance audit evidence</code></td><td>用于把报告、脚本、测试和证据提交串联起来。</td></tr></table>
 
   <h2>审计材料索引</h2>
   <p>本节列出人工审计本阶段自动化开发必须打开的最小材料集合。审计者不需要搜索仓库即可定位主报告、截图、结构化 evidence、生成脚本和防退化 eval。</p>
@@ -49,9 +49,9 @@
 <tr><td>P6-REAL gate-only 报告</td><td><a href='P6_REAL_PROVIDER_ACCEPTANCE_REPORT.html'><code>docs/reports/P6_REAL_PROVIDER_ACCEPTANCE_REPORT.html</code></a></td><td>真实 provider 未授权时的门禁、fallback、configured/called 边界。</td></tr>
 <tr><td>P6-REAL evidence JSON</td><td><a href='evidence/p6_real_provider_acceptance/p6_real_provider_evidence.json'><code>docs/reports/evidence/p6_real_provider_acceptance/p6_real_provider_evidence.json</code></a></td><td>provider gate-only 结构化证据。</td></tr>
 <tr><td>截图目录</td><td><a href='evidence/p5_5_candidate_profile'><code>docs/reports/evidence/p5_5_candidate_profile</code></a></td><td>8 张真实 Chatbox 截图和多轮对话 JSON。</td></tr>
-<tr><td>阶段最终审计</td><td><a href='/mnt/c/workspace/interview_service/docs/active/stage-reviews/P6_REAL_P7POST_FINAL_ACCEPTANCE_AUDIT.md'><code>docs/active/stage-reviews/P6_REAL_P7POST_FINAL_ACCEPTANCE_AUDIT.md</code></a></td><td>命令、结论、PRD 检视和后续触发条件。</td></tr>
-<tr><td>报告生成器</td><td><a href='/mnt/c/workspace/interview_service/scripts/generate_p6_real_p7post_stage_acceptance.py'><code>scripts/generate_p6_real_p7post_stage_acceptance.py</code></a></td><td>生成本报告并执行禁止词自检。</td></tr>
-<tr><td>报告 eval</td><td><a href='/mnt/c/workspace/interview_service/tests/evals/test_p6_real_provider_acceptance_eval.py'><code>tests/evals/test_p6_real_provider_acceptance_eval.py</code></a></td><td>防止报告结构、边界、证据引用退化。</td></tr></table>
+<tr><td>阶段最终审计</td><td><a href='../active/stage-reviews/P6_REAL_P7POST_FINAL_ACCEPTANCE_AUDIT.md'><code>docs/active/stage-reviews/P6_REAL_P7POST_FINAL_ACCEPTANCE_AUDIT.md</code></a></td><td>命令、结论、PRD 检视和后续触发条件。</td></tr>
+<tr><td>报告生成器</td><td><a href='../../scripts/generate_p6_real_p7post_stage_acceptance.py'><code>scripts/generate_p6_real_p7post_stage_acceptance.py</code></a></td><td>生成本报告并执行禁止词自检。</td></tr>
+<tr><td>报告 eval</td><td><a href='../../tests/evals/test_p6_real_provider_acceptance_eval.py'><code>tests/evals/test_p6_real_provider_acceptance_eval.py</code></a></td><td>防止报告结构、边界、证据引用退化。</td></tr></table>
 
   <h2>复现命令</h2>
   <p>以下命令是本轮证据的可复现路径。真实 provider real mode 和真实个人资料复验不在这些命令中，必须另行授权。</p>
