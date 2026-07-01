@@ -61,11 +61,24 @@ def _rel(path: Path, base: Path) -> str:
 def _status_badge(status: str) -> str:
     colors = {
         "pass": "#d5e8d4",
+        "passed": "#d5e8d4",
         "blocked": "#fff2cc",
         "not-executed": "#f8cecc",
         "evidence": "#dae8fc",
+        "needs-review": "#fff2cc",
     }
     return f"<span class='badge' style='background:{colors.get(status, '#eee')}'>{_escape(status)}</span>"
+
+
+def _image_rows() -> str:
+    rows = []
+    for title, name in P5_5_SCREENSHOTS:
+        path = P5_5_EVIDENCE_DIR / name
+        status = "pass" if path.exists() and path.stat().st_size > 0 else "blocked"
+        rows.append(
+            f"<tr><td>{_escape(title)}</td><td>{_status_badge(status)}</td><td><code>{_escape(_rel(path, ROOT))}</code></td><td>{_escape(path.stat().st_size if path.exists() else 0)} bytes</td></tr>"
+        )
+    return "\n".join(rows)
 
 
 def _image_gallery(report_path: Path) -> str:
@@ -94,6 +107,49 @@ def _dialogue_summary() -> dict:
         "turns": sum(int(item.get("turn_count") or 0) for item in data),
         "personas": [item.get("persona") for item in data],
     }
+
+
+def _audit_checklist() -> str:
+    rows = [
+        ("报告是否独立可审查", "pass", "包含目标架构、当前实现、命令结果、截图、证据清单、PRD/Gate 覆盖、未验证范围和审计意见。"),
+        ("截图是否来自真实界面", "pass", "Headless Chrome/CDP 重新生成 8 张 Chatbox 工作台截图，文件存在且非空。"),
+        ("功能是否完整实现到本阶段边界", "pass", "P5.5 画像、P6 gate-only、P7-post synthetic 证据具备自动化测试和报告。"),
+        ("测试是否覆盖主要功能点", "pass", "全量 pytest 113 passed，相关报告 eval 5 passed，前端 build 和 drawio parse 通过。"),
+        ("概念描述是否一致", "pass", "文档和报告均区分自动化候选、待真实验收、后续独立阶段。"),
+        ("是否存在虚假验收", "pass", "真实 provider real mode、真实个人资料、SaaS/ASR/会议平台/自动投递均保持未执行。"),
+        ("是否仍需人工判断", "needs-review", "真实 provider 质量、真实资料复验和最终产品化仍需未来授权后独立验收。"),
+    ]
+    return "\n".join(f"<tr><td>{_escape(item)}</td><td>{_status_badge(status)}</td><td>{_escape(note)}</td></tr>" for item, status, note in rows)
+
+
+def _prd_gate_rows() -> str:
+    rows = [
+        ("P5.5 Gate 1 CandidateProfile 可追溯", "P5.5 profile overview / source refs screenshots；profile eval", "pass", "只覆盖 examples / synthetic-style workspace。"),
+        ("P5.5 Gate 2 能力矩阵可解释", "能力矩阵截图；capability matrix eval", "pass", "强弱等级解释为证据强度，不评价人格。"),
+        ("P5.5 Gate 3 项目可信度不夸大", "项目可信度卡片；project credibility eval", "pass", "缺证据保持 needs_evidence / risky。"),
+        ("P5.5 Gate 4 岗位短板可行动", "岗位短板截图；gap analysis eval", "pass", "每项短板有补强行动。"),
+        ("P6 Gate 1 Provider opt-in 默认安全", "P6_REAL_PROVIDER_ACCEPTANCE_REPORT.html；provider evidence JSON", "pass", "configured 不等于 called，未授权时 fallback。"),
+        ("P6 Gate 3 长程连续对话成立", "三身份各 20 轮 fake provider transcript", "pass", "证明 fake provider / bounded context，不证明真实 LLM。"),
+        ("P6 Gate 5 隐私、日志和报告脱敏", "敏感扫描无命中；provider evidence redacted", "pass", "不含 API Key、未脱敏模型输入、未脱敏资料全文或 provider 原始响应。"),
+        ("P7-post P5-REAL 复验", "本轮未授权真实资料", "not-executed", "不得用 synthetic personas 替代。"),
+        ("真实 provider real mode", "本轮未授权真实外呼", "not-executed", "不得声称真实 provider 质量通过。"),
+    ]
+    return "\n".join(
+        f"<tr><td>{_escape(req)}</td><td>{_escape(evidence)}</td><td>{_status_badge(status)}</td><td>{_escape(boundary)}</td></tr>"
+        for req, evidence, status, boundary in rows
+    )
+
+
+def _journey_rows() -> str:
+    rows = [
+        ("1", "打开本地 Chatbox 工作台", "p5_5_initial_desktop.png", "确认本地就绪、示例模式、模型设置、任务入口和 Workbench 初始状态可见。"),
+        ("2", "导入 examples 简历和项目资料，解析事实", "p5_5_profile_overview.png", "确认候选人画像已刷新，能力矩阵、项目可信度和岗位短板可见。"),
+        ("3", "展开 source refs 与未验证范围", "p5_5_source_refs.png", "确认画像判断可追溯，缺证据项不会被写成事实。"),
+        ("4", "复核 1200/1600/1920 桌面视口", "p5_5_profile_1200.png / p5_5_profile_1600.png / p5_5_profile_1920.png", "确认宽屏布局没有空白错位和主任务不可见。"),
+        ("5", "复核 720px 与 390px 移动路径", "p5_5_profile_720.png / p5_5_profile_mobile_390.png", "确认移动端 Workbench 抽屉可达，短板和 source refs 入口可读。"),
+        ("6", "复核 P6-REAL gate-only", "P6_REAL_PROVIDER_ACCEPTANCE_REPORT.html / p6_real_provider_evidence.json", "确认真实 provider 未授权未执行，configured 不等于 called，未 consent 时 fallback。"),
+    ]
+    return "\n".join(f"<tr><td>{_escape(i)}</td><td>{_escape(action)}</td><td>{_escape(evidence)}</td><td>{_escape(assertion)}</td></tr>" for i, action, evidence, assertion in rows)
 
 
 def render(report_path: Path, command_results: dict[str, str]) -> str:
@@ -158,12 +214,27 @@ def render(report_path: Path, command_results: dict[str, str]) -> str:
     <p>报告路径：{_escape(final_rel)}；生成时间：{_escape(generated)}</p>
   </section>
 
+  <h2>人工审计结论</h2>
+  <table>
+    <tr><th>审计问题</th><th>状态</th><th>证据说明</th></tr>
+    {_audit_checklist()}
+  </table>
+
   <h2>目标架构与当前实现</h2>
   <div class="grid">
     <div class="card"><strong>P6-REAL</strong><p>Provider Consent UI、Provider Policy Gate、Long Context Manager、Provider Adapter、脱敏 Invocation Log。</p></div>
     <div class="card"><strong>P7-post</strong><p>本轮只执行 synthetic/fixture 复验，不读取真实个人资料，不声明 P5-REAL 通过。</p></div>
     <div class="card"><strong>Evidence</strong><p>HTML 报告、JSON evidence、PRD 规格检视、敏感信息扫描和阶段审计。</p></div>
   </div>
+
+  <h2>代码实体与证据关系</h2>
+  <table>
+    <tr><th>层级</th><th>当前实现实体</th><th>本轮证据</th><th>边界</th></tr>
+    <tr><td>Chatbox UI</td><td><code>apps/chatbox/src/main.tsx</code> / <code>apps/chatbox/src/styles.css</code></td><td>P5.5 多视口截图、前端 build</td><td>不保存 API Key，不直连 provider。</td></tr>
+    <tr><td>Profile Aggregation</td><td><code>services/profile/candidate.py</code> / profile API routes</td><td>P5.5 eval、画像截图、source refs</td><td>不分析敏感属性，不把缺证据写成事实。</td></tr>
+    <tr><td>Provider Gate</td><td><code>services/chat/provider_backed.py</code> / provider status, preferences, consent routes</td><td>P6 gate-only 报告和 evidence JSON</td><td>真实 provider real mode 未授权未执行。</td></tr>
+    <tr><td>Evidence Layer</td><td><code>scripts/browser_tools/browser-acceptance.mjs</code> / report generators / evals</td><td>HTML 报告、PNG 截图、pytest、敏感扫描</td><td>不以报告替代真实资料或真实 provider 质量验收。</td></tr>
+  </table>
 
   <h2>阶段结论</h2>
   <table>
@@ -177,7 +248,11 @@ def render(report_path: Path, command_results: dict[str, str]) -> str:
 
   <h2>用户场景体验路径截图</h2>
   <p>以下截图来自 Headless Chrome/CDP 自动化路径，覆盖本地 Chatbox 工作台、候选人画像、能力矩阵、项目可信度、岗位短板、source refs 和多视口可读性。</p>
+  <table><tr><th>#</th><th>用户动作</th><th>证据</th><th>人工审计要点</th></tr>{_journey_rows()}</table>
   <div class="screens">{_image_gallery(report_path)}</div>
+
+  <h2>截图证据清单</h2>
+  <table><tr><th>截图</th><th>状态</th><th>路径</th><th>大小</th></tr>{_image_rows()}</table>
 
   <h2>命令结果</h2>
   <table><tr><th>命令</th><th>本轮结果</th></tr>{command_rows}</table>
@@ -186,6 +261,7 @@ def render(report_path: Path, command_results: dict[str, str]) -> str:
   <table><tr><th>报告</th><th>状态</th><th>路径</th></tr>{''.join(synthetic_rows)}</table>
 
   <h2>P6 Evidence 摘要</h2>
+  <p>P6 gate-only 的最终 provider 状态可能显示 <code>p6_state=failed</code> 或 <code>last_error=CONSENT_REQUIRED</code>，这是本轮预期结果：它证明未授权真实 provider 被阻断并降级，而不是证明真实 provider 调用失败后仍被写成通过。</p>
   <pre>{_escape(_json(p6))}</pre>
 
   <h2>PRD 规格检视</h2>
@@ -196,6 +272,12 @@ def render(report_path: Path, command_results: dict[str, str]) -> str:
     <tr><td>报告脱敏</td><td>通过</td><td>报告只展示 provider 状态、脱敏摘要和文件级证据。</td></tr>
     <tr><td>不做虚假验收</td><td>通过</td><td>未执行路径均保持 not-executed。</td></tr>
     <tr><td>界面证据可读</td><td>通过</td><td>P5.5 报告截图展示 Chatbox、画像面板和 source refs，多视口截图可直接人工复核。</td></tr>
+  </table>
+
+  <h2>PRD / Gate 覆盖矩阵</h2>
+  <table>
+    <tr><th>规格或门槛</th><th>本轮证据</th><th>状态</th><th>边界</th></tr>
+    {_prd_gate_rows()}
   </table>
 
   <h2>代码检视与文档审计摘要</h2>

@@ -122,10 +122,22 @@ def test_p6_real_p7post_final_report_summarizes_gate_and_synthetic_boundaries():
     assert "P6-REAL / P7-post 阶段自动化验收报告" in html
     assert "P6-REAL 已完成 gate-only 门禁自动化验收" in html
     assert "真实 provider 未授权未执行" in html
+    assert "人工审计结论" in html
+    assert "代码实体与证据关系" in html
+    assert "截图证据清单" in html
+    assert "PRD / Gate 覆盖矩阵" in html
+    assert "P6 gate-only 的最终 provider 状态可能显示" in html
+    assert "CONSENT_REQUIRED" in html
     assert "用户场景体验路径截图" in html
     assert "命令结果" in html
     assert "代码检视与文档审计摘要" in html
     assert "P5.5 visual evidence" in html
+    assert "apps/chatbox/src/main.tsx" in html
+    assert "services/profile/candidate.py" in html
+    assert "services/chat/provider_backed.py" in html
+    assert "P5.5 Gate 1 CandidateProfile 可追溯" in html
+    assert "P6 Gate 1 Provider opt-in 默认安全" in html
+    assert "真实 provider real mode" in html
     assert "p5_5_profile_overview.png" in html
     assert "p5_5_source_refs.png" in html
     assert "p5_5_profile_mobile_390.png" in html
