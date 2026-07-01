@@ -152,6 +152,44 @@ def _journey_rows() -> str:
     return "\n".join(f"<tr><td>{_escape(i)}</td><td>{_escape(action)}</td><td>{_escape(evidence)}</td><td>{_escape(assertion)}</td></tr>" for i, action, evidence, assertion in rows)
 
 
+def _audit_package_rows() -> str:
+    rows = [
+        ("主审计报告", "docs/reports/P6_REAL_P7POST_STAGE_ACCEPTANCE_REPORT.html", "本页，阶段性自动化开发总审计入口。"),
+        ("P5.5 可视化报告", "docs/reports/P5_5_CANDIDATE_PROFILE_ACCEPTANCE_REPORT.html", "候选人画像、截图、多背景 20 轮对话 transcript。"),
+        ("P6-REAL gate-only 报告", "docs/reports/P6_REAL_PROVIDER_ACCEPTANCE_REPORT.html", "真实 provider 未授权时的门禁、fallback、configured/called 边界。"),
+        ("P6-REAL evidence JSON", "docs/reports/evidence/p6_real_provider_acceptance/p6_real_provider_evidence.json", "provider gate-only 结构化证据。"),
+        ("截图目录", "docs/reports/evidence/p5_5_candidate_profile/", "8 张真实 Chatbox 截图和多轮对话 JSON。"),
+        ("阶段最终审计", "docs/active/stage-reviews/P6_REAL_P7POST_FINAL_ACCEPTANCE_AUDIT.md", "命令、结论、PRD 检视和后续触发条件。"),
+        ("报告生成器", "scripts/generate_p6_real_p7post_stage_acceptance.py", "生成本报告并执行禁止词自检。"),
+        ("报告 eval", "tests/evals/test_p6_real_provider_acceptance_eval.py", "防止报告结构、边界、证据引用退化。"),
+    ]
+    return "\n".join(f"<tr><td>{_escape(name)}</td><td><code>{_escape(path)}</code></td><td>{_escape(note)}</td></tr>" for name, path, note in rows)
+
+
+def _reproduction_rows() -> str:
+    rows = [
+        ("生成 P5.5 场景和对话证据", "JOBPILOT_LLM_PROVIDER=mock .venv/bin/python scripts/generate_p5_5_candidate_profile_acceptance.py"),
+        ("运行 Headless Chrome 截图验收", "node scripts/browser_tools/browser-acceptance.mjs --start-chrome --scenario .tmp/p5-5-candidate-profile.scenario.json --output-dir docs/reports/evidence/p5_5_candidate_profile --report docs/reports/P5_5_CANDIDATE_PROFILE_ACCEPTANCE_REPORT.html --port 9235"),
+        ("生成 P6-REAL gate-only 报告", ".venv/bin/python scripts/generate_p6_real_provider_acceptance.py --mode gate-only"),
+        ("生成本阶段汇总报告", ".venv/bin/python scripts/generate_p6_real_p7post_stage_acceptance.py --pytest-result passed --build-result passed --browser-result passed --drawio-result passed --scan-result passed"),
+        ("相关报告 eval", ".venv/bin/python -m pytest tests/evals/test_p5_5_acceptance_report_eval.py tests/evals/test_p6_real_provider_acceptance_eval.py -q"),
+        ("全量回归", ".venv/bin/python -m pytest"),
+        ("前端构建", "npm --prefix apps/chatbox run build"),
+        ("drawio 解析", "python3 - <<'PY' ... ET.parse('docs/active/jobpilot-stage-gap-and-acceptance.drawio') ... PY"),
+    ]
+    return "\n".join(f"<tr><td>{_escape(name)}</td><td><code>{_escape(command)}</code></td></tr>" for name, command in rows)
+
+
+def _change_scope_rows() -> str:
+    rows = [
+        ("阶段设计文档", "docs/active/*.md、docs/active/stage-reviews/*.md、drawio 文本镜像和 drawio 文件", "同步 P6-REAL / P7-post 状态口径、出门条件和验收门槛。"),
+        ("自动化报告和证据", "docs/reports/*.html、docs/reports/evidence/*", "可视化截图、对话 transcript、provider gate-only evidence。"),
+        ("报告生成脚本", "scripts/generate_p5_5_candidate_profile_acceptance.py、scripts/generate_p6_real_*.py、browser-acceptance.mjs", "生成截图报告、阶段汇总和 gate-only provider 证据。"),
+        ("自动化测试", "tests/evals/test_p5_5_acceptance_report_eval.py、tests/evals/test_p6_real_provider_acceptance_eval.py", "锁定报告结构、截图、边界声明和敏感扫描。"),
+    ]
+    return "\n".join(f"<tr><td>{_escape(area)}</td><td>{_escape(files)}</td><td>{_escape(reason)}</td></tr>" for area, files, reason in rows)
+
+
 def render(report_path: Path, command_results: dict[str, str]) -> str:
     p6 = _read_json(P6_EVIDENCE)
     dialogue = _dialogue_summary()
@@ -213,6 +251,17 @@ def render(report_path: Path, command_results: dict[str, str]) -> str:
     <p>{_escape(conclusion)}</p>
     <p>报告路径：{_escape(final_rel)}；生成时间：{_escape(generated)}</p>
   </section>
+
+  <h2>审计材料索引</h2>
+  <p>本节列出人工审计本阶段自动化开发必须打开的最小材料集合。审计者不需要搜索仓库即可定位主报告、截图、结构化 evidence、生成脚本和防退化 eval。</p>
+  <table><tr><th>材料</th><th>路径</th><th>用途</th></tr>{_audit_package_rows()}</table>
+
+  <h2>复现命令</h2>
+  <p>以下命令是本轮证据的可复现路径。真实 provider real mode 和真实个人资料复验不在这些命令中，必须另行授权。</p>
+  <table><tr><th>目的</th><th>命令</th></tr>{_reproduction_rows()}</table>
+
+  <h2>本阶段变更范围</h2>
+  <table><tr><th>范围</th><th>文件类别</th><th>审计原因</th></tr>{_change_scope_rows()}</table>
 
   <h2>人工审计结论</h2>
   <table>
