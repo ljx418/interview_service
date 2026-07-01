@@ -722,6 +722,243 @@ input:disabled {
   font-size: 13px;
 }
 
+.p8-workflow-strip {
+  display: grid;
+  grid-template-columns: minmax(220px, 1.05fr) minmax(260px, 1.1fr) minmax(260px, 1fr);
+  gap: 12px;
+  flex-shrink: 0;
+  border-bottom: 1px solid #e3e9e5;
+  background: linear-gradient(180deg, #fbfdfc 0%, #f5f8f6 100%);
+  padding: 14px 24px;
+}
+
+.p8-panel {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  min-width: 0;
+  border: 1px solid #d7e2dd;
+  border-radius: 12px;
+  background: #ffffff;
+  padding: 12px;
+  box-shadow: 0 8px 18px rgb(17 27 24 / 0.04);
+}
+
+.p8-panel-title {
+  display: grid;
+  gap: 3px;
+}
+
+.p8-panel-title.inline {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.p8-panel-title h3 {
+  color: var(--text-main);
+  font-size: 15px;
+  line-height: 1.25;
+}
+
+.p8-panel-title p,
+.p8-empty,
+.resume-generation-plane p {
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.material-card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.material-card {
+  display: grid;
+  gap: 4px;
+  min-height: 82px;
+  border: 1px solid #dce5df;
+  border-radius: 10px;
+  background: #fbfdfc;
+  padding: 9px;
+  cursor: pointer;
+}
+
+.material-card:hover {
+  border-color: #99c9bb;
+  background: var(--primary-soft);
+}
+
+.material-card input {
+  display: none;
+}
+
+.material-card strong {
+  color: var(--text-main);
+  font-size: 12px;
+}
+
+.material-card span,
+.material-card small {
+  color: var(--text-muted);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.material-card small {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.jd-intake-center textarea,
+.jd-meta-grid input {
+  width: 100%;
+  border: 1px solid #d7e0da;
+  border-radius: 10px;
+  background: #f8fbf9;
+  color: var(--text-main);
+  padding: 9px 10px;
+}
+
+.jd-intake-center textarea {
+  min-height: 104px;
+  resize: vertical;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.jd-meta-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: 8px;
+}
+
+.jd-meta-grid input:nth-child(3) {
+  grid-column: 1 / -1;
+}
+
+.jd-meta-grid button {
+  grid-column: 1 / -1;
+}
+
+.job-list-grid {
+  display: grid;
+  gap: 8px;
+}
+
+.job-target-card {
+  display: grid;
+  gap: 7px;
+  border: 1px solid #dde5df;
+  border-radius: 10px;
+  background: #fbfdfc;
+  padding: 10px;
+}
+
+.job-target-card.is-current {
+  border-color: #91c7b8;
+  background: #f0faf6;
+}
+
+.job-card-topline {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.job-card-topline strong {
+  color: var(--text-main);
+  font-size: 13px;
+}
+
+.job-card-topline span,
+.resume-preflight {
+  flex: 0 0 auto;
+  border-radius: 999px;
+  padding: 2px 7px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.job-card-topline span {
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+
+.job-target-card p,
+.job-target-card small {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.job-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.job-chip-row span {
+  border: 1px solid #d7e2dc;
+  border-radius: 999px;
+  background: #ffffff;
+  color: var(--text-muted);
+  padding: 2px 7px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.job-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.resume-generation-plane {
+  grid-column: 1 / -1;
+  border-color: #c9dacd;
+  background: linear-gradient(180deg, #f7fcf8 0%, #ffffff 90%);
+}
+
+.resume-preflight.ok {
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+.resume-preflight.warning {
+  background: var(--warning-bg);
+  color: var(--warning);
+}
+
+.resume-proof-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.resume-proof-grid span {
+  display: grid;
+  gap: 2px;
+  border: 1px solid #dce7e1;
+  border-radius: 10px;
+  background: #ffffff;
+  padding: 8px;
+}
+
+.resume-proof-grid strong {
+  color: var(--text-main);
+  font-size: 13px;
+}
+
+.resume-proof-grid small {
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 700;
+}
+
 .timeline {
   flex: 1;
   overflow-y: auto;
@@ -2033,6 +2270,15 @@ input:disabled {
   .composer-inner {
     max-width: 760px;
   }
+
+  .p8-workflow-strip {
+    grid-template-columns: 1fr;
+    padding: 12px 18px;
+  }
+
+  .resume-generation-plane {
+    grid-column: auto;
+  }
 }
 
 @media (max-width: 768px) {
@@ -2123,6 +2369,21 @@ input:disabled {
     min-height: 118px;
     overflow: visible;
     padding: 16px;
+  }
+
+  .p8-workflow-strip {
+    padding: 12px 16px;
+  }
+
+  .material-card-grid,
+  .jd-meta-grid,
+  .resume-proof-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .jd-meta-grid input:nth-child(3),
+  .jd-meta-grid button {
+    grid-column: auto;
   }
 
   .timeline-content {
@@ -2304,6 +2565,17 @@ input:disabled {
   .composer-quick-actions {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 8px;
+  }
+
+  .p8-panel-title.inline,
+  .job-card-topline {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .job-card-actions {
+    display: grid;
+    grid-template-columns: 1fr;
   }
 
   .composer-quick-actions button,

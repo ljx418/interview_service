@@ -82,6 +82,10 @@ class KeywordChatCore:
     def _looks_like_package_request(self, text: str, lower: str) -> bool:
         return "申请包" in text or "package" in lower
 
+    def _looks_like_resume_request(self, text: str, lower: str) -> bool:
+        markers = ["生成简历", "定制简历", "简历草稿", "resume", "cv"]
+        return any(marker in text or marker in lower for marker in markers)
+
     def _declines_execution(self, lower: str) -> bool:
         markers = [
             "先别生成",
@@ -110,7 +114,15 @@ class KeywordChatCore:
 
     def _workspace_snapshot(self, workspace_id: str) -> dict:
         conn, _ = workspace_conn(workspace_id)
-        latest_job = conn.execute("SELECT id, title, company FROM job WHERE workspace_id=? ORDER BY created_at DESC LIMIT 1", (workspace_id,)).fetchone()
+        latest_job = conn.execute(
+            """
+            SELECT id, title, company FROM job
+            WHERE workspace_id=?
+            ORDER BY is_current_target DESC, created_at DESC
+            LIMIT 1
+            """,
+            (workspace_id,),
+        ).fetchone()
         latest_package = conn.execute("SELECT id FROM application_package WHERE workspace_id=? ORDER BY created_at DESC LIMIT 1", (workspace_id,)).fetchone()
         artifacts = jobpilot.list_artifacts(workspace_id)
         pending = [artifact for artifact in artifacts if artifact.get("status") == "needs_confirmation"]
@@ -189,9 +201,35 @@ class KeywordChatCore:
         jobpilot.append_chat_message(conn, session_id, "user", text)
         if self._declines_execution(lower):
             return self._free_chat_reply(workspace_id, session_id, text)
+        if self._looks_like_resume_request(text, lower):
+            conn, _ = workspace_conn(workspace_id)
+            job = conn.execute(
+                """
+                SELECT id FROM job
+                WHERE workspace_id=?
+                ORDER BY is_current_target DESC, created_at DESC
+                LIMIT 1
+                """,
+                (workspace_id,),
+            ).fetchone()
+            if job:
+                resume = jobpilot.generate_resume(workspace_id, job["id"])
+                jobpilot.append_chat_message(conn, session_id, "assistant", "JD 定制简历草稿已生成，请先检查 source refs 和待确认项。", [resume.get("artifact_ref")])
+                return {"message": "JD 定制简历草稿已生成，请先检查 source refs 和待确认项。", "artifacts": [{"type": "application_package", "data": resume}]}
+            assistant = "请先手动导入或粘贴一个目标 JD，我才能生成 JD 定制简历。"
+            jobpilot.append_chat_message(conn, session_id, "assistant", assistant)
+            return {"message": assistant, "artifacts": []}
         if self._looks_like_package_request(text, lower):
             conn, _ = workspace_conn(workspace_id)
-            job = conn.execute("SELECT id FROM job WHERE workspace_id=? ORDER BY created_at DESC LIMIT 1", (workspace_id,)).fetchone()
+            job = conn.execute(
+                """
+                SELECT id FROM job
+                WHERE workspace_id=?
+                ORDER BY is_current_target DESC, created_at DESC
+                LIMIT 1
+                """,
+                (workspace_id,),
+            ).fetchone()
             if job:
                 package = jobpilot.create_application_package(workspace_id, job["id"])
                 jobpilot.append_chat_message(conn, session_id, "assistant", "申请包已生成，请先确认事实再导出。", [package.get("artifact_ref")])
@@ -201,7 +239,7 @@ class KeywordChatCore:
                 jobpilot.append_chat_message(conn, session_id, "assistant", assistant)
                 return {"message": assistant, "artifacts": []}
         if self._looks_like_job_description(text, lower):
-            parsed = jobpilot.parse_jd(workspace_id, text)
+            parsed = jobpilot.parse_jd(workspace_id, text, import_method="chat_paste", set_current_target=True)
             matched = jobpilot.match_profile(workspace_id, parsed["job_id"])
             artifacts = [{"type": "job", "data": parsed}, {"type": "match_report", "data": matched}]
             jobpilot.append_chat_message(conn, session_id, "assistant", "我已解析岗位并生成适合度分析。", [parsed.get("artifact_ref"), matched.get("artifact_ref")])

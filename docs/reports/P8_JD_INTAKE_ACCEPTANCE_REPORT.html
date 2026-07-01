@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>P8-JD Intake 与定制简历自动化验收报告 - Browser Acceptance Report</title>
+  <style>
+    body { margin: 0; font: 15px/1.55 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #1f2933; background: #f6f8fb; }
+    header, main { max-width: 1120px; margin: 0 auto; padding: 28px; }
+    header { padding-top: 36px; }
+    h1 { margin: 0 0 10px; font-size: 30px; letter-spacing: 0; }
+    h2 { margin: 28px 0 12px; font-size: 19px; }
+    .meta { color: #52606d; }
+    .badge { display: inline-block; padding: 5px 10px; border-radius: 6px; font-weight: 700; background: #d9f9e6; color: #0f6b3d; }
+    section { background: #fff; border: 1px solid #d9e2ec; border-radius: 8px; padding: 18px; margin: 18px 0; }
+    table { width: 100%; border-collapse: collapse; background: #fff; }
+    th, td { text-align: left; border-bottom: 1px solid #e4e7eb; padding: 10px; vertical-align: top; }
+    th { color: #52606d; font-size: 13px; }
+    code { background: #eef2f7; padding: 2px 5px; border-radius: 4px; }
+    .passed { color: #0f6b3d; font-weight: 700; }
+    .failed { color: #a61b1b; font-weight: 700; }
+    .warning { color: #8a4b0f; font-weight: 700; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+    figure { margin: 0; border: 1px solid #d9e2ec; border-radius: 8px; overflow: hidden; background: #fff; }
+    img { display: block; width: 100%; height: auto; border-bottom: 1px solid #d9e2ec; }
+    figcaption { padding: 10px 12px; color: #52606d; font-size: 13px; }
+    h3 { margin: 18px 0 8px; font-size: 17px; }
+    h4 { margin: 18px 0 8px; font-size: 15px; color: #334e68; }
+    details { border: 1px solid #d9e2ec; border-radius: 6px; padding: 10px 12px; margin: 8px 0; background: #fbfdff; }
+    details p { margin: 10px 0 0; color: #334e68; }
+    .dialogue-case { border: 1px solid #bcccdc; border-radius: 8px; padding: 14px; margin: 14px 0; background: #fff; }
+    pre { white-space: pre-wrap; overflow-wrap: anywhere; background: #fff4f4; color: #7f1d1d; padding: 12px; border-radius: 6px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>P8-JD Intake 与定制简历自动化验收报告</h1>
+    <p><span class="badge">passed</span></p>
+    <p class="meta">验证 P8 已实现资料准备向导、JD 手动导入、岗位目标选择、JD 定制简历和可追溯导出前检查；不声明平台自动化、真实 provider 或真实个人资料通过。</p>
+    <p class="meta">Started: 2026-07-01T15:36:45.984Z · Ended: 2026-07-01T15:36:58.112Z · Report: <code>/mnt/c/workspace/interview_service/docs/reports/P8_JD_INTAKE_ACCEPTANCE_REPORT.html</code></p>
+  </header>
+  <main>
+    <section>
+      <h2>目标架构</h2>
+      <ul><li>Chatbox UI：资料准备向导、JD Intake Center、Job Target List、Resume Generation Plane。</li><li>API Boundary：/api/files/upload?kind=...、POST /api/job/intake、GET /api/jobs、POST /api/jobs/{job_id}/select、POST /api/resume/generate。</li><li>Domain Tools：复用 save_document、extract_facts、parse_jd、match_profile、create_application_package、resume_version。</li><li>Storage：document.kind、job.source_url/platform/import_method/user_notes/is_current_target、match_report、resume_version、application_package、artifact_version。</li><li>Evidence：专项 eval、headless 截图、中文 HTML 报告和未验证范围说明。</li></ul>
+      <h2>当前实现</h2>
+      <ul><li>前端在现有单文件 Chatbox 中增量加入 P8 工作区，保持三栏桌面和移动抽屉模型。</li><li>后端新增 P8 路由，旧 parse-jd、application package、export 仍保持兼容。</li><li>SQLite 只做非破坏性加列迁移；不删除历史数据，不引入平台账号或 API Key 存储。</li><li>定制简历生成返回 resume_version_id、source_refs、pending_confirmations 和 export_preflight。</li></ul>
+    </section>
+    <section>
+      <h2>自动化步骤</h2>
+      <table><thead><tr><th>#</th><th>步骤</th><th>动作</th><th>结果</th></tr></thead><tbody><tr><td>1</td><td>打开 P8 Chatbox</td><td><code>goto</code></td><td class="passed">passed</td></tr>
+<tr><td>2</td><td>等待资料准备向导</td><td><code>waitText</code></td><td class="passed">passed</td></tr>
+<tr><td>3</td><td>桌面初始 P8 工作区</td><td><code>screenshot</code></td><td class="passed">passed</td></tr>
+<tr><td>4</td><td>粘贴 JD 文本</td><td><code>fill</code></td><td class="passed">passed</td></tr>
+<tr><td>5</td><td>填写平台</td><td><code>fill</code></td><td class="passed">passed</td></tr>
+<tr><td>6</td><td>填写来源 URL</td><td><code>fill</code></td><td class="passed">passed</td></tr>
+<tr><td>7</td><td>填写备注</td><td><code>fill</code></td><td class="passed">passed</td></tr>
+<tr><td>8</td><td>导入 JD</td><td><code>clickText</code></td><td class="passed">passed</td></tr>
+<tr><td>9</td><td>等待 JD 导入异步刷新</td><td><code>wait</code></td><td class="passed">passed</td></tr>
+<tr><td>10</td><td>JD 导入与岗位列表</td><td><code>screenshot</code></td><td class="passed">passed</td></tr>
+<tr><td>11</td><td>生成定制简历</td><td><code>clickText</code></td><td class="passed">passed</td></tr>
+<tr><td>12</td><td>等待简历草稿</td><td><code>waitText</code></td><td class="passed">passed</td></tr>
+<tr><td>13</td><td>定制简历结果</td><td><code>screenshot</code></td><td class="passed">passed</td></tr>
+<tr><td>14</td><td>720px 响应式视图</td><td><code>goto</code></td><td class="passed">passed</td></tr>
+<tr><td>15</td><td>等待 720px</td><td><code>waitText</code></td><td class="passed">passed</td></tr>
+<tr><td>16</td><td>720px P8 工作区</td><td><code>screenshot</code></td><td class="passed">passed</td></tr>
+<tr><td>17</td><td>390px 响应式视图</td><td><code>goto</code></td><td class="passed">passed</td></tr>
+<tr><td>18</td><td>等待 390px</td><td><code>waitText</code></td><td class="passed">passed</td></tr>
+<tr><td>19</td><td>390px P8 工作区</td><td><code>screenshot</code></td><td class="passed">passed</td></tr></tbody></table>
+
+    </section>
+    <section>
+      <h2>验收标准</h2>
+      <ul><li>用户能看到需要提供哪五类资料，上传时资料带 kind 入库。</li><li>用户能手动粘贴 JD，保存平台、来源 URL 和备注；URL 不触发抓取。</li><li>用户能看到多个 JD 并切换当前目标岗位。</li><li>用户能基于当前目标 JD 生成定制简历草稿，并看到 source refs、待确认项和导出前检查。</li><li>报告明确未验证真实 provider、真实个人资料和招聘平台自动化。</li></ul>
+    </section>
+    <section>
+      <h2>命令结果</h2>
+      <table><thead><tr><th>命令</th><th>状态</th><th>证据</th></tr></thead><tbody><tr><td><code>.venv/bin/python -m pytest tests/evals/test_p8_jd_intake_resume_generation_eval.py</code></td><td class="passed">passed</td><td>3 passed，覆盖 P8 API、DB、ChatCore intent。</td></tr>
+<tr><td><code>.venv/bin/python -m pytest tests/evals/test_p8_acceptance_report_eval.py</code></td><td class="passed">passed</td><td>2 passed，覆盖 HTML 报告结构、截图证据和 false-green 禁止语。</td></tr>
+<tr><td><code>npm --prefix apps/chatbox run build</code></td><td class="passed">passed</td><td>TypeScript 与 Vite build 通过。</td></tr>
+<tr><td><code>API evidence JSON: docs/reports/evidence/p8_jd_intake/p8_api_evidence.json</code></td><td class="passed">passed</td><td>resume_version=resume_9acb794494d8，blocking=2。</td></tr></tbody></table>
+    </section>
+    <section>
+      <h2>PRD 规格检视</h2>
+      <table><thead><tr><th>PRD / Gate 要求</th><th>证据</th><th>结论</th></tr></thead><tbody><tr><td>资料准备向导让用户知道需要提供什么</td><td>页面包含简历、项目、作品、偏好、JD 五类卡片；upload kind 写入 document.kind。</td><td class="passed">PASS</td></tr>
+<tr><td>JD 手动导入，不抓取平台</td><td>JD 已手动导入并设为当前目标岗位。source_url 仅作为来源归档，未触发网页抓取。</td><td class="passed">PASS</td></tr>
+<tr><td>多 JD 列表和当前目标岗位</td><td>GET /api/jobs 返回 1 个岗位，并含 is_current_target。</td><td class="passed">PASS</td></tr>
+<tr><td>JD 定制简历 source refs / pending confirmations / export preflight</td><td>source refs 14，待确认 3，blocking 2。</td><td class="passed">PASS</td></tr>
+<tr><td>不声明真实 provider、真实资料、平台自动化通过</td><td>报告未验证范围独立列出。</td><td class="passed">PASS</td></tr></tbody></table>
+    </section>
+    <section>
+      <h2>代码检视</h2>
+      <table><thead><tr><th>区域</th><th>结论</th><th>级别</th></tr></thead><tbody><tr><td>API</td><td>新增路由复用现有 run_tool 错误映射；未绕过 provider policy。</td><td class="passed">passed</td></tr>
+<tr><td>Storage</td><td>job 表只新增可空/默认列，迁移非破坏性。</td><td class="passed">passed</td></tr>
+<tr><td>ChatCore</td><td>生成简历是显式 intent；普通聊天带“不要生成”不会写入新产物。</td><td class="passed">passed</td></tr>
+<tr><td>Frontend</td><td>P8 面板位于输入区上方，按钮和文字在多断点下有独立响应式规则。</td><td class="passed">passed</td></tr></tbody></table>
+    </section>
+    <section>
+      <h2>文档审计</h2>
+      <table><thead><tr><th>区域</th><th>结论</th><th>状态</th></tr></thead><tbody><tr><td>P8 docs</td><td>实现边界与 P8 文档一致：手动 JD 导入、资料向导、定制简历。</td><td class="passed">passed</td></tr>
+<tr><td>False green</td><td>平台自动化、真实 provider、真实个人资料均未写成通过。</td><td class="passed">passed</td></tr></tbody></table>
+    </section>
+    <section>
+      <h2>多背景多轮对话补证</h2>
+      <p class="meta">以下 transcript 来自合成资料和 fake provider opt-in 自动化路径，用于证明长程对话、上下文边界、脱敏日志和不同背景覆盖；未覆盖真实 LLM/provider 的回复质量、成本、稳定性或可用性验收。</p>
+      <p>Scenario did not define multi-turn dialogue evidence.</p>
+    </section>
+    <section>
+      <h2>截图证据</h2>
+      <div class="grid"><figure><img src="evidence/p8_jd_intake/p8_desktop_initial.png" alt="桌面初始 P8 工作区"><figcaption>桌面初始 P8 工作区<br><code>evidence/p8_jd_intake/p8_desktop_initial.png</code></figcaption></figure>
+<figure><img src="evidence/p8_jd_intake/p8_desktop_job_intake.png" alt="JD 导入与岗位列表"><figcaption>JD 导入与岗位列表<br><code>evidence/p8_jd_intake/p8_desktop_job_intake.png</code></figcaption></figure>
+<figure><img src="evidence/p8_jd_intake/p8_desktop_resume_generated.png" alt="定制简历结果"><figcaption>定制简历结果<br><code>evidence/p8_jd_intake/p8_desktop_resume_generated.png</code></figcaption></figure>
+<figure><img src="evidence/p8_jd_intake/p8_tablet_720.png" alt="720px P8 工作区"><figcaption>720px P8 工作区<br><code>evidence/p8_jd_intake/p8_tablet_720.png</code></figcaption></figure>
+<figure><img src="evidence/p8_jd_intake/p8_mobile_390.png" alt="390px P8 工作区"><figcaption>390px P8 工作区<br><code>evidence/p8_jd_intake/p8_mobile_390.png</code></figcaption></figure></div>
+    </section>
+    <section>
+      <h2>未验证范围与审计意见</h2>
+      <ul><li>未接入 BOSS/猎聘/拉勾等招聘平台账号、登录、抓取、自动沟通或自动投递。</li><li>未调用真实外部 LLM provider；本报告不证明真实 provider 质量。</li><li>未使用用户真实个人资料；本报告使用 examples 和受控真实感 fixture。</li><li>source_url 只作为归档证据保存，没有执行网页抓取。</li></ul>
+      <p>P8 自动化候选通过：已能支撑资料准备、手动 JD 导入、多 JD 目标选择和 JD 定制简历的本地/mock 闭环。产品化前仍需真实资料、真实 provider 和招聘平台合规能力的独立授权验收。</p>
+    </section>
+  </main>
+</body>
+</html>

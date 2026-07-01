@@ -103,6 +103,11 @@ CREATE TABLE IF NOT EXISTS job (
   jd_raw TEXT NOT NULL,
   jd_summary TEXT NOT NULL,
   source_url TEXT,
+  platform TEXT,
+  import_method TEXT NOT NULL DEFAULT 'parse_jd',
+  user_notes TEXT,
+  parse_status TEXT NOT NULL DEFAULT 'parsed',
+  is_current_target INTEGER NOT NULL DEFAULT 0,
   requirements_json TEXT NOT NULL,
   tech_stack TEXT NOT NULL DEFAULT '[]',
   seniority_guess TEXT NOT NULL,
@@ -334,6 +339,7 @@ def connect(db_path: Path) -> sqlite3.Connection:
     conn.executescript(SCHEMA)
     migrate_p1_artifact_versions(conn)
     migrate_p6_provider_chat_invocations(conn)
+    migrate_p8_job_intake(conn)
     return conn
 
 
@@ -425,6 +431,20 @@ def migrate_p6_provider_chat_invocations(conn: sqlite3.Connection) -> None:
         )
         """
     )
+
+
+def migrate_p8_job_intake(conn: sqlite3.Connection) -> None:
+    columns = {row["name"] for row in conn.execute("PRAGMA table_info(job)").fetchall()}
+    if "platform" not in columns:
+        conn.execute("ALTER TABLE job ADD COLUMN platform TEXT")
+    if "import_method" not in columns:
+        conn.execute("ALTER TABLE job ADD COLUMN import_method TEXT NOT NULL DEFAULT 'parse_jd'")
+    if "user_notes" not in columns:
+        conn.execute("ALTER TABLE job ADD COLUMN user_notes TEXT")
+    if "parse_status" not in columns:
+        conn.execute("ALTER TABLE job ADD COLUMN parse_status TEXT NOT NULL DEFAULT 'parsed'")
+    if "is_current_target" not in columns:
+        conn.execute("ALTER TABLE job ADD COLUMN is_current_target INTEGER NOT NULL DEFAULT 0")
 
 
 def row_to_dict(row: sqlite3.Row | None) -> dict[str, Any] | None:

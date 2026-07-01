@@ -675,7 +675,15 @@ def create_project_card(workspace_id: str, project_name: str | None = None, sour
     return {**payload, "improvements": ["补充部署链接", "补充测试说明", "补充本人负责部分和结果指标"], "source_refs": source_refs, "questions_to_confirm": questions_to_confirm, "artifact_ref": artifact_ref}
 
 
-def parse_jd(workspace_id: str, jd_text: str, source_url: str | None = None) -> dict:
+def parse_jd(
+    workspace_id: str,
+    jd_text: str,
+    source_url: str | None = None,
+    platform: str | None = None,
+    import_method: str = "parse_jd",
+    user_notes: str | None = None,
+    set_current_target: bool = False,
+) -> dict:
     conn, workspace = workspace_conn(workspace_id)
     skills = detect_skills(jd_text)
     lower = jd_text.lower()
@@ -749,14 +757,182 @@ def parse_jd(workspace_id: str, jd_text: str, source_url: str | None = None) -> 
     summary = f"{title} 岗位重点关注 {', '.join(requirements.get('must_have', skills[:4]) or skills[:4])}。"
     source_refs = payload.get("source_refs") or source_refs
     questions_to_confirm = payload.get("questions_to_confirm") or questions_to_confirm
+    parse_status = "needs_review" if company == "Unknown" or not title else "parsed"
+    if set_current_target:
+        conn.execute("UPDATE job SET is_current_target=0 WHERE workspace_id=?", (workspace_id,))
     conn.execute(
-        "INSERT INTO job VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-        (job_id, workspace_id, title, company, None, jd_text, summary, source_url, dumps(requirements), dumps(skills), seniority, now_iso()),
+        """
+        INSERT INTO job (
+          id, workspace_id, title, company, location, jd_raw, jd_summary, source_url,
+          platform, import_method, user_notes, parse_status, is_current_target,
+          requirements_json, tech_stack, seniority_guess, created_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """,
+        (
+            job_id,
+            workspace_id,
+            title,
+            company,
+            None,
+            jd_text,
+            summary,
+            source_url,
+            platform,
+            import_method,
+            user_notes,
+            parse_status,
+            1 if set_current_target else 0,
+            dumps(requirements),
+            dumps(skills),
+            seniority,
+            now_iso(),
+        ),
     )
     artifact_ref = _write_artifact(conn, workspace_id, "job_parse", "job", job_id, payload, source_refs, questions_to_confirm, "needs_confirmation", "job.parse_jd")
     _log_tool(conn, workspace_id, "job.parse_jd", f"title={title} chars={len(jd_text)}", [artifact_ref])
     conn.commit()
-    return {**payload, "artifact_ref": artifact_ref}
+    return {
+        **payload,
+        "platform": platform,
+        "import_method": import_method,
+        "user_notes": user_notes,
+        "parse_status": parse_status,
+        "is_current_target": bool(set_current_target),
+        "artifact_ref": artifact_ref,
+    }
+
+
+def job_intake(
+    workspace_id: str,
+    jd_text: str,
+    source_url: str | None = None,
+    platform: str | None = None,
+    import_method: str = "manual_paste",
+    user_notes: str | None = None,
+) -> dict:
+    if not jd_text.strip():
+        raise ValueError("JD text is required.")
+    parsed = parse_jd(
+        workspace_id,
+        jd_text,
+        source_url=source_url,
+        platform=platform,
+        import_method=import_method,
+        user_notes=user_notes,
+        set_current_target=True,
+    )
+    match = match_profile(workspace_id, parsed["job_id"])
+    return {
+        "job": parsed,
+        "match": match,
+        "message": "JD 已手动导入并设为当前目标岗位。source_url 仅作为来源归档，未触发网页抓取。",
+    }
+
+
+def list_jobs(workspace_id: str) -> list[dict]:
+    conn, _ = workspace_conn(workspace_id)
+    rows = conn.execute(
+        """
+        SELECT
+          j.*,
+          mr.fit_label AS latest_fit_label,
+          mr.fit_score_optional AS latest_fit_score,
+          mr.strengths AS latest_strengths,
+          mr.gaps AS latest_gaps,
+          mr.suggested_next_actions AS latest_next_actions
+        FROM job j
+        LEFT JOIN match_report mr
+          ON mr.id = (
+            SELECT id FROM match_report
+            WHERE workspace_id=j.workspace_id AND job_id=j.id
+            ORDER BY created_at DESC
+            LIMIT 1
+          )
+        WHERE j.workspace_id=?
+        ORDER BY j.is_current_target DESC, j.created_at DESC
+        """,
+        (workspace_id,),
+    ).fetchall()
+    jobs = []
+    for row in rows_to_dicts(rows):
+        requirements = loads(row.get("requirements_json"), {})
+        tech_stack = loads(row.get("tech_stack"), [])
+        strengths = loads(row.get("latest_strengths"), [])
+        gaps = loads(row.get("latest_gaps"), [])
+        jobs.append(
+            {
+                "job_id": row["id"],
+                "title": row.get("title"),
+                "company": row.get("company"),
+                "location": row.get("location"),
+                "source_url": row.get("source_url"),
+                "platform": row.get("platform"),
+                "import_method": row.get("import_method") or "parse_jd",
+                "user_notes": row.get("user_notes"),
+                "parse_status": row.get("parse_status") or "parsed",
+                "is_current_target": bool(row.get("is_current_target")),
+                "jd_summary": row.get("jd_summary"),
+                "requirements": requirements,
+                "tech_stack": tech_stack,
+                "seniority_guess": row.get("seniority_guess"),
+                "match": {
+                    "fit_label": row.get("latest_fit_label"),
+                    "fit_score_optional": row.get("latest_fit_score"),
+                    "strengths": strengths,
+                    "gaps": gaps,
+                    "next_actions": loads(row.get("latest_next_actions"), []),
+                }
+                if row.get("latest_fit_label")
+                else None,
+                "created_at": row.get("created_at"),
+            }
+        )
+    return jobs
+
+
+def select_job(workspace_id: str, job_id: str) -> dict:
+    conn, _ = workspace_conn(workspace_id)
+    job = row_to_dict(conn.execute("SELECT * FROM job WHERE workspace_id=? AND id=?", (workspace_id, job_id)).fetchone())
+    if not job:
+        raise ValueError("Job not found.")
+    conn.execute("UPDATE job SET is_current_target=0 WHERE workspace_id=?", (workspace_id,))
+    conn.execute("UPDATE job SET is_current_target=1 WHERE workspace_id=? AND id=?", (workspace_id, job_id))
+    conn.commit()
+    return {"job_id": job_id, "is_current_target": True, "jobs": list_jobs(workspace_id)}
+
+
+def generate_resume(workspace_id: str, job_id: str | None = None, mode: str = "targeted", style: str = "junior_developer", language: str = "zh-CN") -> dict:
+    conn, _ = workspace_conn(workspace_id)
+    if mode == "targeted" and not job_id:
+        current = conn.execute(
+            "SELECT id FROM job WHERE workspace_id=? AND is_current_target=1 ORDER BY created_at DESC LIMIT 1",
+            (workspace_id,),
+        ).fetchone()
+        if not current:
+            current = conn.execute("SELECT id FROM job WHERE workspace_id=? ORDER BY created_at DESC LIMIT 1", (workspace_id,)).fetchone()
+        if current:
+            job_id = current["id"]
+    if not job_id:
+        raise ValueError("请先导入或选择一个目标 JD，再生成 JD 定制简历。")
+    package = create_application_package(workspace_id, job_id, style, language)
+    confirmations = package.get("questions_to_confirm") or []
+    blockers = [item for item in confirmations if isinstance(item, dict) and item.get("confirmation_level") == "blocking"]
+    return {
+        "job_id": job_id,
+        "mode": mode,
+        "resume_version_id": package.get("resume_version_id"),
+        "package_id": package.get("package_id"),
+        "resume_markdown": package.get("resume_markdown"),
+        "source_refs": package.get("source_refs") or [],
+        "pending_confirmations": confirmations,
+        "questions_to_confirm": confirmations,
+        "export_preflight": {
+            "can_export_without_confirmation": len(blockers) == 0,
+            "blocking_count": len(blockers),
+            "message": "存在 blocking 待确认项，正式导出前需要先确认事实。" if blockers else "当前没有 blocking 待确认项。",
+        },
+        "artifact_ref": package.get("artifact_ref"),
+    }
 
 
 def match_profile(workspace_id: str, job_id: str) -> dict:

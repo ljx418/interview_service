@@ -1,4 +1,23 @@
-# JobPilot AI P5.5 Candidate Profile 追踪矩阵
+# JobPilot AI P8-JD Intake 与简历生成体验强化追踪矩阵
+
+## -4. 当前文档阶段 P8-JD Intake 与简历生成追踪矩阵
+
+| 当前目标 | 文档 / 实体边界 | 主要文件 / 模块 | 当前证据 | 验收门槛 |
+| --- | --- | --- | --- | --- |
+| 资料准备向导完整 | Material Intake Wizard | `apps/chatbox/src/main.tsx`, `document.kind`, upload/ingest routes | 当前只有上传/导入入口；P8 文档定义五类资料和缺失影响 | P8 文档门槛 A |
+| JD 手动导入中心 | JD Intake Center | `job`, `job.source_url`, JD parse tools, future `/api/job/intake` | 现有 JD 解析能力和 source_url 字段；尚未有导入中心 UI | P8 文档门槛 B |
+| 岗位列表和目标选择 | Job Target List | `job`, `match_report`, artifact refs, future `/api/jobs` | 现有 job/match_report 存储；尚未有多 JD 选择体验 | P8 文档门槛 B |
+| JD 定制简历 | Resume Generation Plane | `resume_version`, `application_package`, artifact/version, future `/api/resume/generate` | 已有 resume_version 表和申请包导出链路；尚未有面向 JD 的简历生成入口 | P8 文档门槛 C |
+| 招聘平台合规边界 | Platform Boundary | `source_url`, platform label, user notes | 当前不接平台账号，不抓取外部页面 | P8 文档门槛 B/D |
+| 可视化验收 | Evidence Layer | `docs/reports/`, browser evidence scripts | 历史 P4/P5/P5.5/P6/P7 报告链路可复用 | P8 文档门槛 D |
+
+P8 当前阶段不得用以下内容替代验收：
+
+- 保存 `source_url` 不等于 BOSS/招聘平台已接入；
+- 粘贴 JD 不等于平台自动抓取；
+- JD 定制简历草稿不等于真实 provider 生成质量通过；
+- 合成资料不等于真实个人资料路径通过；
+- 文档开发不等于代码实现或人工体验冻结。
 
 ## -3. 当前文档阶段 P6-REAL / P7-post 追踪矩阵
 
@@ -18,7 +37,7 @@
 - provider configured 不替代 provider called；
 - 文档审计不替代代码实现或真实调用结果。
 
-## -2. P5.5 当前阶段追踪矩阵
+## -2. P5.5 历史阶段追踪矩阵
 
 | P5.5 目标 | 实现区域 | 主要文件 / 模块 | 证据 | 验收门槛 |
 | --- | --- | --- | --- | --- |
@@ -36,7 +55,7 @@
 以下内容不能作为 P5.5 出门条件或已完成能力：
 
 - 真实个人资料默认验收；
-- 真实 provider 默认外呼或真实 provider 质量通过；
+- 真实 provider 默认外呼或真实 provider 质量结论；
 - 敏感属性、人格、年龄、性别、健康、政治、家庭、民族等分析；
 - 背景调查、社交媒体画像或隐私画像；
 - workspace 删除、cleanup apply、migration apply；

@@ -28,7 +28,7 @@
 
 P0 已冻结并完成 M5、M7、M8、M9/M13 维护和 PiAgent 编排接入。P1 已完成本地工程闭环和可见验收。P2 已完成 examples-guided Chatbox 端到端体验，并补充 MiniMax opt-in 真实 provider 受控验收。P3 已完成本地自动化验收：真实用户 Chatbox 体验、对话响应闭环、对话区/推进台分离、响应式 UX、截图证据和 HTML 报告已落地；真实个人资料和真实外部调用仍需人工确认。人工审查认可 P3 验收报告的大部分内容，但对当前用户体验不完全认同，当前 P4 阶段优先做 UX 体验强化。P4B 已把全尺寸桌面体验列为 hard gate：1200px、1440px、1600px、1920px 不能出现布局错误造成的大面积空白，截图脚本也不能污染人工审查浏览器 viewport。
 
-P4B 自动化开发闭环已完成：Chatbox suggested prompts、loading/error recovery、产物卡可读性、provider 隐私语义、全尺寸桌面三栏工作台、移动端推进台抽屉、截图脚本隔离、P4/P4B HTML 报告和 PRD 规格检视均已落地。P4C-FC 本地/mock 连续对话开发闭环已完成：自由聊两轮、状态查询、显式工具触发、会话恢复、390px 移动端按钮可达性、Chrome/CDP 截图报告、pytest 和前端 build 均已通过。P4 final closure 自动化审计已完成，当前证据为 71 passed、前端 build 通过、drawio 解析通过和最终 HTML 截图报告。2026-06-25 人工体验审查认可 P4B/P4C 本地 Chatbox 体验，P4 冻结复验通过：`.venv/bin/python -m pytest` 71 passed、`npm --prefix apps/chatbox run build` 通过、drawio XML parse 通过。P5 本地/mock + 脱敏 fixture 自动化候选路径已通过 P5 自动化报告、多视口截图和回归测试，最新全量回归为 `88 passed, 1 warning`；用户已确认 P5-REAL/P5-Freeze 标记为冻结延期复验，后续在 P7 完成后再执行 P7-post 真实资料复验。P6+P7 自动化候选已完成并作为基线保留。P5.5 Candidate Profile 自动化开发候选已完成，覆盖候选人画像、能力矩阵、项目可信度、岗位短板、Workbench 画像面板、eval 和中文 HTML 截图报告；不代表真实资料或真实 provider 通过。
+P4B 自动化开发闭环已完成：Chatbox suggested prompts、loading/error recovery、产物卡可读性、provider 隐私语义、全尺寸桌面三栏工作台、移动端推进台抽屉、截图脚本隔离、P4/P4B HTML 报告和 PRD 规格检视均已落地。P4C-FC 本地/mock 连续对话开发闭环已完成：自由聊两轮、状态查询、显式工具触发、会话恢复、390px 移动端按钮可达性、Chrome/CDP 截图报告、pytest 和前端 build 均已通过。P4 final closure 自动化审计已完成，当前证据为 71 passed、前端 build 通过、drawio 解析通过和最终 HTML 截图报告。2026-06-25 人工体验审查认可 P4B/P4C 本地 Chatbox 体验，P4 冻结复验通过。P5 本地/mock + 脱敏 fixture 自动化候选路径已通过 P5 自动化报告、多视口截图和回归测试；用户已确认 P5-REAL/P5-Freeze 标记为冻结延期复验。P6+P7 自动化候选已完成并作为基线保留。P5.5 Candidate Profile 自动化开发候选已完成，覆盖候选人画像、能力矩阵、项目可信度、岗位短板、Workbench 画像面板、eval 和中文 HTML 截图报告。P6-REAL / P7-post 阶段审计报告已完成，但真实 provider 质量和真实个人资料路径仍未执行。当前最新主线为 P8-JD Intake 与简历生成体验强化自动化候选：资料准备向导、JD 手动导入中心、多 JD 目标岗位、JD 定制简历、source refs、pending confirmations、export preflight、专项 eval 和中文 HTML 截图报告均已落地；不声明 BOSS/招聘平台自动接入、自动投递、真实资料或真实 provider 已通过。
 
 2026-06-27 用户再次确认 P4 冻结方向和当前体验基本 OK；下一阶段期望纳入“长程连续对话”和“真实 provider 聊天”。该目标已落盘为 P6 provider opt-in 规划。2026-06-27 用户进一步确认 P5-REAL/P5-Freeze 冻结延期到 P7 后复验，P6+P7 作为本阶段目标制定开发及验收计划；不得写成 P5 已完成、真实个人资料路径已通过或默认外呼已通过。
 
@@ -113,6 +113,17 @@ P1 冻结说明：
 - [x] P4-Final-Audit：重新基于原始 PRD 和 P4 gates 完成代码检视、文档审计、功能检查和全量端到端自动化验收；报告为 `docs/reports/P4_FINAL_CLOSURE_AUTOMATED_ACCEPTANCE_REPORT.html`，审计为 `docs/active/stage-reviews/P4_FINAL_CLOSURE_AUDIT.md`。
 - [ ] P4C-EP：如需真实外部 provider + 脱敏个人资料验收，必须先按 `docs/active/stage-reviews/P4C_EXTERNAL_PROVIDER_DESENSITIZED_ACCEPTANCE_PLAN.md` 确认数据路径、允许字段、provider、调用次数和报告脱敏范围；该路径默认转入 P6 opt-in，不属于 P5 默认验收。
 - [x] P4-Freeze：人工认可 P4B 后已补齐冻结记录，并再次运行 `.venv/bin/python -m pytest`、`npm --prefix apps/chatbox run build` 和 drawio XML parse，均通过。
+- [x] P8-DOC-PLAN：将“用户不知道提供什么资料、希望主动导入 JD、增强简历生成”的目标落盘为 P8 文档开发阶段。
+- [x] P8-DOC-AUDIT：完成 P8 PRD、目标架构、里程碑、验收门槛、追踪矩阵、roadmap、drawio 和阶段审计收口；当时仅做文档开发，不进入代码实现。
+- [x] P8-DOC-REAUDIT：新增 `docs/active/stage-reviews/P8_DOCUMENTATION_COVERAGE_REAUDIT.md`，复审 P8 文档是否完整支撑后续自动化开发、出门验收和 drawio 人工审核；结论为文档可支撑，仍不代表代码实现通过。
+- [x] P8-DOC-DEV-ACCEPTANCE：新增 `docs/active/stage-reviews/P8_DETAILED_DEVELOPMENT_AND_ACCEPTANCE_PLAN.md`，补齐 P8-M1 到 P8-M5 的详细开发计划、端到端验收路径、打回条件和 ChatGPT 外部审计包。
+- [x] P8-EXTERNAL-REVIEW-CLOSE：采纳 ChatGPT 外部审计意见，确认 P8 文档开发已可收口；不建议继续扩写主设计文档，下一步应进入 P8-M0 开发前启动审计。
+- [x] P8-M0：已按 `docs/active/stage-reviews/P8_DETAILED_DEVELOPMENT_AND_ACCEPTANCE_PLAN.md` 执行开发前启动审计；未发现新增重大规格偏差。
+- [x] P8-M1：资料准备向导已落地，Chatbox 展示简历、项目经历、作品链接、目标 JD、求职偏好五类资料卡，上传支持 `kind`。
+- [x] P8-M2：JD 手动导入中心已落地，新增 `POST /api/job/intake`，保存 JD 文本、来源 URL、平台标签和备注，明确不抓取 URL。
+- [x] P8-M3：多 JD 列表和当前目标岗位已落地，新增 `GET /api/jobs` 和 `POST /api/jobs/{job_id}/select`。
+- [x] P8-M4：JD 定制简历已落地，新增 `POST /api/resume/generate`，返回 `resume_version_id`、source refs、pending confirmations 和 export preflight。
+- [x] P8-M5：P8 中文自动化验收报告已生成：`docs/reports/P8_JD_INTAKE_ACCEPTANCE_REPORT.html`，包含 API evidence、专项 eval、headless Chrome 截图、PRD 规格检视和未验证范围。
 
 ## P5 自动化候选与冻结延期复验状态
 

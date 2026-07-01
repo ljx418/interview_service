@@ -1,0 +1,123 @@
+{
+  "generated_at": "2026-07-01T15:36:43.381026+00:00",
+  "workspace_root": ".tmp/p8_jd_intake_acceptance_workspace_20260701T153641Z",
+  "workspace_id": "ws_d3566b4bc5ef",
+  "source_files": [
+    {
+      "kind": "resume",
+      "path": "examples/resumes/transition_frontend_resume.md",
+      "document_id": "doc_88a1ce578ba8"
+    },
+    {
+      "kind": "project",
+      "path": "examples/projects/todoplus_README.md",
+      "document_id": "doc_89dd0e0d2381"
+    },
+    {
+      "kind": "jd",
+      "path": "examples/jds/junior_frontend_jd.md",
+      "source_url": "https://example.invalid/manual/jobpilot-p8"
+    }
+  ],
+  "job_intake": {
+    "job_id": "job_1c94346b076e",
+    "title": "Junior Frontend Developer",
+    "platform": "公司官网手动粘贴",
+    "source_url": "https://example.invalid/manual/jobpilot-p8",
+    "message": "JD 已手动导入并设为当前目标岗位。source_url 仅作为来源归档，未触发网页抓取。",
+    "match_fit_label": "比较适合",
+    "questions_to_confirm": [
+      {
+        "question": "请确认公司、地点和岗位级别是否与原 JD 一致。",
+        "confirmation_level": "warning",
+        "reason": "JD 文本可能缺少结构化公司信息。",
+        "source_refs": [
+          {
+            "source_type": "job",
+            "source_id": "job_1c94346b076e",
+            "field": "jd_raw",
+            "quote": "# Junior Frontend Developer\n\nCompany: Example Labs\n\nWe are looking for a Junior Frontend Developer to build responsive product features with React, JavaScript, ",
+            "confidence": "high"
+          }
+        ]
+      }
+    ]
+  },
+  "jobs": [
+    {
+      "job_id": "job_1c94346b076e",
+      "title": "Junior Frontend Developer",
+      "company": "Example Labs",
+      "location": null,
+      "source_url": "https://example.invalid/manual/jobpilot-p8",
+      "platform": "公司官网手动粘贴",
+      "import_method": "manual_paste",
+      "user_notes": "P8 自动化验收受控真实感 JD；URL 仅归档，不抓取。",
+      "parse_status": "parsed",
+      "is_current_target": true,
+      "jd_summary": "Junior Frontend Developer 岗位重点关注 React, JavaScript, HTML/CSS, Git。",
+      "requirements": {
+        "must_have": [
+          "React",
+          "JavaScript",
+          "HTML/CSS",
+          "Git"
+        ],
+        "nice_to_have": [
+          "TypeScript",
+          "SQL",
+          "Testing"
+        ],
+        "responsibilities": [
+          "# Junior Frontend Developer",
+          "Company: Example Labs",
+          "We are looking for a Junior Frontend Developer to build responsive product features with React, JavaScript, HTML/CSS, and REST APIs.",
+          "## Responsibilities",
+          "Build reusable UI components"
+        ]
+      },
+      "tech_stack": [
+        "React",
+        "TypeScript",
+        "JavaScript",
+        "HTML/CSS",
+        "SQL",
+        "Testing",
+        "Git",
+        "API"
+      ],
+      "seniority_guess": "junior",
+      "match": {
+        "fit_label": "good",
+        "fit_score_optional": 1.0,
+        "strengths": [
+          "已有 React 相关证据",
+          "已有 JavaScript 相关证据",
+          "已有 HTML/CSS 相关证据",
+          "已有 Git 相关证据"
+        ],
+        "gaps": [],
+        "next_actions": [
+          "优化项目描述并突出与 JD 相关的技能",
+          "准备一个 90 秒自我介绍",
+          "准备一个项目深挖故事卡"
+        ]
+      },
+      "created_at": "2026-07-01T15:36:42.870475+00:00"
+    }
+  ],
+  "resume": {
+    "resume_version_id": "resume_9acb794494d8",
+    "package_id": "pkg_5f321c1dabf6",
+    "source_refs_count": 14,
+    "pending_confirmations_count": 3,
+    "blocking_count": 2,
+    "preflight_message": "存在 blocking 待确认项，正式导出前需要先确认事实。"
+  },
+  "unverified_scope": [
+    "未接入 BOSS/猎聘/拉勾等招聘平台账号、登录、抓取、自动沟通或自动投递。",
+    "未调用真实外部 LLM provider；本报告不证明真实 provider 质量。",
+    "未使用用户真实个人资料；本报告使用 examples 和受控真实感 fixture。",
+    "source_url 只作为归档证据保存，没有执行网页抓取。"
+  ]
+}

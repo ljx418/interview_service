@@ -188,6 +188,42 @@ type WorkflowResult = {
   exports?: Array<{ format: string; path: string }>;
 };
 
+type MaterialKind = "resume" | "project" | "portfolio" | "preference" | "jd" | "upload";
+
+type JobListItem = {
+  job_id: string;
+  title?: string;
+  company?: string;
+  source_url?: string;
+  platform?: string;
+  user_notes?: string;
+  parse_status?: "parsed" | "needs_review" | string;
+  is_current_target?: boolean;
+  jd_summary?: string;
+  requirements?: { must_have?: string[]; nice_to_have?: string[]; responsibilities?: string[] };
+  tech_stack?: string[];
+  match?: {
+    fit_label?: string;
+    fit_score_optional?: number;
+    strengths?: string[];
+    gaps?: string[];
+    next_actions?: string[];
+  } | null;
+  created_at?: string;
+};
+
+type ResumeGenerationResult = {
+  job_id: string;
+  resume_version_id?: string;
+  package_id?: string;
+  resume_markdown?: string;
+  source_refs?: unknown[];
+  pending_confirmations?: unknown[];
+  questions_to_confirm?: unknown[];
+  export_preflight?: { can_export_without_confirmation?: boolean; blocking_count?: number; message?: string };
+  artifact_ref?: unknown;
+};
+
 type AgentPhase = "initializing" | "ready" | "chatting" | "executing" | "needs_confirmation" | "completed" | "error";
 
 type AgentStatus = {
@@ -693,6 +729,175 @@ function SuggestedPrompts({ onPrompt, onRunExample }: { onPrompt: (text: string,
           <h3>运行示例路径</h3>
           <p>用 examples 数据跑完整求职材料闭环。</p>
         </button>
+      </div>
+    </section>
+  );
+}
+
+const materialGuides: Array<{ kind: MaterialKind; title: string; detail: string; example: string }> = [
+  { kind: "resume", title: "简历基础版", detail: "姓名可脱敏，但需要经历、技能、教育、时间线。", example: "resume.md / pdf / txt" },
+  { kind: "project", title: "项目经历", detail: "补充本人负责范围、技术栈、难点、结果和链接。", example: "README.md / project.md" },
+  { kind: "portfolio", title: "作品链接", detail: "GitHub、Demo、博客或截图说明，用于 source refs。", example: "links.txt" },
+  { kind: "preference", title: "求职偏好", detail: "目标城市、岗位方向、薪资范围、远程偏好。", example: "preference.md" },
+  { kind: "jd", title: "目标 JD", detail: "也可以直接在右侧 JD 中心粘贴。", example: "jd.md" },
+];
+
+function MaterialIntakeWizard({
+  onUpload,
+  busy,
+}: {
+  onUpload: (file: File | undefined, kind: MaterialKind) => void;
+  busy: boolean;
+}) {
+  return (
+    <section className="p8-panel material-wizard" aria-label="资料准备向导">
+      <div className="p8-panel-title">
+        <span className="eyebrow">Material Intake</span>
+        <h3>资料准备向导</h3>
+        <p>按用途上传资料，后续生成简历时会显示来源和待确认项。</p>
+      </div>
+      <div className="material-card-grid">
+        {materialGuides.map((item) => (
+          <label key={item.kind} className="material-card">
+            <input type="file" disabled={busy} onChange={(event) => onUpload(event.target.files?.[0], item.kind)} />
+            <strong>{item.title}</strong>
+            <span>{item.detail}</span>
+            <small>{item.example}</small>
+          </label>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function JDIntakeCenter({
+  jdText,
+  sourceUrl,
+  platform,
+  userNotes,
+  busy,
+  onChange,
+  onSubmit,
+}: {
+  jdText: string;
+  sourceUrl: string;
+  platform: string;
+  userNotes: string;
+  busy: boolean;
+  onChange: (value: { jdText?: string; sourceUrl?: string; platform?: string; userNotes?: string }) => void;
+  onSubmit: () => void;
+}) {
+  return (
+    <section className="p8-panel jd-intake-center" aria-label="JD 手动导入中心">
+      <div className="p8-panel-title">
+        <span className="eyebrow">JD Intake</span>
+        <h3>手动导入目标 JD</h3>
+        <p>粘贴 JD 文本并归档来源；URL 不会被抓取或登录平台。</p>
+      </div>
+      <textarea value={jdText} onChange={(event) => onChange({ jdText: event.target.value })} placeholder="粘贴岗位职责、任职要求、技术栈..." rows={4} />
+      <div className="jd-meta-grid">
+        <input value={platform} onChange={(event) => onChange({ platform: event.target.value })} placeholder="平台：BOSS / 猎聘 / 官网" />
+        <input value={sourceUrl} onChange={(event) => onChange({ sourceUrl: event.target.value })} placeholder="来源 URL（仅归档，不抓取）" />
+        <input value={userNotes} onChange={(event) => onChange({ userNotes: event.target.value })} placeholder="备注：投递偏好 / 亮点 / 风险" />
+        <button type="button" className="btn-primary-action" disabled={busy || jdText.trim().length < 24} onClick={onSubmit}>
+          导入并设为目标
+        </button>
+      </div>
+    </section>
+  );
+}
+
+function JobTargetList({
+  jobs,
+  loading,
+  busy,
+  onSelect,
+  onGenerateResume,
+}: {
+  jobs: JobListItem[];
+  loading: boolean;
+  busy: boolean;
+  onSelect: (jobId: string) => void;
+  onGenerateResume: (jobId?: string) => void;
+}) {
+  return (
+    <section className="p8-panel job-target-list" aria-label="目标岗位列表">
+      <div className="p8-panel-title inline">
+        <div>
+          <span className="eyebrow">Job Targets</span>
+          <h3>目标岗位</h3>
+        </div>
+        <button type="button" className="btn-secondary-action" disabled={busy || jobs.length === 0} onClick={() => onGenerateResume()}>
+          生成定制简历
+        </button>
+      </div>
+      {loading ? (
+        <p className="p8-empty">正在读取岗位列表...</p>
+      ) : jobs.length === 0 ? (
+        <p className="p8-empty">还没有导入 JD。先在左侧粘贴一个目标岗位。</p>
+      ) : (
+        <div className="job-list-grid">
+          {jobs.slice(0, 4).map((job) => {
+            const must = job.requirements?.must_have ?? job.tech_stack ?? [];
+            return (
+              <article key={job.job_id} className={`job-target-card ${job.is_current_target ? "is-current" : ""}`}>
+                <div className="job-card-topline">
+                  <strong>{job.title || "目标岗位"}</strong>
+                  <span>{job.is_current_target ? "当前目标" : job.parse_status === "needs_review" ? "需复核" : "已解析"}</span>
+                </div>
+                <p>{job.company || "公司待确认"} · {job.platform || "来源待补充"}</p>
+                <div className="job-chip-row">
+                  {must.slice(0, 5).map((item) => (
+                    <span key={item}>{item}</span>
+                  ))}
+                </div>
+                <small>{job.match?.fit_label ? `匹配：${job.match.fit_label}` : "尚未生成匹配报告"}</small>
+                <div className="job-card-actions">
+                  {!job.is_current_target && (
+                    <button type="button" className="btn-secondary-action" disabled={busy} onClick={() => onSelect(job.job_id)}>
+                      设为目标
+                    </button>
+                  )}
+                  <button type="button" className="btn-primary-action" disabled={busy} onClick={() => onGenerateResume(job.job_id)}>
+                    生成简历
+                  </button>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      )}
+    </section>
+  );
+}
+
+function ResumeGenerationPlane({ result }: { result: ResumeGenerationResult | null }) {
+  if (!result) return null;
+  return (
+    <section className="p8-panel resume-generation-plane" aria-label="JD 定制简历结果">
+      <div className="p8-panel-title inline">
+        <div>
+          <span className="eyebrow">Resume Draft</span>
+          <h3>JD 定制简历草稿</h3>
+        </div>
+        <span className={result.export_preflight?.blocking_count ? "resume-preflight warning" : "resume-preflight ok"}>
+          {result.export_preflight?.blocking_count ? `${result.export_preflight.blocking_count} 个阻塞确认` : "可进入导出检查"}
+        </span>
+      </div>
+      <p>{result.export_preflight?.message || "请检查 source refs 和待确认项。"}</p>
+      <div className="resume-proof-grid">
+        <span>
+          <strong>{result.resume_version_id ? "已生成" : "待生成"}</strong>
+          <small>resume_version</small>
+        </span>
+        <span>
+          <strong>{result.source_refs?.length ?? 0}</strong>
+          <small>source refs</small>
+        </span>
+        <span>
+          <strong>{result.pending_confirmations?.length ?? 0}</strong>
+          <small>待确认</small>
+        </span>
       </div>
     </section>
   );
@@ -1515,6 +1720,10 @@ function App() {
   const [lifecycleResult, setLifecycleResult] = useState<LifecycleResult | null>(null);
   const [lifecycleBusy, setLifecycleBusy] = useState(false);
   const [workflowResult, setWorkflowResult] = useState<WorkflowResult | null>(null);
+  const [jobs, setJobs] = useState<JobListItem[]>([]);
+  const [jobsLoading, setJobsLoading] = useState(false);
+  const [jdDraft, setJdDraft] = useState({ jdText: "", sourceUrl: "", platform: "", userNotes: "" });
+  const [resumeResult, setResumeResult] = useState<ResumeGenerationResult | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const autorunStarted = useRef(false);
   const initializationNoticeShown = useRef(false);
@@ -1581,6 +1790,7 @@ function App() {
     refreshProviderStatus().catch(() => undefined);
     refreshChatContext().catch(() => undefined);
     loadCandidateProfile().catch(() => undefined);
+    loadJobs().catch(() => undefined);
   }, [workspaceId, sessionId]);
 
   useEffect(() => {
@@ -1669,6 +1879,109 @@ function App() {
       return profile;
     } finally {
       setProfileLoading(false);
+    }
+  }
+
+  async function loadJobs() {
+    if (!workspaceId) return [];
+    setJobsLoading(true);
+    try {
+      const list = await api<JobListItem[]>(`/api/jobs?workspace_id=${encodeURIComponent(workspaceId)}`);
+      setJobs(list ?? []);
+      return list ?? [];
+    } finally {
+      setJobsLoading(false);
+    }
+  }
+
+  async function intakeJd() {
+    if (!workspaceId) {
+      notice("本地 workspace 尚未初始化，暂不能导入 JD。", "notice");
+      return;
+    }
+    const jdText = jdDraft.jdText.trim();
+    if (jdText.length < 24) {
+      notice("请粘贴更完整的 JD 文本，至少包含岗位职责或任职要求。", "notice");
+      return;
+    }
+    setBusy(true);
+    try {
+      const result = await api<any>("/api/job/intake", {
+        workspace_id: workspaceId,
+        jd_text: jdText,
+        source_url: jdDraft.sourceUrl.trim() || undefined,
+        platform: jdDraft.platform.trim() || undefined,
+        import_method: "manual_paste",
+        user_notes: jdDraft.userNotes.trim() || undefined,
+      });
+      setDataMode("my_data");
+      setJdDraft({ jdText: "", sourceUrl: "", platform: "", userNotes: "" });
+      setMessages((current) => [
+        ...current,
+        {
+          role: "assistant",
+          tone: "plan",
+          content: result.message ?? "JD 已手动导入并设为当前目标岗位。",
+          artifacts: [
+            { type: "job", data: result.job },
+            { type: "match_report", data: result.match },
+          ],
+        },
+      ]);
+      setDrawerOpen(true);
+      await Promise.allSettled([loadJobs(), refreshChatContext(), loadCandidateProfile()]);
+    } catch (error) {
+      notice(formatError(error, "JD 导入失败"), "error");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function selectJob(jobId: string) {
+    if (!workspaceId) return;
+    setBusy(true);
+    try {
+      const result = await api<any>(`/api/jobs/${encodeURIComponent(jobId)}/select`, { workspace_id: workspaceId });
+      setJobs(result.jobs ?? []);
+      notice("当前目标岗位已切换。后续定制简历会绑定这个 JD。", "notice");
+      await refreshChatContext();
+    } catch (error) {
+      notice(formatError(error, "切换目标岗位失败"), "error");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function generateTargetedResume(jobId?: string) {
+    if (!workspaceId) {
+      notice("本地 workspace 尚未初始化，暂不能生成简历。", "notice");
+      return;
+    }
+    setBusy(true);
+    try {
+      const result = await api<ResumeGenerationResult>("/api/resume/generate", {
+        workspace_id: workspaceId,
+        job_id: jobId,
+        mode: "targeted",
+        style: "junior_developer",
+        language: "zh-CN",
+      });
+      setResumeResult(result);
+      setMessages((current) => [
+        ...current,
+        {
+          role: "assistant",
+          tone: "plan",
+          content: "JD 定制简历草稿已生成。请检查 source refs、待确认项和导出前检查，不要把缺证据内容直接对外投递。",
+          artifacts: [{ type: "application_package", data: result }],
+        },
+      ]);
+      setDrawerOpen(true);
+      await Promise.allSettled([refreshChatContext(), loadCandidateProfile(), loadJobs()]);
+    } catch (error) {
+      notice(formatError(error, "生成定制简历失败"), "error");
+    } finally {
+      setBusy(false);
     }
   }
 
@@ -1811,22 +2124,23 @@ function App() {
     }
   }
 
-  async function upload(file: File | undefined) {
+  async function upload(file: File | undefined, kind: MaterialKind = "upload") {
     if (!file || !workspaceId) return;
     const form = new FormData();
     form.set("file", file);
     setBusy(true);
     try {
-      const response = await fetch(`${API_BASE}/api/files/upload?workspace_id=${encodeURIComponent(workspaceId)}`, { method: "POST", body: form });
+      const response = await fetch(`${API_BASE}/api/files/upload?workspace_id=${encodeURIComponent(workspaceId)}&kind=${encodeURIComponent(kind)}`, { method: "POST", body: form });
       const json = await response.json();
       if (!response.ok) throw new Error(json.detail?.message ?? "Upload failed");
       setDataMode("my_data");
       setMessages((current) => [
         ...current,
-        { role: "assistant", content: `已导入 ${file.name}。下一步可以发送“整理资料”或粘贴 JD。`, artifacts: [{ type: "document", data: json.data }], tone: "notice" },
+        { role: "assistant", content: `已按“${kind}”导入 ${file.name}。下一步可以整理资料、粘贴 JD 或生成定制简历。`, artifacts: [{ type: "document", data: json.data }], tone: "notice" },
       ]);
       await refreshChatContext();
       await loadCandidateProfile();
+      if (kind === "jd") await loadJobs();
     } catch (error) {
       setMessages((current) => [...current, { role: "assistant", tone: "error", content: formatError(error, "上传失败") }]);
     } finally {
@@ -1972,6 +2286,20 @@ function App() {
               artifactCount={artifacts.length + workflowArtifactCount}
               pendingConfirmationCount={pendingConfirmationCount}
             />
+            <section className="p8-workflow-strip" aria-label="P8 资料与 JD 定制简历工作区">
+              <MaterialIntakeWizard onUpload={upload} busy={busy || !appReady} />
+              <JDIntakeCenter
+                jdText={jdDraft.jdText}
+                sourceUrl={jdDraft.sourceUrl}
+                platform={jdDraft.platform}
+                userNotes={jdDraft.userNotes}
+                busy={busy || !appReady}
+                onChange={(value) => setJdDraft((current) => ({ ...current, ...value }))}
+                onSubmit={intakeJd}
+              />
+              <JobTargetList jobs={jobs} loading={jobsLoading} busy={busy || !appReady} onSelect={selectJob} onGenerateResume={generateTargetedResume} />
+              <ResumeGenerationPlane result={resumeResult} />
+            </section>
             <div className="timeline" ref={messagesListRef} role="log" aria-live="polite">
               <div className="timeline-content">
                 {messages.length === 0 && !busy && <SuggestedPrompts onPrompt={fillPrompt} onRunExample={runGuidedDemo} />}

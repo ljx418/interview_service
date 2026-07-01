@@ -85,6 +85,27 @@ class ParseJdRequest(BaseModel):
     source_url: str | None = None
 
 
+class JobIntakeRequest(BaseModel):
+    workspace_id: str
+    jd_text: str
+    source_url: str | None = None
+    platform: str | None = None
+    import_method: Literal["manual_paste", "file_import", "chat_paste"] = "manual_paste"
+    user_notes: str | None = None
+
+
+class JobSelectRequest(BaseModel):
+    workspace_id: str
+
+
+class ResumeGenerateRequest(BaseModel):
+    workspace_id: str
+    job_id: str | None = None
+    mode: Literal["targeted", "general"] = "targeted"
+    style: str = "junior_developer"
+    language: str = "zh-CN"
+
+
 class MatchProfileRequest(BaseModel):
     workspace_id: str
     job_id: str

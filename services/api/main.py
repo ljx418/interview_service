@@ -23,6 +23,8 @@ from services.api.schemas import (
     ExtractFactsRequest,
     InterviewPrepareRequest,
     InterviewReviewRequest,
+    JobIntakeRequest,
+    JobSelectRequest,
     MatchProfileRequest,
     ParseJdRequest,
     ProviderConsentRequest,
@@ -32,6 +34,7 @@ from services.api.schemas import (
     RealtimeDetectRequest,
     RealtimeHintRequest,
     RealtimeStartRequest,
+    ResumeGenerateRequest,
     SimulateInterviewRequest,
     SkillEvidenceRequest,
     StoryCardsRequest,
@@ -357,9 +360,9 @@ def diagnostics_report_api(req: DiagnosticsReportRequest):
 
 
 @app.post("/api/files/upload")
-async def upload_file(workspace_id: str, file: UploadFile = File(...)):
+async def upload_file(workspace_id: str, kind: str = "upload", file: UploadFile = File(...)):
     data = await file.read()
-    return run_tool(jobpilot.save_uploaded_bytes, workspace_id, file.filename or "upload.txt", data, "upload")
+    return run_tool(jobpilot.save_uploaded_bytes, workspace_id, file.filename or "upload.txt", data, kind)
 
 
 @app.post("/api/files/ingest-local")
@@ -419,6 +422,21 @@ def job_parse(req: ParseJdRequest):
     return run_tool(jobpilot.parse_jd, req.workspace_id, req.jd_text, req.source_url)
 
 
+@app.post("/api/job/intake")
+def job_intake(req: JobIntakeRequest):
+    return run_tool(jobpilot.job_intake, req.workspace_id, req.jd_text, req.source_url, req.platform, req.import_method, req.user_notes)
+
+
+@app.get("/api/jobs")
+def jobs_list(workspace_id: str):
+    return run_tool(jobpilot.list_jobs, workspace_id)
+
+
+@app.post("/api/jobs/{job_id}/select")
+def jobs_select(job_id: str, req: JobSelectRequest):
+    return run_tool(jobpilot.select_job, req.workspace_id, job_id)
+
+
 @app.post("/api/job/match-profile")
 def job_match(req: MatchProfileRequest):
     return run_tool(jobpilot.match_profile, req.workspace_id, req.job_id)
@@ -437,6 +455,11 @@ def job_match_report(job_id: str, workspace_id: str):
 @app.post("/api/application/create-package")
 def application_create(req: ApplicationPackageRequest):
     return run_tool(jobpilot.create_application_package, req.workspace_id, req.job_id, req.style, req.language)
+
+
+@app.post("/api/resume/generate")
+def resume_generate(req: ResumeGenerateRequest):
+    return run_tool(jobpilot.generate_resume, req.workspace_id, req.job_id, req.mode, req.style, req.language)
 
 
 @app.post("/api/application/export-package")

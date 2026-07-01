@@ -1,4 +1,45 @@
-# JobPilot AI P5.5 Candidate Profile 里程碑与交付计划
+# JobPilot AI P8-JD Intake 与简历生成体验强化里程碑与交付计划
+
+## 当前自动化候选阶段：P8-JD Intake / Resume Generation
+
+P8 文档和自动化候选均已完成。当前实现已覆盖资料准备向导、JD 手动导入中心、岗位列表、当前目标岗位选择和 JD 定制简历；仍不调用真实 provider，不读取真实个人资料，不接入招聘平台账号。
+
+执行顺序：
+
+```text
+P8-DOC-M0 文档口径和产品边界锁定
+→ P8-DOC-M1 资料准备向导规格
+→ P8-DOC-M2 JD 导入中心和平台合规边界
+→ P8-DOC-M3 JD 定制简历与 source refs / 待确认项
+→ P8-DOC-M4 drawio / 验收门槛 / 审计收口
+```
+
+| 阶段 | 交付物 | 出门条件 |
+| --- | --- | --- |
+| P8-DOC-M0 | README、PRD、目标架构、roadmap、追踪矩阵状态口径修复 | 当前阶段明确为文档开发；不把 BOSS/平台接入、自动投递或真实 provider 写成已通过 |
+| P8-DOC-M1 | 资料准备向导规格 | 五类资料、示例、用途、缺失影响和完成状态定义完整 |
+| P8-DOC-M2 | JD 导入中心规格 | 粘贴 JD、来源 URL、平台标签、用户备注和岗位列表定义完整；URL 不触发抓取 |
+| P8-DOC-M3 | JD 定制简历规格 | `resume_version`、source refs、pending confirmations、导出 preflight 和不编造事实规则完整 |
+| P8-DOC-M4 | drawio、文本镜像、验收门槛、阶段审计 | drawio 不超过 8 页；审计无新增致命或重大规格偏差 |
+
+自动化候选实现结果：
+
+| 阶段 | 目标 | 验收证据 |
+| --- | --- | --- |
+| P8-M1 | 资料准备向导 | `p8_desktop_initial.png`、上传 `kind` eval |
+| P8-M2 | JD 导入中心 | `POST /api/job/intake` eval、`p8_desktop_job_intake.png` |
+| P8-M3 | 多 JD 对比和当前目标岗位 | `GET /api/jobs`、`POST /api/jobs/{job_id}/select` eval |
+| P8-M4 | JD 定制简历 | `POST /api/resume/generate` eval、`p8_desktop_resume_generated.png` |
+| P8-M5 | P8 自动化验收报告 | `docs/reports/P8_JD_INTAKE_ACCEPTANCE_REPORT.html` |
+
+P8 高风险打回条件：
+
+- 文档规划 BOSS/招聘平台登录、绕风控、自动抓取、自动沟通或自动投递；
+- 文档把保存 `source_url` 写成平台真实接入；
+- 文档缺少资料类别、示例、缺失影响或用户完成状态；
+- 文档允许 JD 定制简历编造未证实经历；
+- 文档允许普通聊天静默覆盖 `resume_version`；
+- 文档把真实 provider、真实个人资料、SaaS、ASR、会议平台、自动投递写成本阶段已执行或默认可执行。
 
 ## 当前文档开发阶段：P6-REAL / P7-post 准入文档
 
@@ -30,7 +71,7 @@ REAL-DOC-M0 文档口径修复
 - drawio 出现重复、冲突或不可执行的架构实体；
 - 真实 provider、workspace 删除、迁移 apply、ASR、会议平台、自动投递、SaaS 被写成本阶段已执行或可默认执行。
 
-## P5.5 当前阶段目标
+## P5.5 历史阶段目标
 
 当前阶段已完成 P5.5 自动化开发候选。职业画像与能力评估已从 TODO 级目标推进到可运行、可截图、可回归的本地/mock + examples/synthetic-style workspace 路径。
 
@@ -52,7 +93,7 @@ P5.5-DOC-M0 文档 / drawio / 风险边界 / 验收门槛锁定
 交付物：
 
 - P5.5 PRD；
-- P5.5 目标架构、当前架构差异和具体代码实体关系；
+- P5.5 当时目标架构、当前架构差异和具体代码实体关系；
 - P5.5 里程碑、验收门槛、追踪矩阵；
 - drawio gap 图和文本镜像；
 - README/TODO/active docs 同步；
@@ -61,7 +102,7 @@ P5.5-DOC-M0 文档 / drawio / 风险边界 / 验收门槛锁定
 
 出门条件：
 
-- 文档明确当前阶段是 P5.5，而不是 P5-REAL、P6 真实 provider 复验或 P8+；
+- 文档明确当时阶段是 P5.5，而不是 P5-REAL、P6 真实 provider 复验或 P8+；
 - drawio 不超过 8 页，覆盖目标体验、目标架构、代码实体、开发计划、验收门槛和安全边界；
 - 架构图中的条目是具体代码实体和强关联交互关系；
 - 文档没有把真实资料路径、真实 provider、敏感属性分析、SaaS、ASR、会议平台、自动投递或 MCP/CLI 写成当前已完成。

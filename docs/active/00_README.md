@@ -1,13 +1,13 @@
 # JobPilot AI 当前阶段设计文档
 
-本目录是当前阶段的执行依据。原始文档包 `docs/jobpilot_ai_agent_docs_v1_0/` 保留为产品背景和 v1.0 资料；本目录文档用于记录 P5.5 Candidate Profile 自动化开发候选、P6/P7 自动化候选基线，以及当前 P6-REAL / P7-post P5-REAL 复验准备阶段。P4 已作为本地/mock Chatbox 体验冻结基线保留；P5 本地/mock + 脱敏 fixture 自动化候选证据保留为后续基线；P5.5 已完成本地/mock + synthetic-style workspace 自动化候选；P6+P7 本地 Beta 自动化候选已完成并作为后续基线保留。当前文档主线是把真实 provider 受控验收和真实资料复验的开发、验收、授权、报告边界落盘；不得写成真实个人资料路径、真实外部 provider 默认路径或真实 LLM 质量已通过。
+本目录是当前阶段的执行依据。原始文档包 `docs/jobpilot_ai_agent_docs_v1_0/` 保留为产品背景和 v1.0 资料；本目录文档用于记录 P5.5 Candidate Profile 自动化开发候选、P6/P7 自动化候选基线、P6-REAL / P7-post 真实验收准备，以及当前 P8-JD Intake 与简历生成体验强化自动化候选。P4 已作为本地/mock Chatbox 体验冻结基线保留；P5 本地/mock + 脱敏 fixture 自动化候选证据保留为后续基线；P5.5 已完成本地/mock + synthetic-style workspace 自动化候选；P6+P7 本地 Beta 自动化候选已完成并作为后续基线保留。P8 已完成资料准备向导、JD 手动导入中心、多 JD 目标岗位、JD 定制简历、专项 eval 和中文 HTML 截图报告；不得写成 BOSS/招聘平台自动接入、自动投递、真实个人资料路径、真实外部 provider 默认路径或真实 LLM 质量已通过。
 
 ## 阅读顺序
 
-1. `01_STAGE_PRD.md`：P5.5 自动化候选结论、P6-REAL / P7-post 当前文档阶段 PRD、目标体验路径、非目标和历史阶段边界。
-2. `02_TARGET_ARCHITECTURE.md`：当前架构、目标架构、已实现自动化候选、待真实验收能力、具体代码实体职责和关联关系。
-3. `03_MILESTONES_AND_DELIVERY_PLAN.md`：P6-REAL / P7-post 文档开发里程碑、真实 provider 验收准备、真实资料复验准备和出门条件。
-4. `04_ACCEPTANCE_GATES.md`：P5.5/P6/P7 自动化候选门槛、P6-REAL 真实 provider 门槛、P7-post P5-REAL 复验门槛和虚假验收打回条件。
+1. `01_STAGE_PRD.md`：P8-JD Intake 自动化候选 PRD、P5.5 自动化候选结论、P6-REAL / P7-post 文档阶段结论、目标体验路径、非目标和历史阶段边界。
+2. `02_TARGET_ARCHITECTURE.md`：P8 资料准备向导、JD 导入中心、JD 定制简历目标架构、当前架构、具体代码实体职责和关联关系。
+3. `03_MILESTONES_AND_DELIVERY_PLAN.md`：P8 文档开发里程碑、后续资料向导/JD 导入/简历生成开发计划、平台合规边界和出门条件。
+4. `04_ACCEPTANCE_GATES.md`：P8 资料向导、JD 导入、定制简历、平台合规边界门槛，以及 P5.5/P6/P7 历史自动化候选门槛。
 5. `05_IMPLEMENTATION_SPEC.md`：可直接交付工程实现的 P0 强化规格。
 6. `06_TRACEABILITY_MATRIX.md`：目标、模块、证据、测试、真实验收待办和验收门槛追踪矩阵。
 7. `07_REMAINING_DEVELOPMENT_AND_ACCEPTANCE_PLAN.md`：剩余开发工作包、验收证据和最终验收路径。
@@ -20,28 +20,30 @@
 14. `14_P2_REMAINING_DEVELOPMENT_AND_ACCEPTANCE_PLAN.md`：P2-M4/M5 历史开发、验收、截图、报告和冻结计划。
 15. `15_P3_REAL_USER_CHATBOX_EXPERIENCE_PLAN.md`：P3 真实用户 Chatbox 体验、响应式 UX、验收计划和启动审计。
 16. `16_P4_UX_EXPERIENCE_HARDENING_PLAN.md`：P4 UX 体验强化开发及验收计划，承接 P3 人工审查反馈。
-17. `17_PRODUCTIZATION_DEVELOPMENT_ROADMAP.md`：P5.5 自动化候选、P6/P7 自动化候选、P6-REAL/P7-post 当前准备阶段、P8+ 后续路线图和边界。
+17. `17_PRODUCTIZATION_DEVELOPMENT_ROADMAP.md`：P8-JD Intake 自动化候选、P5.5 自动化候选、P6/P7 自动化候选、P6-REAL/P7-post 准备阶段和后续路线图边界。
 18. `18_FREE_CHATBOX_CONTINUOUS_DIALOGUE_PLAN.md`：自由 Chatbox、不中断连续多轮对话、本地连续对话基线和 provider-backed 后续目标的分层计划。
 19. `19_P6_PROVIDER_BACKED_LONG_CONTEXT_CHAT_PLAN.md`：P6 fake provider 自动化候选、真实 provider opt-in 待执行验收、长程连续对话、上下文压缩、隐私边界和受控外呼执行单。
 20. `20_P5_5_CANDIDATE_PROFILE_PLAN.md`：P5.5 候选人画像、能力矩阵、项目可信度、岗位短板、source refs 和验收计划。
-21. `stage-reviews/`：阶段审计记录，包含 P5/P6/P7/P5.5 审计和 `P6_REAL_AND_P7POST_DOCUMENTATION_DEVELOPMENT_AUDIT.md`。
-22. `jobpilot-stage-gap-and-acceptance.md`：drawio 图的文本镜像，方便审查和 diff。
-23. `jobpilot-stage-gap-and-acceptance.drawio`：P6-REAL / P7-post 目标架构、当前差距、代码实体关系、计划、门槛和验收证据图。
-24. `../reports/P5_SYNTHETIC_PROFILE_REVIEW.html`：P5-REAL 前置合成简历、背景资料、目标 JD 和允许展示字段审核页。
-25. `../reports/P5_STAGE_SYNTHETIC_VISUAL_ACCEPTANCE_REPORT.html`：P5 三身份合成资料 Chrome/CDP 可视化验收聚合报告，不代表 P5-REAL 通过。
-26. `../gemini-frontend-review-package/`：给 Gemini 独立审查的前端页面方案和静态原型。
+21. `21_P8_JD_INTAKE_AND_RESUME_GENERATION_PLAN.md`：P8-JD Intake、资料准备向导、JD 手动导入中心、JD 定制简历和招聘平台合规边界。
+22. `stage-reviews/`：阶段审计记录，包含 P5/P6/P7/P5.5/P8 审计、`P8_JD_INTAKE_DOCUMENTATION_DEVELOPMENT_AUDIT.md`、`P8_DOCUMENTATION_COVERAGE_REAUDIT.md`、`P8_DETAILED_DEVELOPMENT_AND_ACCEPTANCE_PLAN.md` 和 `P8_AUTOMATED_DEVELOPMENT_AND_ACCEPTANCE_AUDIT.md`。
+23. `jobpilot-stage-gap-and-acceptance.md`：drawio 图的文本镜像，方便审查和 diff。
+24. `jobpilot-stage-gap-and-acceptance.drawio`：P8 目标体验、当前差距、代码实体关系、开发验收计划、门槛和安全边界图。
+25. `../reports/P5_SYNTHETIC_PROFILE_REVIEW.html`：P5-REAL 前置合成简历、背景资料、目标 JD 和允许展示字段审核页。
+26. `../reports/P5_STAGE_SYNTHETIC_VISUAL_ACCEPTANCE_REPORT.html`：P5 三身份合成资料 Chrome/CDP 可视化验收聚合报告，不代表 P5-REAL 通过。
+27. `../gemini-frontend-review-package/`：给 Gemini 独立审查的前端页面方案和静态原型。
 
 ## 当前阶段目标
 
-在已冻结 P0、已完成 P1 本地工程闭环、已完成 P2 examples-guided 端到端体验、完成 P3 自动化验收，并完成 P4 本地/mock Chatbox 体验冻结之后，P5 本地/mock + 脱敏 fixture 自动化候选已完成，P5.5 Candidate Profile 自动化候选已完成，P6+P7 本地 Beta 自动化候选也已完成。当前目标不是继续写业务代码，而是把 P6-REAL 真实 provider 受控验收和 P7-post P5-REAL 真实资料复验的文档、门槛、drawio、风险和出门条件补齐，形成后续自动化开发或人工授权验收可直接执行的规格。
+在已冻结 P0、已完成 P1 本地工程闭环、已完成 P2 examples-guided 端到端体验、完成 P3 自动化验收，并完成 P4 本地/mock Chatbox 体验冻结之后，P5 本地/mock + 脱敏 fixture 自动化候选已完成，P5.5 Candidate Profile 自动化候选已完成，P6+P7 本地 Beta 自动化候选也已完成。P8-JD Intake 与简历生成体验强化已完成本地/mock + 受控真实感数据自动化候选，当前目标是进入人工体验复核或规划 P8+ 高风险能力。
 
 ```text
-用户导入或粘贴简历、项目说明、经历材料和目标 JD
-→ 系统基于 career_facts / skill_evidence / tech_project / job / match_report 汇总 CandidateProfile
-→ Workbench 展示专业背景画像、能力矩阵、项目可信度、岗位短板和补强建议
-→ 用户能展开每个判断的 source refs、证据强度、待确认项和风险原因
-→ 用户围绕画像继续追问“我适合什么岗位 / 哪些项目最可信 / 还缺什么证据 / 下一步补什么”
-→ 普通追问不写 artifact；明确要求刷新画像或生成材料时才进入工具路径
+用户打开 Chatbox
+→ 看到资料准备向导，而不是单一上传按钮
+→ 按简历、项目经历、作品链接、目标 JD、求职偏好五类补充资料
+→ 从 BOSS / 猎聘 / 拉勾 / LinkedIn / 公司官网等平台手动粘贴 JD 并保存来源链接
+→ 在岗位列表中选择当前目标 JD
+→ 系统基于现有资料、JD、CandidateProfile 和 source refs 生成 JD 定制简历草稿
+→ 缺证据内容进入待确认项，不写成事实
 ```
 
 ## 当前实现基线
@@ -85,8 +87,9 @@
 - P6 provider-backed 自由智能聊天已完成 fake provider 自动化候选，覆盖 opt-in、20 轮连续对话、失败 fallback、tool safety、脱敏日志，以及多身份合成资料多轮对话证据；这些证据不代表真实 provider 质量通过，真实外部 provider 路径仍必须用户明确确认后单独验收；
 - P7 本地产品化 Beta 自动化候选已补齐 workspace 生命周期入口、备份清单、清理/迁移 dry-run、诊断报告、隐私审计和中文 HTML 报告；workspace 删除、迁移 apply 和 SaaS GA 仍未实现；
 - P5.5 Candidate Profile 自动化候选已补齐 profile 读取/刷新 API、画像聚合、能力矩阵、项目可信度、岗位短板、Workbench 面板、中文 HTML 报告和多视口截图证据；
-- ASR、会议平台、自动投递、SaaS、多租户、Billing 等能力仍属于 P8+ 或独立高风险阶段。
+- P8-JD Intake 自动化候选已补齐资料准备向导、JD 手动导入中心、多 JD 目标岗位、JD 定制简历、专项 eval、headless Chrome 截图和中文 HTML 报告；
+- ASR、会议平台、自动投递、SaaS、多租户、Billing、真实 provider 质量复验、真实个人资料复验和招聘平台合规接入仍属于 P8+ 或独立高风险阶段。
 
 ## 范围边界
 
-本阶段不做前后端业务代码开发、MCP Server、CLI、完整 ASR、会议平台集成、自动海投、隐蔽式面试浮窗、面试官敏感属性分析、SaaS 登录、多租户、Billing 或默认真实外部 provider。真实 provider 只允许在 P6 opt-in、用户明确确认、API Key 本地配置、日志脱敏、预算/次数边界和失败降级均满足时验收；真实资料只允许读取用户明确提供的路径。SaaS、ASR、会议平台、自动投递、MCP/CLI 仍属于 P8+ 或独立高风险阶段。
+P8 自动化候选只覆盖本地/mock + examples / 受控真实感数据，不做 MCP Server、CLI、完整 ASR、会议平台集成、自动海投、隐蔽式面试浮窗、面试官敏感属性分析、SaaS 登录、多租户、Billing 或默认真实外部 provider。BOSS 或其他招聘平台第一版只支持用户手动粘贴 JD 和保存来源链接，不登录、不绕过风控、不自动抓取、不自动沟通或自动投递。真实 provider 只允许在 P6 opt-in、用户明确确认、API Key 本地配置、日志脱敏、预算/次数边界和失败降级均满足时验收；真实资料只允许读取用户明确提供的路径。
