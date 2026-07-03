@@ -1,0 +1,45 @@
+{
+  "name": "P9 interactive map review page acceptance",
+  "url": "http://127.0.0.1:8765/docs/p9-chatbox-native-review/05_VISUAL_REVIEW_PAGE.html",
+  "viewports": [
+    {
+      "name": "desktop1440",
+      "width": 1440,
+      "height": 1000,
+      "mobile": false
+    }
+  ],
+  "steps": [
+    {
+      "name": "Open review page",
+      "action": "goto",
+      "url": "http://127.0.0.1:8765/docs/p9-chatbox-native-review/05_VISUAL_REVIEW_PAGE.html",
+      "viewport": "desktop1440"
+    },
+    {
+      "name": "Wait for interactive map section",
+      "action": "waitText",
+      "text": "交互地图原型",
+      "timeoutMs": 10000,
+      "viewport": "desktop1440"
+    },
+    {
+      "name": "Switch map mode",
+      "action": "clickText",
+      "text": "目标机会与匹配态势",
+      "viewport": "desktop1440"
+    },
+    {
+      "name": "Zoom in map",
+      "action": "clickText",
+      "text": "放大",
+      "viewport": "desktop1440"
+    },
+    {
+      "name": "Capture interactive map",
+      "action": "screenshot",
+      "file": "interactive-map-review.png",
+      "viewport": "desktop1440"
+    }
+  ]
+}

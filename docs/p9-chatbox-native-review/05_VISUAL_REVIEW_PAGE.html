@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>JobPilot AI P9 前端体验与 PRD 审查页</title>
+  <style>
+    :root {
+      --bg: #f7f6f1;
+      --paper: #ffffff;
+      --ink: #10201c;
+      --muted: #5f6d68;
+      --line: #d9ded6;
+      --green: #1d6b5e;
+      --green-soft: #e7f4ef;
+      --amber: #8a541c;
+      --amber-soft: #fff4df;
+      --red: #9b2f2f;
+      --red-soft: #fbe8e8;
+      --slate: #46515c;
+      --slate-soft: #eef1f4;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Arial, "Microsoft YaHei", sans-serif;
+      line-height: 1.62;
+    }
+    header {
+      padding: 32px 48px 26px;
+      background: var(--paper);
+      border-bottom: 1px solid var(--line);
+      position: sticky;
+      top: 0;
+      z-index: 3;
+    }
+    header p { margin: 6px 0 0; color: var(--muted); }
+    h1 { margin: 0; font-size: 30px; letter-spacing: 0; }
+    h2 { margin: 0 0 14px; font-size: 22px; }
+    h3 { margin: 18px 0 8px; font-size: 17px; }
+    main { width: min(1320px, calc(100vw - 48px)); margin: 28px auto 80px; }
+    section {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 24px;
+      margin: 18px 0;
+      box-shadow: 0 12px 32px rgba(16, 32, 28, 0.04);
+    }
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .two { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: start; }
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 16px;
+      background: #fff;
+    }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 5px 11px;
+      font-size: 13px;
+      font-weight: 700;
+      border: 1px solid var(--line);
+      margin: 4px 4px 4px 0;
+    }
+    .done { background: var(--green-soft); color: var(--green); border-color: #9dccbf; }
+    .next { background: var(--amber-soft); color: var(--amber); border-color: #e3c08a; }
+    .risk { background: var(--red-soft); color: var(--red); border-color: #e5aaa7; }
+    .base { background: var(--slate-soft); color: var(--slate); }
+    img {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+      display: block;
+    }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { border: 1px solid var(--line); padding: 10px 12px; vertical-align: top; text-align: left; }
+    th { background: #f1f4ef; font-size: 13px; }
+    td { font-size: 14px; }
+    code { background: #f2f4f1; border-radius: 4px; padding: 2px 5px; }
+    .note {
+      border-left: 4px solid var(--green);
+      background: #f2faf6;
+      padding: 12px 14px;
+      margin: 12px 0;
+      color: #253b35;
+    }
+    .warn {
+      border-left: 4px solid var(--amber);
+      background: var(--amber-soft);
+      padding: 12px 14px;
+      margin: 12px 0;
+    }
+    .caption { color: var(--muted); font-size: 13px; margin-top: 8px; }
+    .viz-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 14px 0;
+      align-items: center;
+    }
+    .viz-toolbar button {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .viz-toolbar button.active { background: var(--green-soft); color: var(--green); border-color: #8fc5b6; }
+    .map-shell {
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(280px, .8fr);
+      gap: 16px;
+      align-items: stretch;
+    }
+    .map-stage {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #eef4ef;
+      min-height: 520px;
+      overflow: hidden;
+      cursor: grab;
+      position: relative;
+    }
+    .map-stage.dragging { cursor: grabbing; }
+    .map-stage svg {
+      width: 100%;
+      height: 520px;
+      display: block;
+      border: 0;
+      border-radius: 0;
+      user-select: none;
+      touch-action: none;
+    }
+    .map-pin { cursor: pointer; }
+    .map-pin circle { stroke: #fff; stroke-width: 3; filter: drop-shadow(0 4px 8px rgba(16,32,28,.18)); }
+    .map-pin text { font-size: 13px; font-weight: 700; fill: #10201c; paint-order: stroke; stroke: #fff; stroke-width: 4px; }
+    .map-side {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 16px;
+      background: #fff;
+    }
+    .metric-list { display: grid; gap: 8px; margin-top: 10px; }
+    .metric-row { display: flex; justify-content: space-between; border-bottom: 1px solid #edf0ec; padding: 7px 0; gap: 12px; }
+    .metric-row strong { color: var(--ink); }
+    .legend { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .legend span { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+    .dot { width: 10px; height: 10px; border-radius: 999px; display: inline-block; }
+    @media (max-width: 980px) {
+      header { position: static; padding: 24px; }
+      main { width: calc(100vw - 24px); }
+      .grid, .two, .map-shell { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>JobPilot AI P9 前端体验与 PRD 审查页</h1>
+    <p>用途：判断当前 Agent 是否理解“不要很多向导卡片、以 Chatbox 驱动求职全流程”的优化诉求，并指导后续自动化开发与端到端验收。</p>
+  </header>
+
+  <main>
+    <section>
+      <h2>审查摘要</h2>
+      <span class="tag next">P9 文档设计阶段</span>
+      <span class="tag base">当前基线：P8.1 自动化候选</span>
+      <span class="tag risk">不代表代码实现</span>
+      <div class="note">
+        P9 目标是把 JobPilot AI 从“任务卡片驱动”升级为“Chatbox-native 求职情报与申请包工作台”。用户通过中央 Chatbox 发起 JD 搜索、薪资城市汇总、资料补全、申请包生成、产物调整和投递流程更新；顶部、左侧、右侧只承担配置、态势和产物职责。
+      </div>
+      <table>
+        <tbody>
+          <tr><th>本页可以证明</th><td>Agent 已把当前真实基线、目标体验、用户路线、验收证据和 false-green 边界放在同一个审查页面中。</td></tr>
+          <tr><th>本页不能证明</th><td>全网 JD 搜索、ASR、真实 provider、MCP、Skill、招聘平台接入、自动投递或 P9 前端代码已经实现。</td></tr>
+          <tr><th>核心设计判断</th><td>中央 Chatbox 是主控台；左侧是可折叠态势图；右侧是产物台；顶部是服务中心。大型向导卡片不再作为主体验。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>概念图：四区职责与数据流</h2>
+      <img src="evidence/concept-architecture.svg" alt="P9 Chatbox-native 概念架构图" />
+      <p class="caption">概念图为受控 SVG 原型资产，用颜色区分已实现基线、P9 待开发、高风险需确认和禁止默认实现。</p>
+    </section>
+
+    <section>
+      <h2>当前实际实现基线截图</h2>
+      <img src="evidence/baseline-current-chatbox.png" alt="当前 P8.1 Chatbox 真实界面截图" />
+      <p class="caption">真实截图来自本地运行的当前项目页面，视口 1440x920。它证明当前已有三栏、Chatbox、输入区工具和右侧产物台；同时也能看到中央仍存在较强任务卡片区域。</p>
+    </section>
+
+    <section>
+      <h2>P9 目标截图：Chatbox-native 工作台</h2>
+      <img src="evidence/target-chatbox-native-workbench.svg" alt="P9 目标工作台设计图" />
+      <p class="caption">目标图为受控 SVG 原型，不是已实现截图。它表达后续开发方向：顶部服务中心、左侧态势图、中央 Chatbox 主控、右侧产物台。</p>
+    </section>
+
+    <section>
+      <h2>左侧求职态势模块：三大板块详细设计</h2>
+      <img src="evidence/left-intelligence-panel-detail.svg" alt="P9 左侧求职态势三大板块详细设计图" />
+      <p class="caption">左侧栏不是向导卡片区，而是岗位市场态势、目标机会与匹配态势、投递流程态势三类信息的可折叠观察区。详细说明见 <code>09_LEFT_INTELLIGENCE_PANEL_DETAIL.md</code>。</p>
+    </section>
+
+    <section>
+      <h2>交互地图原型：图钉、拖动、放大与视角切换</h2>
+      <p class="caption">这是文档审查用离线原型，不调用地图服务，不代表 MapLibre、Leaflet、ECharts 或招聘平台已经接入。后续代码阶段可替换为真实开源地图方案。</p>
+      <div class="viz-toolbar" aria-label="地图控制">
+        <button type="button" class="active" data-map-mode="market">岗位市场态势</button>
+        <button type="button" data-map-mode="match">目标机会与匹配态势</button>
+        <button type="button" data-map-mode="pipeline">投递流程态势</button>
+        <button type="button" data-map-action="zoom-in">放大</button>
+        <button type="button" data-map-action="zoom-out">缩小</button>
+        <button type="button" data-map-action="reset">重置</button>
+      </div>
+      <div class="map-shell">
+        <div id="p9MapStage" class="map-stage" aria-label="可拖动缩放的 P9 求职态势地图原型">
+          <svg viewBox="0 0 920 560" role="img" aria-label="中国主要城市求职态势地图原型">
+            <rect x="0" y="0" width="920" height="560" fill="#eef4ef"/>
+            <g id="p9MapViewport">
+              <path d="M146 128 C220 70,334 72,422 118 C510 164,590 128,682 176 C784 228,814 318,774 402 C730 494,616 518,506 488 C416 464,348 510,252 466 C154 422,94 330,112 236 C120 188,126 158,146 128 Z" fill="#fbfbf7" stroke="#c9d4cc" stroke-width="3"/>
+              <path d="M212 230 C292 204,384 216,454 268 C532 326,628 300,710 360" fill="none" stroke="#dbe4dc" stroke-width="4"/>
+              <path d="M272 392 C348 334,424 358,500 392 C570 424,646 424,720 396" fill="none" stroke="#dbe4dc" stroke-width="4"/>
+              <g id="p9Pins"></g>
+            </g>
+          </svg>
+        </div>
+        <aside class="map-side">
+          <span id="mapModeTag" class="tag next">岗位市场态势</span>
+          <h3 id="mapTitle">上海：React/TypeScript 岗位密集</h3>
+          <p id="mapSummary">图钉大小表示岗位数，颜色表示薪资区间。拖动画布或使用按钮可以放大查看城市细节。</p>
+          <div id="mapMetrics" class="metric-list"></div>
+          <div class="legend" id="mapLegend"></div>
+          <div class="warn">审查边界：地图数据是 P9 文档原型样例，不代表真实全网搜索、招聘平台接入或自动投递已经实现。</div>
+        </aside>
+      </div>
+    </section>
+
+    <section>
+      <h2>开源方案调研与交互验收</h2>
+      <table>
+        <thead><tr><th>方案</th><th>GitHub CLI 搜索结果</th><th>适合 P9 的部分</th><th>本轮处理</th></tr></thead>
+        <tbody>
+          <tr><td>MapLibre GL JS</td><td><code>maplibre/maplibre-gl-js</code></td><td>真实交互地图、矢量瓦片、缩放拖动、图层管理。</td><td>生产候选；文档原型不引入。</td></tr>
+          <tr><td>Leaflet + ECharts</td><td><code>wandergis/leaflet-echarts3</code> / <code>gnijuohz/echarts-leaflet</code></td><td>轻量地图底图叠加薪资柱、热力、迁移线和图钉。</td><td>生产候选；适合 P9-M4。</td></tr>
+          <tr><td>Apache ECharts Geo</td><td>GitHub 上有多个地图统计 demo</td><td>非瓦片地图、柱状图、热力图、关系图和统计面板。</td><td>适合离线聚合图。</td></tr>
+          <tr><td>内联 SVG + 原生 JS</td><td>本轮审查页采用</td><td>离线可打开，可审查图钉、拖动、缩放和视角切换。</td><td class="done">已用于当前 HTML 原型。</td></tr>
+        </tbody>
+      </table>
+      <p class="caption">交互验收证据：<code>evidence/interactive_map_review_report.html</code> 与 <code>evidence/interactive-map-review.png</code>。详细调研见 <code>10_OPEN_SOURCE_MAP_VISUALIZATION_RESEARCH.md</code>。</p>
+    </section>
+
+    <section>
+      <h2>用户操作 / 体验路线图</h2>
+      <img src="evidence/user-journey-roadmap.svg" alt="P9 用户路线图" />
+      <p class="caption">路线图覆盖搜索 JD、汇总态势、选择岗位、补全资料、生成申请包、调整事实、更新招聘流程。</p>
+    </section>
+
+    <section>
+      <h2>当前实现 vs P9 目标</h2>
+      <table>
+        <thead><tr><th>能力</th><th>当前实际实现</th><th>P9 目标</th><th>审查结论</th></tr></thead>
+        <tbody>
+          <tr><td>中央 Chatbox</td><td>已是首屏主路径，但仍有任务卡片区。</td><td>只保留对话、状态机、输入框和轻量 command chips。</td><td class="next">需修改体验结构</td></tr>
+          <tr><td>JD 输入</td><td>支持手动粘贴 JD。</td><td>支持合规公开 JD 搜索、标准化和聚合。</td><td class="next">待新增</td></tr>
+          <tr><td>左侧区域</td><td>任务指导、安全边界、长上下文摘要。</td><td>可折叠求职态势图：城市薪资、技术栈、流程状态。</td><td class="next">待重构</td></tr>
+          <tr><td>右侧产物台</td><td>已有岗位、画像、简历和空态。</td><td>持续展示多 JD 申请包、事实摘要、流程状态、source refs。</td><td class="done">保留并强化</td></tr>
+          <tr><td>顶部导航</td><td>展示本地状态、模型设置和模式。</td><td>展示 provider、MCP、Skill、ASR、搜索源、workspace、诊断。</td><td class="next">待新增</td></tr>
+          <tr><td>ASR</td><td>只有文本实时提示相关接口基线。</td><td>opt-in 语音采集项目故事，转写进入待确认。</td><td class="risk">高风险需确认</td></tr>
+          <tr><td>招聘平台</td><td>未接入。</td><td>仍不登录、不绕风控、不自动投递；仅合规公开来源。</td><td class="risk">禁止默认实现</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>新版 PRD 要点</h2>
+      <div class="grid">
+        <div class="card"><h3>Chatbox 主控</h3><p>用户通过聊天发起搜索、汇总、补资料、生成申请包、调整事实和更新流程。</p></div>
+        <div class="card"><h3>左侧态势图</h3><p>分为岗位市场态势、目标机会与匹配态势、投递流程态势三大板块。</p></div>
+        <div class="card"><h3>右侧产物台</h3><p>展示简历、事实摘要、候选人画像、JD、申请包、source refs 和待确认项。</p></div>
+        <div class="card"><h3>顶部服务中心</h3><p>展示 provider、MCP、Skill、ASR、搜索源、workspace、诊断状态。</p></div>
+        <div class="card"><h3>ASR opt-in</h3><p>语音只作为资料采集入口，转写内容必须确认后才能成为事实。</p></div>
+        <div class="card"><h3>公开 JD 搜索</h3><p>仅允许合规公开来源，不登录平台，不绕反爬，不自动投递。</p></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>左侧三大板块规格表</h2>
+      <table>
+        <thead><tr><th>板块</th><th>用户问题</th><th>主要内容</th><th>交互方式</th><th>验收门槛</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>岗位市场态势</td>
+            <td>哪里有机会，薪资怎样，技术栈热度如何？</td>
+            <td>岗位数、城市薪资直方图、技术栈热度、来源可信度、更新时间。</td>
+            <td>点击城市或技术栈后，由 Chatbox 解释差异或筛选 JD。</td>
+            <td>聚合数字必须能追溯到 source refs；不得声明平台登录或自动抓取。</td>
+          </tr>
+          <tr>
+            <td>目标机会与匹配态势</td>
+            <td>哪些岗位最值得优先处理，缺什么证据？</td>
+            <td>重点岗位、匹配摘要、薪资城市、关键差距、下一步。</td>
+            <td>设为重点、补证据、生成申请包；所有动作也可由 Chatbox 发起。</td>
+            <td>推荐理由必须来自 CandidateProfile、match_report 或 source refs。</td>
+          </tr>
+          <tr>
+            <td>投递流程态势</td>
+            <td>每家公司到哪一步了，下一步做什么？</td>
+            <td>公司、岗位、阶段、下一步、申请包版本、最近更新时间。</td>
+            <td>用户通过 Chatbox 更新阶段，例如“把 B 公司改成一面待约”。</td>
+            <td>状态变化有时间戳和来源；不得自动联系招聘方或自动投递。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>AI 图像 / 原型图一致性审查</h2>
+      <div class="warn">
+        本轮没有使用不可控 AI 文生图作为最终证据，而是使用受控 SVG 原型图。这样可以降低图像漂移和事实错误风险。若后续使用 imag2，本仓库已提供 `06_IMAGE_GENERATION_PROMPTS.md` 和审查规则。
+      </div>
+      <table>
+        <thead><tr><th>检查项</th><th>结果</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td>是否保留中央 Chatbox 主控</td><td class="done">通过</td><td>概念图、目标图和路线图都以 Chatbox 为发起点。</td></tr>
+          <tr><td>是否包含顶部、左侧、中央、右侧四区</td><td class="done">通过</td><td>目标图明确展示四区职责。</td></tr>
+          <tr><td>是否出现虚假实现文案</td><td class="done">通过</td><td>图中未给出招聘平台接入、自动投递或真实 provider 验收通过结论。</td></tr>
+          <tr><td>是否偏离 JobPilot 项目概念</td><td class="done">通过</td><td>所有图均围绕 JD、薪资、项目故事、申请包和投递流程。</td></tr>
+          <tr><td>是否仍然堆叠很多向导卡片</td><td class="done">通过</td><td>目标图使用 Chatbox、轻量 chips、左侧图表和右侧产物台。</td></tr>
+          <tr><td>是否能指导自动化开发验收</td><td class="done">通过</td><td>路线图和对照表给出后续可截图、可追踪的验收点。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>后续端到端验收门槛</h2>
+      <table>
+        <thead><tr><th>门槛</th><th>验收证据</th><th>打回条件</th></tr></thead>
+        <tbody>
+          <tr><td>Chatbox 主控</td><td>1440/1200/720/390 真实截图</td><td>中央仍被大型向导卡片压住。</td></tr>
+          <tr><td>JD 搜索合规</td><td>source connector evidence、source refs、搜索任务日志</td><td>登录平台、绕风控、自动抓取或自动投递。</td></tr>
+          <tr><td>ASR opt-in</td><td>consent 截图、转写待确认、脱敏报告</td><td>未确认开启 ASR，或转写直接写入正式事实。</td></tr>
+          <tr><td>产物可对话修改</td><td>版本 diff、source refs、pending confirmations</td><td>普通聊天静默覆盖正式简历。</td></tr>
+          <tr><td>服务中心</td><td>provider/MCP/Skill/ASR/Search 状态截图</td><td>把 configured 写成 called。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>审计文档入口</h2>
+      <ul>
+        <li><code>01_P9_PRD_DRAFT.md</code>：新版 PRD 初稿。</li>
+        <li><code>02_CURRENT_IMPLEMENTATION_BASELINE.md</code>：当前实现基线与差距。</li>
+        <li><code>03_FRONTEND_EXPERIENCE_SPEC.md</code>：前端体验规格。</li>
+        <li><code>04_USER_JOURNEY_AND_ACCEPTANCE.md</code>：用户路线与验收。</li>
+        <li><code>06_IMAGE_GENERATION_PROMPTS.md</code>：imag2 提示词和图像审查规则。</li>
+        <li><code>07_FALSE_GREEN_AND_RISK_GATES.md</code>：防虚假验收门槛。</li>
+        <li><code>08_CHATGPT_AUDIT_PROMPT.md</code>：给 ChatGPT 的审计提示词。</li>
+        <li><code>09_LEFT_INTELLIGENCE_PANEL_DETAIL.md</code>：左侧求职态势三大板块详细设计。</li>
+        <li><code>10_OPEN_SOURCE_MAP_VISUALIZATION_RESEARCH.md</code>：GitHub CLI 开源地图与可视化方案调研。</li>
+      </ul>
+    </section>
+  </main>
+  <script>
+    (() => {
+      const datasets = {
+        market: {
+          tag: "岗位市场态势",
+          title: "上海：React/TypeScript 岗位密集",
+          summary: "图钉大小表示岗位数，颜色表示薪资区间。适合回答哪里有机会、薪资怎样、技术栈热度如何。",
+          legend: [["#1d6b5e", "25k-40k 主区间"], ["#d79a3b", "机会多但波动大"], ["#2d5d79", "远程/混合机会"]],
+          pins: [
+            { city: "北京", x: 548, y: 178, r: 22, color: "#d79a3b", jobs: 31, salary: "28k-45k", stack: "React / AI 应用" },
+            { city: "上海", x: 626, y: 318, r: 28, color: "#1d6b5e", jobs: 42, salary: "25k-40k", stack: "React / TypeScript" },
+            { city: "杭州", x: 596, y: 366, r: 21, color: "#1d6b5e", jobs: 24, salary: "22k-35k", stack: "前端工程化" },
+            { city: "深圳", x: 524, y: 442, r: 24, color: "#d79a3b", jobs: 29, salary: "26k-42k", stack: "全栈 / 小程序" },
+            { city: "成都", x: 392, y: 352, r: 16, color: "#2d5d79", jobs: 13, salary: "18k-30k", stack: "远程 / 混合" }
+          ],
+          metrics: [["岗位总数", "139"], ["城市", "5"], ["主薪资区间", "25k-40k"], ["主要技术栈", "React / TS"]]
+        },
+        match: {
+          tag: "目标机会与匹配态势",
+          title: "A 公司：高匹配，适合优先生成申请包",
+          summary: "图钉颜色表示匹配状态：绿色可优先处理，琥珀色需要补证据，红色暂缓。",
+          legend: [["#1d6b5e", "高匹配"], ["#d79a3b", "需补证据"], ["#9b2f2f", "暂缓"]],
+          pins: [
+            { city: "A 公司 上海", x: 626, y: 318, r: 24, color: "#1d6b5e", jobs: "前端性能优化", salary: "30k-40k", stack: "证据充足" },
+            { city: "B 公司 杭州", x: 596, y: 366, r: 22, color: "#d79a3b", jobs: "AI 应用前端", salary: "25k-35k", stack: "需补 AI 项目故事" },
+            { city: "C 公司 北京", x: 548, y: 178, r: 20, color: "#9b2f2f", jobs: "高级全栈", salary: "35k-50k", stack: "后端 must-have 不足" },
+            { city: "D 公司 深圳", x: 524, y: 442, r: 18, color: "#d79a3b", jobs: "低代码平台", salary: "24k-36k", stack: "需补平台项目细节" }
+          ],
+          metrics: [["高匹配", "1"], ["需补证据", "2"], ["暂缓", "1"], ["下一步", "补 AI 项目故事"]]
+        },
+        pipeline: {
+          tag: "投递流程态势",
+          title: "B 公司：一面待约，需补低代码项目细节",
+          summary: "图钉颜色表示流程阶段。用户可以通过 Chatbox 更新阶段，但不会自动联系招聘方或自动投递。",
+          legend: [["#667085", "待评估"], ["#2d5d79", "已生成申请包"], ["#d79a3b", "面试中"], ["#1d6b5e", "Offer/推进顺利"]],
+          pins: [
+            { city: "A 公司 上海", x: 626, y: 318, r: 22, color: "#2d5d79", jobs: "已生成申请包", salary: "v2 草稿", stack: "待确认 1 项" },
+            { city: "B 公司 杭州", x: 596, y: 366, r: 24, color: "#d79a3b", jobs: "一面待约", salary: "下周三前", stack: "补低代码项目细节" },
+            { city: "C 公司 北京", x: 548, y: 178, r: 18, color: "#667085", jobs: "暂缓", salary: "未投递", stack: "关键证据不足" },
+            { city: "E 公司 成都", x: 392, y: 352, r: 18, color: "#1d6b5e", jobs: "HR 沟通中", salary: "远程岗位", stack: "等待反馈" }
+          ],
+          metrics: [["待评估", "1"], ["已生成申请包", "1"], ["面试中", "1"], ["HR 沟通", "1"]]
+        }
+      };
+      const stage = document.getElementById("p9MapStage");
+      const viewport = document.getElementById("p9MapViewport");
+      const pins = document.getElementById("p9Pins");
+      const modeTag = document.getElementById("mapModeTag");
+      const title = document.getElementById("mapTitle");
+      const summary = document.getElementById("mapSummary");
+      const metrics = document.getElementById("mapMetrics");
+      const legend = document.getElementById("mapLegend");
+      let currentMode = "market";
+      let selectedIndex = 0;
+      let scale = 1;
+      let tx = 0;
+      let ty = 0;
+      let dragging = false;
+      let start = { x: 0, y: 0, tx: 0, ty: 0 };
+
+      function applyTransform() {
+        viewport.setAttribute("transform", `translate(${tx} ${ty}) scale(${scale})`);
+      }
+      function renderSide(item) {
+        const data = datasets[currentMode];
+        modeTag.textContent = data.tag;
+        title.textContent = `${item.city}`;
+        summary.textContent = `${data.summary} 当前选中：${item.jobs}，${item.salary}，${item.stack}。`;
+        metrics.innerHTML = data.metrics.map(([k, v]) => `<div class="metric-row"><span>${k}</span><strong>${v}</strong></div>`).join("");
+        legend.innerHTML = data.legend.map(([color, label]) => `<span><i class="dot" style="background:${color}"></i>${label}</span>`).join("");
+      }
+      function renderPins() {
+        const data = datasets[currentMode];
+        pins.innerHTML = "";
+        data.pins.forEach((pin, index) => {
+          const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+          g.setAttribute("class", "map-pin");
+          g.setAttribute("tabindex", "0");
+          g.setAttribute("role", "button");
+          g.setAttribute("aria-label", pin.city);
+          g.innerHTML = `<circle cx="${pin.x}" cy="${pin.y}" r="${pin.r}" fill="${pin.color}"></circle><text x="${pin.x + pin.r + 8}" y="${pin.y + 5}">${pin.city}</text>`;
+          g.addEventListener("click", () => { selectedIndex = index; renderSide(pin); });
+          g.addEventListener("keydown", (event) => {
+            if (event.key === "Enter" || event.key === " ") { event.preventDefault(); selectedIndex = index; renderSide(pin); }
+          });
+          pins.appendChild(g);
+        });
+        renderSide(data.pins[selectedIndex] || data.pins[0]);
+      }
+      function setMode(mode) {
+        currentMode = mode;
+        selectedIndex = 0;
+        document.querySelectorAll("[data-map-mode]").forEach((button) => button.classList.toggle("active", button.dataset.mapMode === mode));
+        renderPins();
+      }
+      document.querySelectorAll("[data-map-mode]").forEach((button) => button.addEventListener("click", () => setMode(button.dataset.mapMode)));
+      document.querySelector("[data-map-action='zoom-in']").addEventListener("click", () => { scale = Math.min(2.4, scale + 0.2); applyTransform(); });
+      document.querySelector("[data-map-action='zoom-out']").addEventListener("click", () => { scale = Math.max(0.7, scale - 0.2); applyTransform(); });
+      document.querySelector("[data-map-action='reset']").addEventListener("click", () => { scale = 1; tx = 0; ty = 0; applyTransform(); });
+      stage.addEventListener("pointerdown", (event) => {
+        dragging = true; stage.classList.add("dragging"); stage.setPointerCapture(event.pointerId);
+        start = { x: event.clientX, y: event.clientY, tx, ty };
+      });
+      stage.addEventListener("pointermove", (event) => {
+        if (!dragging) return;
+        tx = start.tx + (event.clientX - start.x) / scale;
+        ty = start.ty + (event.clientY - start.y) / scale;
+        applyTransform();
+      });
+      stage.addEventListener("pointerup", (event) => {
+        dragging = false; stage.classList.remove("dragging"); stage.releasePointerCapture(event.pointerId);
+      });
+      stage.addEventListener("wheel", (event) => {
+        event.preventDefault();
+        scale = Math.max(0.7, Math.min(2.4, scale + (event.deltaY < 0 ? 0.12 : -0.12)));
+        applyTransform();
+      }, { passive: false });
+      renderPins();
+      applyTransform();
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>P9 阶段收口：Chatbox-native 求职情报工作台自动化验收报告 - Browser Acceptance Report</title>
+  <style>
+    body { margin: 0; font: 15px/1.55 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #1f2933; background: #f6f8fb; }
+    header, main { max-width: 1120px; margin: 0 auto; padding: 28px; }
+    header { padding-top: 36px; }
+    h1 { margin: 0 0 10px; font-size: 30px; letter-spacing: 0; }
+    h2 { margin: 28px 0 12px; font-size: 19px; }
+    .meta { color: #52606d; }
+    .badge { display: inline-block; padding: 5px 10px; border-radius: 6px; font-weight: 700; background: #d9f9e6; color: #0f6b3d; }
+    section { background: #fff; border: 1px solid #d9e2ec; border-radius: 8px; padding: 18px; margin: 18px 0; }
+    table { width: 100%; border-collapse: collapse; background: #fff; }
+    th, td { text-align: left; border-bottom: 1px solid #e4e7eb; padding: 10px; vertical-align: top; }
+    th { color: #52606d; font-size: 13px; }
+    code { background: #eef2f7; padding: 2px 5px; border-radius: 4px; }
+    .passed { color: #0f6b3d; font-weight: 700; }
+    .failed { color: #a61b1b; font-weight: 700; }
+    .warning { color: #8a4b0f; font-weight: 700; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+    figure { margin: 0; border: 1px solid #d9e2ec; border-radius: 8px; overflow: hidden; background: #fff; }
+    img { display: block; width: 100%; height: auto; border-bottom: 1px solid #d9e2ec; }
+    figcaption { padding: 10px 12px; color: #52606d; font-size: 13px; }
+    h3 { margin: 18px 0 8px; font-size: 17px; }
+    h4 { margin: 18px 0 8px; font-size: 15px; color: #334e68; }
+    details { border: 1px solid #d9e2ec; border-radius: 6px; padding: 10px 12px; margin: 8px 0; background: #fbfdff; }
+    details p { margin: 10px 0 0; color: #334e68; }
+    .dialogue-case { border: 1px solid #bcccdc; border-radius: 8px; padding: 14px; margin: 14px 0; background: #fff; }
+    pre { white-space: pre-wrap; overflow-wrap: anywhere; background: #fff4f4; color: #7f1d1d; padding: 12px; border-radius: 6px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>P9 阶段收口：Chatbox-native 求职情报工作台自动化验收报告</h1>
+    <p><span class="badge">passed</span></p>
+    <p class="meta">复验 P9 目标架构、当前实现、出门条件和真实界面路径是否在本地自动化候选范围内全绿，并明确未验证的高风险外部能力。</p>
+    <p class="meta">Started: 2026-07-03T22:18:06.665Z · Ended: 2026-07-03T22:18:14.121Z · Report: <code>/mnt/c/workspace/interview_service/docs/reports/P9_STAGE_CLOSURE_ACCEPTANCE_REPORT.html</code></p>
+  </header>
+  <main>
+    <section>
+      <h2>目标架构</h2>
+      <ul><li>TopServiceCenter 展示 provider、JD 信息源、ASR、MCP/Skill、workspace 和安全边界状态。</li><li>LeftIntelligencePanel 展示岗位市场、目标机会与匹配、投递流程三大页签，地图/图钉支持缩放、拖动和重置。</li><li>ConversationPlane 仍是中央主路径，Chatbox 可发起 JD 汇总、资料补全、申请包生成和流程更新。</li><li>RightArtifactBench 展示 search run、故事草稿、流程摘要、岗位、简历、画像、source refs 和 pending confirmations。</li><li>FastAPI / Domain / SQLite 复用现有 P8/P8.1 能力；P9 不新增真实搜索、平台抓取、真实 ASR 或自动投递系统。</li><li>drawio 已同步到 P9 阶段收口口径：代码实体、分层关系、开发验收计划、门槛和安全边界均标注已实现/已修改/未实现状态。</li></ul>
+      <h2>当前实现</h2>
+      <ul><li>apps/chatbox/src/main.tsx 新增 TopServiceCenter、LeftIntelligencePanel、MarketMapView、OpportunityMatchPanel、ApplicationPipelineView 和 P9ArtifactOverview。</li><li>Chatbox 新增本地 handleP9Command：JD/薪资/城市汇总、项目故事补全、流程更新和申请包生成均从输入框发起。</li><li>apps/chatbox/src/styles.css 新增 P9 服务状态、离线地图、流程泳道、产物总览和 1920/1440/1200/720/390 响应式规则。</li><li>P9 search run 和流程状态使用 repo fixture、已导入 JD、用户粘贴和 localStorage；没有联网抓取或平台登录。</li><li>docs/active/jobpilot-stage-gap-and-acceptance.drawio 与文本镜像已从文档阶段更新为自动化候选阶段收口审计。</li></ul>
+    </section>
+    <section>
+      <h2>自动化步骤</h2>
+      <table><thead><tr><th>#</th><th>步骤</th><th>动作</th><th>结果</th></tr></thead><tbody><tr><td>1</td><td>打开 P9 工作台</td><td><code>goto</code></td><td class="passed">passed</td></tr>
+<tr><td>2</td><td>等待 P9 标题</td><td><code>waitText</code></td><td class="passed">passed</td></tr>
+<tr><td>3</td><td>等待 Chatbox 初始化完成</td><td><code>waitText</code></td><td class="passed">passed</td></tr>
+<tr><td>4</td><td>P9 三栏首屏</td><td><code>screenshot</code></td><td class="passed">passed</td></tr>
+<tr><td>5</td><td>输入 JD 汇总请求</td><td><code>fill</code></td><td class="passed">passed</td></tr>
+<tr><td>6</td><td>发送 JD 汇总请求</td><td><code>clickText</code></td><td class="passed">passed</td></tr>
+<tr><td>7</td><td>等待 search run</td><td><code>waitText</code></td><td class="passed">passed</td></tr>
+<tr><td>8</td><td>JD 汇总与地图态势</td><td><code>screenshot</code></td><td class="passed">passed</td></tr>
+<tr><td>9</td><td>打开流程页签</td><td><code>clickText</code></td><td class="passed">passed</td></tr>
+<tr><td>10</td><td>输入流程更新</td><td><code>fill</code></td><td class="passed">passed</td></tr>
+<tr><td>11</td><td>发送流程更新</td><td><code>clickText</code></td><td class="passed">passed</td></tr>
+<tr><td>12</td><td>等待流程更新</td><td><code>waitText</code></td><td class="passed">passed</td></tr>
+<tr><td>13</td><td>流程更新证据</td><td><code>screenshot</code></td><td class="passed">passed</td></tr>
+<tr><td>14</td><td>1440 重新打开</td><td><code>goto</code></td><td class="passed">passed</td></tr>
+<tr><td>15</td><td>等待 1440 标题</td><td><code>waitText</code></td><td class="passed">passed</td></tr>
+<tr><td>16</td><td>等待 1440 初始化</td><td><code>waitText</code></td><td class="passed">passed</td></tr>
+<tr><td>17</td><td>1440 P9 可视度</td><td><code>screenshot</code></td><td class="passed">passed</td></tr>
+<tr><td>18</td><td>1200 重新打开</td><td><code>goto</code></td><td class="passed">passed</td></tr>
+<tr><td>19</td><td>等待 1200 标题</td><td><code>waitText</code></td><td class="passed">passed</td></tr>
+<tr><td>20</td><td>等待 1200 初始化</td><td><code>waitText</code></td><td class="passed">passed</td></tr>
+<tr><td>21</td><td>1200 P9 可视度</td><td><code>screenshot</code></td><td class="passed">passed</td></tr>
+<tr><td>22</td><td>720 重新打开</td><td><code>goto</code></td><td class="passed">passed</td></tr>
+<tr><td>23</td><td>等待 720 标题</td><td><code>waitText</code></td><td class="passed">passed</td></tr>
+<tr><td>24</td><td>等待 720 初始化</td><td><code>waitText</code></td><td class="passed">passed</td></tr>
+<tr><td>25</td><td>720 Chatbox 默认主视图</td><td><code>screenshot</code></td><td class="passed">passed</td></tr>
+<tr><td>26</td><td>390 重新打开</td><td><code>goto</code></td><td class="passed">passed</td></tr>
+<tr><td>27</td><td>等待 390 标题</td><td><code>waitText</code></td><td class="passed">passed</td></tr>
+<tr><td>28</td><td>等待 390 初始化</td><td><code>waitText</code></td><td class="passed">passed</td></tr>
+<tr><td>29</td><td>390 输入框与工具可达</td><td><code>screenshot</code></td><td class="passed">passed</td></tr></tbody></table>
+
+    </section>
+    <section>
+      <h2>验收标准</h2>
+      <ul><li>中央 Chatbox 是首屏第一交互路径，左侧态势和右侧产物台不抢占输入框。</li><li>顶部服务中心不把未配置或未授权服务显示为已连通。</li><li>左侧三大板块可见，地图/图钉支持缩放、拖动和重置。</li><li>Chatbox 可发起 JD/城市/薪资汇总，并明确来源限制。</li><li>Chatbox 可更新投递流程，但不对外发送、不自动投递。</li><li>右侧产物台展示 search run、故事草稿、流程、岗位、简历和画像。</li><li>报告不声称真实全网搜索、招聘平台接入、真实 provider、真实个人资料、真实 ASR、自动投递或 SaaS 已通过。</li></ul>
+    </section>
+    <section>
+      <h2>命令结果</h2>
+      <table><thead><tr><th>命令</th><th>状态</th><th>证据</th></tr></thead><tbody><tr><td><code>/mnt/c/workspace/interview_service/.venv/bin/python -m pytest</code></td><td class="passed">passed</td><td>tests/evals/test_p9_stage_closure_acceptance_eval.py .....               [ 87%]
+tests/evals/test_piagent_chat_core_integration_eval.py ........          [ 93%]
+tests/evals/test_provider_timeout_mapping_eval.py .                      [ 94%]
+tests/evals/test_realtime_safety_eval.py ..                              [ 95%]
+tests/evals/test_schema_and_docs_hardening_eval.py ...                   [ 97%]
+tests/evals/test_workspace_privacy_eval.py .                             [ 98%]
+tests/test_demo_flow.py .                                                [ 99%]
+tests/test_workspace_security.py .                                       [100%]
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/starlette/formparsers.py:12
+  /mnt/c/workspace/interview_service/.venv/lib/python3.12/site-packages/starlette/formparsers.py:12: PendingDeprecationWarning: Please use `import python_multipart` instead.
+    import multipart
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+================== 136 passed, 1 warning in 77.70s (0:01:17) ===================</td></tr>
+<tr><td><code>npm --prefix apps/chatbox run build</code></td><td class="passed">passed</td><td>&gt; @jobpilot/chatbox@0.1.0 build
+&gt; tsc &amp;&amp; vite build
+vite v7.3.5 building client environment for production...
+transforming...
+✓ 1578 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.38 kB │ gzip:  0.26 kB
+dist/assets/index-C-mUy2Kv.css   46.00 kB │ gzip:  9.01 kB
+dist/assets/index-CrvkyUnQ.js   269.18 kB │ gzip: 85.75 kB
+✓ built in 12.47s</td></tr>
+<tr><td><code>/mnt/c/workspace/interview_service/.venv/bin/python -c from pathlib import Path; import xml.etree.ElementTree as ET; p=Path('docs/active/jobpilot-stage-gap-and-acceptance.drawio'); ET.parse(p); print('drawio ok', p.stat().st_size)</code></td><td class="passed">passed</td><td>drawio ok 50317</td></tr>
+<tr><td><code>static text guard for P9 UI entities</code></td><td class="passed">passed</td><td>{
+  &quot;top_service_center&quot;: true,
+  &quot;left_intelligence_panel&quot;: true,
+  &quot;market_map_view&quot;: true,
+  &quot;chatbox_command_router&quot;: true,
+  &quot;artifact_overview&quot;: true,
+  &quot;no_forbidden_claims&quot;: true
+}</td></tr>
+<tr><td><code>/mnt/c/workspace/interview_service/.venv/bin/python -m pytest tests/evals/test_p9_chatbox_native_acceptance_eval.py</code></td><td class="passed">passed</td><td>============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0
+rootdir: /mnt/c/workspace/interview_service
+configfile: pyproject.toml
+plugins: anyio-4.4.0
+collected 4 items
+tests/evals/test_p9_chatbox_native_acceptance_eval.py ....               [100%]
+============================== 4 passed in 0.31s ===============================</td></tr>
+<tr><td><code>git diff --check</code></td><td class="passed">passed</td><td></td></tr></tbody></table>
+    </section>
+    <section>
+      <h2>PRD 规格检视</h2>
+      <table><thead><tr><th>PRD / Gate 要求</th><th>证据</th><th>结论</th></tr></thead><tbody><tr><td>Chatbox-native 主路径</td><td>截图显示中央 Chatbox、状态机、输入框和工具入口首屏可见。</td><td class="passed">PASS</td></tr>
+<tr><td>求职态势三大板块</td><td>左侧 Market/Match/Pipeline 页签和地图/流程截图可见。</td><td class="passed">PASS</td></tr>
+<tr><td>JD 汇总边界</td><td>search run 明确使用 repo fixture、已导入 JD 和用户粘贴，不联网抓取。</td><td class="passed">PASS</td></tr>
+<tr><td>Chatbox 更新流程</td><td>流程更新通过本地 Chatbox 命令完成，报告保留截图。</td><td class="passed">PASS</td></tr>
+<tr><td>高风险边界</td><td>未验证范围列明真实 provider、ASR、招聘平台、自动投递未通过。</td><td class="passed">PASS</td></tr>
+<tr><td>drawio 目标架构同步</td><td>drawio 8 页图已包含目标架构、当前架构差异、实体分层、开发验收计划和出门条件。</td><td class="passed">PASS</td></tr></tbody></table>
+    </section>
+    <section>
+      <h2>代码检视</h2>
+      <table><thead><tr><th>区域</th><th>结论</th><th>级别</th></tr></thead><tbody><tr><td>Frontend shell</td><td>P9 新实体在 main.tsx 内增量实现，未拆动后端路由和数据库。</td><td class="passed">passed</td></tr>
+<tr><td>Command router</td><td>handleP9Command 只处理本地 UI 状态和现有 resume API，不触发外部搜索或平台动作。</td><td class="passed">passed</td></tr>
+<tr><td>Map visualization</td><td>使用离线 SVG 地图形态，不依赖外部地图服务或网络 token。</td><td class="passed">passed</td></tr>
+<tr><td>Residual risk</td><td>本轮未验证真实 LLM 输出质量和真实数据源质量，需要后续单独授权。</td><td class="warning">warning</td></tr></tbody></table>
+    </section>
+    <section>
+      <h2>文档审计</h2>
+      <table><thead><tr><th>区域</th><th>结论</th><th>状态</th></tr></thead><tbody><tr><td>P9 PRD</td><td>实现围绕顶部服务中心、左侧态势、中央 Chatbox、右侧产物台展开。</td><td class="passed">passed</td></tr>
+<tr><td>目标架构</td><td>实现未扩张为真实搜索系统、ASR 系统、MCP/Skill 平台或招聘自动化。</td><td class="passed">passed</td></tr>
+<tr><td>验收门槛</td><td>报告包含 build、drawio parse、静态 guard、headless 截图和 PRD 规格检视。</td><td class="passed">passed</td></tr>
+<tr><td>阶段收口</td><td>drawio 文本镜像已同步为 P9 自动化候选阶段收口审计，不再停留在文档开发阶段。</td><td class="passed">passed</td></tr></tbody></table>
+    </section>
+    <section>
+      <h2>多背景多轮对话补证</h2>
+      <p class="meta">以下 transcript 来自合成资料和 fake provider opt-in 自动化路径，用于证明长程对话、上下文边界、脱敏日志和不同背景覆盖；未覆盖真实 LLM/provider 的回复质量、成本、稳定性或可用性验收。</p>
+      <article class="dialogue-case">
+        <h3>合成候选人 A · LLM 应用前端工程师</h3>
+        <p class="meta">技术背景：React / TypeScript / 前端工程化 / LLM 应用控制台；provider 路径：fake/local command route；未调用真实 provider；真实 provider 调用：否</p>
+        <table><tbody>
+          <tr><th>轮次</th><td>20 轮用户消息 / 40 条会话消息</td></tr>
+          <tr><th>provider 记录</th><td>0 条 called 记录；recent window=8；rolling summary covered=yes, synthetic transcript only</td></tr>
+          <tr><th>隐私边界</th><td>API Key=否；raw provider response=否；full history=否</td></tr>
+          <tr><th>关注点</th><td>JD 汇总 / 资料补全 / 申请包草稿 / 流程更新 / 事实边界</td></tr>
+        </tbody></table>
+        <h4>虚拟资料</h4>
+        <details><summary>虚拟简历资料：<code>docs/reports/evidence/p9_stage_closure/synthetic_profiles.md</code></summary><p>本报告内嵌的是合成资料摘要，不包含真实个人资料路径或敏感凭据。</p></details><details><summary>虚拟 JD 资料：<code>docs/reports/evidence/p9_stage_closure/synthetic_jobs.md</code></summary><p>JD 来自本地 fixture/示例文本，不代表真实全网搜索或招聘平台抓取。</p></details>
+        <h4>20 轮对话 transcript</h4>
+        <table><thead><tr><th>#</th><th>用户消息</th><th>助手回复</th><th>状态</th><th>产物数</th></tr></thead><tbody><tr><td>1</td><td>我想找北京 LLM 应用前端岗位，先帮我看 JD 机会。</td><td>基于本地 fixture、已导入 JD 和用户粘贴来源整理北京 LLM 应用前端机会，不执行平台抓取。</td><td>not_called / local/fake</td><td>1</td></tr>
+<tr><td>2</td><td>薪资范围优先 30-45K，城市只看北京和上海。</td><td>已把城市和薪资偏好纳入 search run 条件，并在左侧市场态势中突出北京、上海。</td><td>not_called / local/fake</td><td>1</td></tr>
+<tr><td>3</td><td>我的核心栈是 React、TypeScript、前端工程化。</td><td>已记录为前端主技能，后续申请包会把 React、TypeScript 和工程化证据绑定到 source refs。</td><td>not_called / local/fake</td><td>2</td></tr>
+<tr><td>4</td><td>补充一个项目：我做过智能客服控制台。</td><td>已生成项目故事草稿，需要继续确认本人贡献、指标和技术难点。</td><td>not_called / local/fake</td><td>2</td></tr>
+<tr><td>5</td><td>本人负责流式消息、会话状态和错误重试。</td><td>已把流式消息、会话状态、错误重试加入故事证据，并标记需要量化效果。</td><td>not_called / local/fake</td><td>2</td></tr>
+<tr><td>6</td><td>指标是首屏响应从 2.8s 降到 1.6s。</td><td>已记录性能指标，作为简历项目亮点候选，但导出前仍需确认数据来源。</td><td>not_called / local/fake</td><td>3</td></tr>
+<tr><td>7</td><td>把北辰智能这个岗位设成目标岗位。</td><td>已把北辰智能 LLM 应用前端标记为当前目标岗位，右侧产物台将围绕它生成申请包。</td><td>not_called / local/fake</td><td>3</td></tr>
+<tr><td>8</td><td>生成一版针对这个 JD 的简历摘要。</td><td>已生成 JD 定制简历摘要草稿，并保留 source refs 与 pending confirmations。</td><td>not_called / local/fake</td><td>4</td></tr>
+<tr><td>9</td><td>把前端工程化部分写得更强。</td><td>已增强工程化段落，强调构建优化、类型安全、组件抽象和可观测性。</td><td>not_called / local/fake</td><td>4</td></tr>
+<tr><td>10</td><td>不要编造我没做过的模型训练。</td><td>已保留边界：只描述 LLM 应用前端和平台工程，不写模型训练经历。</td><td>not_called / local/fake</td><td>4</td></tr>
+<tr><td>11</td><td>补一个面试故事，讲复杂状态管理。</td><td>已生成 STAR 面试故事草稿，包含问题、行动、结果和待确认指标。</td><td>not_called / local/fake</td><td>5</td></tr>
+<tr><td>12</td><td>把投递状态改成已投递。</td><td>已在本地流程态势中把目标岗位更新为 applied，不对外投递。</td><td>not_called / local/fake</td><td>5</td></tr>
+<tr><td>13</td><td>如果下周一一面，帮我列准备重点。</td><td>已生成一面准备清单：项目架构、流式体验、性能指标、错误重试、边界说明。</td><td>not_called / local/fake</td><td>5</td></tr>
+<tr><td>14</td><td>上海岗位也保留，但优先级低。</td><td>已把上海岗位保留为备选机会，优先级低于北京目标岗位。</td><td>not_called / local/fake</td><td>5</td></tr>
+<tr><td>15</td><td>更新故事：我还做过权限控制。</td><td>已新增权限控制故事线，提示需要补充角色、权限模型和审计日志证据。</td><td>not_called / local/fake</td><td>6</td></tr>
+<tr><td>16</td><td>帮我检查哪些事实还待确认。</td><td>待确认项包括性能指标来源、权限控制规模、团队人数、项目时间范围。</td><td>not_called / local/fake</td><td>6</td></tr>
+<tr><td>17</td><td>先不要导出正式简历。</td><td>已保持草稿状态，不执行正式导出。</td><td>not_called / local/fake</td><td>6</td></tr>
+<tr><td>18</td><td>给我一个申请包目录。</td><td>已生成申请包目录：JD 摘要、定制简历、项目故事、一面准备、待确认项。</td><td>not_called / local/fake</td><td>7</td></tr>
+<tr><td>19</td><td>把目标公司状态改成一面通过。</td><td>已在本地流程中更新为 interview，一面通过；不对外发送任何消息。</td><td>not_called / local/fake</td><td>7</td></tr>
+<tr><td>20</td><td>总结一下下一步。</td><td>下一步是确认指标和事实边界、补权限项目证据、人工审查简历草稿后再导出。</td><td>not_called / local/fake</td><td>7</td></tr></tbody></table>
+      </article>
+<article class="dialogue-case">
+        <h3>合成候选人 B · AI 平台后端工程师</h3>
+        <p class="meta">技术背景：Java / Spring Boot / Kafka / MySQL / 平台稳定性；provider 路径：fake/local command route；未调用真实 provider；真实 provider 调用：否</p>
+        <table><tbody>
+          <tr><th>轮次</th><td>20 轮用户消息 / 40 条会话消息</td></tr>
+          <tr><th>provider 记录</th><td>0 条 called 记录；recent window=8；rolling summary covered=yes, synthetic transcript only</td></tr>
+          <tr><th>隐私边界</th><td>API Key=否；raw provider response=否；full history=否</td></tr>
+          <tr><th>关注点</th><td>JD 汇总 / 资料补全 / 申请包草稿 / 流程更新 / 事实边界</td></tr>
+        </tbody></table>
+        <h4>虚拟资料</h4>
+        <details><summary>虚拟简历资料：<code>docs/reports/evidence/p9_stage_closure/synthetic_profiles.md</code></summary><p>本报告内嵌的是合成资料摘要，不包含真实个人资料路径或敏感凭据。</p></details><details><summary>虚拟 JD 资料：<code>docs/reports/evidence/p9_stage_closure/synthetic_jobs.md</code></summary><p>JD 来自本地 fixture/示例文本，不代表真实全网搜索或招聘平台抓取。</p></details>
+        <h4>20 轮对话 transcript</h4>
+        <table><thead><tr><th>#</th><th>用户消息</th><th>助手回复</th><th>状态</th><th>产物数</th></tr></thead><tbody><tr><td>1</td><td>我偏后端和平台工程，想看杭州 Java/AI 平台岗位。</td><td>已按杭州、Java、AI 平台方向生成本地 search run，不进行真实平台抓取。</td><td>not_called / local/fake</td><td>1</td></tr>
+<tr><td>2</td><td>薪资希望 35K 以上，优先大模型应用平台。</td><td>已把薪资和方向偏好加入机会匹配，并标记杭州高优先级岗位。</td><td>not_called / local/fake</td><td>1</td></tr>
+<tr><td>3</td><td>我的主栈是 Java、Spring Boot、Kafka、MySQL。</td><td>已记录后端主技能，后续申请包会强调服务治理、消息系统和数据库经验。</td><td>not_called / local/fake</td><td>2</td></tr>
+<tr><td>4</td><td>项目经历有推荐系统实时特征服务。</td><td>已生成项目故事草稿，待确认吞吐、延迟、可用性和本人职责。</td><td>not_called / local/fake</td><td>2</td></tr>
+<tr><td>5</td><td>我负责 Kafka 消费链路和特征缓存。</td><td>已补充本人贡献：消费链路、缓存策略和稳定性治理。</td><td>not_called / local/fake</td><td>2</td></tr>
+<tr><td>6</td><td>QPS 峰值 1.2 万，P99 低于 80ms。</td><td>已记录量化指标，并标为导出前需要确认数据来源。</td><td>not_called / local/fake</td><td>3</td></tr>
+<tr><td>7</td><td>把云栖数据的 AI 平台后端岗位设为目标。</td><td>已设置目标岗位，右侧产物台将围绕该 JD 生成后端申请包。</td><td>not_called / local/fake</td><td>3</td></tr>
+<tr><td>8</td><td>生成简历草稿，突出平台工程。</td><td>已生成平台工程导向简历摘要，绑定 Kafka、缓存、P99 指标和 source refs。</td><td>not_called / local/fake</td><td>4</td></tr>
+<tr><td>9</td><td>别写 Kubernetes，我没做过。</td><td>已添加事实边界：不写 Kubernetes 实操，只保留服务治理和部署协作。</td><td>not_called / local/fake</td><td>4</td></tr>
+<tr><td>10</td><td>补一个故障恢复故事。</td><td>已生成故障恢复 STAR 草稿，等待补充故障影响范围和恢复时长。</td><td>not_called / local/fake</td><td>5</td></tr>
+<tr><td>11</td><td>投递状态先设为感兴趣。</td><td>已在本地流程态势中设为 interested，不对外投递。</td><td>not_called / local/fake</td><td>5</td></tr>
+<tr><td>12</td><td>我还做过数据库慢查询优化。</td><td>已新增慢查询优化故事线，提示补充索引、SQL、数据量和收益。</td><td>not_called / local/fake</td><td>6</td></tr>
+<tr><td>13</td><td>帮我做一版面试问题准备。</td><td>已生成后端面试准备：消息一致性、缓存失效、P99、慢查询、故障恢复。</td><td>not_called / local/fake</td><td>6</td></tr>
+<tr><td>14</td><td>如果 JD 要求 Go，会不会是短板？</td><td>已标记 Go 为岗位短板，建议表达 Java 平台迁移能力而不虚构 Go 项目。</td><td>not_called / local/fake</td><td>6</td></tr>
+<tr><td>15</td><td>把云栖数据状态改成 HR 沟通中。</td><td>已在本地流程中更新为 interview 阶段的 HR 沟通中。</td><td>not_called / local/fake</td><td>6</td></tr>
+<tr><td>16</td><td>帮我整理 pending confirmations。</td><td>待确认项包括 QPS/P99 数据来源、故障影响范围、慢查询收益和 Go 能力边界。</td><td>not_called / local/fake</td><td>7</td></tr>
+<tr><td>17</td><td>生成申请包目录。</td><td>已生成申请包目录：岗位解读、定制简历、平台故事、故障故事、面试准备。</td><td>not_called / local/fake</td><td>7</td></tr>
+<tr><td>18</td><td>我想比较杭州和上海机会。</td><td>已在左侧态势中保留杭州和上海对比，强调本地样例数据边界。</td><td>not_called / local/fake</td><td>7</td></tr>
+<tr><td>19</td><td>不要正式导出。</td><td>已保持草稿和待确认状态，不触发正式导出。</td><td>not_called / local/fake</td><td>7</td></tr>
+<tr><td>20</td><td>最后总结下风险。</td><td>主要风险是 Go 经验不足、指标需确认、真实 provider 和真实平台数据仍未验收。</td><td>not_called / local/fake</td><td>7</td></tr></tbody></table>
+      </article>
+    </section>
+    <section>
+      <h2>截图证据</h2>
+      <div class="grid"><figure><img src="evidence/p9_stage_closure/p9_initial_1920.png" alt="P9 三栏首屏"><figcaption>P9 三栏首屏<br><code>evidence/p9_stage_closure/p9_initial_1920.png</code></figcaption></figure>
+<figure><img src="evidence/p9_stage_closure/p9_search_run_1920.png" alt="JD 汇总与地图态势"><figcaption>JD 汇总与地图态势<br><code>evidence/p9_stage_closure/p9_search_run_1920.png</code></figcaption></figure>
+<figure><img src="evidence/p9_stage_closure/p9_pipeline_update_1920.png" alt="流程更新证据"><figcaption>流程更新证据<br><code>evidence/p9_stage_closure/p9_pipeline_update_1920.png</code></figcaption></figure>
+<figure><img src="evidence/p9_stage_closure/p9_1440.png" alt="1440 P9 可视度"><figcaption>1440 P9 可视度<br><code>evidence/p9_stage_closure/p9_1440.png</code></figcaption></figure>
+<figure><img src="evidence/p9_stage_closure/p9_1200.png" alt="1200 P9 可视度"><figcaption>1200 P9 可视度<br><code>evidence/p9_stage_closure/p9_1200.png</code></figcaption></figure>
+<figure><img src="evidence/p9_stage_closure/p9_720.png" alt="720 Chatbox 默认主视图"><figcaption>720 Chatbox 默认主视图<br><code>evidence/p9_stage_closure/p9_720.png</code></figcaption></figure>
+<figure><img src="evidence/p9_stage_closure/p9_390.png" alt="390 输入框与工具可达"><figcaption>390 输入框与工具可达<br><code>evidence/p9_stage_closure/p9_390.png</code></figcaption></figure></div>
+    </section>
+    <section>
+      <h2>未验证范围与审计意见</h2>
+      <ul><li>未登录、抓取、自动沟通或自动投递 BOSS、猎聘、拉勾、LinkedIn 等招聘平台。</li><li>未执行真实全网 JD 搜索，只使用用户粘贴、已导入 JD、repo fixture 和本地示例表达。</li><li>未默认调用 MiniMax、DeepSeek 或 OpenAI-compatible provider。</li><li>未读取用户真实个人资料路径。</li><li>未采集麦克风，未调用真实 ASR。</li><li>未建设 MCP/Skill 平台、SaaS、多租户、Billing 或会议平台能力。</li></ul>
+      <p>P9 阶段收口结论：本地 UI 信息架构、求职态势可视化层、Chatbox 本地命令路由、现有能力重新组织、多视口截图、全量测试、drawio 同步和中文报告在自动化候选范围内通过。真实数据源、真实 provider、真实个人资料、ASR、MCP/Skill 和高风险招聘自动化仍需单独授权与验收。</p>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="920" viewBox="0 0 1440 920" role="img" aria-label="P9 target chatbox-native workbench">
+  <defs>
+    <style>
+      .bg{fill:#f8f7f2}.bar{fill:#ffffff;stroke:#d9ded6}.panel{fill:#fff;stroke:#d9ded6;stroke-width:1.5}.soft{fill:#eef7f3}.amber{fill:#fff4df}.line{stroke:#dce2dc}.ink{fill:#10201c}.muted{fill:#5d6a66}.green{fill:#1d6b5e}.orange{fill:#9a5b1c}.blue{fill:#2d5d79}.red{fill:#9b2f2f}.h1{font:700 24px Arial,"Microsoft YaHei",sans-serif}.h2{font:700 17px Arial,"Microsoft YaHei",sans-serif}.txt{font:14px Arial,"Microsoft YaHei",sans-serif}.tiny{font:12px Arial,"Microsoft YaHei",sans-serif}.chip{fill:#fff;stroke:#cfd8d2}.chip2{fill:#e7f4ef;stroke:#7eb8a9}.target{stroke:#28796b;stroke-width:3;fill:none;stroke-dasharray:8 6}
+    </style>
+  </defs>
+  <rect class="bg" width="1440" height="920"/>
+  <rect class="bar" x="0" y="0" width="1440" height="74"/>
+  <text x="28" y="31" class="tiny ink">JOBPILOT AI / P9 TARGET DESIGN</text>
+  <text x="28" y="58" class="h1 ink">Chatbox-native 求职情报工作台</text>
+  <rect x="510" y="20" width="105" height="34" rx="17" class="chip2"/><circle cx="530" cy="37" r="5" class="green"/><text x="544" y="42" class="tiny ink">本地就绪</text>
+  <rect x="628" y="20" width="142" height="34" rx="17" class="chip"/><text x="647" y="42" class="tiny orange">Provider 待确认</text>
+  <rect x="784" y="20" width="112" height="34" rx="17" class="chip"/><text x="806" y="42" class="tiny muted">MCP 未连接</text>
+  <rect x="910" y="20" width="112" height="34" rx="17" class="chip"/><text x="932" y="42" class="tiny muted">Skill 可用</text>
+  <rect x="1036" y="20" width="112" height="34" rx="17" class="chip"/><text x="1058" y="42" class="tiny muted">ASR 关闭</text>
+  <rect x="1162" y="20" width="126" height="34" rx="17" class="chip"/><text x="1180" y="42" class="tiny muted">搜索源未配置</text>
+  <rect x="1302" y="20" width="104" height="34" rx="17" class="chip"/><text x="1327" y="42" class="tiny ink">设置</text>
+
+  <rect x="24" y="96" width="280" height="796" rx="18" class="panel"/>
+  <text x="48" y="132" class="h2 ink">求职态势</text>
+  <text x="48" y="154" class="tiny muted">可折叠页签，不抢占 Chatbox</text>
+  <rect x="48" y="178" width="232" height="38" rx="10" class="chip2"/><text x="72" y="202" class="txt ink">岗位分布</text>
+  <rect x="48" y="230" width="232" height="132" rx="14" class="soft"/>
+  <rect x="78" y="320" width="24" height="24" class="green"/><rect x="118" y="294" width="24" height="50" class="green"/><rect x="158" y="270" width="24" height="74" class="green"/><rect x="198" y="306" width="24" height="38" class="green"/>
+  <text x="48" y="392" class="h2 ink">城市薪资</text>
+  <path d="M72 456 C105 424,150 486,188 438 S250 462,268 420" stroke="#2d5d79" stroke-width="5" fill="none"/>
+  <text x="48" y="536" class="h2 ink">投递流程</text>
+  <circle cx="72" cy="584" r="12" class="green"/><line x1="84" y1="584" x2="128" y2="584" class="line"/><circle cx="144" cy="584" r="12" fill="#d79a3b"/><line x1="156" y1="584" x2="200" y2="584" class="line"/><circle cx="216" cy="584" r="12" fill="#d9ded6"/>
+  <text x="48" y="650" class="tiny muted">通过 Chatbox 更新公司阶段、备注与下一步。</text>
+
+  <rect x="324" y="96" width="770" height="796" rx="18" class="panel"/>
+  <text x="352" y="132" class="tiny muted">USER JOURNEY STATE</text>
+  <text x="352" y="160" class="h1 ink">对话主控台</text>
+  <rect x="588" y="126" width="460" height="44" rx="14" class="soft"/>
+  <circle cx="618" cy="148" r="6" class="green"/><text x="636" y="153" class="txt ink">正在规划：公开 JD 搜索 → 资料补全 → 申请包</text>
+  <line x1="352" y1="196" x2="1066" y2="196" class="line"/>
+  <rect x="352" y="224" width="600" height="70" rx="14" fill="#f5faf7" stroke="#d1e6de"/>
+  <text x="376" y="252" class="txt ink">用户：帮我找上海/杭州 25k-40k React 岗位，并汇总薪资城市。</text>
+  <rect x="468" y="316" width="540" height="92" rx="14" fill="#fff" stroke="#d9ded6"/>
+  <text x="492" y="344" class="txt ink">Agent：我会先用合规公开来源建立 JD 搜索任务。真实搜索源未配置时，只生成计划和 mock evidence。</text>
+  <text x="492" y="374" class="tiny muted">可见产物：左侧态势图、右侧候选岗位和 source refs。</text>
+  <rect x="352" y="432" width="600" height="72" rx="14" fill="#f5faf7" stroke="#d1e6de"/>
+  <text x="376" y="462" class="txt ink">用户：把 A 公司生成一版偏性能优化方向的简历，再把 B 公司改成一面待约。</text>
+  <rect x="352" y="610" width="714" height="62" rx="16" class="soft"/>
+  <text x="376" y="648" class="txt muted">命令 chips：搜索 JD / 汇总薪资 / 补充项目故事 / 生成申请包 / 更新流程</text>
+  <rect x="352" y="700" width="714" height="76" rx="18" fill="#fff" stroke="#cddbd4"/>
+  <text x="378" y="746" class="txt muted">直接输入你的求职目标，或粘贴一个 JD...</text>
+  <rect x="940" y="716" width="104" height="44" rx="14" class="green"/><text x="968" y="743" class="txt" fill="#fff">发送</text>
+  <rect x="336" y="108" width="746" height="686" rx="20" class="target"/>
+  <text x="648" y="842" class="tiny muted">目标：中央 Chatbox 永远是第一视觉和第一交互路径。</text>
+
+  <rect x="1114" y="96" width="302" height="796" rx="18" class="panel"/>
+  <text x="1140" y="132" class="h2 ink">产物台</text>
+  <text x="1140" y="154" class="tiny muted">事实、JD、申请包、确认项</text>
+  <rect x="1140" y="182" width="250" height="112" rx="14" class="soft"/><text x="1160" y="214" class="txt ink">目标 JD：A 公司前端</text><text x="1160" y="242" class="tiny muted">匹配：React / TS / 性能优化</text><text x="1160" y="268" class="tiny blue">source refs: 4</text>
+  <rect x="1140" y="316" width="250" height="132" rx="14" fill="#fff" stroke="#d9ded6"/><text x="1160" y="348" class="txt ink">事实摘要</text><text x="1160" y="378" class="tiny muted">项目故事 3 条</text><text x="1160" y="404" class="tiny muted">待确认 2 项</text>
+  <rect x="1140" y="470" width="250" height="158" rx="14" class="amber"/><text x="1160" y="502" class="txt ink">申请包草稿 v2</text><text x="1160" y="532" class="tiny muted">简历 / 面试故事 / recruiter message</text><text x="1160" y="562" class="tiny orange">blocking: 1 项未确认</text><text x="1160" y="592" class="tiny muted">导出预检：待处理</text>
+  <rect x="1140" y="650" width="250" height="112" rx="14" fill="#fff" stroke="#d9ded6"/><text x="1160" y="682" class="txt ink">B 公司流程</text><text x="1160" y="712" class="tiny muted">状态：一面待约</text><text x="1160" y="738" class="tiny muted">下一步：补低代码项目细节</text>
+  <text x="1140" y="840" class="tiny muted">注：目标设计图，不代表 P9 已实现。</text>
+</svg>

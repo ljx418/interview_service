@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="760" viewBox="0 0 1440 760" role="img" aria-label="P9 user journey roadmap">
+  <defs>
+    <style>
+      .bg{fill:#f7f6f1}.card{fill:#fff;stroke:#d9ded6;stroke-width:2}.done{fill:#e7f4ef}.next{fill:#fff6e8}.risk{fill:#fbe8e8}.h{font:700 26px Arial,"Microsoft YaHei",sans-serif;fill:#10201c}.step{font:700 18px Arial,"Microsoft YaHei",sans-serif;fill:#10201c}.t{font:14px Arial,"Microsoft YaHei",sans-serif;fill:#3e4a46}.tiny{font:12px Arial,"Microsoft YaHei",sans-serif;fill:#63706c}.arrow{stroke:#2d6f65;stroke-width:3;fill:none;marker-end:url(#arrow)}
+    </style>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2d6f65"/>
+    </marker>
+  </defs>
+  <rect class="bg" width="1440" height="760"/>
+  <text x="56" y="58" class="h">P9 用户操作 / 体验路线图</text>
+  <text x="56" y="88" class="t">每一步都由中央 Chatbox 发起，左右栏只展示态势、确认项和产物。</text>
+
+  <g transform="translate(56,140)">
+    <rect width="178" height="210" rx="18" class="card"/>
+    <rect x="18" y="18" width="142" height="32" rx="12" class="next"/>
+    <text x="24" y="40" class="tiny">P9-M2</text>
+    <text x="22" y="80" class="step">1 搜索 JD</text>
+    <text x="22" y="116" class="t">用户说出城市、薪资、技术栈。</text>
+    <text x="22" y="150" class="tiny">产物：搜索任务</text>
+    <text x="22" y="176" class="tiny">证据：source refs</text>
+  </g>
+  <path d="M242 245 H306" class="arrow"/>
+  <g transform="translate(316,140)">
+    <rect width="178" height="210" rx="18" class="card"/>
+    <rect x="18" y="18" width="142" height="32" rx="12" class="next"/>
+    <text x="24" y="40" class="tiny">P9-M3</text>
+    <text x="22" y="80" class="step">2 汇总态势</text>
+    <text x="22" y="116" class="t">左侧展示薪资、城市、技术栈。</text>
+    <text x="22" y="150" class="tiny">产物：态势图</text>
+    <text x="22" y="176" class="tiny">证据：图表截图</text>
+  </g>
+  <path d="M502 245 H566" class="arrow"/>
+  <g transform="translate(576,140)">
+    <rect width="178" height="210" rx="18" class="card"/>
+    <rect x="18" y="18" width="142" height="32" rx="12" class="done"/>
+    <text x="24" y="40" class="tiny">P8/P9-M5</text>
+    <text x="22" y="80" class="step">3 选择岗位</text>
+    <text x="22" y="116" class="t">Chatbox 解释匹配度与短板。</text>
+    <text x="22" y="150" class="tiny">产物：目标 JD</text>
+    <text x="22" y="176" class="tiny">证据：匹配报告</text>
+  </g>
+  <path d="M762 245 H826" class="arrow"/>
+  <g transform="translate(836,140)">
+    <rect width="178" height="210" rx="18" class="card"/>
+    <rect x="18" y="18" width="142" height="32" rx="12" class="risk"/>
+    <text x="24" y="40" class="tiny">P9-M6</text>
+    <text x="22" y="80" class="step">4 补全资料</text>
+    <text x="22" y="116" class="t">Chatbox / ASR 引导项目故事。</text>
+    <text x="22" y="150" class="tiny">产物：待确认事实</text>
+    <text x="22" y="176" class="tiny">证据：consent + transcript</text>
+  </g>
+  <path d="M1022 245 H1086" class="arrow"/>
+  <g transform="translate(1096,140)">
+    <rect width="178" height="210" rx="18" class="card"/>
+    <rect x="18" y="18" width="142" height="32" rx="12" class="next"/>
+    <text x="24" y="40" class="tiny">P9-M7</text>
+    <text x="22" y="80" class="step">5 生成申请包</text>
+    <text x="22" y="116" class="t">右侧展示简历与面试故事。</text>
+    <text x="22" y="150" class="tiny">产物：申请包版本</text>
+    <text x="22" y="176" class="tiny">证据：source refs</text>
+  </g>
+
+  <path d="M1185 350 V430 H242" class="arrow"/>
+  <g transform="translate(56,468)">
+    <rect width="570" height="170" rx="18" class="card"/>
+    <text x="28" y="52" class="step">6 通过 Chatbox 调整事实与表达</text>
+    <text x="28" y="88" class="t">用户说：“把这个项目写得保守一点，不要写不可验证数字。”</text>
+    <text x="28" y="122" class="tiny">右侧产物台更新版本；事实强度变化进入 pending confirmations。</text>
+  </g>
+  <path d="M642 552 H706" class="arrow"/>
+  <g transform="translate(716,468)">
+    <rect width="570" height="170" rx="18" class="card"/>
+    <text x="28" y="52" class="step">7 更新招聘流程</text>
+    <text x="28" y="88" class="t">用户说：“把 B 公司改成一面待约，下周三提醒我补项目细节。”</text>
+    <text x="28" y="122" class="tiny">左侧流程图更新状态；不自动联系招聘方，不自动投递。</text>
+  </g>
+</svg>

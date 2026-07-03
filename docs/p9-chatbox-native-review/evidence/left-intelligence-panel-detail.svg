@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="980" viewBox="0 0 1440 980" role="img" aria-label="P9 left intelligence panel detail">
+  <defs>
+    <style>
+      .bg{fill:#f7f6f1}.panel{fill:#fff;stroke:#d9ded6;stroke-width:2}.section{fill:#fff;stroke:#d9ded6;stroke-width:1.5}.soft{fill:#eef7f3}.amber{fill:#fff4df}.redsoft{fill:#fbe8e8}.ink{fill:#10201c}.muted{fill:#5d6a66}.green{fill:#1d6b5e}.orange{fill:#9a5b1c}.red{fill:#9b2f2f}.blue{fill:#2d5d79}.h1{font:700 30px Arial,"Microsoft YaHei",sans-serif}.h2{font:700 20px Arial,"Microsoft YaHei",sans-serif}.txt{font:15px Arial,"Microsoft YaHei",sans-serif}.tiny{font:12px Arial,"Microsoft YaHei",sans-serif}.line{stroke:#dce2dc;stroke-width:2}.dash{stroke:#9fb4aa;stroke-width:2;stroke-dasharray:6 6}.chip{fill:#fff;stroke:#cfd8d2}.arrow{stroke:#2d6f65;stroke-width:3;fill:none;marker-end:url(#arrow)}
+    </style>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2d6f65"/>
+    </marker>
+  </defs>
+  <rect class="bg" width="1440" height="980"/>
+  <text x="56" y="58" class="h1 ink">P9 左侧求职态势模块：三大板块详细设计</text>
+  <text x="56" y="88" class="txt muted">左侧不是向导卡片区，而是求职市场、目标机会和投递流程的可折叠观察区；所有更新都可由中央 Chatbox 发起。</text>
+
+  <rect x="56" y="128" width="392" height="760" rx="22" class="panel"/>
+  <text x="84" y="168" class="h2 ink">A. 岗位市场态势</text>
+  <text x="84" y="194" class="tiny muted">回答：哪里有机会、薪资怎样、技术栈热度如何？</text>
+  <rect x="84" y="224" width="336" height="90" rx="16" class="soft"/>
+  <text x="106" y="254" class="txt ink">摘要：42 个 JD / 5 个城市 / 主区间 25k-40k</text>
+  <text x="106" y="282" class="tiny muted">来源：公开搜索源、公司官网、用户粘贴 JD</text>
+  <text x="84" y="352" class="txt ink">城市薪资直方图</text>
+  <rect x="110" y="434" width="26" height="54" class="green"/><rect x="160" y="398" width="26" height="90" class="green"/><rect x="210" y="374" width="26" height="114" class="green"/><rect x="260" y="420" width="26" height="68" class="green"/><rect x="310" y="450" width="26" height="38" class="green"/>
+  <line x1="96" y1="488" x2="374" y2="488" class="line"/>
+  <text x="106" y="520" class="tiny muted">点击城市 → Chatbox 生成“分析该城市岗位差异”意图</text>
+  <text x="84" y="574" class="txt ink">技术栈热度</text>
+  <rect x="84" y="596" width="86" height="30" rx="15" class="chip"/><text x="104" y="616" class="tiny ink">React 36</text>
+  <rect x="180" y="596" width="86" height="30" rx="15" class="chip"/><text x="198" y="616" class="tiny ink">TS 31</text>
+  <rect x="276" y="596" width="86" height="30" rx="15" class="chip"/><text x="296" y="616" class="tiny ink">Node 18</text>
+  <rect x="84" y="650" width="336" height="86" rx="16" class="amber"/>
+  <text x="106" y="680" class="txt ink">验收：聚合数字必须可追溯到 source refs</text>
+  <text x="106" y="708" class="tiny muted">不声明平台登录、自动抓取或自动投递。</text>
+
+  <rect x="524" y="128" width="392" height="760" rx="22" class="panel"/>
+  <text x="552" y="168" class="h2 ink">B. 目标机会与匹配态势</text>
+  <text x="552" y="194" class="tiny muted">回答：哪些岗位最值得我优先处理？缺什么证据？</text>
+  <rect x="552" y="224" width="336" height="82" rx="16" class="soft"/>
+  <text x="574" y="254" class="txt ink">策略：优先 3 个 / 补证据 2 个 / 暂缓 1 个</text>
+  <text x="574" y="282" class="tiny muted">来源：CandidateProfile + match_report</text>
+  <rect x="552" y="338" width="336" height="96" rx="16" class="section"/>
+  <circle cx="578" cy="368" r="8" class="green"/><text x="596" y="374" class="txt ink">A 公司 前端性能优化</text>
+  <text x="596" y="402" class="tiny muted">高匹配：React / TS / 性能优化证据充足</text>
+  <rect x="552" y="456" width="336" height="96" rx="16" class="section"/>
+  <circle cx="578" cy="486" r="8" fill="#d79a3b"/><text x="596" y="492" class="txt ink">B 公司 AI 应用前端</text>
+  <text x="596" y="520" class="tiny muted">有机会：需要补 AI 项目故事和量化结果</text>
+  <rect x="552" y="574" width="336" height="96" rx="16" class="section"/>
+  <circle cx="578" cy="604" r="8" class="red"/><text x="596" y="610" class="txt ink">C 公司 高级全栈</text>
+  <text x="596" y="638" class="tiny muted">暂缓：后端深度 must-have 证据不足</text>
+  <rect x="552" y="704" width="336" height="86" rx="16" class="amber"/>
+  <text x="574" y="734" class="txt ink">验收：推荐理由不能是黑盒分数</text>
+  <text x="574" y="762" class="tiny muted">必须展示依据、差距、下一步和 source refs。</text>
+
+  <rect x="992" y="128" width="392" height="760" rx="22" class="panel"/>
+  <text x="1020" y="168" class="h2 ink">C. 投递流程态势</text>
+  <text x="1020" y="194" class="tiny muted">回答：每家公司到哪一步了？下一步做什么？</text>
+  <rect x="1020" y="224" width="336" height="82" rx="16" class="soft"/>
+  <text x="1042" y="254" class="txt ink">流程：收藏 → 申请包 → 投递 → 面试 → Offer</text>
+  <text x="1042" y="282" class="tiny muted">由 Chatbox 更新，本地记录时间戳和来源。</text>
+  <circle cx="1060" cy="380" r="16" class="green"/><line x1="1076" y1="380" x2="1130" y2="380" class="line"/><circle cx="1146" cy="380" r="16" fill="#d79a3b"/><line x1="1162" y1="380" x2="1216" y2="380" class="line"/><circle cx="1232" cy="380" r="16" fill="#d9ded6"/><line x1="1248" y1="380" x2="1302" y2="380" class="line"/><circle cx="1318" cy="380" r="16" fill="#d9ded6"/>
+  <text x="1020" y="432" class="tiny muted">A 公司：已生成申请包；B 公司：一面待约；C 公司：暂缓</text>
+  <rect x="1020" y="470" width="336" height="88" rx="16" class="section"/>
+  <text x="1042" y="500" class="txt ink">Chatbox 更新示例</text>
+  <text x="1042" y="528" class="tiny muted">“把 B 公司改成一面待约，下周三提醒我补项目细节。”</text>
+  <rect x="1020" y="588" width="336" height="82" rx="16" class="redsoft"/>
+  <text x="1042" y="618" class="txt ink">禁止默认实现</text>
+  <text x="1042" y="646" class="tiny muted">不自动联系招聘方；不自动投递；不默认同步外部日历。</text>
+  <rect x="1020" y="704" width="336" height="86" rx="16" class="amber"/>
+  <text x="1042" y="734" class="txt ink">验收：状态变化有时间戳和来源</text>
+  <text x="1042" y="762" class="tiny muted">点击流程项时，右侧产物台展示相关 JD 与申请包。</text>
+
+  <path d="M720 888 V936 H252 V888" class="dash"/>
+  <path d="M720 888 V936 H1188 V888" class="dash"/>
+  <text x="520" y="940" class="txt muted">与中央 Chatbox 的关系：左侧展示态势，Chatbox 发起解释、筛选、更新和下一步行动。</text>
+</svg>

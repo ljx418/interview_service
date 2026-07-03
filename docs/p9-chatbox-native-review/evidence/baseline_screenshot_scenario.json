@@ -1,0 +1,33 @@
+{
+  "name": "P9 baseline current Chatbox screenshot",
+  "url": "http://127.0.0.1:5173/?workspace_root=/mnt/c/workspace/interview_service/.tmp/p9_review_workspace",
+  "viewports": [
+    {
+      "name": "desktop1440",
+      "width": 1440,
+      "height": 920,
+      "mobile": false
+    }
+  ],
+  "steps": [
+    {
+      "name": "Open current Chatbox",
+      "action": "goto",
+      "url": "http://127.0.0.1:5173/?workspace_root=/mnt/c/workspace/interview_service/.tmp/p9_review_workspace",
+      "viewport": "desktop1440"
+    },
+    {
+      "name": "Wait for current page",
+      "action": "waitText",
+      "text": "求职材料工作台",
+      "timeoutMs": 20000,
+      "viewport": "desktop1440"
+    },
+    {
+      "name": "Capture current baseline",
+      "action": "screenshot",
+      "file": "baseline-current-chatbox.png",
+      "viewport": "desktop1440"
+    }
+  ]
+}

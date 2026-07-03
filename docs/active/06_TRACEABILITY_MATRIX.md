@@ -1,6 +1,47 @@
-# JobPilot AI P8-JD Intake 与简历生成体验强化追踪矩阵
+# JobPilot AI P9 Chatbox-native 求职情报与申请包工作台追踪矩阵
 
-## -5. 当前文档阶段 P8.1 Chatbox-first 追踪矩阵
+## -6. 当前文档阶段 P9 Chatbox-native 追踪矩阵
+
+| 当前目标 | 文档 / 实体边界 | 主要文件 / 模块 | 当前证据 | 验收门槛 |
+| --- | --- | --- | --- | --- |
+| Chatbox-native 主路径 | `ConversationPlane`, `JourneyStateHeader`, `ComposerToolRail` | `apps/chatbox/src/main.tsx`, `apps/chatbox/src/styles.css` | P8.1 自动化候选保留；P9 需避免向导卡片主导 | P9 门槛 A |
+| 顶部服务中心 | `TopServiceBar`, service health summary | future UI module, `services/api/main.py`, provider diagnostics | provider/settings 基础存在；P9 待新增统一状态栏 | P9 门槛 C |
+| 左侧求职态势图 | `LeftIntelligencePanel`, `MarketMapView`, `OpportunityMatchPanel`, `ApplicationPipelineView` | future UI module, job/search/pipeline data | P9 审查页和态势细化文档；代码待开发 | P9 门槛 B |
+| JD 搜索和招聘信息汇总 | `JobSourceConnector`, `JobSearchRun`, `NormalizedJobPost` | future API/domain/storage | P8 已有手动 JD 导入；P9 待扩展合规 source run | P9 门槛 B/C |
+| Chatbox/ASR 资料补全 | `ChatboxCommandRouter`, `VoiceIntakeSession`, `StoryBank` | future API/domain; ASR opt-in boundary | P4/P6 有连续对话基线；ASR 未实现 | P9 门槛 C/D |
+| 多 JD 申请包 | `ResumePackageGenerator`, `ApplicationPackageVersion` | existing resume routes + future story/package layer | P8 已有 JD 定制简历；P9 待扩展故事和多版本申请包 | P9 门槛 D |
+| Chatbox 驱动流程更新 | `ApplicationPipelineService`, pipeline storage | future API/domain/storage | 当前无完整流程服务；P9 待新增 | P9 门槛 D |
+| 可视化验收 | browser screenshots, HTML report | `docs/reports/`, evidence scripts | P9 审查页已有基线图；真实实现截图待 P9-M9 | P9 门槛 A/B/C/D |
+| P9 实施范围锁 | UI/Visualization scope guard | active docs, stage reviews, drawio, report false-green scan | 外部审计意见已采纳；P9 限定为 UI/信息结构/可视化层 | P9 门槛 E |
+
+P9 代码实体状态追踪：
+
+| 层级 | 实体 | 当前状态 | 关系 | 验收证据 |
+| --- | --- | --- | --- | --- |
+| UI | `TopServiceBar` | 待新增 | 读取 provider/ASR/MCP/Skill/search/workspace 状态；不保存密钥 | 顶部状态截图 |
+| UI | `LeftIntelligencePanel` | 待新增 | 读取 job/search/pipeline 摘要；点击后联动 Chatbox | 三大页签截图 |
+| UI | `MarketMapView` | 待新增 | 上游 `JobMarketInsight`；下游城市/技术栈追问 | 地图缩放拖动截图 |
+| UI | `ConversationPlane` | 需修改 | 中央主路径，触发 command router 和 API | 首屏 Chatbox 截图 |
+| UI | `RightArtifactBench` | 需修改 | 读取 profile/resume/story/package/pending confirmations | 产物台截图 |
+| API | `JobSourceConnector` routes | 待新增 | 管理 search run 和 source refs；默认不登录招聘平台 | API/eval 证据 |
+| Domain | `StoryBank` | 待新增或强化 | 从用户资料/Chatbox/ASR 汇总项目故事和能力证据 | 故事 source refs 证据 |
+| Domain | `ApplicationPipelineService` | 待新增 | 通过 Chatbox 更新投递流程和历史 | 流程更新 eval |
+| Storage | `job`, `match_report`, `candidate_profile`, `resume_version`, `artifact` | 已实现自动化候选 | P9 复用并扩展展示 | 回归测试 |
+| Evidence | `docs/reports/` / screenshots | 已有机制，P9 待新增报告 | 证明真实实现，不证明高风险外部能力 | 中文 HTML 报告 |
+| Scope | P9 scope guard | 文档约束，开发阶段必须复核 | 不新增真实数据源系统、外部平台接入、长期任务系统或独立业务服务 | P9-M0 / P9-M9 审计 |
+
+P9 当前阶段不得用以下内容替代验收：
+
+- 不得写成：P9 文档通过等于 P9 UI 已实现；
+- 不得写成：保存 URL 或手动粘贴 JD 等于招聘平台自动接入；
+- 不得写成：fixture/search mock 等于全网 JD 搜索；
+- 不得写成：配置页显示 provider 等于真实 provider 质量通过；
+- 不得写成：ASR 目标设计等于真实麦克风和语音服务已实现；
+- 不得写成：MCP/Skill 状态展示等于外部服务连通性通过；
+- 不得写成：流程状态更新等于自动投递或自动沟通。
+- 不得写成：P9 需要或已经新增真实数据源系统、外部平台接入、长期任务系统或独立业务服务。
+
+## -5. 上一自动化候选阶段 P8.1 Chatbox-first 追踪矩阵
 
 | 当前目标 | 文档 / 实体边界 | 主要文件 / 模块 | 当前证据 | 验收门槛 |
 | --- | --- | --- | --- | --- |
@@ -35,7 +76,7 @@ P8.1 当前阶段不得用以下内容替代验收：
 - 不得写成：fake provider 或 mock provider 等于真实 provider 质量通过；
 - 不得写成：合成资料等于真实个人资料路径通过。
 
-## -4. 当前文档阶段 P8-JD Intake 与简历生成追踪矩阵
+## -4. 历史自动化候选阶段 P8-JD Intake 与简历生成追踪矩阵
 
 | 当前目标 | 文档 / 实体边界 | 主要文件 / 模块 | 当前证据 | 验收门槛 |
 | --- | --- | --- | --- | --- |

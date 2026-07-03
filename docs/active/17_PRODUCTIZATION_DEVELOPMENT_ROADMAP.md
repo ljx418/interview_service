@@ -1,8 +1,8 @@
 # JobPilot AI 产品化后续开发路线图
 
 日期：2026-06-25
-状态：P4 本地/mock examples 路径已冻结；P5 本地/mock + 脱敏 fixture 自动化候选已完成；P5.5 Candidate Profile 自动化候选已完成；P6+P7 本地 Beta 自动化候选已完成；P6-REAL / P7-post 审计报告已完成；P8-JD Intake 与简历生成体验强化自动化候选已完成；当前文档主线为 P8.1 Chatbox-first 工作台信息架构修正。
-用途：把当前到产品化 Beta / SaaS 之前的开发目标落盘，并作为 P8.1 Chatbox-first 体验修正、P8 资料准备向导、JD 手动导入中心、JD 定制简历、招聘平台合规接入和 P8+ 高风险能力拆分的规划入口。
+状态：P4 本地/mock examples 路径已冻结；P5 本地/mock + 脱敏 fixture 自动化候选已完成；P5.5 Candidate Profile 自动化候选已完成；P6+P7 本地 Beta 自动化候选已完成；P6-REAL / P7-post 审计报告已完成；P8-JD Intake 与简历生成体验强化自动化候选已完成；P8.1 Chatbox-first 自动化候选已完成；当前文档主线为 P9 Chatbox-native 求职情报与申请包工作台。
+用途：把当前到产品化 Beta / SaaS 之前的开发目标落盘，并作为 P9 Chatbox-native、P8.1 Chatbox-first、P8 资料准备向导、JD 手动导入中心、JD 定制简历、招聘平台合规接入和 P9+ 高风险能力拆分的规划入口。
 
 ## 1. 当前真实状态
 
@@ -42,7 +42,8 @@ P5.5 / P6+P7 / P6-REAL / P7-post / P8 当前口径：
 - P6 fake provider opt-in、20 轮连续对话和脱敏日志可作为自动化候选证据，但不代表真实 LLM 质量通过；
 - P6-REAL / P7-post 阶段审计报告已完成，但真实 provider 质量和真实个人资料路径仍未执行；
 - P8-JD Intake 自动化候选已完成，覆盖资料准备、JD 手动导入、多 JD 当前目标和 JD 定制简历体验；
-- P8.1 Chatbox-first 当前处于文档阶段，目标是修正 P8 UI 中 workflow strip 抢占中央聊天首屏的问题，让三栏体验回到“用户指导 - Chatbox - 工作台”；
+- P8.1 Chatbox-first 自动化候选已完成并作为当前前端基线保留；
+- P9 Chatbox-native 当前处于文档阶段，目标是把工作台重构为“顶部服务中心 - 左侧求职态势图 - 中央 Chatbox 主控台 - 右侧产物台”，并纳入 JD 搜索/招聘信息汇总、Chatbox/ASR 资料补全、多 JD 申请包、投递流程可视化和地图/图钉式态势交互；
 - 不读取真实个人资料；
 - 不声明真实个人资料路径通过；
 - 不声明真实外部 provider 默认路径通过；
@@ -64,7 +65,7 @@ P5.5 / P6+P7 / P6-REAL / P7-post / P8 当前口径：
 
 ## 3. P4/P5/P5.5/P6/P7 基线后的当前主线
 
-P4 已完成本地/mock examples 路径冻结。P5 已完成本地/mock + 脱敏 fixture 自动化候选。P5.5 已完成职业画像与能力评估自动化候选。P6+P7 已完成本地 Beta 自动化候选。P6-REAL 和 P7-post P5-REAL 已完成审计准备但尚未执行真实验收。P8-JD Intake 自动化候选已完成：资料准备向导、JD 手动导入中心、岗位列表、JD 定制简历和招聘平台合规边界已完成本地/mock + 受控真实感数据验收。当前主线转入 P8.1 Chatbox-first 文档阶段，修正 Chatbox 被资料/JD/简历大块入口压低优先级的问题。
+P4 已完成本地/mock examples 路径冻结。P5 已完成本地/mock + 脱敏 fixture 自动化候选。P5.5 已完成职业画像与能力评估自动化候选。P6+P7 已完成本地 Beta 自动化候选。P6-REAL 和 P7-post P5-REAL 已完成审计准备但尚未执行真实验收。P8-JD Intake 自动化候选已完成：资料准备向导、JD 手动导入中心、岗位列表、JD 定制简历和招聘平台合规边界已完成本地/mock + 受控真实感数据验收。P8.1 Chatbox-first 自动化候选已完成。当前主线转入 P9 Chatbox-native 文档阶段，重新定义顶部服务中心、左侧求职态势图、中央 Chatbox 主控台和右侧产物台的目标体验。
 
 ```text
 P5：真实资料本地闭环自动化候选完成；P5-REAL/P5-Freeze 冻结延期复验
@@ -73,8 +74,9 @@ P6/P7：本地 Beta 自动化候选完成
 P6-REAL：真实外部 provider 受控小样本验收准备（当前文档阶段）
 P7-post：P5-REAL/P5-Freeze 真实资料复验准备（当前文档阶段）
 P8：JD Intake / 资料准备向导 / JD 定制简历体验强化（自动化候选完成）
-P8.1：Chatbox-first 工作台信息架构修正（当前文档阶段，未实现）
-P8+：合规招聘平台接入 / SaaS / ASR / 会议平台 / 自动投递等高风险能力
+P8.1：Chatbox-first 工作台信息架构修正（自动化候选完成，作为 P9 基线）
+P9：Chatbox-native 求职情报与申请包工作台（当前文档阶段，未实现）
+P9+：合规招聘平台接入 / SaaS / ASR / 会议平台 / 自动投递等高风险能力
 ```
 
 入口文档：
@@ -85,9 +87,40 @@ docs/active/18_FREE_CHATBOX_CONTINUOUS_DIALOGUE_PLAN.md
 docs/active/19_P6_PROVIDER_BACKED_LONG_CONTEXT_CHAT_PLAN.md
 docs/active/21_P8_JD_INTAKE_AND_RESUME_GENERATION_PLAN.md
 docs/active/22_P8_1_CHATBOX_FIRST_WORKSPACE_PLAN.md
+docs/active/23_P9_CHATBOX_NATIVE_JOB_INTELLIGENCE_PLAN.md
 ```
 
-P6-REAL/P7-post 实质执行前必须再次确认授权表、目标架构、验收门槛、风险确认和脱敏报告边界。P8+ 高风险能力仍必须在各自启动前单独制定规划和验收边界。
+P6-REAL/P7-post 实质执行前必须再次确认授权表、目标架构、验收门槛、风险确认和脱敏报告边界。P9+ 高风险能力仍必须在各自启动前单独制定规划和验收边界。
+
+## 3.0 P9 当前文档主线：Chatbox-native 求职情报与申请包工作台
+
+触发原因：用户明确反馈当前前端体验仍然很差，不希望存在很多向导卡片；期望通过 Chatbox 直接发起 JD、薪资、城市招聘信息汇总，通过 Chatbox 或 ASR 引导补全简历、项目故事和用户信息，自动生成不同 JD 的申请包，并在左侧看到地图/图钉式求职态势、在右侧看到简历和事实产物。
+
+P9 第一版产品边界：
+
+- 做 Chatbox-native 信息架构，不让向导卡片主导首屏；
+- 做顶部服务中心，展示 provider、ASR、MCP、Skill、外部搜索和安全边界状态；
+- 做左侧求职态势图，覆盖岗位市场、目标机会与匹配、投递流程三大板块；
+- 做地图/图钉或等价地图可视化方案，支持缩放、拖动、折叠和 Chatbox 联动；
+- 做 JD 搜索/汇总的合规架构，默认仅使用用户粘贴、fixture 或合规公开源；
+- 做 Chatbox 引导式资料补全和多 JD 申请包生成；
+- 做 Chatbox 驱动的产物、事实和投递流程更新；
+- 不默认登录招聘平台、不绕风控、不自动沟通或自动投递；
+- 不默认调用真实 provider，不默认开启 ASR，不默认声明 MCP/Skill 连通。
+
+P9 计划工作包：
+
+| 工作包 | 目标 | 验收证据 |
+| --- | --- | --- |
+| P9-DOC | PRD、架构、里程碑、门槛、追踪矩阵、drawio 同步 | active docs 口径一致、drawio 解析通过 |
+| P9-M1 | Chatbox-native 信息架构 | 多视口真实截图，中央 Chatbox 首屏优先 |
+| P9-M2 | 顶部服务中心 | provider/ASR/MCP/Skill/search 状态截图和未验证范围 |
+| P9-M3 | 左侧求职态势图 | 三大页签、地图式可视化、缩放拖动截图 |
+| P9-M4 | 合规 JD search run | fixture/手动/公开源验收，不声明平台自动接入 |
+| P9-M5 | Chatbox/ASR 资料补全 | Chatbox 路径验收；ASR 真实路径单独授权 |
+| P9-M6 | 多 JD 申请包 | 简历、故事、申请包版本、source refs、pending confirmations |
+| P9-M7 | Chatbox 更新产物和流程 | 流程状态、事实修订、版本历史验收 |
+| P9-M8/M9 | 响应式和中文报告 | 1920/1440/1200/720/390 截图和 HTML 报告 |
 
 ## 3.1 P8 当前自动化候选：JD Intake 与简历生成体验强化
 

@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="900" viewBox="0 0 1440 900" role="img" aria-label="P9 Chatbox-native concept architecture">
+  <defs>
+    <style>
+      .bg{fill:#f7f6f1}.panel{fill:#fff;stroke:#d9ded6;stroke-width:2}.done{fill:#e7f4ef;stroke:#28796b}.next{fill:#fff6e8;stroke:#b8732b}.risk{fill:#fbe8e8;stroke:#b84b4b}.ban{fill:#eceff3;stroke:#6b7280}.title{font:700 30px Arial,"Microsoft YaHei",sans-serif;fill:#10201c}.h{font:700 20px Arial,"Microsoft YaHei",sans-serif;fill:#10201c}.t{font:15px Arial,"Microsoft YaHei",sans-serif;fill:#33413d}.small{font:13px Arial,"Microsoft YaHei",sans-serif;fill:#596662}.tag{font:700 13px Arial,"Microsoft YaHei",sans-serif}.arrow{stroke:#2d6f65;stroke-width:3;fill:none;marker-end:url(#arrow)}
+    </style>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2d6f65"/>
+    </marker>
+  </defs>
+  <rect class="bg" width="1440" height="900"/>
+  <text x="56" y="58" class="title">P9 Chatbox-native 求职情报与申请包工作台：概念图</text>
+  <text x="56" y="86" class="t">中央 Chatbox 是唯一主控入口；顶部配置服务，左侧观察态势，右侧审查产物。</text>
+
+  <rect x="56" y="122" width="1328" height="72" rx="16" class="panel"/>
+  <text x="84" y="152" class="h">顶部服务中心</text>
+  <text x="84" y="178" class="t">Provider / MCP / Skill / ASR / 搜索源 / Workspace / 诊断状态。Configured 不等于 Called。</text>
+
+  <rect x="56" y="242" width="276" height="520" rx="20" class="panel"/>
+  <text x="84" y="282" class="h">左侧求职态势图</text>
+  <rect x="84" y="316" width="220" height="62" rx="12" class="next"/><text x="104" y="342" class="tag" fill="#8a541c">P9 待开发</text><text x="104" y="365" class="t">城市薪资分布</text>
+  <rect x="84" y="396" width="220" height="62" rx="12" class="next"/><text x="104" y="422" class="tag" fill="#8a541c">P9 待开发</text><text x="104" y="445" class="t">技术栈热度</text>
+  <rect x="84" y="476" width="220" height="62" rx="12" class="next"/><text x="104" y="502" class="tag" fill="#8a541c">P9 待开发</text><text x="104" y="525" class="t">投递流程图</text>
+  <rect x="84" y="556" width="220" height="62" rx="12" class="ban"/><text x="104" y="582" class="tag" fill="#4b5563">禁止默认实现</text><text x="104" y="605" class="t">自动沟通 / 自动投递</text>
+
+  <rect x="394" y="242" width="650" height="520" rx="20" class="panel"/>
+  <text x="424" y="282" class="h">中央 Chatbox 主控台</text>
+  <rect x="424" y="316" width="590" height="70" rx="14" class="done"/><text x="448" y="343" class="tag" fill="#1d6b5e">已实现基线</text><text x="448" y="367" class="t">P8.1 Chatbox-first、状态机、时间线、输入框</text>
+  <rect x="424" y="410" width="590" height="70" rx="14" class="next"/><text x="448" y="437" class="tag" fill="#8a541c">P9 待开发</text><text x="448" y="461" class="t">通过对话发起 JD 搜索、市场汇总、资料补全、流程更新</text>
+  <rect x="424" y="504" width="590" height="70" rx="14" class="risk"/><text x="448" y="531" class="tag" fill="#9b2f2f">高风险需确认</text><text x="448" y="555" class="t">真实 provider / ASR / 搜索 API 外呼需要 opt-in</text>
+  <rect x="424" y="598" width="590" height="70" rx="14" class="ban"/><text x="448" y="625" class="tag" fill="#4b5563">禁止</text><text x="448" y="649" class="t">大型向导卡片常驻中央、表单压住聊天</text>
+
+  <rect x="1104" y="242" width="280" height="520" rx="20" class="panel"/>
+  <text x="1132" y="282" class="h">右侧产物台</text>
+  <rect x="1132" y="316" width="224" height="62" rx="12" class="done"/><text x="1152" y="342" class="tag" fill="#1d6b5e">已实现基线</text><text x="1152" y="365" class="t">JD / 简历 / 画像</text>
+  <rect x="1132" y="396" width="224" height="62" rx="12" class="next"/><text x="1152" y="422" class="tag" fill="#8a541c">P9 待开发</text><text x="1152" y="445" class="t">多 JD 申请包版本</text>
+  <rect x="1132" y="476" width="224" height="62" rx="12" class="next"/><text x="1152" y="502" class="tag" fill="#8a541c">P9 待开发</text><text x="1152" y="525" class="t">流程状态与提醒</text>
+  <rect x="1132" y="556" width="224" height="62" rx="12" class="risk"/><text x="1152" y="582" class="tag" fill="#9b2f2f">需审查</text><text x="1152" y="605" class="t">source refs / 待确认</text>
+
+  <path d="M720 194 V242" class="arrow"/>
+  <path d="M394 502 H332" class="arrow"/>
+  <path d="M1044 502 H1104" class="arrow"/>
+  <text x="535" y="820" class="small">注：本图为 P9 目标概念，不代表全网搜索、ASR、MCP、Skill、真实 provider 或招聘平台接入已实现。</text>
+</svg>

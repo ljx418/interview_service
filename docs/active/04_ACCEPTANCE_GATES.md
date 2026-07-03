@@ -1,6 +1,103 @@
-# JobPilot AI P8-JD Intake 与简历生成体验强化验收门槛
+# JobPilot AI P9 Chatbox-native 求职情报与申请包工作台验收门槛
 
-## 当前阶段文档门槛 - P8.1 Chatbox-first 工作台信息架构
+## 当前阶段文档门槛 - P9 Chatbox-native 求职情报与申请包工作台
+
+这些门槛只验收文档和架构方向是否足以支撑后续 P9 自动化开发，不代表 P9 UI、全网 JD 搜索、ASR、真实 provider、MCP/Skill、招聘平台接入或自动投递已通过。
+
+### P9 文档门槛 A - Chatbox-native 主路径
+
+通过条件：
+
+- 文档明确中央 Chatbox 是第一交互路径；
+- 页面不再由大量向导卡片主导；
+- Chatbox 上方有用户历程状态，输入框和工具入口始终可达；
+- 资料补全、JD 搜索、申请包生成、流程更新都能从对话发起。
+
+不通过条件：
+
+- 继续把资料/JD/简历表单作为首屏主路径；
+- 用户必须先理解 workspace、artifact、job、resume_version 才能开始；
+- 只做视觉美化，不解决信息架构和交互路径。
+
+### P9 文档门槛 B - 左侧求职态势图
+
+通过条件：
+
+- 左侧明确包含岗位市场态势、目标机会与匹配态势、投递流程态势三大板块；
+- 地图/图钉/热力/聚合或等价地图可视化方案明确；
+- 支持放大、缩小、拖动、折叠、重置和点击后联动 Chatbox；
+- 文档明确没有授权时不能把示例/fixture/手动数据写成全网真实搜索。
+
+不通过条件：
+
+- 左侧只是一组静态卡片；
+- 三大板块职责重叠或缺失；
+- 没有说明数据来源、交互方式和 false green 边界。
+
+### P9 文档门槛 C - 顶部服务中心和安全边界
+
+通过条件：
+
+- provider、ASR、MCP、Skill、外部搜索、workspace 和安全边界状态可见；
+- 未配置、未授权、未连通的服务必须显示为不可用或待配置；
+- 不保存 API Key，不默认外呼，不默认采集麦克风。
+
+不通过条件：
+
+- 把配置入口写成真实连通通过；
+- 把 ASR、MCP、Skill、真实 provider 或外部搜索写成默认已可用；
+- 缺少高风险确认门。
+
+### P9 文档门槛 D - 申请包与事实安全
+
+通过条件：
+
+- 不同 JD 的简历、面试故事、求职信或申请包草稿必须有版本边界；
+- 核心事实必须来自 source refs；
+- 缺证据内容进入 pending confirmations；
+- 用户能通过 Chatbox 调整事实、产物和投递流程，但系统不默认对外发送消息。
+
+不通过条件：
+
+- 简历和故事编造未证实学历、年限、公司、项目贡献或量化结果；
+- 普通聊天静默覆盖申请包版本；
+- 自动沟通或自动投递混入本阶段验收。
+
+P9 后续自动化验收最低证据：
+
+```bash
+python3 -m pytest
+npm --prefix apps/chatbox run build
+drawio XML parse
+P9 browser acceptance screenshots: 1920px, 1440px, 1200px, 720px, 390px
+P9 Chinese HTML acceptance report
+```
+
+P9 验收报告必须逐项说明：
+
+- 当前截图是否证明 Chatbox 主路径优先；
+- 顶部服务中心是否真实表达 configured / unavailable / pending / connected 状态；
+- 左侧态势图是否有三大板块、地图式可视化、缩放拖动和 Chatbox 联动；
+- 右侧产物台是否展示事实摘要、申请包、source refs、pending confirmations 和版本；
+- 哪些能力仍未验证：全网搜索、招聘平台自动接入、真实 provider、ASR、MCP/Skill、自动投递、真实个人资料。
+
+### P9 文档门槛 E - 实施范围锁定
+
+通过条件：
+
+- 文档和后续报告明确 P9 是 Chatbox-first UI 与信息结构重构，加求职情报可视化层；
+- P9 不新增真实数据源系统、外部平台接入、长期运行任务系统或独立业务服务；
+- P9-M4 的 search run 只使用用户粘贴、fixture、已有本地示例或合规公开样例数据；
+- P9-M5 的 ASR 只作为 opt-in 状态或后续独立阶段，不默认采集麦克风；
+- 顶部服务中心只展示状态，不执行真实 provider / ASR / MCP / Skill 接入。
+
+不通过条件：
+
+- 把 P9 实现成 BI 平台、招聘搜索系统、语音系统、MCP/Skill 平台或自动投递系统；
+- 在 P9 默认启动爬虫、长期任务、外部平台登录、真实 provider 外呼或麦克风采集；
+- 新增独立业务服务来绕开现有 API / Domain / SQLite / Artifact 边界。
+
+## 历史阶段门槛 - P8.1 Chatbox-first 工作台信息架构
 
 这些门槛只验收文档和架构方向是否足以支撑后续 P8.1 自动化开发，不代表 Chatbox-first UI 已经实现，不代表真实 provider、真实个人资料、招聘平台接入或自动投递已通过。
 
@@ -77,7 +174,7 @@ P8.1 后续自动化验收报告必须逐项说明：
 - Agent 状态机、岗位、画像、简历草稿、source refs、pending confirmations、export preflight 是否在正确区域可见；
 - 任何目标概念图、设计图或 AI 图像不得替代真实实现截图。
 
-## 当前阶段文档门槛 - P8-JD Intake 与简历生成体验强化
+## 历史阶段门槛 - P8-JD Intake 与简历生成体验强化
 
 这些门槛只验收文档和架构方向是否足以支撑后续 P8 自动化开发，不代表 BOSS/招聘平台接入、自动投递、真实 provider、真实个人资料或最终产品化已通过。
 

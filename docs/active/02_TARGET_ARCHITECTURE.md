@@ -1,4 +1,77 @@
-# JobPilot AI P8-JD Intake 与简历生成体验强化目标架构
+# JobPilot AI P9 Chatbox-native 求职情报与申请包工作台目标架构
+
+## -6. P9 Chatbox-native 求职情报与申请包工作台目标架构
+
+P9 当前已完成第一轮自动化候选实现。目标是在 P8.1 自动化候选基线上，把产品从“向导卡片工作台”调整为 Chatbox-native 求职情报与申请包工作台；当前实现仅覆盖本地 UI 信息架构、求职态势可视化层和现有能力重新组织。
+
+目标分层：
+
+```text
+User
+→ Chatbox Experience Shell (`apps/chatbox/src/main.tsx`)
+  → TopServiceBar（顶部服务中心，待新增）
+  → LeftIntelligencePanel（左侧求职态势图，待新增）
+    → MarketMapView（地图 / 图钉 / 热力 / 聚合，待新增）
+    → OpportunityMatchPanel（目标机会与匹配，待新增）
+    → ApplicationPipelineView（投递流程态势，待新增）
+  → ConversationPlane（中央 Chatbox，需修改）
+    → JourneyStateHeader（用户历程状态，待新增或改造）
+    → MessageTimeline（已实现基线，必须首屏优先）
+    → ComposerToolRail（输入框工具入口，需修改）
+    → ChatboxCommandRouter（对话意图路由，待新增）
+  → RightArtifactBench（右侧产物台，需修改）
+    → CandidateProfileSummary（已实现候选）
+    → JobTargetList / ResumeGenerationPlane（已实现候选，需重排）
+    → StoryBank / ApplicationPackageVersion（待新增或强化）
+→ FastAPI Agent Service (`services/api/main.py`, `services/api/schemas.py`)
+  → Provider / Service Health（已有基础，需扩展展示）
+  → Job Source / Search Runs（待新增，需合规边界）
+  → Profile / Resume / Application Package routes（部分已实现）
+→ Domain Tools
+  → JobSourceConnector（待新增；默认只用合规公开源、用户粘贴源或 fixture）
+  → CandidateFactGraph / StoryBank（待新增或强化）
+  → ResumePackageGenerator（已有基础，需围绕多 JD 强化）
+  → ApplicationPipelineService（待新增）
+→ SQLite Workspace / Artifact / Evidence
+```
+
+P9 代码实体状态与职责：
+
+| 层级 | 实体 | 状态 | 上游 / 下游 | P9 职责 |
+| --- | --- | --- | --- | --- |
+| UI | `TopServiceBar` | 待新增 | 上游读取 service health；下游打开设置/诊断 | 展示 provider、ASR、MCP、Skill、外部搜索、workspace、安全边界状态 |
+| UI | `LeftIntelligencePanel` | 待新增 | 上游读取 job/search/pipeline 摘要；下游联动 Chatbox | 承载岗位市场、目标机会、投递流程三大页签 |
+| UI | `MarketMapView` | 待新增 | 上游读取 `JobMarketInsight`；下游触发城市/技术栈追问 | 地图、图钉、热力、聚合、缩放、拖动、重置 |
+| UI | `OpportunityMatchPanel` | 待新增 | 上游读取 `job`、`match_report`、`candidate_profile`；下游选择当前目标 | 展示多 JD 匹配、短板、证据覆盖和优先级 |
+| UI | `ApplicationPipelineView` | 待新增 | 上游读取 `application_pipeline_item`；下游发起流程更新 | 展示投递流程、颜色状态、下一步动作和备注 |
+| UI | `ConversationPlane` | 需修改 | 上游接收用户输入；下游触发 command router / API | 保持中央主路径，承载时间线、状态、输入框和工具入口 |
+| UI | `JourneyStateHeader` | 待新增或改造 | 上游读取 workflow state；下游解释当前行动 | 展示探索市场、补资料、选 JD、生成申请包、确认事实等状态 |
+| UI | `RightArtifactBench` | 需修改 | 上游读取 artifact / profile / resume；下游确认和导出 | 展示事实摘要、简历、故事、申请包、source refs 和 pending confirmations |
+| API | `JobSourceConnector` routes | 待新增 | 上游 Chatbox/search run；下游 connector/domain | 归档搜索任务、来源、结果和合规状态；默认不登录平台 |
+| Domain | `StoryBank` | 待新增或强化 | 上游用户资料/ASR/Chatbox；下游申请包生成 | 管理项目故事、能力证据和面试叙事版本 |
+| Domain | `ApplicationPipelineService` | 待新增 | 上游 Chatbox 更新；下游 pipeline storage | 管理投递流程状态和历史记录 |
+| Storage | `job`, `match_report`, `candidate_profile`, `resume_version`, `artifact` | 已实现自动化候选 | 上游 P8/P5.5；下游 P9 UI | 复用既有事实、岗位、画像、简历和产物数据 |
+| Evidence | `docs/reports/`, browser screenshots | 已有机制，P9 待新增报告 | 上游自动化验收；下游人工审查 | 证明多视口真实界面和 P9 目标路径 |
+
+P9 架构不变量：
+
+- Chatbox 是第一交互路径，左侧态势图和右侧产物台不能抢占中央对话。
+- 顶部服务中心只展示配置/连通/安全状态，不保存 API Key，不默认外呼。
+- JD 搜索默认只允许用户粘贴、fixture 或合规公开源；招聘平台登录、绕风控和自动投递必须独立立项。
+- ASR 只能作为用户明确开启的资料补全入口，不得默认采集麦克风。
+- 所有申请包草稿必须有 source refs、pending confirmations 和版本边界。
+- Chatbox 不直接写 SQLite、不直连真实 provider；必须通过 API / Domain 边界。
+- 验收报告必须使用真实界面截图，不能以概念图、AI 目标图或原型图替代实现证据。
+
+P9 架构范围锁：
+
+- `TopServiceBar` 是 control-plane visibility，不是 provider、ASR、MCP 或 Skill 执行平台；
+- `LeftIntelligencePanel` 是求职情报可视化层，不是 BI 分析引擎或长期数据任务系统；
+- `JobSourceConnector` 在 P9 只允许作为现有 API/Domain 内的轻量边界或接口命名，不得落成独立平台接入服务；
+- `MarketMapView` 在 P9 只展示用户粘贴、fixture、已有本地示例或合规公开样例数据，不负责真实全网搜索；
+- `VoiceIntakeSession` 或 ASR 相关实体若后续出现，只能作为 opt-in 状态和文本引导边界，不得默认采集麦克风或调用外部语音服务；
+- `ApplicationPipelineService` 只更新本地 workspace/artifact 状态，不对外发送消息、不自动沟通、不自动投递；
+- P9 不新增独立业务服务，不新增长期运行调度任务，不新增真实外部数据源系统。
 
 ## -5. P8.1 Chatbox-first 工作台信息架构目标
 

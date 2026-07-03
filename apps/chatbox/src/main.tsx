@@ -4,6 +4,8 @@ import {
   Activity,
   AlertCircle,
   Archive,
+  BarChart3,
+  BriefcaseBusiness,
   CheckCircle2,
   Database,
   Download,
@@ -11,13 +13,25 @@ import {
   FileCog,
   FileText,
   FileUp,
+  Globe2,
+  Layers,
   ListChecks,
+  MapPin,
   MessageSquare,
+  Mic,
+  Minus,
+  Navigation,
+  Plus,
+  Puzzle,
   RefreshCcw,
+  Route,
   Send,
+  Server,
   Settings,
   ShieldCheck,
   Sparkles,
+  Target,
+  TrendingUp,
   X,
 } from "lucide-react";
 import "./styles.css";
@@ -237,6 +251,61 @@ type AgentStatus = {
   steps: Array<{ label: string; state: "done" | "active" | "idle" | "blocked" }>;
 };
 
+type P9IntelligenceTab = "market" | "match" | "pipeline";
+
+type ServiceState = "connected" | "configured" | "local" | "disabled" | "requires_confirmation" | "unavailable";
+
+type ServiceStatusItem = {
+  key: string;
+  label: string;
+  state: ServiceState;
+  detail: string;
+  icon: React.ReactNode;
+};
+
+type MarketCity = {
+  city: string;
+  x: number;
+  y: number;
+  jobs: number;
+  salary: string;
+  remote: string;
+  competition: "低" | "中" | "高";
+  tech: string[];
+  source: string;
+};
+
+type SearchRun = {
+  query: string;
+  city: string;
+  salary: string;
+  sourceMode: string;
+  resultCount: number;
+  generatedAt: string;
+  refs: string[];
+};
+
+type PipelineStage = "待评估" | "待投递" | "已投递" | "HR 沟通" | "笔试" | "面试" | "Offer" | "拒绝" | "搁置";
+
+type PipelineItem = {
+  id: string;
+  company: string;
+  role: string;
+  city: string;
+  stage: PipelineStage;
+  statusTone: "idle" | "active" | "action" | "done" | "risk";
+  nextAction: string;
+  updatedAt: string;
+  sourceRef: string;
+};
+
+type StoryDraft = {
+  title: string;
+  summary: string;
+  evidence: string;
+  status: "draft" | "needs_evidence" | "ready";
+};
+
 class ApiError extends Error {
   errorCode?: string;
   suggestedAction?: string;
@@ -250,6 +319,65 @@ class ApiError extends Error {
     this.recoverable = options?.recoverable;
   }
 }
+
+const marketCities: MarketCity[] = [
+  { city: "北京", x: 56, y: 34, jobs: 18, salary: "22-35k", remote: "12%", competition: "高", tech: ["LLM", "React", "Python"], source: "本地示例 + 手动 JD" },
+  { city: "上海", x: 68, y: 55, jobs: 14, salary: "20-32k", remote: "18%", competition: "高", tech: ["前端", "数据可视化", "AI 应用"], source: "fixture" },
+  { city: "深圳", x: 61, y: 76, jobs: 11, salary: "18-30k", remote: "10%", competition: "中", tech: ["ToB", "React", "Node"], source: "fixture" },
+  { city: "杭州", x: 64, y: 59, jobs: 9, salary: "18-28k", remote: "16%", competition: "中", tech: ["电商", "低代码", "前端"], source: "fixture" },
+  { city: "成都", x: 38, y: 63, jobs: 7, salary: "14-24k", remote: "22%", competition: "低", tech: ["企业应用", "Vue", "测试"], source: "fixture" },
+];
+
+const initialPipelineItems: PipelineItem[] = [
+  {
+    id: "pipeline-bj-ai",
+    company: "北辰智能",
+    role: "LLM 应用前端工程师",
+    city: "北京",
+    stage: "待评估",
+    statusTone: "action",
+    nextAction: "补充 AI 工具链项目故事后生成定制简历",
+    updatedAt: "本地示例",
+    sourceRef: "examples/jds/junior_frontend_jd.md",
+  },
+  {
+    id: "pipeline-sh-data",
+    company: "海石数据",
+    role: "数据可视化前端",
+    city: "上海",
+    stage: "待投递",
+    statusTone: "active",
+    nextAction: "确认 ECharts / 地图可视化证据",
+    updatedAt: "本地示例",
+    sourceRef: "examples/p5_synthetic_personas/qa_to_fullstack/jd.md",
+  },
+  {
+    id: "pipeline-sz-saas",
+    company: "湾区协同",
+    role: "SaaS 前端工程师",
+    city: "深圳",
+    stage: "HR 沟通",
+    statusTone: "action",
+    nextAction: "准备项目复盘和薪资区间说明",
+    updatedAt: "本地示例",
+    sourceRef: "examples/p5_synthetic_personas/ops_to_frontend/jd.md",
+  },
+];
+
+const initialStoryDrafts: StoryDraft[] = [
+  {
+    title: "复杂工作台重构",
+    summary: "围绕 Chatbox-first 信息架构，说明如何把表单向导改为对话主路径。",
+    evidence: "apps/chatbox/src/main.tsx + P8.1/P9 文档",
+    status: "draft",
+  },
+  {
+    title: "求职材料事实边界",
+    summary: "强调 source refs、pending confirmations 和不编造经历。",
+    evidence: "P5.5 Candidate Profile / P8 resume generation",
+    status: "needs_evidence",
+  },
+];
 
 async function api<T>(path: string, body?: unknown, method?: string): Promise<T> {
   const response = await fetch(`${API_BASE}${path}`, {
@@ -662,6 +790,328 @@ function CollapsibleText({ children, lines = 5, showToggle = true }: { children:
 
 function StatusBadge({ tone = "neutral", children, shield = false }: { tone?: "ok" | "warning" | "neutral"; children: React.ReactNode; shield?: boolean }) {
   return <span className={`status-badge ${tone} ${shield ? "shield" : ""}`}>{children}</span>;
+}
+
+function serviceStateLabel(state: ServiceState) {
+  const map: Record<ServiceState, string> = {
+    connected: "已连通",
+    configured: "已配置",
+    local: "本地可用",
+    disabled: "未启用",
+    requires_confirmation: "需确认",
+    unavailable: "不可用",
+  };
+  return map[state];
+}
+
+function buildServiceItems(providerStatus: ProviderStatus | null, workspaceId: string): ServiceStatusItem[] {
+  const providerState: ServiceState = !providerStatus
+    ? "disabled"
+    : providerStatus.p6_state === "called"
+      ? "connected"
+      : providerStatus.provider === "mock"
+        ? "local"
+        : providerStatus.configured || providerStatus.api_key_configured
+          ? "requires_confirmation"
+          : "disabled";
+  return [
+    {
+      key: "provider",
+      label: "LLM Provider",
+      state: providerState,
+      detail: providerLabel(providerStatus),
+      icon: <Server size={15} />,
+    },
+    {
+      key: "search",
+      label: "JD 信息源",
+      state: "local",
+      detail: "仅本地示例、用户粘贴和已导入 JD，不抓取平台",
+      icon: <Globe2 size={15} />,
+    },
+    {
+      key: "asr",
+      label: "ASR",
+      state: "requires_confirmation",
+      detail: "仅 opt-in 状态入口，未采集麦克风",
+      icon: <Mic size={15} />,
+    },
+    {
+      key: "mcp",
+      label: "MCP / Skill",
+      state: "unavailable",
+      detail: "P9 只展示状态，不建设平台连通",
+      icon: <Puzzle size={15} />,
+    },
+    {
+      key: "workspace",
+      label: "Workspace",
+      state: workspaceId ? "local" : "disabled",
+      detail: workspaceId ? "本地 workspace 已初始化" : "初始化中",
+      icon: <Database size={15} />,
+    },
+  ];
+}
+
+function TopServiceCenter({
+  providerStatus,
+  workspaceId,
+  dataMode,
+  onOpenSettings,
+}: {
+  providerStatus: ProviderStatus | null;
+  workspaceId: string;
+  dataMode: DataMode;
+  onOpenSettings: () => void;
+}) {
+  const services = buildServiceItems(providerStatus, workspaceId);
+  return (
+    <section className="top-service-center" aria-label="顶部服务中心">
+      <div className="service-center-title">
+        <span className="eyebrow">Service Center</span>
+        <strong>本地优先 · 高风险需确认</strong>
+      </div>
+      <div className="service-pill-row">
+        {services.map((item) => (
+          <span key={item.key} className={`service-pill service-${item.state}`} title={item.detail}>
+            {item.icon}
+            <span>
+              <strong>{item.label}</strong>
+              <small>{serviceStateLabel(item.state)}</small>
+            </span>
+          </span>
+        ))}
+      </div>
+      <div className="service-actions">
+        <span>{dataMode === "example" ? "匿名示例/fixture 验收" : "本地资料模式"}</span>
+        <button className="provider-settings-button provider-settings-button-primary" type="button" onClick={onOpenSettings}>
+          <Settings size={15} /> 配置
+        </button>
+      </div>
+    </section>
+  );
+}
+
+function MarketMapView({
+  searchRun,
+  onPrompt,
+}: {
+  searchRun: SearchRun | null;
+  onPrompt: (text: string, autoSubmit?: boolean) => void;
+}) {
+  const [zoom, setZoom] = useState(1);
+  const [pan, setPan] = useState({ x: 0, y: 0 });
+  const [dragStart, setDragStart] = useState<{ x: number; y: number; panX: number; panY: number } | null>(null);
+  const [selectedCity, setSelectedCity] = useState<MarketCity>(marketCities[0]);
+
+  function startDrag(event: React.PointerEvent<SVGSVGElement>) {
+    event.currentTarget.setPointerCapture(event.pointerId);
+    setDragStart({ x: event.clientX, y: event.clientY, panX: pan.x, panY: pan.y });
+  }
+
+  function moveDrag(event: React.PointerEvent<SVGSVGElement>) {
+    if (!dragStart) return;
+    setPan({
+      x: Math.max(-32, Math.min(32, dragStart.panX + (event.clientX - dragStart.x) / 5)),
+      y: Math.max(-24, Math.min(24, dragStart.panY + (event.clientY - dragStart.y) / 5)),
+    });
+  }
+
+  return (
+    <div className="market-map-view">
+      <div className="map-toolbar" aria-label="地图控制">
+        <button type="button" onClick={() => setZoom((value) => Math.min(1.8, Number((value + 0.15).toFixed(2))))} aria-label="放大地图">
+          <Plus size={14} />
+        </button>
+        <button type="button" onClick={() => setZoom((value) => Math.max(0.75, Number((value - 0.15).toFixed(2))))} aria-label="缩小地图">
+          <Minus size={14} />
+        </button>
+        <button type="button" onClick={() => { setZoom(1); setPan({ x: 0, y: 0 }); }} aria-label="重置地图">
+          <Navigation size={14} />
+        </button>
+        <span>{Math.round(zoom * 100)}%</span>
+      </div>
+      <svg className="market-map" viewBox="0 0 100 88" role="img" aria-label="岗位城市地图图钉" onPointerDown={startDrag} onPointerMove={moveDrag} onPointerUp={() => setDragStart(null)}>
+        <defs>
+          <radialGradient id="p9Hotspot" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#2f7d6f" stopOpacity="0.28" />
+            <stop offset="100%" stopColor="#2f7d6f" stopOpacity="0" />
+          </radialGradient>
+        </defs>
+        <g transform={`translate(${pan.x} ${pan.y}) scale(${zoom}) translate(${(1 - zoom) * 50} ${(1 - zoom) * 44})`}>
+          <path d="M18 24 C28 8 52 5 68 18 C84 31 84 56 66 72 C48 88 21 77 13 58 C8 45 10 33 18 24Z" fill="#eef5f1" stroke="#bad0c7" strokeWidth="1.2" />
+          <path d="M30 28 C42 20 56 22 68 35 M25 51 C39 45 56 48 74 58 M37 72 C42 58 44 43 43 25" fill="none" stroke="#d0ddd7" strokeWidth="0.8" strokeLinecap="round" />
+          {marketCities.map((city) => {
+            const radius = 5 + Math.min(city.jobs, 20) / 4;
+            return (
+              <g key={city.city} className={`city-pin ${selectedCity.city === city.city ? "is-selected" : ""}`} transform={`translate(${city.x} ${city.y})`} onClick={(event) => { event.stopPropagation(); setSelectedCity(city); onPrompt(`帮我解释${city.city}的岗位机会、薪资区间和下一步求职动作。`); }}>
+                <circle r={radius + 9} fill="url(#p9Hotspot)" />
+                <circle r={radius} />
+                <text y={-radius - 5}>{city.city}</text>
+              </g>
+            );
+          })}
+        </g>
+      </svg>
+      <div className="city-insight-card">
+        <div>
+          <span className="eyebrow">Selected City</span>
+          <h3>{selectedCity.city}</h3>
+        </div>
+        <dl>
+          <div><dt>岗位</dt><dd>{selectedCity.jobs} 个</dd></div>
+          <div><dt>薪资</dt><dd>{selectedCity.salary}</dd></div>
+          <div><dt>远程</dt><dd>{selectedCity.remote}</dd></div>
+          <div><dt>竞争</dt><dd>{selectedCity.competition}</dd></div>
+        </dl>
+        <p>{selectedCity.tech.join(" / ")} · {selectedCity.source}</p>
+      </div>
+      {searchRun && (
+        <div className="search-run-card">
+          <span className="eyebrow">Search Run</span>
+          <strong>{searchRun.query}</strong>
+          <p>{searchRun.city} · {searchRun.salary} · {searchRun.resultCount} 条本地可审计结果</p>
+          <small>{searchRun.sourceMode}；{searchRun.refs.join(" / ")}</small>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function OpportunityMatchPanel({
+  jobs,
+  candidateProfile,
+  onPrompt,
+}: {
+  jobs: JobListItem[];
+  candidateProfile: CandidateProfile | null;
+  onPrompt: (text: string, autoSubmit?: boolean) => void;
+}) {
+  const matrix = candidateProfile?.capability_matrix ?? [];
+  const gaps = candidateProfile?.job_gaps ?? [];
+  const visibleJobs = jobs.length > 0 ? jobs : [
+    { job_id: "fixture-ai-frontend", title: "LLM 应用前端", company: "北辰智能", platform: "fixture", tech_stack: ["React", "TypeScript", "LLM"], match: { fit_label: "部分匹配", gaps: ["LLM 项目量化证据"], strengths: ["工作台 UX", "React"] } },
+    { job_id: "fixture-data-viz", title: "数据可视化前端", company: "海石数据", platform: "fixture", tech_stack: ["地图", "ECharts", "仪表盘"], match: { fit_label: "可尝试", gaps: ["地图交互案例"], strengths: ["复杂 UI"] } },
+  ] as JobListItem[];
+
+  return (
+    <div className="opportunity-match-panel">
+      <div className="intelligence-card">
+        <span className="eyebrow">Target Jobs</span>
+        <h3>目标机会与匹配</h3>
+        <p>这里展示已导入 JD 和本地 fixture，不代表真实平台自动搜索。</p>
+      </div>
+      <div className="opportunity-list">
+        {visibleJobs.slice(0, 4).map((job) => (
+          <button key={job.job_id} type="button" className="opportunity-row" onClick={() => onPrompt(`帮我比较 ${job.company || "该公司"} 的 ${job.title || "目标岗位"} 与当前资料的匹配和短板。`)}>
+            <span><strong>{job.title || "目标岗位"}</strong><small>{job.company || "公司待确认"} · {job.platform || "本地"}</small></span>
+            <em>{job.match?.fit_label || (job.is_current_target ? "当前目标" : "待匹配")}</em>
+          </button>
+        ))}
+      </div>
+      <div className="skill-gap-grid">
+        <div>
+          <strong>{matrix.length || 6}</strong>
+          <small>能力证据项</small>
+        </div>
+        <div>
+          <strong>{gaps.length || 3}</strong>
+          <small>岗位短板</small>
+        </div>
+        <div>
+          <strong>{candidateProfile?.source_refs?.length ?? 0}</strong>
+          <small>source refs</small>
+        </div>
+      </div>
+      <div className="gap-chip-row">
+        {(gaps.length ? gaps.map((item) => item.requirement) : ["LLM 项目证据", "地图可视化案例", "可量化业务结果"]).slice(0, 5).map((item) => (
+          <span key={item}>{item}</span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ApplicationPipelineView({
+  pipelineItems,
+  onPrompt,
+}: {
+  pipelineItems: PipelineItem[];
+  onPrompt: (text: string, autoSubmit?: boolean) => void;
+}) {
+  return (
+    <div className="application-pipeline-view">
+      <div className="pipeline-lane">
+        {["待评估", "待投递", "已投递", "HR 沟通", "笔试", "面试", "Offer"].map((stage) => (
+          <span key={stage} className={pipelineItems.some((item) => item.stage === stage) ? "has-item" : ""}>{stage}</span>
+        ))}
+      </div>
+      <div className="pipeline-list">
+        {pipelineItems.map((item) => (
+          <article key={item.id} className={`pipeline-item tone-${item.statusTone}`}>
+            <div>
+              <strong>{item.company}</strong>
+              <span>{item.role} · {item.city}</span>
+            </div>
+            <em>{item.stage}</em>
+            <p>{item.nextAction}</p>
+            <button type="button" onClick={() => onPrompt(`把${item.company}${item.role}的投递状态更新为：`)}>
+              用 Chatbox 更新
+            </button>
+          </article>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function LeftIntelligencePanel({
+  jobs,
+  candidateProfile,
+  searchRun,
+  pipelineItems,
+  onPrompt,
+}: {
+  jobs: JobListItem[];
+  candidateProfile: CandidateProfile | null;
+  searchRun: SearchRun | null;
+  pipelineItems: PipelineItem[];
+  onPrompt: (text: string, autoSubmit?: boolean) => void;
+}) {
+  const [activeTab, setActiveTab] = useState<P9IntelligenceTab>("market");
+  const tabs: Array<{ key: P9IntelligenceTab; label: string; icon: React.ReactNode }> = [
+    { key: "market", label: "市场", icon: <MapPin size={14} /> },
+    { key: "match", label: "匹配", icon: <Target size={14} /> },
+    { key: "pipeline", label: "流程", icon: <Route size={14} /> },
+  ];
+  return (
+    <aside className="left-intelligence-panel" aria-label="求职态势图">
+      <div className="intelligence-header">
+        <div>
+          <span className="eyebrow">Job Intelligence</span>
+          <h2>求职态势</h2>
+        </div>
+        <span className="source-boundary">本地/fixture</span>
+      </div>
+      <div className="intelligence-tabs" role="tablist" aria-label="求职态势页签">
+        {tabs.map((tab) => (
+          <button key={tab.key} type="button" role="tab" aria-selected={activeTab === tab.key} onClick={() => setActiveTab(tab.key)}>
+            {tab.icon}
+            {tab.label}
+          </button>
+        ))}
+      </div>
+      <div className="intelligence-body">
+        {activeTab === "market" && <MarketMapView searchRun={searchRun} onPrompt={onPrompt} />}
+        {activeTab === "match" && <OpportunityMatchPanel jobs={jobs} candidateProfile={candidateProfile} onPrompt={onPrompt} />}
+        {activeTab === "pipeline" && <ApplicationPipelineView pipelineItems={pipelineItems} onPrompt={onPrompt} />}
+      </div>
+      <div className="intelligence-footer" role="note">
+        <ShieldCheck size={14} />
+        未授权时不访问招聘平台，不执行全网抓取。
+      </div>
+    </aside>
+  );
 }
 
 function ThinkingMessage() {
@@ -1738,12 +2188,72 @@ function ResultRail({
   );
 }
 
+function P9ArtifactOverview({
+  searchRun,
+  storyDrafts,
+  pipelineItems,
+  resumeResult,
+}: {
+  searchRun: SearchRun | null;
+  storyDrafts: StoryDraft[];
+  pipelineItems: PipelineItem[];
+  resumeResult: ResumeGenerationResult | null;
+}) {
+  return (
+    <section className="p9-artifact-overview" aria-label="P9 产物台总览">
+      <div className="p9-artifact-header">
+        <div>
+          <span className="eyebrow">Artifact Bench</span>
+          <h3>产物台总览</h3>
+        </div>
+        <span>{pipelineItems.length} 条流程</span>
+      </div>
+      <div className="artifact-overview-grid">
+        <article>
+          <BarChart3 size={16} />
+          <strong>{searchRun ? `${searchRun.resultCount} 条` : "待汇总"}</strong>
+          <small>JD / 薪资 / 城市</small>
+        </article>
+        <article>
+          <BriefcaseBusiness size={16} />
+          <strong>{resumeResult?.resume_version_id ? "已生成" : "待生成"}</strong>
+          <small>定制简历</small>
+        </article>
+        <article>
+          <Layers size={16} />
+          <strong>{storyDrafts.length}</strong>
+          <small>项目故事</small>
+        </article>
+      </div>
+      {searchRun && (
+        <div className="artifact-brief">
+          <strong>最近 search run</strong>
+          <p>{searchRun.query}</p>
+          <small>{searchRun.sourceMode}</small>
+        </div>
+      )}
+      <div className="story-bank-mini">
+        {storyDrafts.slice(0, 3).map((story) => (
+          <article key={`${story.title}-${story.summary}`} className={`story-mini story-${story.status}`}>
+            <strong>{story.title}</strong>
+            <p>{story.summary}</p>
+            <small>{story.evidence}</small>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function Workbench({
   result,
   artifacts,
   jobs,
   jobsLoading,
   resumeResult,
+  searchRun,
+  storyDrafts,
+  pipelineItems,
   busy,
   workspaceId,
   candidateProfile,
@@ -1763,6 +2273,9 @@ function Workbench({
   jobs: JobListItem[];
   jobsLoading: boolean;
   resumeResult: ResumeGenerationResult | null;
+  searchRun: SearchRun | null;
+  storyDrafts: StoryDraft[];
+  pipelineItems: PipelineItem[];
   busy: boolean;
   workspaceId: string;
   candidateProfile: CandidateProfile | null;
@@ -1796,6 +2309,7 @@ function Workbench({
           </div>
         </div>
         <div className="workbench-body">
+          <P9ArtifactOverview searchRun={searchRun} storyDrafts={storyDrafts} pipelineItems={pipelineItems} resumeResult={resumeResult} />
           <JobTargetList jobs={jobs} loading={jobsLoading} busy={busy} onSelect={onSelectJob} onGenerateResume={onGenerateResume} />
           <ResumeGenerationPlane result={resumeResult} />
           <WorkflowPanel result={result} busy={busy} workspaceId={workspaceId} onRunExample={onRunExample} />
@@ -1834,6 +2348,23 @@ function App() {
   const [jdDraft, setJdDraft] = useState({ jdText: "", sourceUrl: "", platform: "", userNotes: "" });
   const [resumeResult, setResumeResult] = useState<ResumeGenerationResult | null>(null);
   const [activeTool, setActiveTool] = useState<P8Tool>("none");
+  const [searchRun, setSearchRun] = useState<SearchRun | null>(null);
+  const [pipelineItems, setPipelineItems] = useState<PipelineItem[]>(() => {
+    try {
+      const stored = window.localStorage.getItem("jobpilot:p9:pipeline");
+      return stored ? JSON.parse(stored) as PipelineItem[] : initialPipelineItems;
+    } catch {
+      return initialPipelineItems;
+    }
+  });
+  const [storyDrafts, setStoryDrafts] = useState<StoryDraft[]>(() => {
+    try {
+      const stored = window.localStorage.getItem("jobpilot:p9:stories");
+      return stored ? JSON.parse(stored) as StoryDraft[] : initialStoryDrafts;
+    } catch {
+      return initialStoryDrafts;
+    }
+  });
   const [drawerOpen, setDrawerOpen] = useState(false);
   const autorunStarted = useRef(false);
   const initializationNoticeShown = useRef(false);
@@ -1907,6 +2438,14 @@ function App() {
     const messageList = messagesListRef.current;
     if (messageList) messageList.scrollTop = messageList.scrollHeight;
   }, [messages, busy]);
+
+  useEffect(() => {
+    window.localStorage.setItem("jobpilot:p9:pipeline", JSON.stringify(pipelineItems));
+  }, [pipelineItems]);
+
+  useEffect(() => {
+    window.localStorage.setItem("jobpilot:p9:stories", JSON.stringify(storyDrafts));
+  }, [storyDrafts]);
 
   function notice(content: string, tone: Message["tone"] = "notice") {
     setMessages((current) => [...current, { role: "assistant", content, tone }]);
@@ -2097,6 +2636,120 @@ function App() {
     }
   }
 
+  function inferCity(text: string) {
+    return marketCities.find((city) => text.includes(city.city))?.city ?? "北京/上海/深圳";
+  }
+
+  function inferPipelineStage(text: string): PipelineStage {
+    if (/offer|录用/i.test(text)) return "Offer";
+    if (/拒绝|不合适|失败/.test(text)) return "拒绝";
+    if (/笔试|测评/.test(text)) return "笔试";
+    if (/面试|一面|二面|终面/.test(text)) return "面试";
+    if (/hr|沟通|约/.test(text.toLowerCase())) return "HR 沟通";
+    if (/已投|投递完成/.test(text)) return "已投递";
+    if (/搁置|暂停/.test(text)) return "搁置";
+    if (/待投|准备投/.test(text)) return "待投递";
+    return "待评估";
+  }
+
+  function pipelineTone(stage: PipelineStage): PipelineItem["statusTone"] {
+    if (stage === "Offer") return "done";
+    if (stage === "拒绝" || stage === "搁置") return "risk";
+    if (stage === "HR 沟通" || stage === "笔试" || stage === "面试") return "action";
+    if (stage === "已投递" || stage === "待投递") return "active";
+    return "idle";
+  }
+
+  async function handleP9Command(text: string): Promise<boolean> {
+    if (/汇总|搜索|岗位|JD|jd|薪资|城市|招聘信息|机会/.test(text) && !/生成.*(简历|申请包)/.test(text) && !/更新|改成|状态|投递|一面|二面|终面|面试|HR|hr|笔试|Offer|offer|拒绝|搁置/.test(text)) {
+      const city = inferCity(text);
+      const run: SearchRun = {
+        query: text,
+        city,
+        salary: text.match(/\d+\s*[-~到]\s*\d+\s*k/i)?.[0] ?? "14-35k",
+        sourceMode: "用户粘贴 / 已导入 JD / repo fixture，本轮不联网抓取",
+        resultCount: marketCities.reduce((sum, item) => sum + (city.includes(item.city) || city.includes("/") ? item.jobs : 0), 0),
+        generatedAt: new Date().toLocaleString(),
+        refs: ["examples/jds/junior_frontend_jd.md", "examples/p5_synthetic_personas/*/jd.md"],
+      };
+      setSearchRun(run);
+      setMessages((current) => [
+        ...current,
+        {
+          role: "assistant",
+          tone: "plan",
+          content: `已生成一组本地可审计 JD 信息源汇总：${run.city}，薪资参考 ${run.salary}，结果 ${run.resultCount} 条。来源限定为用户粘贴、已导入 JD 和 repo fixture；本轮没有登录或抓取招聘平台，也不声称全网搜索通过。你可以继续说“比较这些岗位”或“把深圳岗位优先级调低”。`,
+        },
+      ]);
+      return true;
+    }
+
+    if (/故事|项目|能力证据|补全|简历模板|ASR|语音/.test(text)) {
+      const asrNote = /ASR|语音/.test(text) ? "ASR 仍是 opt-in 状态入口，本轮没有采集麦克风或调用外部语音服务。" : "";
+      const nextStory: StoryDraft = {
+        title: text.includes("项目") ? "项目故事补全草稿" : "能力证据补全草稿",
+        summary: "请补充：背景、本人职责、关键动作、可量化结果、可公开 source refs。",
+        evidence: "来自 Chatbox 引导输入，缺证据内容会进入 pending confirmations。",
+        status: "needs_evidence",
+      };
+      setStoryDrafts((current) => [nextStory, ...current].slice(0, 6));
+      setDrawerOpen(true);
+      setMessages((current) => [
+        ...current,
+        {
+          role: "assistant",
+          tone: "plan",
+          content: `我会按 STAR 结构引导你补资料：1. 场景和目标；2. 你负责的部分；3. 技术动作；4. 结果和证据；5. 可展示链接。${asrNote} 右侧产物台已新增故事草稿，待你继续补充事实。`,
+        },
+      ]);
+      return true;
+    }
+
+    if (/更新|改成|状态|投递|一面|二面|终面|面试|HR|hr|笔试|Offer|offer|拒绝|搁置/.test(text)) {
+      const nextStage = inferPipelineStage(text);
+      setPipelineItems((current) => {
+        const [first, ...rest] = current;
+        const target = first ?? initialPipelineItems[0];
+        return [
+          {
+            ...target,
+            stage: nextStage,
+            statusTone: pipelineTone(nextStage),
+            nextAction: text,
+            updatedAt: new Date().toLocaleString(),
+          },
+          ...rest,
+        ];
+      });
+      setMessages((current) => [
+        ...current,
+        {
+          role: "assistant",
+          tone: "plan",
+          content: `已在本地求职流程中记录状态更新：${nextStage}。这只是本地流程态势更新，不会对外发送消息、不会自动投递，也不会联系招聘平台。`,
+        },
+      ]);
+      return true;
+    }
+
+    if (/生成.*(申请包|简历|面试故事)|申请包.*生成/.test(text)) {
+      await generateTargetedResume();
+      const nextStory: StoryDraft = {
+        title: "面试故事包草稿",
+        summary: "围绕当前目标 JD 准备 3 个可追溯项目故事，缺指标的内容需用户确认。",
+        evidence: "由 Chatbox 触发，复用当前 JD 与候选人画像上下文。",
+        status: "draft",
+      };
+      setStoryDrafts((current) => [
+        nextStory,
+        ...current,
+      ].slice(0, 6));
+      return true;
+    }
+
+    return false;
+  }
+
   async function refreshCandidateProfile() {
     if (!workspaceId) {
       notice("本地 workspace 尚未初始化，暂不能生成画像。", "notice");
@@ -2209,6 +2862,10 @@ function App() {
     }
     setInput("");
     setMessages((current) => [...current, { role: "user", content: text }]);
+    if (await handleP9Command(text)) {
+      await Promise.allSettled([refreshChatContext(), loadCandidateProfile(), loadJobs()]);
+      return;
+    }
     setBusy(true);
     try {
       const providerMode = providerStatus?.consented && providerStatus.provider !== "mock" ? "provider_opt_in" : "local_default";
@@ -2353,42 +3010,19 @@ function App() {
         <div className="brand">
           <span className="eyebrow">JobPilot AI</span>
           <div className="brand-title-row">
-            <h1>求职材料工作台</h1>
+            <h1>Chatbox-native 求职材料工作台</h1>
           </div>
         </div>
-        <div className="status-strip" role="status" aria-live="polite">
-          <StatusBadge tone={workspaceId ? "ok" : "neutral"}>{workspaceId ? "本地就绪" : "本地初始化中"}</StatusBadge>
-          <div className="mode-toggle" role="group" aria-label="数据模式">
-            <button type="button" aria-pressed={dataMode === "example"} onClick={() => setDataMode("example")}>
-              示例模式
-            </button>
-            <button type="button" aria-pressed={dataMode === "my_data"} onClick={() => setDataMode("my_data")}>
-              我的资料
-            </button>
-          </div>
-          <StatusBadge tone={providerTone(providerStatus)} shield>
-            {providerLabel(providerStatus)}
-          </StatusBadge>
-          <button className="provider-settings-button" type="button" onClick={() => setProviderSettingsOpen(true)}>
-            <Settings size={15} /> 模型设置
-          </button>
-          <span className="mode-note">{dataMode === "example" ? "当前使用匿名示例数据" : "仅处理本地上传资料"}</span>
-        </div>
+        <TopServiceCenter providerStatus={providerStatus} workspaceId={workspaceId} dataMode={dataMode} onOpenSettings={() => setProviderSettingsOpen(true)} />
       </header>
 
       <div className="layout-grid">
-        <DesktopContextPanel
-          dataMode={dataMode}
-          workflowResult={workflowResult}
-          artifactCount={artifacts.length + workflowArtifactCount}
-          chatContext={chatContext}
-          contextLoading={contextLoading}
-          lifecycleResult={lifecycleResult}
-          lifecycleBusy={lifecycleBusy}
-          onRefreshContext={() => {
-            refreshChatContext().catch(() => undefined);
-          }}
-          onWorkspaceAction={runWorkspaceAction}
+        <LeftIntelligencePanel
+          jobs={jobs}
+          candidateProfile={candidateProfile}
+          searchRun={searchRun}
+          pipelineItems={pipelineItems}
+          onPrompt={fillPrompt}
         />
         <section className="workstream conversation-area" aria-label="对话区">
           <section className="conversation-plane" aria-label="对话与任务区">
@@ -2488,6 +3122,9 @@ function App() {
           jobs={jobs}
           jobsLoading={jobsLoading}
           resumeResult={resumeResult}
+          searchRun={searchRun}
+          storyDrafts={storyDrafts}
+          pipelineItems={pipelineItems}
           busy={busy}
           workspaceId={workspaceId}
           candidateProfile={candidateProfile}

@@ -1,0 +1,332 @@
+{
+  "name": "P9 Chatbox-native 求职情报工作台自动化验收报告",
+  "goal": "验证 P9 已从向导卡片式页面推进为顶部服务中心、左侧求职态势、中央 Chatbox 主路径和右侧产物台的本地自动化候选。",
+  "url": "http://127.0.0.1:5174/?workspace_root=/mnt/c/workspace/interview_service/.tmp/p9_chatbox_native_workspace",
+  "targetArchitecture": [
+    "TopServiceCenter 展示 provider、JD 信息源、ASR、MCP/Skill、workspace 和安全边界状态。",
+    "LeftIntelligencePanel 展示岗位市场、目标机会与匹配、投递流程三大页签，地图/图钉支持缩放、拖动和重置。",
+    "ConversationPlane 仍是中央主路径，Chatbox 可发起 JD 汇总、资料补全、申请包生成和流程更新。",
+    "RightArtifactBench 展示 search run、故事草稿、流程摘要、岗位、简历、画像、source refs 和 pending confirmations。",
+    "FastAPI / Domain / SQLite 复用现有 P8/P8.1 能力；P9 不新增真实搜索、平台抓取、真实 ASR 或自动投递系统。"
+  ],
+  "currentImplementation": [
+    "apps/chatbox/src/main.tsx 新增 TopServiceCenter、LeftIntelligencePanel、MarketMapView、OpportunityMatchPanel、ApplicationPipelineView 和 P9ArtifactOverview。",
+    "Chatbox 新增本地 handleP9Command：JD/薪资/城市汇总、项目故事补全、流程更新和申请包生成均从输入框发起。",
+    "apps/chatbox/src/styles.css 新增 P9 服务状态、离线地图、流程泳道、产物总览和 1920/1440/1200/720/390 响应式规则。",
+    "P9 search run 和流程状态使用 repo fixture、已导入 JD、用户粘贴和 localStorage；没有联网抓取或平台登录。"
+  ],
+  "viewports": [
+    {
+      "name": "desktop1920",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "name": "desktop1440",
+      "width": 1440,
+      "height": 920
+    },
+    {
+      "name": "desktop1200",
+      "width": 1200,
+      "height": 900
+    },
+    {
+      "name": "tablet720",
+      "width": 720,
+      "height": 920
+    },
+    {
+      "name": "mobile390",
+      "width": 390,
+      "height": 860,
+      "mobile": true
+    }
+  ],
+  "steps": [
+    {
+      "viewport": "desktop1920",
+      "name": "打开 P9 工作台",
+      "action": "goto"
+    },
+    {
+      "viewport": "desktop1920",
+      "name": "等待 P9 标题",
+      "action": "waitText",
+      "text": "Chatbox-native 求职材料工作台",
+      "timeoutMs": 20000
+    },
+    {
+      "viewport": "desktop1920",
+      "name": "等待 Chatbox 初始化完成",
+      "action": "waitText",
+      "text": "发送任务",
+      "timeoutMs": 30000
+    },
+    {
+      "viewport": "desktop1920",
+      "name": "P9 三栏首屏",
+      "action": "screenshot",
+      "file": "p9_initial_1920.png"
+    },
+    {
+      "viewport": "desktop1920",
+      "name": "输入 JD 汇总请求",
+      "action": "fill",
+      "selector": "textarea",
+      "value": "帮我汇总北京 LLM 应用前端岗位、薪资和城市机会"
+    },
+    {
+      "viewport": "desktop1920",
+      "name": "发送 JD 汇总请求",
+      "action": "clickText",
+      "text": "发送任务"
+    },
+    {
+      "viewport": "desktop1920",
+      "name": "等待 search run",
+      "action": "waitText",
+      "text": "本地可审计 JD 信息源汇总",
+      "timeoutMs": 10000
+    },
+    {
+      "viewport": "desktop1920",
+      "name": "JD 汇总与地图态势",
+      "action": "screenshot",
+      "file": "p9_search_run_1920.png"
+    },
+    {
+      "viewport": "desktop1920",
+      "name": "打开流程页签",
+      "action": "clickText",
+      "text": "流程"
+    },
+    {
+      "viewport": "desktop1920",
+      "name": "输入流程更新",
+      "action": "fill",
+      "selector": "textarea",
+      "value": "把北辰智能 LLM 应用前端岗位状态改成一面通过，下周三二面"
+    },
+    {
+      "viewport": "desktop1920",
+      "name": "发送流程更新",
+      "action": "clickText",
+      "text": "发送任务"
+    },
+    {
+      "viewport": "desktop1920",
+      "name": "等待流程更新",
+      "action": "waitText",
+      "text": "本地求职流程中记录状态更新",
+      "timeoutMs": 10000
+    },
+    {
+      "viewport": "desktop1920",
+      "name": "流程更新证据",
+      "action": "screenshot",
+      "file": "p9_pipeline_update_1920.png"
+    },
+    {
+      "viewport": "desktop1440",
+      "name": "1440 重新打开",
+      "action": "goto"
+    },
+    {
+      "viewport": "desktop1440",
+      "name": "等待 1440 标题",
+      "action": "waitText",
+      "text": "Chatbox-native 求职材料工作台",
+      "timeoutMs": 20000
+    },
+    {
+      "viewport": "desktop1440",
+      "name": "等待 1440 初始化",
+      "action": "waitText",
+      "text": "发送任务",
+      "timeoutMs": 30000
+    },
+    {
+      "viewport": "desktop1440",
+      "name": "1440 P9 可视度",
+      "action": "screenshot",
+      "file": "p9_1440.png"
+    },
+    {
+      "viewport": "desktop1200",
+      "name": "1200 重新打开",
+      "action": "goto"
+    },
+    {
+      "viewport": "desktop1200",
+      "name": "等待 1200 标题",
+      "action": "waitText",
+      "text": "Chatbox-native 求职材料工作台",
+      "timeoutMs": 20000
+    },
+    {
+      "viewport": "desktop1200",
+      "name": "等待 1200 初始化",
+      "action": "waitText",
+      "text": "发送任务",
+      "timeoutMs": 30000
+    },
+    {
+      "viewport": "desktop1200",
+      "name": "1200 P9 可视度",
+      "action": "screenshot",
+      "file": "p9_1200.png"
+    },
+    {
+      "viewport": "tablet720",
+      "name": "720 重新打开",
+      "action": "goto"
+    },
+    {
+      "viewport": "tablet720",
+      "name": "等待 720 标题",
+      "action": "waitText",
+      "text": "Chatbox-native 求职材料工作台",
+      "timeoutMs": 20000
+    },
+    {
+      "viewport": "tablet720",
+      "name": "等待 720 初始化",
+      "action": "waitText",
+      "text": "发送任务",
+      "timeoutMs": 30000
+    },
+    {
+      "viewport": "tablet720",
+      "name": "720 Chatbox 默认主视图",
+      "action": "screenshot",
+      "file": "p9_720.png"
+    },
+    {
+      "viewport": "mobile390",
+      "name": "390 重新打开",
+      "action": "goto"
+    },
+    {
+      "viewport": "mobile390",
+      "name": "等待 390 标题",
+      "action": "waitText",
+      "text": "Chatbox-native 求职材料工作台",
+      "timeoutMs": 20000
+    },
+    {
+      "viewport": "mobile390",
+      "name": "等待 390 初始化",
+      "action": "waitText",
+      "text": "发送任务",
+      "timeoutMs": 30000
+    },
+    {
+      "viewport": "mobile390",
+      "name": "390 输入框与工具可达",
+      "action": "screenshot",
+      "file": "p9_390.png"
+    }
+  ],
+  "acceptanceCriteria": [
+    "中央 Chatbox 是首屏第一交互路径，左侧态势和右侧产物台不抢占输入框。",
+    "顶部服务中心不把未配置或未授权服务显示为已连通。",
+    "左侧三大板块可见，地图/图钉支持缩放、拖动和重置。",
+    "Chatbox 可发起 JD/城市/薪资汇总，并明确来源限制。",
+    "Chatbox 可更新投递流程，但不对外发送、不自动投递。",
+    "右侧产物台展示 search run、故事草稿、流程、岗位、简历和画像。",
+    "报告不声称真实全网搜索、招聘平台接入、真实 provider、真实个人资料、真实 ASR、自动投递或 SaaS 已通过。"
+  ],
+  "commandResults": [
+    {
+      "command": "npm --prefix apps/chatbox run build",
+      "status": "passed",
+      "evidence": "> @jobpilot/chatbox@0.1.0 build\n> tsc && vite build\nvite v7.3.5 building client environment for production...\ntransforming...\n✓ 1578 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/index.html                   0.38 kB │ gzip:  0.26 kB\ndist/assets/index-C-mUy2Kv.css   46.00 kB │ gzip:  9.01 kB\ndist/assets/index-CrvkyUnQ.js   269.18 kB │ gzip: 85.75 kB\n✓ built in 8.23s"
+    },
+    {
+      "command": "/mnt/c/workspace/interview_service/.venv/bin/python -c from pathlib import Path; import xml.etree.ElementTree as ET; p=Path('docs/active/jobpilot-stage-gap-and-acceptance.drawio'); ET.parse(p); print('drawio ok', p.stat().st_size)",
+      "status": "passed",
+      "evidence": "drawio ok 40902"
+    },
+    {
+      "command": "static text guard for P9 UI entities",
+      "status": "passed",
+      "evidence": "{\n  \"top_service_center\": true,\n  \"left_intelligence_panel\": true,\n  \"market_map_view\": true,\n  \"chatbox_command_router\": true,\n  \"artifact_overview\": true,\n  \"no_forbidden_claims\": true\n}"
+    }
+  ],
+  "prdReview": [
+    {
+      "requirement": "Chatbox-native 主路径",
+      "evidence": "截图显示中央 Chatbox、状态机、输入框和工具入口首屏可见。",
+      "status": "PASS"
+    },
+    {
+      "requirement": "求职态势三大板块",
+      "evidence": "左侧 Market/Match/Pipeline 页签和地图/流程截图可见。",
+      "status": "PASS"
+    },
+    {
+      "requirement": "JD 汇总边界",
+      "evidence": "search run 明确使用 repo fixture、已导入 JD 和用户粘贴，不联网抓取。",
+      "status": "PASS"
+    },
+    {
+      "requirement": "Chatbox 更新流程",
+      "evidence": "流程更新通过本地 Chatbox 命令完成，报告保留截图。",
+      "status": "PASS"
+    },
+    {
+      "requirement": "高风险边界",
+      "evidence": "未验证范围列明真实 provider、ASR、招聘平台、自动投递未通过。",
+      "status": "PASS"
+    }
+  ],
+  "codeReview": [
+    {
+      "area": "Frontend shell",
+      "finding": "P9 新实体在 main.tsx 内增量实现，未拆动后端路由和数据库。",
+      "severity": "passed"
+    },
+    {
+      "area": "Command router",
+      "finding": "handleP9Command 只处理本地 UI 状态和现有 resume API，不触发外部搜索或平台动作。",
+      "severity": "passed"
+    },
+    {
+      "area": "Map visualization",
+      "finding": "使用离线 SVG 地图形态，不依赖外部地图服务或网络 token。",
+      "severity": "passed"
+    },
+    {
+      "area": "Residual risk",
+      "finding": "本轮未验证真实 LLM 输出质量和真实数据源质量，需要后续单独授权。",
+      "severity": "warning"
+    }
+  ],
+  "documentationAudit": [
+    {
+      "area": "P9 PRD",
+      "finding": "实现围绕顶部服务中心、左侧态势、中央 Chatbox、右侧产物台展开。",
+      "status": "passed"
+    },
+    {
+      "area": "目标架构",
+      "finding": "实现未扩张为真实搜索系统、ASR 系统、MCP/Skill 平台或招聘自动化。",
+      "status": "passed"
+    },
+    {
+      "area": "验收门槛",
+      "finding": "报告包含 build、drawio parse、静态 guard、headless 截图和 PRD 规格检视。",
+      "status": "passed"
+    }
+  ],
+  "unverifiedScope": [
+    "未登录、抓取、自动沟通或自动投递 BOSS、猎聘、拉勾、LinkedIn 等招聘平台。",
+    "未执行真实全网 JD 搜索，只使用用户粘贴、已导入 JD、repo fixture 和本地示例表达。",
+    "未默认调用 MiniMax、DeepSeek 或 OpenAI-compatible provider。",
+    "未读取用户真实个人资料路径。",
+    "未采集麦克风，未调用真实 ASR。",
+    "未建设 MCP/Skill 平台、SaaS、多租户、Billing 或会议平台能力。"
+  ],
+  "auditOpinion": "P9 自动化候选通过的判断仅覆盖本地 UI 信息架构、可视化和现有能力重新组织。真实数据源、真实 provider、真实个人资料和高风险自动化仍需单独授权与验收。"
+}

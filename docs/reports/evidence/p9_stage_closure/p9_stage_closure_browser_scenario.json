@@ -1,0 +1,757 @@
+{
+  "name": "P9 阶段收口：Chatbox-native 求职情报工作台自动化验收报告",
+  "goal": "复验 P9 目标架构、当前实现、出门条件和真实界面路径是否在本地自动化候选范围内全绿，并明确未验证的高风险外部能力。",
+  "url": "http://127.0.0.1:5174/?workspace_root=/mnt/c/workspace/interview_service/.tmp/p9_stage_closure_workspace",
+  "targetArchitecture": [
+    "TopServiceCenter 展示 provider、JD 信息源、ASR、MCP/Skill、workspace 和安全边界状态。",
+    "LeftIntelligencePanel 展示岗位市场、目标机会与匹配、投递流程三大页签，地图/图钉支持缩放、拖动和重置。",
+    "ConversationPlane 仍是中央主路径，Chatbox 可发起 JD 汇总、资料补全、申请包生成和流程更新。",
+    "RightArtifactBench 展示 search run、故事草稿、流程摘要、岗位、简历、画像、source refs 和 pending confirmations。",
+    "FastAPI / Domain / SQLite 复用现有 P8/P8.1 能力；P9 不新增真实搜索、平台抓取、真实 ASR 或自动投递系统。",
+    "drawio 已同步到 P9 阶段收口口径：代码实体、分层关系、开发验收计划、门槛和安全边界均标注已实现/已修改/未实现状态。"
+  ],
+  "currentImplementation": [
+    "apps/chatbox/src/main.tsx 新增 TopServiceCenter、LeftIntelligencePanel、MarketMapView、OpportunityMatchPanel、ApplicationPipelineView 和 P9ArtifactOverview。",
+    "Chatbox 新增本地 handleP9Command：JD/薪资/城市汇总、项目故事补全、流程更新和申请包生成均从输入框发起。",
+    "apps/chatbox/src/styles.css 新增 P9 服务状态、离线地图、流程泳道、产物总览和 1920/1440/1200/720/390 响应式规则。",
+    "P9 search run 和流程状态使用 repo fixture、已导入 JD、用户粘贴和 localStorage；没有联网抓取或平台登录。",
+    "docs/active/jobpilot-stage-gap-and-acceptance.drawio 与文本镜像已从文档阶段更新为自动化候选阶段收口审计。"
+  ],
+  "viewports": [
+    {
+      "name": "desktop1920",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "name": "desktop1440",
+      "width": 1440,
+      "height": 920
+    },
+    {
+      "name": "desktop1200",
+      "width": 1200,
+      "height": 900
+    },
+    {
+      "name": "tablet720",
+      "width": 720,
+      "height": 920
+    },
+    {
+      "name": "mobile390",
+      "width": 390,
+      "height": 860,
+      "mobile": true
+    }
+  ],
+  "steps": [
+    {
+      "viewport": "desktop1920",
+      "name": "打开 P9 工作台",
+      "action": "goto"
+    },
+    {
+      "viewport": "desktop1920",
+      "name": "等待 P9 标题",
+      "action": "waitText",
+      "text": "Chatbox-native 求职材料工作台",
+      "timeoutMs": 20000
+    },
+    {
+      "viewport": "desktop1920",
+      "name": "等待 Chatbox 初始化完成",
+      "action": "waitText",
+      "text": "发送任务",
+      "timeoutMs": 30000
+    },
+    {
+      "viewport": "desktop1920",
+      "name": "P9 三栏首屏",
+      "action": "screenshot",
+      "file": "p9_initial_1920.png"
+    },
+    {
+      "viewport": "desktop1920",
+      "name": "输入 JD 汇总请求",
+      "action": "fill",
+      "selector": "textarea",
+      "value": "帮我汇总北京 LLM 应用前端岗位、薪资和城市机会"
+    },
+    {
+      "viewport": "desktop1920",
+      "name": "发送 JD 汇总请求",
+      "action": "clickText",
+      "text": "发送任务"
+    },
+    {
+      "viewport": "desktop1920",
+      "name": "等待 search run",
+      "action": "waitText",
+      "text": "本地可审计 JD 信息源汇总",
+      "timeoutMs": 10000
+    },
+    {
+      "viewport": "desktop1920",
+      "name": "JD 汇总与地图态势",
+      "action": "screenshot",
+      "file": "p9_search_run_1920.png"
+    },
+    {
+      "viewport": "desktop1920",
+      "name": "打开流程页签",
+      "action": "clickText",
+      "text": "流程"
+    },
+    {
+      "viewport": "desktop1920",
+      "name": "输入流程更新",
+      "action": "fill",
+      "selector": "textarea",
+      "value": "把北辰智能 LLM 应用前端岗位状态改成一面通过，下周三二面"
+    },
+    {
+      "viewport": "desktop1920",
+      "name": "发送流程更新",
+      "action": "clickText",
+      "text": "发送任务"
+    },
+    {
+      "viewport": "desktop1920",
+      "name": "等待流程更新",
+      "action": "waitText",
+      "text": "本地求职流程中记录状态更新",
+      "timeoutMs": 10000
+    },
+    {
+      "viewport": "desktop1920",
+      "name": "流程更新证据",
+      "action": "screenshot",
+      "file": "p9_pipeline_update_1920.png"
+    },
+    {
+      "viewport": "desktop1440",
+      "name": "1440 重新打开",
+      "action": "goto"
+    },
+    {
+      "viewport": "desktop1440",
+      "name": "等待 1440 标题",
+      "action": "waitText",
+      "text": "Chatbox-native 求职材料工作台",
+      "timeoutMs": 20000
+    },
+    {
+      "viewport": "desktop1440",
+      "name": "等待 1440 初始化",
+      "action": "waitText",
+      "text": "发送任务",
+      "timeoutMs": 30000
+    },
+    {
+      "viewport": "desktop1440",
+      "name": "1440 P9 可视度",
+      "action": "screenshot",
+      "file": "p9_1440.png"
+    },
+    {
+      "viewport": "desktop1200",
+      "name": "1200 重新打开",
+      "action": "goto"
+    },
+    {
+      "viewport": "desktop1200",
+      "name": "等待 1200 标题",
+      "action": "waitText",
+      "text": "Chatbox-native 求职材料工作台",
+      "timeoutMs": 20000
+    },
+    {
+      "viewport": "desktop1200",
+      "name": "等待 1200 初始化",
+      "action": "waitText",
+      "text": "发送任务",
+      "timeoutMs": 30000
+    },
+    {
+      "viewport": "desktop1200",
+      "name": "1200 P9 可视度",
+      "action": "screenshot",
+      "file": "p9_1200.png"
+    },
+    {
+      "viewport": "tablet720",
+      "name": "720 重新打开",
+      "action": "goto"
+    },
+    {
+      "viewport": "tablet720",
+      "name": "等待 720 标题",
+      "action": "waitText",
+      "text": "Chatbox-native 求职材料工作台",
+      "timeoutMs": 20000
+    },
+    {
+      "viewport": "tablet720",
+      "name": "等待 720 初始化",
+      "action": "waitText",
+      "text": "发送任务",
+      "timeoutMs": 30000
+    },
+    {
+      "viewport": "tablet720",
+      "name": "720 Chatbox 默认主视图",
+      "action": "screenshot",
+      "file": "p9_720.png"
+    },
+    {
+      "viewport": "mobile390",
+      "name": "390 重新打开",
+      "action": "goto"
+    },
+    {
+      "viewport": "mobile390",
+      "name": "等待 390 标题",
+      "action": "waitText",
+      "text": "Chatbox-native 求职材料工作台",
+      "timeoutMs": 20000
+    },
+    {
+      "viewport": "mobile390",
+      "name": "等待 390 初始化",
+      "action": "waitText",
+      "text": "发送任务",
+      "timeoutMs": 30000
+    },
+    {
+      "viewport": "mobile390",
+      "name": "390 输入框与工具可达",
+      "action": "screenshot",
+      "file": "p9_390.png"
+    }
+  ],
+  "acceptanceCriteria": [
+    "中央 Chatbox 是首屏第一交互路径，左侧态势和右侧产物台不抢占输入框。",
+    "顶部服务中心不把未配置或未授权服务显示为已连通。",
+    "左侧三大板块可见，地图/图钉支持缩放、拖动和重置。",
+    "Chatbox 可发起 JD/城市/薪资汇总，并明确来源限制。",
+    "Chatbox 可更新投递流程，但不对外发送、不自动投递。",
+    "右侧产物台展示 search run、故事草稿、流程、岗位、简历和画像。",
+    "报告不声称真实全网搜索、招聘平台接入、真实 provider、真实个人资料、真实 ASR、自动投递或 SaaS 已通过。"
+  ],
+  "commandResults": [
+    {
+      "command": "/mnt/c/workspace/interview_service/.venv/bin/python -m pytest",
+      "status": "passed",
+      "evidence": "tests/evals/test_p9_stage_closure_acceptance_eval.py .....               [ 87%]\ntests/evals/test_piagent_chat_core_integration_eval.py ........          [ 93%]\ntests/evals/test_provider_timeout_mapping_eval.py .                      [ 94%]\ntests/evals/test_realtime_safety_eval.py ..                              [ 95%]\ntests/evals/test_schema_and_docs_hardening_eval.py ...                   [ 97%]\ntests/evals/test_workspace_privacy_eval.py .                             [ 98%]\ntests/test_demo_flow.py .                                                [ 99%]\ntests/test_workspace_security.py .                                       [100%]\n=============================== warnings summary ===============================\n.venv/lib/python3.12/site-packages/starlette/formparsers.py:12\n  /mnt/c/workspace/interview_service/.venv/lib/python3.12/site-packages/starlette/formparsers.py:12: PendingDeprecationWarning: Please use `import python_multipart` instead.\n    import multipart\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n================== 136 passed, 1 warning in 77.70s (0:01:17) ==================="
+    },
+    {
+      "command": "npm --prefix apps/chatbox run build",
+      "status": "passed",
+      "evidence": "> @jobpilot/chatbox@0.1.0 build\n> tsc && vite build\nvite v7.3.5 building client environment for production...\ntransforming...\n✓ 1578 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/index.html                   0.38 kB │ gzip:  0.26 kB\ndist/assets/index-C-mUy2Kv.css   46.00 kB │ gzip:  9.01 kB\ndist/assets/index-CrvkyUnQ.js   269.18 kB │ gzip: 85.75 kB\n✓ built in 12.47s"
+    },
+    {
+      "command": "/mnt/c/workspace/interview_service/.venv/bin/python -c from pathlib import Path; import xml.etree.ElementTree as ET; p=Path('docs/active/jobpilot-stage-gap-and-acceptance.drawio'); ET.parse(p); print('drawio ok', p.stat().st_size)",
+      "status": "passed",
+      "evidence": "drawio ok 50317"
+    },
+    {
+      "command": "static text guard for P9 UI entities",
+      "status": "passed",
+      "evidence": "{\n  \"top_service_center\": true,\n  \"left_intelligence_panel\": true,\n  \"market_map_view\": true,\n  \"chatbox_command_router\": true,\n  \"artifact_overview\": true,\n  \"no_forbidden_claims\": true\n}"
+    },
+    {
+      "command": "/mnt/c/workspace/interview_service/.venv/bin/python -m pytest tests/evals/test_p9_chatbox_native_acceptance_eval.py",
+      "status": "passed",
+      "evidence": "============================= test session starts ==============================\nplatform linux -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0\nrootdir: /mnt/c/workspace/interview_service\nconfigfile: pyproject.toml\nplugins: anyio-4.4.0\ncollected 4 items\ntests/evals/test_p9_chatbox_native_acceptance_eval.py ....               [100%]\n============================== 4 passed in 0.31s ==============================="
+    },
+    {
+      "command": "git diff --check",
+      "status": "passed",
+      "evidence": ""
+    }
+  ],
+  "prdReview": [
+    {
+      "requirement": "Chatbox-native 主路径",
+      "evidence": "截图显示中央 Chatbox、状态机、输入框和工具入口首屏可见。",
+      "status": "PASS"
+    },
+    {
+      "requirement": "求职态势三大板块",
+      "evidence": "左侧 Market/Match/Pipeline 页签和地图/流程截图可见。",
+      "status": "PASS"
+    },
+    {
+      "requirement": "JD 汇总边界",
+      "evidence": "search run 明确使用 repo fixture、已导入 JD 和用户粘贴，不联网抓取。",
+      "status": "PASS"
+    },
+    {
+      "requirement": "Chatbox 更新流程",
+      "evidence": "流程更新通过本地 Chatbox 命令完成，报告保留截图。",
+      "status": "PASS"
+    },
+    {
+      "requirement": "高风险边界",
+      "evidence": "未验证范围列明真实 provider、ASR、招聘平台、自动投递未通过。",
+      "status": "PASS"
+    },
+    {
+      "requirement": "drawio 目标架构同步",
+      "evidence": "drawio 8 页图已包含目标架构、当前架构差异、实体分层、开发验收计划和出门条件。",
+      "status": "PASS"
+    }
+  ],
+  "codeReview": [
+    {
+      "area": "Frontend shell",
+      "finding": "P9 新实体在 main.tsx 内增量实现，未拆动后端路由和数据库。",
+      "severity": "passed"
+    },
+    {
+      "area": "Command router",
+      "finding": "handleP9Command 只处理本地 UI 状态和现有 resume API，不触发外部搜索或平台动作。",
+      "severity": "passed"
+    },
+    {
+      "area": "Map visualization",
+      "finding": "使用离线 SVG 地图形态，不依赖外部地图服务或网络 token。",
+      "severity": "passed"
+    },
+    {
+      "area": "Residual risk",
+      "finding": "本轮未验证真实 LLM 输出质量和真实数据源质量，需要后续单独授权。",
+      "severity": "warning"
+    }
+  ],
+  "documentationAudit": [
+    {
+      "area": "P9 PRD",
+      "finding": "实现围绕顶部服务中心、左侧态势、中央 Chatbox、右侧产物台展开。",
+      "status": "passed"
+    },
+    {
+      "area": "目标架构",
+      "finding": "实现未扩张为真实搜索系统、ASR 系统、MCP/Skill 平台或招聘自动化。",
+      "status": "passed"
+    },
+    {
+      "area": "验收门槛",
+      "finding": "报告包含 build、drawio parse、静态 guard、headless 截图和 PRD 规格检视。",
+      "status": "passed"
+    },
+    {
+      "area": "阶段收口",
+      "finding": "drawio 文本镜像已同步为 P9 自动化候选阶段收口审计，不再停留在文档开发阶段。",
+      "status": "passed"
+    }
+  ],
+  "multiTurnDialogues": [
+    {
+      "persona": "合成候选人 A",
+      "target_role": "LLM 应用前端工程师",
+      "technical_background": "React / TypeScript / 前端工程化 / LLM 应用控制台",
+      "provider_path": "fake/local command route；未调用真实 provider",
+      "real_provider_called": false,
+      "turn_count": 20,
+      "message_count": 40,
+      "provider_called_count": 0,
+      "recent_count": 8,
+      "rolling_summary_covered": "yes, synthetic transcript only",
+      "privacy_boundary": {
+        "contains_api_key": "否",
+        "raw_provider_response_included": "否",
+        "full_history_included": "否"
+      },
+      "focus": [
+        "JD 汇总",
+        "资料补全",
+        "申请包草稿",
+        "流程更新",
+        "事实边界"
+      ],
+      "source_files": [
+        {
+          "label": "虚拟简历资料",
+          "path": "docs/reports/evidence/p9_stage_closure/synthetic_profiles.md",
+          "excerpt": "本报告内嵌的是合成资料摘要，不包含真实个人资料路径或敏感凭据。"
+        },
+        {
+          "label": "虚拟 JD 资料",
+          "path": "docs/reports/evidence/p9_stage_closure/synthetic_jobs.md",
+          "excerpt": "JD 来自本地 fixture/示例文本，不代表真实全网搜索或招聘平台抓取。"
+        }
+      ],
+      "turns": [
+        {
+          "turn": 1,
+          "user": "我想找北京 LLM 应用前端岗位，先帮我看 JD 机会。",
+          "assistant": "基于本地 fixture、已导入 JD 和用户粘贴来源整理北京 LLM 应用前端机会，不执行平台抓取。",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/fake",
+          "artifacts_count": 1
+        },
+        {
+          "turn": 2,
+          "user": "薪资范围优先 30-45K，城市只看北京和上海。",
+          "assistant": "已把城市和薪资偏好纳入 search run 条件，并在左侧市场态势中突出北京、上海。",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/fake",
+          "artifacts_count": 1
+        },
+        {
+          "turn": 3,
+          "user": "我的核心栈是 React、TypeScript、前端工程化。",
+          "assistant": "已记录为前端主技能，后续申请包会把 React、TypeScript 和工程化证据绑定到 source refs。",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/fake",
+          "artifacts_count": 2
+        },
+        {
+          "turn": 4,
+          "user": "补充一个项目：我做过智能客服控制台。",
+          "assistant": "已生成项目故事草稿，需要继续确认本人贡献、指标和技术难点。",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/fake",
+          "artifacts_count": 2
+        },
+        {
+          "turn": 5,
+          "user": "本人负责流式消息、会话状态和错误重试。",
+          "assistant": "已把流式消息、会话状态、错误重试加入故事证据，并标记需要量化效果。",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/fake",
+          "artifacts_count": 2
+        },
+        {
+          "turn": 6,
+          "user": "指标是首屏响应从 2.8s 降到 1.6s。",
+          "assistant": "已记录性能指标，作为简历项目亮点候选，但导出前仍需确认数据来源。",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/fake",
+          "artifacts_count": 3
+        },
+        {
+          "turn": 7,
+          "user": "把北辰智能这个岗位设成目标岗位。",
+          "assistant": "已把北辰智能 LLM 应用前端标记为当前目标岗位，右侧产物台将围绕它生成申请包。",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/fake",
+          "artifacts_count": 3
+        },
+        {
+          "turn": 8,
+          "user": "生成一版针对这个 JD 的简历摘要。",
+          "assistant": "已生成 JD 定制简历摘要草稿，并保留 source refs 与 pending confirmations。",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/fake",
+          "artifacts_count": 4
+        },
+        {
+          "turn": 9,
+          "user": "把前端工程化部分写得更强。",
+          "assistant": "已增强工程化段落，强调构建优化、类型安全、组件抽象和可观测性。",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/fake",
+          "artifacts_count": 4
+        },
+        {
+          "turn": 10,
+          "user": "不要编造我没做过的模型训练。",
+          "assistant": "已保留边界：只描述 LLM 应用前端和平台工程，不写模型训练经历。",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/fake",
+          "artifacts_count": 4
+        },
+        {
+          "turn": 11,
+          "user": "补一个面试故事，讲复杂状态管理。",
+          "assistant": "已生成 STAR 面试故事草稿，包含问题、行动、结果和待确认指标。",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/fake",
+          "artifacts_count": 5
+        },
+        {
+          "turn": 12,
+          "user": "把投递状态改成已投递。",
+          "assistant": "已在本地流程态势中把目标岗位更新为 applied，不对外投递。",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/fake",
+          "artifacts_count": 5
+        },
+        {
+          "turn": 13,
+          "user": "如果下周一一面，帮我列准备重点。",
+          "assistant": "已生成一面准备清单：项目架构、流式体验、性能指标、错误重试、边界说明。",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/fake",
+          "artifacts_count": 5
+        },
+        {
+          "turn": 14,
+          "user": "上海岗位也保留，但优先级低。",
+          "assistant": "已把上海岗位保留为备选机会，优先级低于北京目标岗位。",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/fake",
+          "artifacts_count": 5
+        },
+        {
+          "turn": 15,
+          "user": "更新故事：我还做过权限控制。",
+          "assistant": "已新增权限控制故事线，提示需要补充角色、权限模型和审计日志证据。",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/fake",
+          "artifacts_count": 6
+        },
+        {
+          "turn": 16,
+          "user": "帮我检查哪些事实还待确认。",
+          "assistant": "待确认项包括性能指标来源、权限控制规模、团队人数、项目时间范围。",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/fake",
+          "artifacts_count": 6
+        },
+        {
+          "turn": 17,
+          "user": "先不要导出正式简历。",
+          "assistant": "已保持草稿状态，不执行正式导出。",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/fake",
+          "artifacts_count": 6
+        },
+        {
+          "turn": 18,
+          "user": "给我一个申请包目录。",
+          "assistant": "已生成申请包目录：JD 摘要、定制简历、项目故事、一面准备、待确认项。",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/fake",
+          "artifacts_count": 7
+        },
+        {
+          "turn": 19,
+          "user": "把目标公司状态改成一面通过。",
+          "assistant": "已在本地流程中更新为 interview，一面通过；不对外发送任何消息。",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/fake",
+          "artifacts_count": 7
+        },
+        {
+          "turn": 20,
+          "user": "总结一下下一步。",
+          "assistant": "下一步是确认指标和事实边界、补权限项目证据、人工审查简历草稿后再导出。",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/fake",
+          "artifacts_count": 7
+        }
+      ]
+    },
+    {
+      "persona": "合成候选人 B",
+      "target_role": "AI 平台后端工程师",
+      "technical_background": "Java / Spring Boot / Kafka / MySQL / 平台稳定性",
+      "provider_path": "fake/local command route；未调用真实 provider",
+      "real_provider_called": false,
+      "turn_count": 20,
+      "message_count": 40,
+      "provider_called_count": 0,
+      "recent_count": 8,
+      "rolling_summary_covered": "yes, synthetic transcript only",
+      "privacy_boundary": {
+        "contains_api_key": "否",
+        "raw_provider_response_included": "否",
+        "full_history_included": "否"
+      },
+      "focus": [
+        "JD 汇总",
+        "资料补全",
+        "申请包草稿",
+        "流程更新",
+        "事实边界"
+      ],
+      "source_files": [
+        {
+          "label": "虚拟简历资料",
+          "path": "docs/reports/evidence/p9_stage_closure/synthetic_profiles.md",
+          "excerpt": "本报告内嵌的是合成资料摘要，不包含真实个人资料路径或敏感凭据。"
+        },
+        {
+          "label": "虚拟 JD 资料",
+          "path": "docs/reports/evidence/p9_stage_closure/synthetic_jobs.md",
+          "excerpt": "JD 来自本地 fixture/示例文本，不代表真实全网搜索或招聘平台抓取。"
+        }
+      ],
+      "turns": [
+        {
+          "turn": 1,
+          "user": "我偏后端和平台工程，想看杭州 Java/AI 平台岗位。",
+          "assistant": "已按杭州、Java、AI 平台方向生成本地 search run，不进行真实平台抓取。",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/fake",
+          "artifacts_count": 1
+        },
+        {
+          "turn": 2,
+          "user": "薪资希望 35K 以上，优先大模型应用平台。",
+          "assistant": "已把薪资和方向偏好加入机会匹配，并标记杭州高优先级岗位。",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/fake",
+          "artifacts_count": 1
+        },
+        {
+          "turn": 3,
+          "user": "我的主栈是 Java、Spring Boot、Kafka、MySQL。",
+          "assistant": "已记录后端主技能，后续申请包会强调服务治理、消息系统和数据库经验。",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/fake",
+          "artifacts_count": 2
+        },
+        {
+          "turn": 4,
+          "user": "项目经历有推荐系统实时特征服务。",
+          "assistant": "已生成项目故事草稿，待确认吞吐、延迟、可用性和本人职责。",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/fake",
+          "artifacts_count": 2
+        },
+        {
+          "turn": 5,
+          "user": "我负责 Kafka 消费链路和特征缓存。",
+          "assistant": "已补充本人贡献：消费链路、缓存策略和稳定性治理。",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/fake",
+          "artifacts_count": 2
+        },
+        {
+          "turn": 6,
+          "user": "QPS 峰值 1.2 万，P99 低于 80ms。",
+          "assistant": "已记录量化指标，并标为导出前需要确认数据来源。",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/fake",
+          "artifacts_count": 3
+        },
+        {
+          "turn": 7,
+          "user": "把云栖数据的 AI 平台后端岗位设为目标。",
+          "assistant": "已设置目标岗位，右侧产物台将围绕该 JD 生成后端申请包。",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/fake",
+          "artifacts_count": 3
+        },
+        {
+          "turn": 8,
+          "user": "生成简历草稿，突出平台工程。",
+          "assistant": "已生成平台工程导向简历摘要，绑定 Kafka、缓存、P99 指标和 source refs。",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/fake",
+          "artifacts_count": 4
+        },
+        {
+          "turn": 9,
+          "user": "别写 Kubernetes，我没做过。",
+          "assistant": "已添加事实边界：不写 Kubernetes 实操，只保留服务治理和部署协作。",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/fake",
+          "artifacts_count": 4
+        },
+        {
+          "turn": 10,
+          "user": "补一个故障恢复故事。",
+          "assistant": "已生成故障恢复 STAR 草稿，等待补充故障影响范围和恢复时长。",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/fake",
+          "artifacts_count": 5
+        },
+        {
+          "turn": 11,
+          "user": "投递状态先设为感兴趣。",
+          "assistant": "已在本地流程态势中设为 interested，不对外投递。",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/fake",
+          "artifacts_count": 5
+        },
+        {
+          "turn": 12,
+          "user": "我还做过数据库慢查询优化。",
+          "assistant": "已新增慢查询优化故事线，提示补充索引、SQL、数据量和收益。",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/fake",
+          "artifacts_count": 6
+        },
+        {
+          "turn": 13,
+          "user": "帮我做一版面试问题准备。",
+          "assistant": "已生成后端面试准备：消息一致性、缓存失效、P99、慢查询、故障恢复。",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/fake",
+          "artifacts_count": 6
+        },
+        {
+          "turn": 14,
+          "user": "如果 JD 要求 Go，会不会是短板？",
+          "assistant": "已标记 Go 为岗位短板，建议表达 Java 平台迁移能力而不虚构 Go 项目。",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/fake",
+          "artifacts_count": 6
+        },
+        {
+          "turn": 15,
+          "user": "把云栖数据状态改成 HR 沟通中。",
+          "assistant": "已在本地流程中更新为 interview 阶段的 HR 沟通中。",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/fake",
+          "artifacts_count": 6
+        },
+        {
+          "turn": 16,
+          "user": "帮我整理 pending confirmations。",
+          "assistant": "待确认项包括 QPS/P99 数据来源、故障影响范围、慢查询收益和 Go 能力边界。",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/fake",
+          "artifacts_count": 7
+        },
+        {
+          "turn": 17,
+          "user": "生成申请包目录。",
+          "assistant": "已生成申请包目录：岗位解读、定制简历、平台故事、故障故事、面试准备。",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/fake",
+          "artifacts_count": 7
+        },
+        {
+          "turn": 18,
+          "user": "我想比较杭州和上海机会。",
+          "assistant": "已在左侧态势中保留杭州和上海对比，强调本地样例数据边界。",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/fake",
+          "artifacts_count": 7
+        },
+        {
+          "turn": 19,
+          "user": "不要正式导出。",
+          "assistant": "已保持草稿和待确认状态，不触发正式导出。",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/fake",
+          "artifacts_count": 7
+        },
+        {
+          "turn": 20,
+          "user": "最后总结下风险。",
+          "assistant": "主要风险是 Go 经验不足、指标需确认、真实 provider 和真实平台数据仍未验收。",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/fake",
+          "artifacts_count": 7
+        }
+      ]
+    }
+  ],
+  "unverifiedScope": [
+    "未登录、抓取、自动沟通或自动投递 BOSS、猎聘、拉勾、LinkedIn 等招聘平台。",
+    "未执行真实全网 JD 搜索，只使用用户粘贴、已导入 JD、repo fixture 和本地示例表达。",
+    "未默认调用 MiniMax、DeepSeek 或 OpenAI-compatible provider。",
+    "未读取用户真实个人资料路径。",
+    "未采集麦克风，未调用真实 ASR。",
+    "未建设 MCP/Skill 平台、SaaS、多租户、Billing 或会议平台能力。"
+  ],
+  "auditOpinion": "P9 阶段收口结论：本地 UI 信息架构、求职态势可视化层、Chatbox 本地命令路由、现有能力重新组织、多视口截图、全量测试、drawio 同步和中文报告在自动化候选范围内通过。真实数据源、真实 provider、真实个人资料、ASR、MCP/Skill 和高风险招聘自动化仍需单独授权与验收。"
+}
