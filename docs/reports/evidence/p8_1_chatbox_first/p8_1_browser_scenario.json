@@ -25,7 +25,7 @@
     {
       "command": "npm --prefix apps/chatbox run build",
       "status": "passed",
-      "evidence": "> @jobpilot/chatbox@0.1.0 build\n> tsc && vite build\nvite v7.3.5 building client environment for production...\ntransforming...\n✓ 1578 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/index.html                   0.38 kB │ gzip:  0.26 kB\ndist/assets/index-B9qJwEiw.css   37.83 kB │ gzip:  7.63 kB\ndist/assets/index-BXHabywX.js   257.75 kB │ gzip: 81.30 kB\n✓ built in 20.69s"
+      "evidence": "> @jobpilot/chatbox@0.1.0 build\n> tsc && vite build\nvite v7.3.5 building client environment for production...\ntransforming...\n✓ 1578 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/index.html                   0.38 kB │ gzip:  0.26 kB\ndist/assets/index-B9qJwEiw.css   37.83 kB │ gzip:  7.63 kB\ndist/assets/index-BXHabywX.js   257.75 kB │ gzip: 81.30 kB\n✓ built in 12.84s"
     },
     {
       "command": "/mnt/c/workspace/interview_service/.venv/bin/python -c from pathlib import Path; import xml.etree.ElementTree as ET; p=Path('docs/active/jobpilot-stage-gap-and-acceptance.drawio'); ET.parse(p); print('drawio ok', p.stat().st_size)",

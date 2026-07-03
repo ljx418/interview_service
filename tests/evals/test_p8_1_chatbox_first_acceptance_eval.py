@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 import re
+import json
+import os
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
 REPORT = ROOT / "docs/reports/P8_1_CHATBOX_FIRST_ACCEPTANCE_REPORT.html"
 EVIDENCE_DIR = ROOT / "docs/reports/evidence/p8_1_chatbox_first"
+FINAL_EVIDENCE = EVIDENCE_DIR / "p8_1_final_acceptance_evidence.json"
 
 
 def test_p8_1_acceptance_report_has_required_sections_and_real_screenshots() -> None:
@@ -21,6 +24,12 @@ def test_p8_1_acceptance_report_has_required_sections_and_real_screenshots() -> 
         "截图证据",
         "未验证范围与审计意见",
         "P8.1 阶段聊天能力边界",
+        "审计总览",
+        "人类审计步骤",
+        "最终命令门槛",
+        "截图审计索引",
+        "追踪矩阵",
+        "残余风险与打回条件",
         "Conversation Plane",
         "ComposerWorkflowDock",
         "Workbench",
@@ -73,3 +82,21 @@ def test_p8_1_chatbox_first_static_guard() -> None:
     assert "JobTargetList jobs={jobs}" in main
     assert ".composer-tool-rail" in css
     assert ".composer-workflow-panel" in css
+
+
+def test_p8_1_final_acceptance_evidence_is_complete() -> None:
+    assert FINAL_EVIDENCE.exists(), "P8.1 final acceptance evidence JSON is missing."
+    evidence = json.loads(FINAL_EVIDENCE.read_text(encoding="utf-8"))
+    labels = {item["label"]: item for item in evidence["results"]}
+    expected = ["全量 pytest（排除报告自举 eval）", "Chatbox production build", "git diff whitespace check"]
+    if not os.environ.get("JOBPILOT_P8_1_REPORT_EVAL_BOOTSTRAP"):
+        expected.append("P8.1 报告 eval")
+    if not os.environ.get("JOBPILOT_P8_1_REPORT_EVAL_BOOTSTRAP") and not os.environ.get("JOBPILOT_P8_1_REPORT_EVAL_FINALIZING"):
+        expected.append("P8.1 报告 eval（final）")
+    for label in expected:
+        assert label in labels
+        assert labels[label]["status"] == "passed"
+
+    html = REPORT.read_text(encoding="utf-8")
+    assert "passed" in labels["全量 pytest（排除报告自举 eval）"]["summary"]
+    assert "git diff --check" in html
