@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>P8.1 前端优化审查与实现指导</title>
+  <style>
+    :root {
+      --bg: #f5f7f4;
+      --panel: #ffffff;
+      --ink: #16231f;
+      --muted: #5d6b64;
+      --line: #d9e3dd;
+      --primary: #236b5f;
+      --ok: #0f6b3d;
+      --warn: #8a4b0f;
+      --bad: #a61b1b;
+      --soft: #eef7f3;
+      --cream: #fff8ed;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font: 15px/1.58 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: var(--ink); background: var(--bg); }
+    header, main { max-width: 1180px; margin: 0 auto; padding: 30px; }
+    header { padding-top: 42px; }
+    h1 { margin: 0 0 10px; font-size: 31px; letter-spacing: 0; }
+    h2 { margin: 0 0 14px; font-size: 21px; }
+    h3 { margin: 18px 0 10px; font-size: 17px; }
+    p { margin: 8px 0; }
+    section { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 20px; margin: 18px 0; box-shadow: 0 12px 28px rgb(31 47 42 / 0.05); }
+    .meta { color: var(--muted); }
+    .badge { display: inline-flex; align-items: center; min-height: 30px; padding: 6px 10px; border-radius: 7px; font-weight: 800; background: #fff7e6; color: var(--warn); border: 1px solid #e8c986; }
+    .badge.ok { background: #ddf7e8; color: var(--ok); border-color: #9bd5b2; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; }
+    .two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { text-align: left; vertical-align: top; border-bottom: 1px solid #e6ece8; padding: 10px; }
+    th { color: var(--muted); font-size: 13px; }
+    code { background: #eef3f0; padding: 2px 5px; border-radius: 4px; }
+    pre { white-space: pre-wrap; overflow-wrap: anywhere; margin: 0; background: #f8faf8; border: 1px solid #e0e7e3; border-radius: 6px; padding: 10px; max-height: 220px; overflow: auto; }
+    figure { margin: 0; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: #fff; }
+    img { display: block; width: 100%; height: auto; background: #fff; border-bottom: 1px solid var(--line); }
+    figcaption { padding: 11px 12px; color: var(--muted); font-size: 13px; }
+    .passed { color: var(--ok); font-weight: 800; }
+    .failed { color: var(--bad); font-weight: 800; }
+    .warning { color: var(--warn); font-weight: 800; }
+    .flow { counter-reset: step; display: grid; gap: 10px; }
+    .flow li { list-style: none; position: relative; padding: 13px 14px 13px 54px; background: var(--soft); border: 1px solid #cde0d7; border-radius: 8px; }
+    .flow li::before { counter-increment: step; content: counter(step); position: absolute; left: 14px; top: 12px; width: 26px; height: 26px; display: grid; place-items: center; border-radius: 50%; background: var(--primary); color: white; font-weight: 900; }
+    .callout { background: var(--cream); border-color: #edcf9d; }
+    @media (max-width: 760px) {
+      header, main { padding: 18px; }
+      .two { grid-template-columns: 1fr; }
+      h1 { font-size: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <p><span class="badge">P8.1 待实现</span> <span class="badge ok">审查指导页已生成</span></p>
+    <h1>P8.1 前端优化审查与自动化实现指导</h1>
+    <p class="meta">用途：让人类判断当前 Agent 是否完整理解前端页面优化诉求，并指导后续 P8.1 自动化开发和端到端验收。生成时间：2026-07-02T10:23:34.983266+00:00</p>
+    <p class="meta">Git：<code>2e60219 feat: complete p8 jd intake acceptance</code></p>
+  </header>
+  <main>
+    <section class="callout">
+      <h2>审查结论</h2>
+      <p><strong>当前理解已明确：</strong>P8 能力已经存在，但前端信息架构主次错误。P8.1 的核心不是增加更多按钮，而是把体验恢复为 <code>用户指导 - Chatbox - 工作台</code>，其中中央 Chatbox 是首屏第一优先路径。</p>
+      <p><strong>当前状态边界：</strong>本报告用于指导实现和验收，不代表 P8.1 UI 已修复；目标概念截图不是当前实现截图。</p>
+    </section>
+
+    <section>
+      <h2>概念图</h2>
+      <figure>
+        <img src="evidence/p8_1_frontend_review/p8_1_concept_diagram.svg" alt="P8.1 Chatbox-first 概念图">
+        <figcaption>概念图明确三栏职责：左侧用户指导、中央 Chatbox 主路径、右侧工作台产物区。<code>docs/reports/evidence/p8_1_frontend_review/p8_1_concept_diagram.svg</code></figcaption>
+      </figure>
+    </section>
+
+    <section>
+      <h2>当前实际实现基线截图</h2>
+      <p class="meta">以下截图来自真实运行中的当前项目，不是设计稿。它们用于证明 P8.1 需要修复的基线状态。</p>
+      <div class="grid">
+      <figure>
+        <img src="evidence/p8_1_frontend_review/baseline_current_1440.png" alt="当前真实基线 1440px：P8 workflow strip 位于聊天时间线之前">
+        <figcaption><strong>当前真实截图</strong><br>当前真实基线 1440px：P8 workflow strip 位于聊天时间线之前<br><code>docs/reports/evidence/p8_1_frontend_review/baseline_current_1440.png</code></figcaption>
+      </figure>
+
+
+      <figure>
+        <img src="evidence/p8_1_frontend_review/baseline_current_1200.png" alt="当前真实基线 1200px：三栏基线和中央任务区">
+        <figcaption><strong>当前真实截图</strong><br>当前真实基线 1200px：三栏基线和中央任务区<br><code>docs/reports/evidence/p8_1_frontend_review/baseline_current_1200.png</code></figcaption>
+      </figure>
+
+
+      <figure>
+        <img src="evidence/p8_1_frontend_review/baseline_current_720.png" alt="当前真实基线 720px：窄屏下聊天与 P8 工作区关系">
+        <figcaption><strong>当前真实截图</strong><br>当前真实基线 720px：窄屏下聊天与 P8 工作区关系<br><code>docs/reports/evidence/p8_1_frontend_review/baseline_current_720.png</code></figcaption>
+      </figure>
+
+
+      <figure>
+        <img src="evidence/p8_1_frontend_review/baseline_current_390.png" alt="当前真实基线 390px：移动端可达性和输入区">
+        <figcaption><strong>当前真实截图</strong><br>当前真实基线 390px：移动端可达性和输入区<br><code>docs/reports/evidence/p8_1_frontend_review/baseline_current_390.png</code></figcaption>
+      </figure>
+</div>
+    </section>
+
+    <section>
+      <h2>目标概念截图</h2>
+      <p class="meta">以下截图由确定性 HTML/SVG mock 渲染生成，水印已标注“目标概念图 / 非当前实现”。它们只用于指导开发，不作为实现验收通过证据。</p>
+      <div class="grid">
+      <figure>
+        <img src="evidence/p8_1_frontend_review/target_chatbox_first_1440.png" alt="目标概念 1440px：用户指导 - Chatbox - 工作台">
+        <figcaption><strong>目标概念截图</strong><br>目标概念 1440px：用户指导 - Chatbox - 工作台<br><code>docs/reports/evidence/p8_1_frontend_review/target_chatbox_first_1440.png</code></figcaption>
+      </figure>
+
+
+      <figure>
+        <img src="evidence/p8_1_frontend_review/target_chatbox_first_720.png" alt="目标概念 720px：Chatbox 默认主视图，辅助区收敛">
+        <figcaption><strong>目标概念截图</strong><br>目标概念 720px：Chatbox 默认主视图，辅助区收敛<br><code>docs/reports/evidence/p8_1_frontend_review/target_chatbox_first_720.png</code></figcaption>
+      </figure>
+
+
+      <figure>
+        <img src="evidence/p8_1_frontend_review/target_chatbox_first_390.png" alt="目标概念 390px：移动端优先显示 Chatbox 和输入区">
+        <figcaption><strong>目标概念截图</strong><br>目标概念 390px：移动端优先显示 Chatbox 和输入区<br><code>docs/reports/evidence/p8_1_frontend_review/target_chatbox_first_390.png</code></figcaption>
+      </figure>
+</div>
+    </section>
+
+    <section>
+      <h2>当前事实基线检查</h2>
+      <table><thead><tr><th>事实</th><th>结果</th></tr></thead><tbody><tr><td>p8-workflow-strip 位于 timeline 之前</td><td class="passed">True</td></tr>
+<tr><td>DesktopContextPanel 存在</td><td class="passed">True</td></tr>
+<tr><td>MaterialIntakeWizard 存在</td><td class="passed">True</td></tr>
+<tr><td>JDIntakeCenter 存在</td><td class="passed">True</td></tr>
+<tr><td>JobTargetList 存在</td><td class="passed">True</td></tr>
+<tr><td>ResumeGenerationPlane 存在</td><td class="passed">True</td></tr>
+<tr><td>Workbench 存在</td><td class="passed">True</td></tr>
+<tr><td>composer quick actions 存在</td><td class="passed">True</td></tr></tbody></table>
+    </section>
+
+    <section>
+      <h2>当前截图与目标截图对比</h2>
+      <table>
+        <thead><tr><th>审查点</th><th>当前基线</th><th>P8.1 目标</th><th>验收判断</th></tr></thead>
+        <tbody>
+          <tr><td>中央首屏主路径</td><td><code>p8-workflow-strip</code> 在 timeline 前，资料/JD/简历入口抢占首屏。</td><td>中央优先展示 Agent 状态、聊天时间线和输入框。</td><td class="warning">待实现</td></tr>
+          <tr><td>资料/JD 入口</td><td>资料向导、JD 导入、岗位列表、简历生成集中在中央大块区域。</td><td>入口紧贴输入框，或进入左侧指导/右侧工作台/轻弹层。</td><td class="warning">待实现</td></tr>
+          <tr><td>三栏职责</td><td>三栏存在，但中央职责混杂。</td><td>左侧指导、中央聊天、右侧产物确认。</td><td class="warning">待实现</td></tr>
+          <tr><td>移动端</td><td>需要继续以真实截图确认 Chatbox 是否默认主路径。</td><td>移动端默认显示 Chatbox，指导和工作台抽屉化。</td><td class="warning">待实现</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>用户操作 / 体验路线图</h2>
+      <ol class="flow">
+        <li>用户打开本地 Chatbox，首屏识别三栏：左侧“我该准备什么”、中央“聊天”、右侧“产物”。</li>
+        <li>用户可以直接在 Chatbox 提问，例如“帮我生成一版前端岗位简历”。</li>
+        <li>Agent 在对话中解释缺少哪些资料，并把上传资料、粘贴 JD、选择岗位、生成简历入口放在输入框附近。</li>
+        <li>用户粘贴目标 JD；系统只保存文本、来源 URL、平台标签和备注，不抓取网页。</li>
+        <li>右侧工作台展示当前目标 JD、CandidateProfile、简历草稿、source refs、pending confirmations 和 export preflight。</li>
+        <li>用户继续多轮对话补充资料、确认事实，blocking 项处理后才能正式导出。</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>自动化开发指导</h2>
+      <table>
+        <thead><tr><th>区域</th><th>需要做什么</th><th>禁止做什么</th></tr></thead>
+        <tbody>
+          <tr><td><code>Conversation Plane</code></td><td>将 timeline 和 composer 提升为中央首屏主体，保留紧凑 Agent 状态机。</td><td>继续把大型资料/JD/简历表单放在 timeline 前。</td></tr>
+          <tr><td><code>p8-workflow-strip</code></td><td>拆为输入框工具、轻弹层、抽屉或左右辅助面板。</td><td>删除 P8 能力或让工具入口不可达。</td></tr>
+          <tr><td><code>DesktopContextPanel</code></td><td>承载资料清单、缺失影响、示例路径和下一步建议。</td><td>承载大型编辑表单或替代聊天。</td></tr>
+          <tr><td><code>Workbench</code></td><td>承载岗位、画像、简历、source refs、pending confirmations、export preflight。</td><td>抢占中央主路径或要求用户理解内部 artifact。</td></tr>
+          <tr><td><code>styles.css</code></td><td>固定多视口主次：桌面三栏、平板/移动 Chatbox 默认优先。</td><td>出现按钮错位、文字重叠、输入框不可达。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>端到端验收门槛</h2>
+      <table>
+        <thead><tr><th>门槛</th><th>必须证据</th><th>打回条件</th></tr></thead>
+        <tbody>
+          <tr><td>Chatbox-first</td><td>1200/1440/1920 首屏截图显示聊天时间线和输入框优先。</td><td>workflow strip 或大表单仍压住聊天。</td></tr>
+          <tr><td>工具入口</td><td>上传资料、粘贴 JD、选择岗位、生成简历紧贴输入框或在辅助面板内。</td><td>入口分散、不可达、文字重叠。</td></tr>
+          <tr><td>工作台</td><td>右侧能看到岗位、画像、简历、source refs、待确认和导出检查。</td><td>右侧空白或抢占中央聊天。</td></tr>
+          <tr><td>移动端</td><td>720px/390px 真实截图证明默认 Chatbox 优先。</td><td>移动端默认进入资料表单或输入框不可达。</td></tr>
+          <tr><td>边界</td><td>报告明确未验证真实 provider、真实资料、招聘平台自动化、自动投递。</td><td>任何 false-green 结论。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>AI 文生图审计</h2>
+      <p class="meta">本阶段没有使用 AI 文生图作为报告图片。检测结果见 <code>docs/reports/evidence/p8_1_frontend_review/p8_1_ai_image_audit.json</code>。</p>
+      <table><tbody>
+        <tr><th>检测模式</th><td><code>B-or-C</code> / MODE B / C · 未启用 Garden。若宿主 Agent 自带图像工具（image_generation / dalle / mcp__*image* 等）→ MODE B：把 prompt 交给宿主出图。若宿主无图像工具 → MODE C：仅产出高质量 prompt 给用户。</td></tr>
+        <tr><th>是否使用 AI 文生图</th><td class="warning">False</td></tr>
+        <tr><th>决策</th><td>未使用 AI 文生图；采用可复现 HTML/SVG 目标概念图。</td></tr>
+      </tbody></table>
+      <h3>一致性与事实性检查</h3>
+      <table><thead><tr><th>检查项</th><th>结果</th><th>证据</th></tr></thead><tbody><tr><td>项目概念一致性</td><td class="passed">通过</td><td>目标图只表达 P8.1 文档定义的用户指导 - Chatbox - 工作台。</td></tr>
+<tr><td>事实性错误</td><td class="passed">未发现</td><td>目标图带非当前实现水印，不声称平台接入、真实 provider 或真实资料通过。</td></tr>
+<tr><td>实现截图混淆风险</td><td class="passed">已控制</td><td>报告将当前真实截图和目标概念截图分区展示。</td></tr></tbody></table>
+    </section>
+
+    <section>
+      <h2>命令证据与图片完整性</h2>
+      <h3>命令证据</h3>
+      <table><thead><tr><th>检查</th><th>命令</th><th>状态</th><th>摘要</th></tr></thead><tbody><tr><td>gpt-image-2 mode check</td><td><code>node /home/administrator/.agents/skills/gpt-image-2/scripts/check-mode.js --json</code></td><td class="passed">passed</td><td><pre>{
+  &quot;mode&quot;: &quot;B-or-C&quot;,
+  &quot;recommendation&quot;: &quot;host-or-advisor&quot;,
+  &quot;garden_mode_enabled&quot;: false,
+  &quot;has_api_key&quot;: false,
+  &quot;base_url&quot;: &quot;https://api.openai.com/v1&quot;,
+  &quot;model&quot;: &quot;gpt-image-2&quot;,
+  &quot;env_flag_value&quot;: &quot;(unset)&quot;,
+  &quot;summary&quot;: &quot;MODE B / C · 未启用 Garden。若宿主 Agent 自带图像工具（image_generation / dalle / mcp__*image* 等）→ MODE B：把 prompt 交给宿主出图。若宿主无图像工具 → MODE C：仅产出高质量 prompt 给用户。&quot;
+}</pre></td></tr>
+<tr><td>drawio XML parse</td><td><code>/usr/bin/python3 -c import xml.etree.ElementTree as ET; ET.parse(&#x27;docs/active/jobpilot-stage-gap-and-acceptance.drawio&#x27;); print(&#x27;drawio parse ok&#x27;)</code></td><td class="passed">passed</td><td><pre>drawio parse ok</pre></td></tr>
+<tr><td>headless Chrome screenshot capture</td><td><code>node scripts/browser_tools/browser-acceptance.mjs --start-chrome --scenario /mnt/c/workspace/interview_service/docs/reports/evidence/p8_1_frontend_review/p8_1_browser_scenario.json --output-dir /mnt/c/workspace/interview_service/docs/reports/evidence/p8_1_frontend_review --report /mnt/c/workspace/interview_service/docs/reports/evidence/p8_1_frontend_review/p8_1_browser_capture_report.html --port 9238</code></td><td class="passed">passed</td><td><pre>/mnt/c/workspace/interview_service/docs/reports/evidence/p8_1_frontend_review/p8_1_browser_capture_report.html</pre></td></tr>
+<tr><td>报告图片与 false-green 自检</td><td><code>internal report validation</code></td><td class="passed">passed</td><td><pre>image_refs=8; missing=[]; forbidden=[]</pre></td></tr></tbody></table>
+      <h3>图片引用检查</h3>
+      <table><thead><tr><th>文件</th><th>大小</th><th>状态</th></tr></thead><tbody><tr><td><code>docs/reports/evidence/p8_1_frontend_review/p8_1_concept_diagram.svg</code></td><td>5316 bytes</td><td class="passed">passed</td></tr>
+<tr><td><code>docs/reports/evidence/p8_1_frontend_review/baseline_current_1440.png</code></td><td>191941 bytes</td><td class="passed">passed</td></tr>
+<tr><td><code>docs/reports/evidence/p8_1_frontend_review/baseline_current_1200.png</code></td><td>178315 bytes</td><td class="passed">passed</td></tr>
+<tr><td><code>docs/reports/evidence/p8_1_frontend_review/baseline_current_720.png</code></td><td>168865 bytes</td><td class="passed">passed</td></tr>
+<tr><td><code>docs/reports/evidence/p8_1_frontend_review/baseline_current_390.png</code></td><td>167999 bytes</td><td class="passed">passed</td></tr>
+<tr><td><code>docs/reports/evidence/p8_1_frontend_review/target_chatbox_first_1440.png</code></td><td>94796 bytes</td><td class="passed">passed</td></tr>
+<tr><td><code>docs/reports/evidence/p8_1_frontend_review/target_chatbox_first_720.png</code></td><td>88296 bytes</td><td class="passed">passed</td></tr>
+<tr><td><code>docs/reports/evidence/p8_1_frontend_review/target_chatbox_first_390.png</code></td><td>52069 bytes</td><td class="passed">passed</td></tr></tbody></table>
+    </section>
+
+    <section>
+      <h2>未验证范围</h2>
+      <ul>
+        <li>P8.1 UI 还没有实现，本报告只是审查与实现指导页。</li>
+        <li>目标概念截图不是当前实现截图，不能作为验收通过证据。</li>
+        <li>未调用真实 MiniMax、DeepSeek 或 OpenAI-compatible provider。</li>
+        <li>未使用用户真实个人资料。</li>
+        <li>未接入 BOSS、猎聘、拉勾等招聘平台，不自动沟通或自动投递。</li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>

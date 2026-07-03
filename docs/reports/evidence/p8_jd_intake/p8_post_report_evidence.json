@@ -1,0 +1,26 @@
+{
+  "generated_at": "2026-07-01T17:35:28.370766+00:00",
+  "git_head": "2e60219",
+  "git_status_short": "M docs/reports/P8_JD_INTAKE_ACCEPTANCE_REPORT.html\n M docs/reports/evidence/p8_jd_intake/p8_api_evidence.json\n M docs/reports/evidence/p8_jd_intake/p8_browser_scenario.json\n M docs/reports/evidence/p8_jd_intake/p8_desktop_initial.png\n M docs/reports/evidence/p8_jd_intake/p8_desktop_resume_generated.png\n M docs/reports/evidence/p8_jd_intake/p8_mobile_390.png\n M docs/reports/evidence/p8_jd_intake/p8_tablet_720.png\n M scripts/generate_p8_jd_intake_acceptance.py\n M tests/evals/test_p8_acceptance_report_eval.py\n?? docs/reports/evidence/p8_jd_intake/p8_command_evidence.json\n?? docs/reports/evidence/p8_jd_intake/p8_post_report_evidence.json",
+  "bootstrap": false,
+  "results": [
+    {
+      "label": "报告本体 eval",
+      "command": "/mnt/c/workspace/interview_service/.venv/bin/python -m pytest tests/evals/test_p8_acceptance_report_eval.py",
+      "status": "passed",
+      "returncode": 0,
+      "started_at": "2026-07-01T17:35:27.471882+00:00",
+      "ended_at": "2026-07-01T17:35:28.322958+00:00",
+      "summary": "============================= test session starts ==============================\nplatform linux -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0\nrootdir: /mnt/c/workspace/interview_service\nconfigfile: pyproject.toml\nplugins: anyio-4.4.0\ncollected 4 items\ntests/evals/test_p8_acceptance_report_eval.py ....                       [100%]\n============================== 4 passed in 0.18s ==============================="
+    },
+    {
+      "label": "报告图片与 false-green 快速检查",
+      "command": "/mnt/c/workspace/interview_service/.venv/bin/python -c from pathlib import Path; import re; report=Path('docs/reports/P8_JD_INTAKE_ACCEPTANCE_REPORT.html'); html=report.read_text(encoding='utf-8'); missing=[]\nfor src in re.findall(r'<img[^>]+src=\"([^\"]+)\"', html):\n p=(report.parent/src).resolve();\n missing.append(src) if (not p.exists() or p.stat().st_size <= 1024) else None\nforbidden=['BOSS '+'已接入','招聘平台自动'+'接入通过','真实 provider '+'质量通过','真实个人资料路径'+'通过','自动投递'+'已实现','Scenario did not define '+'multi-turn dialogue evidence','No screenshots '+'captured']\nhits=[m for m in forbidden if m in html]\nprint(f'image refs={len(re.findall(r\"<img[^>]+src=\\\"([^\\\"]+)\\\"\", html))}; missing={missing}; forbidden={hits}')\nraise SystemExit(1 if missing or hits else 0)",
+      "status": "passed",
+      "returncode": 0,
+      "started_at": "2026-07-01T17:35:28.322991+00:00",
+      "ended_at": "2026-07-01T17:35:28.370760+00:00",
+      "summary": "image refs=5; missing=[]; forbidden=[]"
+    }
+  ]
+}

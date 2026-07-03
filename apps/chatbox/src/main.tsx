@@ -26,6 +26,7 @@ const API_BASE = "http://127.0.0.1:8000";
 
 type DataMode = "example" | "my_data";
 type ProviderPreset = "" | "minimax" | "deepseek";
+type P8Tool = "none" | "materials" | "jd" | "jobs" | "resume";
 
 type ProviderStatus = {
   provider: string;
@@ -903,6 +904,102 @@ function ResumeGenerationPlane({ result }: { result: ResumeGenerationResult | nu
   );
 }
 
+function ComposerWorkflowDock({
+  activeTool,
+  onActiveTool,
+  jdDraft,
+  jobs,
+  jobsLoading,
+  resumeResult,
+  busy,
+  appReady,
+  onUpload,
+  onJdChange,
+  onJdSubmit,
+  onSelectJob,
+  onGenerateResume,
+}: {
+  activeTool: P8Tool;
+  onActiveTool: (tool: P8Tool) => void;
+  jdDraft: { jdText: string; sourceUrl: string; platform: string; userNotes: string };
+  jobs: JobListItem[];
+  jobsLoading: boolean;
+  resumeResult: ResumeGenerationResult | null;
+  busy: boolean;
+  appReady: boolean;
+  onUpload: (file: File | undefined, kind: MaterialKind) => void;
+  onJdChange: (value: { jdText?: string; sourceUrl?: string; platform?: string; userNotes?: string }) => void;
+  onJdSubmit: () => void;
+  onSelectJob: (jobId: string) => void;
+  onGenerateResume: (jobId?: string) => void;
+}) {
+  const disabled = busy || !appReady;
+  const tools: Array<{ key: P8Tool; label: string; icon: React.ReactNode; hint: string }> = [
+    { key: "materials", label: "上传资料", icon: <FileUp size={14} />, hint: "简历、项目、作品、偏好" },
+    { key: "jd", label: "粘贴 JD", icon: <FileText size={14} />, hint: "手动导入，不抓取 URL" },
+    { key: "jobs", label: "选择岗位", icon: <ListChecks size={14} />, hint: `${jobs.length} 个目标` },
+    { key: "resume", label: "生成简历", icon: <Sparkles size={14} />, hint: resumeResult ? "查看草稿状态" : "基于当前目标 JD" },
+  ];
+
+  return (
+    <section className="composer-workflow-dock" aria-label="输入框上方资料与 JD 工具">
+      <div className="composer-tool-rail" role="group" aria-label="资料、JD、岗位和简历快捷入口">
+        {tools.map((tool) => (
+          <button
+            key={tool.key}
+            type="button"
+            aria-pressed={activeTool === tool.key}
+            disabled={disabled && tool.key !== "resume"}
+            onClick={() => onActiveTool(activeTool === tool.key ? "none" : tool.key)}
+          >
+            {tool.icon}
+            <span>{tool.label}</span>
+            <small>{tool.hint}</small>
+          </button>
+        ))}
+      </div>
+      {activeTool !== "none" && (
+        <div className="composer-workflow-panel">
+          <div className="composer-panel-topline">
+            <span className="eyebrow">Assistant Tool</span>
+            <button type="button" className="btn-secondary-action icon-button" onClick={() => onActiveTool("none")} aria-label="收起工具面板">
+              <X size={14} />
+            </button>
+          </div>
+          {activeTool === "materials" && <MaterialIntakeWizard onUpload={onUpload} busy={disabled} />}
+          {activeTool === "jd" && (
+            <JDIntakeCenter
+              jdText={jdDraft.jdText}
+              sourceUrl={jdDraft.sourceUrl}
+              platform={jdDraft.platform}
+              userNotes={jdDraft.userNotes}
+              busy={disabled}
+              onChange={onJdChange}
+              onSubmit={onJdSubmit}
+            />
+          )}
+          {activeTool === "jobs" && <JobTargetList jobs={jobs} loading={jobsLoading} busy={disabled} onSelect={onSelectJob} onGenerateResume={onGenerateResume} />}
+          {activeTool === "resume" && (
+            <section className="p8-panel resume-request-panel" aria-label="JD 定制简历生成">
+              <div className="p8-panel-title inline">
+                <div>
+                  <span className="eyebrow">Resume Action</span>
+                  <h3>围绕当前目标 JD 生成简历</h3>
+                </div>
+                <button type="button" className="btn-primary-action" disabled={disabled} onClick={() => onGenerateResume()}>
+                  生成定制简历
+                </button>
+              </div>
+              <p className="p8-empty">生成结果会进入右侧工作台，并显示 source refs、待确认项和导出前检查。普通聊天不会静默覆盖简历版本。</p>
+              <ResumeGenerationPlane result={resumeResult} />
+            </section>
+          )}
+        </div>
+      )}
+    </section>
+  );
+}
+
 function ConversationHeader({
   dataMode,
   status,
@@ -1644,6 +1741,9 @@ function ResultRail({
 function Workbench({
   result,
   artifacts,
+  jobs,
+  jobsLoading,
+  resumeResult,
   busy,
   workspaceId,
   candidateProfile,
@@ -1653,11 +1753,16 @@ function Workbench({
   onClose,
   onRunExample,
   onRefreshProfile,
+  onSelectJob,
+  onGenerateResume,
   onNotice,
   onArtifactStatus,
 }: {
   result: WorkflowResult | null;
   artifacts: any[];
+  jobs: JobListItem[];
+  jobsLoading: boolean;
+  resumeResult: ResumeGenerationResult | null;
   busy: boolean;
   workspaceId: string;
   candidateProfile: CandidateProfile | null;
@@ -1667,6 +1772,8 @@ function Workbench({
   onClose: () => void;
   onRunExample: () => void;
   onRefreshProfile: () => void;
+  onSelectJob: (jobId: string) => void;
+  onGenerateResume: (jobId?: string) => void;
   onNotice: (message: string, tone?: Message["tone"]) => void;
   onArtifactStatus: (artifactId: string, status: string) => void;
 }) {
@@ -1689,6 +1796,8 @@ function Workbench({
           </div>
         </div>
         <div className="workbench-body">
+          <JobTargetList jobs={jobs} loading={jobsLoading} busy={busy} onSelect={onSelectJob} onGenerateResume={onGenerateResume} />
+          <ResumeGenerationPlane result={resumeResult} />
           <WorkflowPanel result={result} busy={busy} workspaceId={workspaceId} onRunExample={onRunExample} />
           <CandidateProfilePanel profile={candidateProfile} loading={profileLoading} refreshing={profileRefreshing} onRefresh={onRefreshProfile} />
           <ResultRail artifacts={artifacts} workflowArtifacts={workflowArtifacts} workspaceId={workspaceId} onNotice={onNotice} onArtifactStatus={onArtifactStatus} />
@@ -1724,6 +1833,7 @@ function App() {
   const [jobsLoading, setJobsLoading] = useState(false);
   const [jdDraft, setJdDraft] = useState({ jdText: "", sourceUrl: "", platform: "", userNotes: "" });
   const [resumeResult, setResumeResult] = useState<ResumeGenerationResult | null>(null);
+  const [activeTool, setActiveTool] = useState<P8Tool>("none");
   const [drawerOpen, setDrawerOpen] = useState(false);
   const autorunStarted = useRef(false);
   const initializationNoticeShown = useRef(false);
@@ -1928,6 +2038,7 @@ function App() {
           ],
         },
       ]);
+      setActiveTool("jobs");
       setDrawerOpen(true);
       await Promise.allSettled([loadJobs(), refreshChatContext(), loadCandidateProfile()]);
     } catch (error) {
@@ -1967,6 +2078,7 @@ function App() {
         language: "zh-CN",
       });
       setResumeResult(result);
+      setActiveTool("resume");
       setMessages((current) => [
         ...current,
         {
@@ -2286,20 +2398,6 @@ function App() {
               artifactCount={artifacts.length + workflowArtifactCount}
               pendingConfirmationCount={pendingConfirmationCount}
             />
-            <section className="p8-workflow-strip" aria-label="P8 资料与 JD 定制简历工作区">
-              <MaterialIntakeWizard onUpload={upload} busy={busy || !appReady} />
-              <JDIntakeCenter
-                jdText={jdDraft.jdText}
-                sourceUrl={jdDraft.sourceUrl}
-                platform={jdDraft.platform}
-                userNotes={jdDraft.userNotes}
-                busy={busy || !appReady}
-                onChange={(value) => setJdDraft((current) => ({ ...current, ...value }))}
-                onSubmit={intakeJd}
-              />
-              <JobTargetList jobs={jobs} loading={jobsLoading} busy={busy || !appReady} onSelect={selectJob} onGenerateResume={generateTargetedResume} />
-              <ResumeGenerationPlane result={resumeResult} />
-            </section>
             <div className="timeline" ref={messagesListRef} role="log" aria-live="polite">
               <div className="timeline-content">
                 {messages.length === 0 && !busy && <SuggestedPrompts onPrompt={fillPrompt} onRunExample={runGuidedDemo} />}
@@ -2325,11 +2423,22 @@ function App() {
                 sendText();
               }}
             >
+              <ComposerWorkflowDock
+                activeTool={activeTool}
+                onActiveTool={setActiveTool}
+                jdDraft={jdDraft}
+                jobs={jobs}
+                jobsLoading={jobsLoading}
+                resumeResult={resumeResult}
+                busy={busy}
+                appReady={appReady}
+                onUpload={upload}
+                onJdChange={(value) => setJdDraft((current) => ({ ...current, ...value }))}
+                onJdSubmit={intakeJd}
+                onSelectJob={selectJob}
+                onGenerateResume={generateTargetedResume}
+              />
               <div className="composer-quick-actions" aria-label="输入区快捷任务">
-                <label className="composer-action upload-action" title="上传简历或项目 README">
-                  <FileUp size={14} /> 上传资料
-                  <input type="file" onChange={(event) => upload(event.target.files?.[0])} />
-                </label>
                 <button type="button" onClick={() => fillPrompt("我还没有 JD，先聊聊求职方向和偏好。", true)} disabled={!appReady || busy}>
                   <MessageSquare size={14} /> 自由聊
                 </button>
@@ -2376,6 +2485,9 @@ function App() {
         <Workbench
           result={workflowResult}
           artifacts={artifacts}
+          jobs={jobs}
+          jobsLoading={jobsLoading}
+          resumeResult={resumeResult}
           busy={busy}
           workspaceId={workspaceId}
           candidateProfile={candidateProfile}
@@ -2385,6 +2497,8 @@ function App() {
           onClose={() => setDrawerOpen(false)}
           onRunExample={runGuidedDemo}
           onRefreshProfile={refreshCandidateProfile}
+          onSelectJob={selectJob}
+          onGenerateResume={generateTargetedResume}
           onNotice={notice}
           onArtifactStatus={updateArtifactStatus}
         />

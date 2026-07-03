@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="760" viewBox="0 0 1440 760">
+  <rect width="1440" height="760" fill="#f5f7f4"/>
+  <text x="56" y="58" font-family="Arial, sans-serif" font-size="28" font-weight="700" fill="#17231f">P8.1 Chatbox-first 概念图：用户指导 - Chatbox - 工作台</text>
+  <text x="56" y="92" font-family="Arial, sans-serif" font-size="15" fill="#5d6b64">目标是修正信息架构主次关系，不声明当前 UI 已实现。</text>
+  <g transform="translate(56 132)">
+    <rect x="0" y="0" width="300" height="500" rx="12" fill="#eaf5f1" stroke="#73a99a" stroke-width="2"/>
+    <text x="24" y="42" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#1d3832">用户指导</text>
+    <text x="24" y="76" font-family="Arial, sans-serif" font-size="14" fill="#49635b">辅助用户知道该提供什么</text>
+    <rect x="24" y="112" width="252" height="54" rx="8" fill="#ffffff" stroke="#c9ddd5"/>
+    <text x="42" y="145" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#20352f">简历 / 项目 / 作品 / JD / 偏好</text>
+    <rect x="24" y="184" width="252" height="54" rx="8" fill="#ffffff" stroke="#c9ddd5"/>
+    <text x="42" y="217" font-family="Arial, sans-serif" font-size="15" fill="#20352f">缺失影响与下一步建议</text>
+    <rect x="24" y="256" width="252" height="54" rx="8" fill="#ffffff" stroke="#c9ddd5"/>
+    <text x="42" y="289" font-family="Arial, sans-serif" font-size="15" fill="#20352f">示例路径：仅作演示</text>
+    <text x="24" y="430" font-family="Arial, sans-serif" font-size="13" fill="#7b4b1f">不承载大型编辑表单</text>
+  </g>
+  <g transform="translate(400 112)">
+    <rect x="0" y="0" width="610" height="560" rx="14" fill="#ffffff" stroke="#46796e" stroke-width="3"/>
+    <rect x="0" y="0" width="610" height="76" rx="14" fill="#f0f7f4" stroke="#46796e" stroke-width="0"/>
+    <text x="28" y="42" font-family="Arial, sans-serif" font-size="23" font-weight="700" fill="#142b25">Chatbox 主路径</text>
+    <text x="380" y="42" font-family="Arial, sans-serif" font-size="14" fill="#2f675c">状态：等待资料 → 解析 JD → 可导出</text>
+    <rect x="34" y="104" width="420" height="58" rx="10" fill="#eef8f4" stroke="#c6dfd5"/>
+    <text x="58" y="139" font-family="Arial, sans-serif" font-size="16" fill="#20352f">Agent：你可以直接问我如何生成目标岗位简历。</text>
+    <rect x="156" y="184" width="420" height="58" rx="10" fill="#eef2ff" stroke="#c6ccef"/>
+    <text x="180" y="219" font-family="Arial, sans-serif" font-size="16" fill="#25314f">用户：帮我基于这个 JD 生成前端岗位简历。</text>
+    <rect x="34" y="264" width="440" height="78" rx="10" fill="#eef8f4" stroke="#c6dfd5"/>
+    <text x="58" y="294" font-family="Arial, sans-serif" font-size="16" fill="#20352f">Agent：还缺项目经历和目标 JD，先补这两项。</text>
+    <text x="58" y="322" font-family="Arial, sans-serif" font-size="14" fill="#52645e">资料入口在输入框上方，不压住聊天时间线。</text>
+    <rect x="34" y="390" width="542" height="52" rx="10" fill="#f8fbf9" stroke="#d8e4df"/>
+    <text x="54" y="422" font-family="Arial, sans-serif" font-size="15" fill="#52645e">上传资料    粘贴 JD    选择岗位    生成简历</text>
+    <rect x="34" y="458" width="420" height="64" rx="12" fill="#ffffff" stroke="#9eb9b0"/>
+    <text x="56" y="496" font-family="Arial, sans-serif" font-size="16" fill="#1d2f2a">输入框：继续对话、补充资料或确认事实...</text>
+    <rect x="466" y="458" width="110" height="64" rx="12" fill="#236b5f"/>
+    <text x="498" y="496" font-family="Arial, sans-serif" font-size="16" font-weight="700" fill="#ffffff">发送</text>
+  </g>
+  <g transform="translate(1056 132)">
+    <rect x="0" y="0" width="320" height="500" rx="12" fill="#fff8ed" stroke="#d8a456" stroke-width="2"/>
+    <text x="24" y="42" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#3e2a0c">工作台</text>
+    <text x="24" y="76" font-family="Arial, sans-serif" font-size="14" fill="#6b5432">产物、证据、确认、导出</text>
+    <rect x="24" y="112" width="272" height="54" rx="8" fill="#ffffff" stroke="#ead7b7"/>
+    <text x="42" y="145" font-family="Arial, sans-serif" font-size="15" fill="#352719">当前目标 JD / 岗位列表</text>
+    <rect x="24" y="184" width="272" height="54" rx="8" fill="#ffffff" stroke="#ead7b7"/>
+    <text x="42" y="217" font-family="Arial, sans-serif" font-size="15" fill="#352719">CandidateProfile 摘要</text>
+    <rect x="24" y="256" width="272" height="54" rx="8" fill="#ffffff" stroke="#ead7b7"/>
+    <text x="42" y="289" font-family="Arial, sans-serif" font-size="15" fill="#352719">简历草稿 / source refs</text>
+    <rect x="24" y="328" width="272" height="54" rx="8" fill="#ffffff" stroke="#ead7b7"/>
+    <text x="42" y="361" font-family="Arial, sans-serif" font-size="15" fill="#352719">pending confirmations</text>
+    <text x="24" y="430" font-family="Arial, sans-serif" font-size="13" fill="#7b4b1f">不抢占聊天主路径</text>
+  </g>
+  <text x="56" y="716" font-family="Arial, sans-serif" font-size="16" font-weight="700" fill="#9a3412">目标概念图 / 非当前实现截图 / 不代表 P8.1 已完成</text>
+</svg>

@@ -1,0 +1,38 @@
+{
+  "generated_at": "2026-07-02T10:23:29.618801+00:00",
+  "requested_capability": "imag2 / GPT Image 2 style image generation",
+  "mode_detection": {
+    "mode": "B-or-C",
+    "recommendation": "host-or-advisor",
+    "garden_mode_enabled": false,
+    "has_api_key": false,
+    "base_url": "https://api.openai.com/v1",
+    "model": "gpt-image-2",
+    "env_flag_value": "(unset)",
+    "summary": "MODE B / C · 未启用 Garden。若宿主 Agent 自带图像工具（image_generation / dalle / mcp__*image* 等）→ MODE B：把 prompt 交给宿主出图。若宿主无图像工具 → MODE C：仅产出高质量 prompt 给用户。"
+  },
+  "ai_text_to_image_used": false,
+  "decision": "未使用 AI 文生图；采用可复现 HTML/SVG 目标概念图。",
+  "reason": [
+    "gpt-image-2 检测为 B-or-C，未启用 Garden 本地出图且没有 OPENAI_API_KEY。",
+    "本审查页需要稳定落盘和可复现，不应依赖不可验证的宿主图片去向。",
+    "目标图必须避免被误解为当前真实实现截图。"
+  ],
+  "consistency_review": [
+    {
+      "item": "项目概念一致性",
+      "result": "通过",
+      "evidence": "目标图只表达 P8.1 文档定义的用户指导 - Chatbox - 工作台。"
+    },
+    {
+      "item": "事实性错误",
+      "result": "未发现",
+      "evidence": "目标图带非当前实现水印，不声称平台接入、真实 provider 或真实资料通过。"
+    },
+    {
+      "item": "实现截图混淆风险",
+      "result": "已控制",
+      "evidence": "报告将当前真实截图和目标概念截图分区展示。"
+    }
+  ]
+}

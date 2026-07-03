@@ -1,5 +1,74 @@
 # JobPilot AI P8-JD Intake 与简历生成体验强化阶段 PRD
 
+## -5. 当前文档阶段：P8.1 Chatbox-first 工作台信息架构修正
+
+当前最新文档阶段为 P8.1 Chatbox-first 工作台信息架构修正。P8-JD Intake 与简历生成体验强化已经完成本地/mock + 受控真实感数据自动化候选；P8.1 不推翻 P8 的资料准备、JD 导入、岗位选择和 JD 定制简历能力，而是修正当前界面的主次关系。
+
+P8.1 要解决的问题：
+
+```text
+P8 已经具备资料准备、JD 导入和简历生成能力
+但中央对话区首屏被较重的 workflow strip 抢占
+用户感知从“和求职 Agent 对话”变成“先填多个表单”
+这违背 Chatbox 作为默认入口和主路径的产品定位
+```
+
+P8.1 目标体验：
+
+```text
+用户打开本地 Chatbox
+→ 首屏清楚看到三栏结构：用户指导 - Chatbox - 工作台
+→ 中央 Chatbox 第一优先展示聊天时间线、Agent 状态和输入框
+→ 上传资料、粘贴 JD、选择目标岗位、生成简历入口紧贴输入框或进入左右辅助面板
+→ Agent 通过对话解释缺少哪些资料、为什么需要、下一步做什么
+→ 右侧工作台展示岗位、画像、简历草稿、source refs、pending confirmations 和 export preflight
+→ 用户可以连续多轮对话、补资料、确认事实和导出
+```
+
+P8.1 必须产出的用户结果：
+
+- 稳定三栏：左侧用户指导、中央 Chatbox、右侧工作台；
+- Chatbox-first：中央首屏不能被资料/JD/简历生成大表单压住；
+- 紧贴输入框的资料和 JD 快捷入口；
+- Agent 状态机：等待资料、解析 JD、生成简历、待确认、可导出、失败恢复；
+- 工作台产物区：岗位列表、当前目标 JD、CandidateProfile、简历草稿、source refs、待确认项和导出前检查；
+- 多视口可用：1200px、1440px、1920px、720px、390px 无按钮错位、文字重叠或核心入口不可达；
+- 中文 HTML 验收报告使用真实界面截图，明确未验证范围。
+
+P8.1 完成后的人类可感知结果必须是：
+
+```text
+用户不需要先理解 workspace / artifact / job / resume_version
+→ 先看到可以直接对话的 Chatbox
+→ 再通过输入框上方工具补资料、粘贴 JD、选岗位和生成简历
+→ 右侧只在产物生成或需要确认时承担工作台职责
+→ 任一视口下都能判断“我现在该说什么 / 补什么 / 确认什么”
+```
+
+P8.1 对已有 P8 能力的处理原则：
+
+- `MaterialIntakeWizard`、`JDIntakeCenter`、`JobTargetList`、`ResumeGenerationPlane` 是保留能力，不删除、不降级业务语义；
+- 这些能力的入口必须从中央大块 workflow 区迁移为输入框附近工具、轻弹层、抽屉或左右辅助面板；
+- `Conversation Plane` 是首屏主路径，不能被任何资料、JD 或简历表单挤出首屏；
+- `Workbench` 是产物和确认路径，不能要求用户先理解内部 artifact 结构才能开始对话。
+
+P8.1 非目标：
+
+- 不登录 BOSS、猎聘、拉勾等招聘平台；
+- 不抓取招聘平台页面、不绕风控、不自动沟通或自动投递；
+- 不默认调用真实 MiniMax、DeepSeek 或 OpenAI-compatible provider；
+- 不读取未授权真实个人资料；
+- 不执行 workspace 删除、迁移 apply 或不可逆操作；
+- 不实现 SaaS、多租户、Billing、ASR、会议平台、MCP/CLI。
+
+P8.1 文档阶段出门标准：
+
+- PRD、目标架构、里程碑、验收门槛、追踪矩阵、roadmap、drawio 和文本镜像均明确 P8.1 为 Chatbox-first 信息架构修正；
+- 文档不把 P8.1 写成已实现或已人工验收；
+- 文档不把招聘平台接入、真实 provider、真实个人资料或自动投递写成已通过；
+- drawio 第 4 页必须能看出具体代码实体之间的层级、上游/下游和状态颜色；
+- 后续实现计划能直接指导 P8.1-M0 到 P8.1-M5 自动化开发和验收。
+
 ## -4. 当前自动化候选阶段：P8-JD Intake 与简历生成体验强化
 
 当前最新阶段已完成 P8-JD Intake 自动化候选。P4 本地/mock Chatbox 体验已冻结，P5 本地/mock + 脱敏 fixture 自动化候选已完成，P5.5 Candidate Profile 自动化候选已完成，P6/P7 本地 Beta 自动化候选和 P6-REAL / P7-post 审计报告已完成。P8 针对用户反馈“上传资料按钮太抽象、用户不知道需要提供什么资料、希望系统更主动帮助导入 JD 并增强简历生成”，已落地资料准备向导、JD 手动导入中心、多 JD 当前目标岗位、JD 定制简历、专项 eval 和中文 HTML 截图验收报告。

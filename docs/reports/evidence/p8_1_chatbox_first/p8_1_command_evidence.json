@@ -1,0 +1,28 @@
+{
+  "generated_at": "2026-07-03T04:56:32.062644+00:00",
+  "git_head": "2e60219",
+  "git_status_short": "M README.md\n M TODO.md\n M apps/chatbox/src/main.tsx\n M apps/chatbox/src/styles.css\n M docs/active/00_README.md\n M docs/active/01_STAGE_PRD.md\n M docs/active/02_TARGET_ARCHITECTURE.md\n M docs/active/03_MILESTONES_AND_DELIVERY_PLAN.md\n M docs/active/04_ACCEPTANCE_GATES.md\n M docs/active/06_TRACEABILITY_MATRIX.md\n M docs/active/14_P2_REMAINING_DEVELOPMENT_AND_ACCEPTANCE_PLAN.md\n M docs/active/17_PRODUCTIZATION_DEVELOPMENT_ROADMAP.md\n M docs/active/21_P8_JD_INTAKE_AND_RESUME_GENERATION_PLAN.md\n M docs/active/jobpilot-stage-gap-and-acceptance.drawio\n M docs/active/jobpilot-stage-gap-and-acceptance.md\n M docs/active/stage-reviews/P2_M4_M5_ACCEPTANCE_EVIDENCE_AND_FREEZE_AUDIT.md\n M docs/active/stage-reviews/P5_5_STAGE_ACCEPTANCE_AUDIT.md\n M docs/active/stage-reviews/P8_DETAILED_DEVELOPMENT_AND_ACCEPTANCE_PLAN.md\n M docs/reports/P8_JD_INTAKE_ACCEPTANCE_REPORT.html\n M docs/reports/evidence/p8_jd_intake/p8_api_evidence.json\n M docs/reports/evidence/p8_jd_intake/p8_browser_scenario.json\n M docs/reports/evidence/p8_jd_intake/p8_desktop_initial.png\n M docs/reports/evidence/p8_jd_intake/p8_desktop_resume_generated.png\n M docs/reports/evidence/p8_jd_intake/p8_mobile_390.png\n M docs/reports/evidence/p8_jd_intake/p8_tablet_720.png\n M scripts/generate_p8_jd_intake_acceptance.py\n M tests/evals/test_p8_acceptance_report_eval.py\n?? docs/active/22_P8_1_CHATBOX_FIRST_WORKSPACE_PLAN.md\n?? docs/active/stage-reviews/P8_1_AUTOMATED_DEVELOPMENT_AUDIT.md\n?? docs/active/stage-reviews/P8_1_DOCUMENTATION_DEVELOPMENT_AUDIT.md\n?? docs/reports/P8_1_CHATBOX_FIRST_ACCEPTANCE_REPORT.html\n?? docs/reports/P8_1_FRONTEND_REVIEW_GUIDANCE.html\n?? docs/reports/evidence/p8_1_chatbox_first/\n?? docs/reports/evidence/p8_1_frontend_review/\n?? docs/reports/evidence/p8_jd_intake/p8_command_evidence.json\n?? docs/reports/evidence/p8_jd_intake/p8_post_report_evidence.json\n?? scripts/generate_p8_1_chatbox_first_acceptance.py\n?? scripts/generate_p8_1_frontend_review_guidance.py\n?? tests/evals/test_p8_1_chatbox_first_acceptance_eval.py\n?? tests/evals/test_p8_1_frontend_review_guidance_eval.py",
+  "results": [
+    {
+      "label": "Chatbox production build",
+      "command": "npm --prefix apps/chatbox run build",
+      "status": "passed",
+      "returncode": 0,
+      "summary": "> @jobpilot/chatbox@0.1.0 build\n> tsc && vite build\nvite v7.3.5 building client environment for production...\ntransforming...\n✓ 1578 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/index.html                   0.38 kB │ gzip:  0.26 kB\ndist/assets/index-B9qJwEiw.css   37.83 kB │ gzip:  7.63 kB\ndist/assets/index-BXHabywX.js   257.75 kB │ gzip: 81.30 kB\n✓ built in 20.69s"
+    },
+    {
+      "label": "drawio XML parse",
+      "command": "/mnt/c/workspace/interview_service/.venv/bin/python -c from pathlib import Path; import xml.etree.ElementTree as ET; p=Path('docs/active/jobpilot-stage-gap-and-acceptance.drawio'); ET.parse(p); print('drawio ok', p.stat().st_size)",
+      "status": "passed",
+      "returncode": 0,
+      "summary": "drawio ok 34873"
+    },
+    {
+      "label": "P8.1 static code review",
+      "command": "static AST/text guard",
+      "status": "passed",
+      "returncode": 0,
+      "summary": "{\n  \"workflow_strip_before_timeline\": false,\n  \"composer_workflow_dock\": true,\n  \"workbench_job_list\": true,\n  \"composer_tool_rail_css\": true,\n  \"workflow_panel_max_height\": true,\n  \"mobile_two_column_tools\": true\n}"
+    }
+  ]
+}

@@ -1,5 +1,40 @@
 # JobPilot AI P8-JD Intake 与简历生成体验强化追踪矩阵
 
+## -5. 当前文档阶段 P8.1 Chatbox-first 追踪矩阵
+
+| 当前目标 | 文档 / 实体边界 | 主要文件 / 模块 | 当前证据 | 验收门槛 |
+| --- | --- | --- | --- | --- |
+| Chatbox 第一优先 | Conversation Plane / Chatbox | `apps/chatbox/src/main.tsx`, `apps/chatbox/src/styles.css` | 当前 P8 能力已落地，但中央 workflow strip 抢占首屏优先级 | P8.1 文档门槛 A/C |
+| 三栏职责稳定 | User Guidance / Chatbox / Workbench | `DesktopContextPanel`, `Conversation Plane`, `Workbench` | P4/P8 三栏基线存在；P8.1 需修正职责和首屏主次 | P8.1 文档门槛 B |
+| 资料入口不压住聊天 | Material Intake Wizard | `MaterialIntakeWizard`, upload route, `document.kind` | P8 已有五类资料向导；后续需迁移为输入框工具或辅助面板 | P8.1 文档门槛 A/B |
+| JD 入口不压住聊天 | JD Intake Center / Job Target List | `JDIntakeCenter`, `JobTargetList`, `/api/job/intake`, `/api/jobs` | P8 已有 JD 手动导入和岗位列表；后续需进入右侧或轻弹层 | P8.1 文档门槛 A/B |
+| 简历生成围绕对话触发 | Resume Generation Plane | `ResumeGenerationPlane`, `/api/resume/generate`, `resume_version` | P8 已有 JD 定制简历；后续需由对话意图或输入框工具触发 | P8.1 文档门槛 A/B |
+| Agent 状态机可见 | Agent State Machine | Chatbox UI state, workflow status copy | P8 有状态和报告证据；后续需压缩成中央顶部状态机 | P8.1 文档门槛 B/C |
+| 多视口无重叠 | Responsive CSS / Browser Evidence | `styles.css`, browser screenshot scripts, `docs/reports/evidence/` | P8 报告有多视口证据；P8.1 需新增 Chatbox-first 截图 | P8.1 文档门槛 C |
+| 边界不虚假 | Safety / Evidence | active docs, HTML report, stage review | P8 报告已标明未验证范围；P8.1 继续继承 | P8.1 文档门槛 D |
+
+P8.1 代码实体状态追踪：
+
+| 层级 | 实体 | 当前状态 | P8.1 关系 | 验收证据 |
+| --- | --- | --- | --- | --- |
+| UI | `DesktopContextPanel` | P8.1 待强化 | 上游读取 workspace 摘要；下游只指导用户补资料，不写业务数据 | 左侧指导截图 |
+| UI | `Conversation Plane` | P8.1 待修改 | 上游接收用户输入；下游触发 P8 工具入口和 API；必须首屏优先 | 桌面/移动 Chatbox 截图 |
+| UI | `p8-workflow-strip` | P8 能力保留但重排 | 不再位于 timeline 前；拆为 composer tool rail、弹层、抽屉或辅助面板 | before/after 截图 |
+| UI | `MaterialIntakeWizard` / `JDIntakeCenter` / `JobTargetList` / `ResumeGenerationPlane` | P8 已实现自动化候选，P8.1 待重新摆放 | 由输入框工具、对话意图或右侧工作台承载 | 工具入口和工作台截图 |
+| UI | `Workbench` | P8.1 待强化 | 下游读取岗位、画像、简历、确认项和导出 preflight；不抢占聊天 | 右侧产物截图 |
+| API | `POST /api/job/intake` / `GET /api/jobs` / `POST /api/resume/generate` | P8 已实现自动化候选 | P8.1 复用，不改变业务语义 | API eval / 报告证据 |
+| Domain/Storage | `document` / `job` / `match_report` / `resume_version` / `artifact` | P8 已实现自动化候选 | P8.1 只改变 UI 入口和可见优先级 | source refs / export preflight 证据 |
+| Evidence | `docs/reports/` / browser screenshots | 已实现验收机制，P8.1 待新增报告 | 证明多视口 Chatbox-first，而不是证明平台或真实 provider | 中文 HTML 报告 |
+
+P8.1 当前阶段不得用以下内容替代验收：
+
+- 不得写成：P8 功能已实现等于 P8.1 Chatbox-first UI 已实现；
+- 不得写成：workflow strip 可点击等于聊天框优先；
+- 不得写成：设计稿或合成图等于真实界面截图；
+- 不得写成：保存 `source_url` 等于招聘平台自动接入；
+- 不得写成：fake provider 或 mock provider 等于真实 provider 质量通过；
+- 不得写成：合成资料等于真实个人资料路径通过。
+
 ## -4. 当前文档阶段 P8-JD Intake 与简历生成追踪矩阵
 
 | 当前目标 | 文档 / 实体边界 | 主要文件 / 模块 | 当前证据 | 验收门槛 |

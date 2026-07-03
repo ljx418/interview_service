@@ -1,0 +1,110 @@
+{
+  "generated_at": "2026-07-02T10:23:33.884573+00:00",
+  "git_head": "2e60219 feat: complete p8 jd intake acceptance",
+  "git_status_short": "M README.md\n M TODO.md\n M docs/active/00_README.md\n M docs/active/01_STAGE_PRD.md\n M docs/active/02_TARGET_ARCHITECTURE.md\n M docs/active/03_MILESTONES_AND_DELIVERY_PLAN.md\n M docs/active/04_ACCEPTANCE_GATES.md\n M docs/active/06_TRACEABILITY_MATRIX.md\n M docs/active/17_PRODUCTIZATION_DEVELOPMENT_ROADMAP.md\n M docs/active/21_P8_JD_INTAKE_AND_RESUME_GENERATION_PLAN.md\n M docs/active/jobpilot-stage-gap-and-acceptance.drawio\n M docs/active/jobpilot-stage-gap-and-acceptance.md\n M docs/reports/P8_JD_INTAKE_ACCEPTANCE_REPORT.html\n M docs/reports/evidence/p8_jd_intake/p8_api_evidence.json\n M docs/reports/evidence/p8_jd_intake/p8_browser_scenario.json\n M docs/reports/evidence/p8_jd_intake/p8_desktop_initial.png\n M docs/reports/evidence/p8_jd_intake/p8_desktop_resume_generated.png\n M docs/reports/evidence/p8_jd_intake/p8_mobile_390.png\n M docs/reports/evidence/p8_jd_intake/p8_tablet_720.png\n M scripts/generate_p8_jd_intake_acceptance.py\n M tests/evals/test_p8_acceptance_report_eval.py\n?? docs/active/22_P8_1_CHATBOX_FIRST_WORKSPACE_PLAN.md\n?? docs/active/stage-reviews/P8_1_DOCUMENTATION_DEVELOPMENT_AUDIT.md\n?? docs/reports/P8_1_FRONTEND_REVIEW_GUIDANCE.html\n?? docs/reports/evidence/p8_1_frontend_review/\n?? docs/reports/evidence/p8_jd_intake/p8_command_evidence.json\n?? docs/reports/evidence/p8_jd_intake/p8_post_report_evidence.json\n?? scripts/generate_p8_1_frontend_review_guidance.py",
+  "results": [
+    {
+      "label": "gpt-image-2 mode check",
+      "command": "node /home/administrator/.agents/skills/gpt-image-2/scripts/check-mode.js --json",
+      "status": "passed",
+      "returncode": 0,
+      "started_at": "2026-07-02T10:23:29.596428+00:00",
+      "ended_at": "2026-07-02T10:23:29.618777+00:00",
+      "summary": "{\n  \"mode\": \"B-or-C\",\n  \"recommendation\": \"host-or-advisor\",\n  \"garden_mode_enabled\": false,\n  \"has_api_key\": false,\n  \"base_url\": \"https://api.openai.com/v1\",\n  \"model\": \"gpt-image-2\",\n  \"env_flag_value\": \"(unset)\",\n  \"summary\": \"MODE B / C · 未启用 Garden。若宿主 Agent 自带图像工具（image_generation / dalle / mcp__*image* 等）→ MODE B：把 prompt 交给宿主出图。若宿主无图像工具 → MODE C：仅产出高质量 prompt 给用户。\"\n}"
+    },
+    {
+      "label": "drawio XML parse",
+      "command": "/usr/bin/python3 -c import xml.etree.ElementTree as ET; ET.parse('docs/active/jobpilot-stage-gap-and-acceptance.drawio'); print('drawio parse ok')",
+      "status": "passed",
+      "returncode": 0,
+      "started_at": "2026-07-02T10:23:29.623327+00:00",
+      "ended_at": "2026-07-02T10:23:29.643363+00:00",
+      "summary": "drawio parse ok"
+    },
+    {
+      "label": "headless Chrome screenshot capture",
+      "command": "node scripts/browser_tools/browser-acceptance.mjs --start-chrome --scenario /mnt/c/workspace/interview_service/docs/reports/evidence/p8_1_frontend_review/p8_1_browser_scenario.json --output-dir /mnt/c/workspace/interview_service/docs/reports/evidence/p8_1_frontend_review --report /mnt/c/workspace/interview_service/docs/reports/evidence/p8_1_frontend_review/p8_1_browser_capture_report.html --port 9238",
+      "status": "passed",
+      "returncode": 0,
+      "started_at": "2026-07-02T10:23:30.771100+00:00",
+      "ended_at": "2026-07-02T10:23:33.868950+00:00",
+      "summary": "/mnt/c/workspace/interview_service/docs/reports/evidence/p8_1_frontend_review/p8_1_browser_capture_report.html"
+    },
+    {
+      "label": "报告图片与 false-green 自检",
+      "command": "internal report validation",
+      "status": "passed",
+      "returncode": 0,
+      "started_at": "2026-07-02T10:23:34.980944+00:00",
+      "ended_at": "2026-07-02T10:23:34.980956+00:00",
+      "summary": "image_refs=8; missing=[]; forbidden=[]"
+    }
+  ],
+  "static_facts": {
+    "p8_workflow_strip_before_timeline": true,
+    "main_entities": {
+      "DesktopContextPanel": true,
+      "MaterialIntakeWizard": true,
+      "JDIntakeCenter": true,
+      "JobTargetList": true,
+      "ResumeGenerationPlane": true,
+      "Workbench": true
+    },
+    "css_entities": {
+      "layout_grid": true,
+      "p8_workflow_strip": true,
+      "composer_quick_actions": true,
+      "mobile_media": true
+    }
+  },
+  "images": [
+    {
+      "path": "docs/reports/evidence/p8_1_frontend_review/p8_1_concept_diagram.svg",
+      "exists": true,
+      "size": 5316,
+      "status": "passed"
+    },
+    {
+      "path": "docs/reports/evidence/p8_1_frontend_review/baseline_current_1440.png",
+      "exists": true,
+      "size": 191941,
+      "status": "passed"
+    },
+    {
+      "path": "docs/reports/evidence/p8_1_frontend_review/baseline_current_1200.png",
+      "exists": true,
+      "size": 178315,
+      "status": "passed"
+    },
+    {
+      "path": "docs/reports/evidence/p8_1_frontend_review/baseline_current_720.png",
+      "exists": true,
+      "size": 168865,
+      "status": "passed"
+    },
+    {
+      "path": "docs/reports/evidence/p8_1_frontend_review/baseline_current_390.png",
+      "exists": true,
+      "size": 167999,
+      "status": "passed"
+    },
+    {
+      "path": "docs/reports/evidence/p8_1_frontend_review/target_chatbox_first_1440.png",
+      "exists": true,
+      "size": 94796,
+      "status": "passed"
+    },
+    {
+      "path": "docs/reports/evidence/p8_1_frontend_review/target_chatbox_first_720.png",
+      "exists": true,
+      "size": 88296,
+      "status": "passed"
+    },
+    {
+      "path": "docs/reports/evidence/p8_1_frontend_review/target_chatbox_first_390.png",
+      "exists": true,
+      "size": 52069,
+      "status": "passed"
+    }
+  ]
+}

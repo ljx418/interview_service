@@ -1211,6 +1211,92 @@ input:disabled {
   padding: 14px 32px 16px;
 }
 
+.composer-workflow-dock {
+  display: grid;
+  width: 100%;
+  max-width: 900px;
+  gap: 10px;
+  margin: 0 auto 10px;
+}
+
+.composer-tool-rail {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.composer-tool-rail button {
+  display: grid;
+  min-height: 48px;
+  grid-template-columns: 18px minmax(0, 1fr);
+  gap: 2px 8px;
+  align-items: center;
+  border: 1px solid #d5ddd8;
+  border-radius: 12px;
+  background: #fbfdfc;
+  color: var(--text-main);
+  padding: 8px 10px;
+  text-align: left;
+  transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.composer-tool-rail button:hover:not(:disabled),
+.composer-tool-rail button[aria-pressed="true"] {
+  border-color: #9ccabe;
+  background: var(--primary-soft);
+  box-shadow: inset 0 0 0 1px rgb(31 107 94 / 0.08);
+}
+
+.composer-tool-rail svg {
+  grid-row: 1 / span 2;
+  color: var(--primary);
+}
+
+.composer-tool-rail span {
+  overflow: hidden;
+  color: var(--text-main);
+  font-size: 13px;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.composer-tool-rail small {
+  overflow: hidden;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 650;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.composer-workflow-panel {
+  display: grid;
+  max-height: min(360px, 42vh);
+  gap: 10px;
+  overflow-y: auto;
+  border: 1px solid #cbded6;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #f8fcfa 0%, #ffffff 100%);
+  padding: 10px;
+  box-shadow: 0 16px 34px rgb(17 27 24 / 0.10);
+}
+
+.composer-panel-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.composer-panel-topline .eyebrow {
+  margin: 0;
+}
+
+.resume-request-panel {
+  box-shadow: none;
+}
+
 .composer-quick-actions {
   display: grid;
   width: 100%;
@@ -2267,8 +2353,13 @@ input:disabled {
   }
 
   .composer-quick-actions,
-  .composer-inner {
+  .composer-inner,
+  .composer-workflow-dock {
     max-width: 760px;
+  }
+
+  .composer-tool-rail {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .p8-workflow-strip {
@@ -2333,7 +2424,7 @@ input:disabled {
     border-radius: 0;
     box-shadow: none;
     overflow: visible;
-    padding-bottom: 218px;
+    padding-bottom: 238px;
   }
 
   .conversation-header {
@@ -2412,6 +2503,34 @@ input:disabled {
     border-top-color: #dce4df;
     padding: 10px 12px 14px;
     box-shadow: 0 -16px 34px rgb(17 27 24 / 0.12);
+  }
+
+  .composer-workflow-dock {
+    max-width: none;
+    margin-bottom: 8px;
+  }
+
+  .composer-tool-rail {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+  }
+
+  .composer-tool-rail button {
+    min-height: 42px;
+    padding: 7px 8px;
+  }
+
+  .composer-tool-rail span {
+    font-size: 12px;
+  }
+
+  .composer-tool-rail small {
+    font-size: 10.5px;
+  }
+
+  .composer-workflow-panel {
+    max-height: 38vh;
+    padding: 8px;
   }
 
   .composer-quick-actions {
@@ -2565,6 +2684,10 @@ input:disabled {
   .composer-quick-actions {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 8px;
+  }
+
+  .composer-tool-rail {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .p8-panel-title.inline,

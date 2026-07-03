@@ -1,8 +1,8 @@
 # JobPilot AI 产品化后续开发路线图
 
 日期：2026-06-25
-状态：P4 本地/mock examples 路径已冻结；P5 本地/mock + 脱敏 fixture 自动化候选已完成；P5.5 Candidate Profile 自动化候选已完成；P6+P7 本地 Beta 自动化候选已完成；P6-REAL / P7-post 审计报告已完成；当前主线为 P8-JD Intake 与简历生成体验强化自动化候选。
-用途：把当前到产品化 Beta / SaaS 之前的开发目标落盘，并作为 P8 资料准备向导、JD 手动导入中心、JD 定制简历、招聘平台合规接入和 P8+ 高风险能力拆分的规划入口。
+状态：P4 本地/mock examples 路径已冻结；P5 本地/mock + 脱敏 fixture 自动化候选已完成；P5.5 Candidate Profile 自动化候选已完成；P6+P7 本地 Beta 自动化候选已完成；P6-REAL / P7-post 审计报告已完成；P8-JD Intake 与简历生成体验强化自动化候选已完成；当前文档主线为 P8.1 Chatbox-first 工作台信息架构修正。
+用途：把当前到产品化 Beta / SaaS 之前的开发目标落盘，并作为 P8.1 Chatbox-first 体验修正、P8 资料准备向导、JD 手动导入中心、JD 定制简历、招聘平台合规接入和 P8+ 高风险能力拆分的规划入口。
 
 ## 1. 当前真实状态
 
@@ -42,6 +42,7 @@ P5.5 / P6+P7 / P6-REAL / P7-post / P8 当前口径：
 - P6 fake provider opt-in、20 轮连续对话和脱敏日志可作为自动化候选证据，但不代表真实 LLM 质量通过；
 - P6-REAL / P7-post 阶段审计报告已完成，但真实 provider 质量和真实个人资料路径仍未执行；
 - P8-JD Intake 自动化候选已完成，覆盖资料准备、JD 手动导入、多 JD 当前目标和 JD 定制简历体验；
+- P8.1 Chatbox-first 当前处于文档阶段，目标是修正 P8 UI 中 workflow strip 抢占中央聊天首屏的问题，让三栏体验回到“用户指导 - Chatbox - 工作台”；
 - 不读取真实个人资料；
 - 不声明真实个人资料路径通过；
 - 不声明真实外部 provider 默认路径通过；
@@ -63,7 +64,7 @@ P5.5 / P6+P7 / P6-REAL / P7-post / P8 当前口径：
 
 ## 3. P4/P5/P5.5/P6/P7 基线后的当前主线
 
-P4 已完成本地/mock examples 路径冻结。P5 已完成本地/mock + 脱敏 fixture 自动化候选。P5.5 已完成职业画像与能力评估自动化候选。P6+P7 已完成本地 Beta 自动化候选。P6-REAL 和 P7-post P5-REAL 已完成审计准备但尚未执行真实验收。当前主线是 P8-JD Intake 自动化候选：资料准备向导、JD 手动导入中心、岗位列表、JD 定制简历和招聘平台合规边界已完成本地/mock + 受控真实感数据验收。
+P4 已完成本地/mock examples 路径冻结。P5 已完成本地/mock + 脱敏 fixture 自动化候选。P5.5 已完成职业画像与能力评估自动化候选。P6+P7 已完成本地 Beta 自动化候选。P6-REAL 和 P7-post P5-REAL 已完成审计准备但尚未执行真实验收。P8-JD Intake 自动化候选已完成：资料准备向导、JD 手动导入中心、岗位列表、JD 定制简历和招聘平台合规边界已完成本地/mock + 受控真实感数据验收。当前主线转入 P8.1 Chatbox-first 文档阶段，修正 Chatbox 被资料/JD/简历大块入口压低优先级的问题。
 
 ```text
 P5：真实资料本地闭环自动化候选完成；P5-REAL/P5-Freeze 冻结延期复验
@@ -72,6 +73,7 @@ P6/P7：本地 Beta 自动化候选完成
 P6-REAL：真实外部 provider 受控小样本验收准备（当前文档阶段）
 P7-post：P5-REAL/P5-Freeze 真实资料复验准备（当前文档阶段）
 P8：JD Intake / 资料准备向导 / JD 定制简历体验强化（自动化候选完成）
+P8.1：Chatbox-first 工作台信息架构修正（当前文档阶段，未实现）
 P8+：合规招聘平台接入 / SaaS / ASR / 会议平台 / 自动投递等高风险能力
 ```
 
@@ -82,6 +84,7 @@ docs/active/17_PRODUCTIZATION_DEVELOPMENT_ROADMAP.md
 docs/active/18_FREE_CHATBOX_CONTINUOUS_DIALOGUE_PLAN.md
 docs/active/19_P6_PROVIDER_BACKED_LONG_CONTEXT_CHAT_PLAN.md
 docs/active/21_P8_JD_INTAKE_AND_RESUME_GENERATION_PLAN.md
+docs/active/22_P8_1_CHATBOX_FIRST_WORKSPACE_PLAN.md
 ```
 
 P6-REAL/P7-post 实质执行前必须再次确认授权表、目标架构、验收门槛、风险确认和脱敏报告边界。P8+ 高风险能力仍必须在各自启动前单独制定规划和验收边界。
@@ -118,6 +121,41 @@ P8 出门不能声称：
 - BOSS 或任何招聘平台已真实接入；
 - 平台职位列表已自动抓取；
 - 自动沟通或自动投递已实现；
+- 真实 provider 或真实个人资料路径被列为验收结论。
+
+## 3.2 P8.1 当前文档阶段：Chatbox-first 工作台信息架构修正
+
+触发原因：用户人工体验反馈当前交互仍不好，感觉 Chatbox 被资料/JD/简历入口“干没了”。用户期望当前三栏栏目是“用户指导 - 聊天框 - 工作台”，聊天框始终是最优先展示。
+
+P8.1 第一版产品边界：
+
+- 保留 P8 已完成的资料准备、JD 导入、岗位选择和 JD 定制简历能力；
+- 将中央首屏主路径恢复为 Chatbox 对话、Agent 状态和输入框；
+- 将上传资料、粘贴 JD、选择目标岗位、生成简历入口迁移到输入框附近工具条、轻弹层、抽屉或左右辅助面板；
+- 右侧工作台承载岗位列表、画像、简历草稿、source refs、pending confirmations 和导出前检查；
+- 不新增招聘平台自动接入、真实 provider 默认调用、真实个人资料读取、自动投递、SaaS、ASR 或会议平台能力。
+
+P8.1 后续工作包：
+
+| 工作包 | 目标 | 验收证据 |
+| --- | --- | --- |
+| P8.1-DOC | 文档、drawio、门槛、审计和外部意见收口 | active docs 口径一致，drawio 可解析，外部审计确认不建议继续扩写主设计文档 |
+| P8.1-M0 | 开发前启动审计 | stage review 无重大 PRD 偏差 |
+| P8.1-M1 | Chatbox-first 布局重构 | 桌面首屏聊天时间线和输入框可见 |
+| P8.1-M2 | 资料/JD/简历入口迁移 | 输入框附近工具条或左右辅助面板截图 |
+| P8.1-M3 | 状态机和工作台职责稳定 | Agent 状态、岗位、画像、简历、待确认项截图 |
+| P8.1-M4 | 响应式和视觉质量修复 | 1200px/1440px/1920px/720px/390px 截图 |
+| P8.1-M5 | 自动化验收报告 | 中文 HTML 报告和 PRD 检视 |
+
+P8.1 结束后的用户可见状态必须是：用户打开 Chatbox 后先对话，再通过输入框附近入口补资料、粘贴 JD、选岗位和生成简历；右侧只负责产物和确认，不能继续用中央大块 workflow 区压低聊天优先级。
+
+P8.1 文档收口判断：当前 PRD、目标架构、里程碑、验收门槛、追踪矩阵、专项计划、drawio 和文本镜像已能支撑 P8.1-M0 到 P8.1-M5 的后续自动化开发。后续不再扩写主设计文档，除非 P8.1-M0 启动审计发现新增致命或重大规格偏差。
+
+P8.1 出门不能声称：
+
+- P8.1 文档开发等于 UI 已修复；
+- Chatbox-first 体验未经截图和人工复核即可冻结；
+- BOSS 或任何招聘平台已真实接入；
 - 真实 provider 或真实个人资料路径被列为验收结论。
 
 ## 4. P4C 候选：人工体验微调

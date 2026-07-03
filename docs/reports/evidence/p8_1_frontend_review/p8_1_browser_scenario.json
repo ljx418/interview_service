@@ -1,0 +1,197 @@
+{
+  "name": "P8.1 Frontend Review Guidance capture",
+  "goal": "Capture current real baseline screenshots and deterministic target concept screenshots for P8.1 Chatbox-first review.",
+  "url": "http://127.0.0.1:5173/?workspace_root=/mnt/c/workspace/interview_service/.tmp/p8_1_frontend_review_workspace_20260702T102329Z",
+  "targetArchitecture": [
+    "Current baseline: actual running Chatbox UI from Vite/FastAPI.",
+    "Target concept: deterministic HTML/SVG mock, explicitly marked as not implemented."
+  ],
+  "currentImplementation": [
+    "apps/chatbox/src/main.tsx renders p8-workflow-strip before timeline.",
+    "P8.1 implementation is not yet complete."
+  ],
+  "acceptanceCriteria": [
+    "Baseline screenshots come from the real running UI.",
+    "Target concept screenshots are visibly watermarked as non-implementation concept images.",
+    "Report distinguishes evidence, concept, and unverified scope."
+  ],
+  "viewports": [
+    {
+      "name": "baseline1440",
+      "width": 1440,
+      "height": 900,
+      "mobile": false
+    },
+    {
+      "name": "baseline1200",
+      "width": 1200,
+      "height": 900,
+      "mobile": false
+    },
+    {
+      "name": "baseline720",
+      "width": 720,
+      "height": 920,
+      "mobile": false
+    },
+    {
+      "name": "baseline390",
+      "width": 390,
+      "height": 820,
+      "mobile": true
+    },
+    {
+      "name": "target1440",
+      "width": 1440,
+      "height": 900,
+      "mobile": false
+    },
+    {
+      "name": "target720",
+      "width": 720,
+      "height": 920,
+      "mobile": false
+    },
+    {
+      "name": "target390",
+      "width": 390,
+      "height": 820,
+      "mobile": true
+    }
+  ],
+  "steps": [
+    {
+      "name": "打开当前 Chatbox 1440",
+      "action": "goto",
+      "url": "http://127.0.0.1:5173/?workspace_root=/mnt/c/workspace/interview_service/.tmp/p8_1_frontend_review_workspace_20260702T102329Z",
+      "viewport": "baseline1440"
+    },
+    {
+      "name": "等待当前页面标题 1440",
+      "action": "waitText",
+      "text": "求职材料工作台",
+      "timeoutMs": 20000,
+      "viewport": "baseline1440"
+    },
+    {
+      "name": "当前真实基线 1440",
+      "action": "screenshot",
+      "file": "baseline_current_1440.png",
+      "viewport": "baseline1440"
+    },
+    {
+      "name": "打开当前 Chatbox 1200",
+      "action": "goto",
+      "url": "http://127.0.0.1:5173/?workspace_root=/mnt/c/workspace/interview_service/.tmp/p8_1_frontend_review_workspace_20260702T102329Z",
+      "viewport": "baseline1200"
+    },
+    {
+      "name": "等待当前页面标题 1200",
+      "action": "waitText",
+      "text": "求职材料工作台",
+      "timeoutMs": 20000,
+      "viewport": "baseline1200"
+    },
+    {
+      "name": "当前真实基线 1200",
+      "action": "screenshot",
+      "file": "baseline_current_1200.png",
+      "viewport": "baseline1200"
+    },
+    {
+      "name": "打开当前 Chatbox 720",
+      "action": "goto",
+      "url": "http://127.0.0.1:5173/?workspace_root=/mnt/c/workspace/interview_service/.tmp/p8_1_frontend_review_workspace_20260702T102329Z",
+      "viewport": "baseline720"
+    },
+    {
+      "name": "等待当前页面标题 720",
+      "action": "waitText",
+      "text": "求职材料工作台",
+      "timeoutMs": 20000,
+      "viewport": "baseline720"
+    },
+    {
+      "name": "当前真实基线 720",
+      "action": "screenshot",
+      "file": "baseline_current_720.png",
+      "viewport": "baseline720"
+    },
+    {
+      "name": "打开当前 Chatbox 390",
+      "action": "goto",
+      "url": "http://127.0.0.1:5173/?workspace_root=/mnt/c/workspace/interview_service/.tmp/p8_1_frontend_review_workspace_20260702T102329Z",
+      "viewport": "baseline390"
+    },
+    {
+      "name": "等待当前页面标题 390",
+      "action": "waitText",
+      "text": "求职材料工作台",
+      "timeoutMs": 20000,
+      "viewport": "baseline390"
+    },
+    {
+      "name": "当前真实基线 390",
+      "action": "screenshot",
+      "file": "baseline_current_390.png",
+      "viewport": "baseline390"
+    },
+    {
+      "name": "打开目标概念 1440",
+      "action": "goto",
+      "url": "http://127.0.0.1:8766/p8_1_target_mock.html",
+      "viewport": "target1440"
+    },
+    {
+      "name": "等待目标概念 1440",
+      "action": "waitText",
+      "text": "目标概念图",
+      "timeoutMs": 5000,
+      "viewport": "target1440"
+    },
+    {
+      "name": "目标概念 1440",
+      "action": "screenshot",
+      "file": "target_chatbox_first_1440.png",
+      "viewport": "target1440"
+    },
+    {
+      "name": "打开目标概念 720",
+      "action": "goto",
+      "url": "http://127.0.0.1:8766/p8_1_target_mock.html",
+      "viewport": "target720"
+    },
+    {
+      "name": "等待目标概念 720",
+      "action": "waitText",
+      "text": "目标概念图",
+      "timeoutMs": 5000,
+      "viewport": "target720"
+    },
+    {
+      "name": "目标概念 720",
+      "action": "screenshot",
+      "file": "target_chatbox_first_720.png",
+      "viewport": "target720"
+    },
+    {
+      "name": "打开目标概念 390",
+      "action": "goto",
+      "url": "http://127.0.0.1:8766/p8_1_target_mock.html",
+      "viewport": "target390"
+    },
+    {
+      "name": "等待目标概念 390",
+      "action": "waitText",
+      "text": "目标概念图",
+      "timeoutMs": 5000,
+      "viewport": "target390"
+    },
+    {
+      "name": "目标概念 390",
+      "action": "screenshot",
+      "file": "target_chatbox_first_390.png",
+      "viewport": "target390"
+    }
+  ]
+}

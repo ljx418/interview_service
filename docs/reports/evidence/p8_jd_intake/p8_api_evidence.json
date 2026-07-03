@@ -1,17 +1,17 @@
 {
-  "generated_at": "2026-07-01T15:36:43.381026+00:00",
-  "workspace_root": ".tmp/p8_jd_intake_acceptance_workspace_20260701T153641Z",
-  "workspace_id": "ws_d3566b4bc5ef",
+  "generated_at": "2026-07-01T17:35:14.597032+00:00",
+  "workspace_root": ".tmp/p8_jd_intake_acceptance_workspace_20260701T173336Z",
+  "workspace_id": "ws_baa1d54aabff",
   "source_files": [
     {
       "kind": "resume",
       "path": "examples/resumes/transition_frontend_resume.md",
-      "document_id": "doc_88a1ce578ba8"
+      "document_id": "doc_1e9e33e7c79a"
     },
     {
       "kind": "project",
       "path": "examples/projects/todoplus_README.md",
-      "document_id": "doc_89dd0e0d2381"
+      "document_id": "doc_0c625597b3b9"
     },
     {
       "kind": "jd",
@@ -20,7 +20,7 @@
     }
   ],
   "job_intake": {
-    "job_id": "job_1c94346b076e",
+    "job_id": "job_184165272c34",
     "title": "Junior Frontend Developer",
     "platform": "公司官网手动粘贴",
     "source_url": "https://example.invalid/manual/jobpilot-p8",
@@ -34,7 +34,7 @@
         "source_refs": [
           {
             "source_type": "job",
-            "source_id": "job_1c94346b076e",
+            "source_id": "job_184165272c34",
             "field": "jd_raw",
             "quote": "# Junior Frontend Developer\n\nCompany: Example Labs\n\nWe are looking for a Junior Frontend Developer to build responsive product features with React, JavaScript, ",
             "confidence": "high"
@@ -45,7 +45,7 @@
   },
   "jobs": [
     {
-      "job_id": "job_1c94346b076e",
+      "job_id": "job_184165272c34",
       "title": "Junior Frontend Developer",
       "company": "Example Labs",
       "location": null,
@@ -103,12 +103,12 @@
           "准备一个项目深挖故事卡"
         ]
       },
-      "created_at": "2026-07-01T15:36:42.870475+00:00"
+      "created_at": "2026-07-01T17:35:14.236982+00:00"
     }
   ],
   "resume": {
-    "resume_version_id": "resume_9acb794494d8",
-    "package_id": "pkg_5f321c1dabf6",
+    "resume_version_id": "resume_4df60a575bd9",
+    "package_id": "pkg_e0a4095efeab",
     "source_refs_count": 14,
     "pending_confirmations_count": 3,
     "blocking_count": 2,

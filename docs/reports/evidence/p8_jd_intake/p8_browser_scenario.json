@@ -1,7 +1,7 @@
 {
   "name": "P8-JD Intake 与定制简历自动化验收报告",
   "goal": "验证 P8 已实现资料准备向导、JD 手动导入、岗位目标选择、JD 定制简历和可追溯导出前检查；不声明平台自动化、真实 provider 或真实个人资料通过。",
-  "url": "http://127.0.0.1:5173/?workspace_root=/mnt/c/workspace/interview_service/.tmp/p8_jd_intake_acceptance_workspace_20260701T153641Z",
+  "url": "http://127.0.0.1:5173/?workspace_root=/mnt/c/workspace/interview_service/.tmp/p8_jd_intake_acceptance_workspace_20260701T173336Z",
   "targetArchitecture": [
     "Chatbox UI：资料准备向导、JD Intake Center、Job Target List、Resume Generation Plane。",
     "API Boundary：/api/files/upload?kind=...、POST /api/job/intake、GET /api/jobs、POST /api/jobs/{job_id}/select、POST /api/resume/generate。",
@@ -24,24 +24,39 @@
   ],
   "commandResults": [
     {
-      "command": ".venv/bin/python -m pytest tests/evals/test_p8_jd_intake_resume_generation_eval.py",
+      "command": "/mnt/c/workspace/interview_service/.venv/bin/python -m pytest --ignore=tests/evals/test_p8_acceptance_report_eval.py",
       "status": "passed",
-      "evidence": "3 passed，覆盖 P8 API、DB、ChatCore intent。"
+      "evidence": "tests/evals/test_provider_timeout_mapping_eval.py .                      [ 93%]\ntests/evals/test_realtime_safety_eval.py ..                              [ 94%]\ntests/evals/test_schema_and_docs_hardening_eval.py ...                   [ 97%]\ntests/evals/test_workspace_privacy_eval.py .                             [ 98%]\ntests/test_demo_flow.py .                                                [ 99%]\ntests/test_workspace_security.py .                                       [100%]\n=============================== warnings summary ===============================\n.venv/lib/python3.12/site-packages/starlette/formparsers.py:12\n  /mnt/c/workspace/interview_service/.venv/lib/python3.12/site-packages/starlette/formparsers.py:12: PendingDeprecationWarning: Please use `import python_multipart` instead.\n    import multipart\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n================== 116 passed, 1 warning in 73.94s (0:01:13) ==================="
     },
     {
-      "command": ".venv/bin/python -m pytest tests/evals/test_p8_acceptance_report_eval.py",
+      "command": "/mnt/c/workspace/interview_service/.venv/bin/python -m pytest tests/evals/test_p8_jd_intake_resume_generation_eval.py",
       "status": "passed",
-      "evidence": "2 passed，覆盖 HTML 报告结构、截图证据和 false-green 禁止语。"
+      "evidence": "platform linux -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0\nrootdir: /mnt/c/workspace/interview_service\nconfigfile: pyproject.toml\nplugins: anyio-4.4.0\ncollected 3 items\ntests/evals/test_p8_jd_intake_resume_generation_eval.py ...              [100%]\n=============================== warnings summary ===============================\n.venv/lib/python3.12/site-packages/starlette/formparsers.py:12\n  /mnt/c/workspace/interview_service/.venv/lib/python3.12/site-packages/starlette/formparsers.py:12: PendingDeprecationWarning: Please use `import python_multipart` instead.\n    import multipart\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n========================= 3 passed, 1 warning in 2.80s ========================="
     },
     {
       "command": "npm --prefix apps/chatbox run build",
       "status": "passed",
-      "evidence": "TypeScript 与 Vite build 通过。"
+      "evidence": "> @jobpilot/chatbox@0.1.0 build\n> tsc && vite build\nvite v7.3.5 building client environment for production...\ntransforming...\n✓ 1578 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/index.html                   0.38 kB │ gzip:  0.27 kB\ndist/assets/index-CzdV4eY1.css   35.92 kB │ gzip:  7.34 kB\ndist/assets/index-KSWHjfrQ.js   255.50 kB │ gzip: 80.70 kB\n✓ built in 8.15s"
+    },
+    {
+      "command": "/mnt/c/workspace/interview_service/.venv/bin/python -c from pathlib import Path; import xml.etree.ElementTree as ET; path=Path('docs/active/jobpilot-stage-gap-and-acceptance.drawio'); ET.parse(path); print(f'drawio XML parse passed: {path} ({path.stat().st_size} bytes)')",
+      "status": "passed",
+      "evidence": "drawio XML parse passed: docs/active/jobpilot-stage-gap-and-acceptance.drawio (34233 bytes)"
+    },
+    {
+      "command": "git diff --check",
+      "status": "passed",
+      "evidence": ""
     },
     {
       "command": "API evidence JSON: docs/reports/evidence/p8_jd_intake/p8_api_evidence.json",
       "status": "passed",
-      "evidence": "resume_version=resume_9acb794494d8，blocking=2。"
+      "evidence": "resume_version=resume_4df60a575bd9，blocking=2。"
+    },
+    {
+      "command": "Command evidence JSON: docs/reports/evidence/p8_jd_intake/p8_command_evidence.json",
+      "status": "passed",
+      "evidence": "命令结果由报告生成器实际执行并落盘，不使用静态 passed 文案。"
     }
   ],
   "prdReview": [
@@ -135,7 +150,7 @@
     {
       "name": "打开 P8 Chatbox",
       "action": "goto",
-      "url": "http://127.0.0.1:5173/?workspace_root=/mnt/c/workspace/interview_service/.tmp/p8_jd_intake_acceptance_workspace_20260701T153641Z",
+      "url": "http://127.0.0.1:5173/?workspace_root=/mnt/c/workspace/interview_service/.tmp/p8_jd_intake_acceptance_workspace_20260701T173336Z",
       "viewport": "desktop"
     },
     {
@@ -218,7 +233,7 @@
     {
       "name": "720px 响应式视图",
       "action": "goto",
-      "url": "http://127.0.0.1:5173/?workspace_root=/mnt/c/workspace/interview_service/.tmp/p8_jd_intake_acceptance_workspace_20260701T153641Z",
+      "url": "http://127.0.0.1:5173/?workspace_root=/mnt/c/workspace/interview_service/.tmp/p8_jd_intake_acceptance_workspace_20260701T173336Z",
       "viewport": "tablet"
     },
     {
@@ -236,7 +251,7 @@
     {
       "name": "390px 响应式视图",
       "action": "goto",
-      "url": "http://127.0.0.1:5173/?workspace_root=/mnt/c/workspace/interview_service/.tmp/p8_jd_intake_acceptance_workspace_20260701T153641Z",
+      "url": "http://127.0.0.1:5173/?workspace_root=/mnt/c/workspace/interview_service/.tmp/p8_jd_intake_acceptance_workspace_20260701T173336Z",
       "viewport": "mobile"
     },
     {

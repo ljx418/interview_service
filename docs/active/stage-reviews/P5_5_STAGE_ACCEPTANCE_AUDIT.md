@@ -161,7 +161,7 @@ node scripts/browser_tools/browser-acceptance.mjs \
 
 出现以下任一情况，不能接受本阶段审计结论：
 
-- 报告或文档出现“真实个人资料路径已通过”“真实 provider 默认路径已通过”“P5-REAL 已通过”等扩展结论；
+- 打回：报告或文档出现“真实个人资料路径已通过”“真实 provider 默认路径已通过”“P5-REAL 已通过”等扩展结论；
 - `docs/reports/evidence/p5_5_candidate_profile/` 缺少任一截图，或截图无法打开、为空白、与报告不对应；
 - `test_p5_5_chat_boundary_eval.py` 失败，说明普通聊天可能写入画像 artifact；
 - `test_p5_5_candidate_profile_eval.py` 失败，说明 profile row、artifact/version 或 source refs 不能被证明；

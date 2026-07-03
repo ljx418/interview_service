@@ -1,13 +1,13 @@
 # JobPilot AI 当前阶段设计文档
 
-本目录是当前阶段的执行依据。原始文档包 `docs/jobpilot_ai_agent_docs_v1_0/` 保留为产品背景和 v1.0 资料；本目录文档用于记录 P5.5 Candidate Profile 自动化开发候选、P6/P7 自动化候选基线、P6-REAL / P7-post 真实验收准备，以及当前 P8-JD Intake 与简历生成体验强化自动化候选。P4 已作为本地/mock Chatbox 体验冻结基线保留；P5 本地/mock + 脱敏 fixture 自动化候选证据保留为后续基线；P5.5 已完成本地/mock + synthetic-style workspace 自动化候选；P6+P7 本地 Beta 自动化候选已完成并作为后续基线保留。P8 已完成资料准备向导、JD 手动导入中心、多 JD 目标岗位、JD 定制简历、专项 eval 和中文 HTML 截图报告；不得写成 BOSS/招聘平台自动接入、自动投递、真实个人资料路径、真实外部 provider 默认路径或真实 LLM 质量已通过。
+本目录是当前阶段的执行依据。原始文档包 `docs/jobpilot_ai_agent_docs_v1_0/` 保留为产品背景和 v1.0 资料；本目录文档用于记录 P5.5 Candidate Profile 自动化开发候选、P6/P7 自动化候选基线、P6-REAL / P7-post 真实验收准备、P8-JD Intake 与简历生成体验强化自动化候选，以及当前 P8.1 Chatbox-first 工作台信息架构修正。P4 已作为本地/mock Chatbox 体验冻结基线保留；P5 本地/mock + 脱敏 fixture 自动化候选证据保留为后续基线；P5.5 已完成本地/mock + synthetic-style workspace 自动化候选；P6+P7 本地 Beta 自动化候选已完成并作为后续基线保留。P8 已完成资料准备向导、JD 手动导入中心、多 JD 目标岗位、JD 定制简历、专项 eval 和中文 HTML 截图报告；P8.1 当前只做文档开发，目标是将三栏体验修正为“用户指导 - Chatbox - 工作台”，不得写成 UI 修复已完成、BOSS/招聘平台自动接入、自动投递、真实个人资料路径、真实外部 provider 默认路径或真实 LLM 质量已通过。
 
 ## 阅读顺序
 
-1. `01_STAGE_PRD.md`：P8-JD Intake 自动化候选 PRD、P5.5 自动化候选结论、P6-REAL / P7-post 文档阶段结论、目标体验路径、非目标和历史阶段边界。
-2. `02_TARGET_ARCHITECTURE.md`：P8 资料准备向导、JD 导入中心、JD 定制简历目标架构、当前架构、具体代码实体职责和关联关系。
-3. `03_MILESTONES_AND_DELIVERY_PLAN.md`：P8 文档开发里程碑、后续资料向导/JD 导入/简历生成开发计划、平台合规边界和出门条件。
-4. `04_ACCEPTANCE_GATES.md`：P8 资料向导、JD 导入、定制简历、平台合规边界门槛，以及 P5.5/P6/P7 历史自动化候选门槛。
+1. `01_STAGE_PRD.md`：P8.1 Chatbox-first 信息架构修正 PRD、P8-JD Intake 自动化候选 PRD、P5.5 自动化候选结论、P6-REAL / P7-post 文档阶段结论、目标体验路径、非目标和历史阶段边界。
+2. `02_TARGET_ARCHITECTURE.md`：P8.1 三栏 Chatbox-first 工作台目标架构、P8 资料准备向导、JD 导入中心、JD 定制简历目标架构、当前架构、具体代码实体职责和关联关系。
+3. `03_MILESTONES_AND_DELIVERY_PLAN.md`：P8.1 文档阶段和后续开发里程碑、P8 资料向导/JD 导入/简历生成开发计划、平台合规边界和出门条件。
+4. `04_ACCEPTANCE_GATES.md`：P8.1 Chatbox-first 信息架构门槛、P8 资料向导、JD 导入、定制简历、平台合规边界门槛，以及 P5.5/P6/P7 历史自动化候选门槛。
 5. `05_IMPLEMENTATION_SPEC.md`：可直接交付工程实现的 P0 强化规格。
 6. `06_TRACEABILITY_MATRIX.md`：目标、模块、证据、测试、真实验收待办和验收门槛追踪矩阵。
 7. `07_REMAINING_DEVELOPMENT_AND_ACCEPTANCE_PLAN.md`：剩余开发工作包、验收证据和最终验收路径。
@@ -25,24 +25,25 @@
 19. `19_P6_PROVIDER_BACKED_LONG_CONTEXT_CHAT_PLAN.md`：P6 fake provider 自动化候选、真实 provider opt-in 待执行验收、长程连续对话、上下文压缩、隐私边界和受控外呼执行单。
 20. `20_P5_5_CANDIDATE_PROFILE_PLAN.md`：P5.5 候选人画像、能力矩阵、项目可信度、岗位短板、source refs 和验收计划。
 21. `21_P8_JD_INTAKE_AND_RESUME_GENERATION_PLAN.md`：P8-JD Intake、资料准备向导、JD 手动导入中心、JD 定制简历和招聘平台合规边界。
-22. `stage-reviews/`：阶段审计记录，包含 P5/P6/P7/P5.5/P8 审计、`P8_JD_INTAKE_DOCUMENTATION_DEVELOPMENT_AUDIT.md`、`P8_DOCUMENTATION_COVERAGE_REAUDIT.md`、`P8_DETAILED_DEVELOPMENT_AND_ACCEPTANCE_PLAN.md` 和 `P8_AUTOMATED_DEVELOPMENT_AND_ACCEPTANCE_AUDIT.md`。
-23. `jobpilot-stage-gap-and-acceptance.md`：drawio 图的文本镜像，方便审查和 diff。
-24. `jobpilot-stage-gap-and-acceptance.drawio`：P8 目标体验、当前差距、代码实体关系、开发验收计划、门槛和安全边界图。
+22. `22_P8_1_CHATBOX_FIRST_WORKSPACE_PLAN.md`：P8.1 Chatbox-first 工作台信息架构修正计划，定义“用户指导 - Chatbox - 工作台”和聊天优先验收门槛。
+23. `stage-reviews/`：阶段审计记录，包含 P5/P6/P7/P5.5/P8/P8.1 审计、`P8_JD_INTAKE_DOCUMENTATION_DEVELOPMENT_AUDIT.md`、`P8_DOCUMENTATION_COVERAGE_REAUDIT.md`、`P8_DETAILED_DEVELOPMENT_AND_ACCEPTANCE_PLAN.md`、`P8_AUTOMATED_DEVELOPMENT_AND_ACCEPTANCE_AUDIT.md` 和 `P8_1_DOCUMENTATION_DEVELOPMENT_AUDIT.md`；其中 P8.1 审计已记录外部审计意见采纳和“下一步进入 P8.1-M0”的收口结论。
+24. `jobpilot-stage-gap-and-acceptance.md`：drawio 图的文本镜像，方便审查和 diff。
+25. `jobpilot-stage-gap-and-acceptance.drawio`：P8.1 Chatbox-first 修正、目标体验、当前差距、代码实体分层交互关系、开发验收计划、门槛和安全边界图。
 25. `../reports/P5_SYNTHETIC_PROFILE_REVIEW.html`：P5-REAL 前置合成简历、背景资料、目标 JD 和允许展示字段审核页。
 26. `../reports/P5_STAGE_SYNTHETIC_VISUAL_ACCEPTANCE_REPORT.html`：P5 三身份合成资料 Chrome/CDP 可视化验收聚合报告，不代表 P5-REAL 通过。
 27. `../gemini-frontend-review-package/`：给 Gemini 独立审查的前端页面方案和静态原型。
 
 ## 当前阶段目标
 
-在已冻结 P0、已完成 P1 本地工程闭环、已完成 P2 examples-guided 端到端体验、完成 P3 自动化验收，并完成 P4 本地/mock Chatbox 体验冻结之后，P5 本地/mock + 脱敏 fixture 自动化候选已完成，P5.5 Candidate Profile 自动化候选已完成，P6+P7 本地 Beta 自动化候选也已完成。P8-JD Intake 与简历生成体验强化已完成本地/mock + 受控真实感数据自动化候选，当前目标是进入人工体验复核或规划 P8+ 高风险能力。
+在已冻结 P0、已完成 P1 本地工程闭环、已完成 P2 examples-guided 端到端体验、完成 P3 自动化验收，并完成 P4 本地/mock Chatbox 体验冻结之后，P5 本地/mock + 脱敏 fixture 自动化候选已完成，P5.5 Candidate Profile 自动化候选已完成，P6+P7 本地 Beta 自动化候选也已完成。P8-JD Intake 与简历生成体验强化已完成本地/mock + 受控真实感数据自动化候选。当前 P8.1 文档目标是修正 P8 UI 的信息架构主次关系，让三栏体验回到“用户指导 - Chatbox - 工作台”，其中 Chatbox 是第一优先展示和第一交互路径。
 
 ```text
 用户打开 Chatbox
-→ 看到资料准备向导，而不是单一上传按钮
-→ 按简历、项目经历、作品链接、目标 JD、求职偏好五类补充资料
-→ 从 BOSS / 猎聘 / 拉勾 / LinkedIn / 公司官网等平台手动粘贴 JD 并保存来源链接
-→ 在岗位列表中选择当前目标 JD
-→ 系统基于现有资料、JD、CandidateProfile 和 source refs 生成 JD 定制简历草稿
+→ 首屏理解三栏：左侧用户指导，中间 Chatbox，右侧工作台
+→ 直接在 Chatbox 中对话，或使用输入框附近的上传资料 / 粘贴 JD / 生成简历入口
+→ Agent 在对话中解释需要哪些资料、缺失影响和下一步
+→ 用户从 BOSS / 猎聘 / 拉勾 / LinkedIn / 公司官网等平台手动粘贴 JD 并保存来源链接
+→ 右侧工作台展示岗位列表、当前目标 JD、画像、简历草稿、source refs 和待确认项
 → 缺证据内容进入待确认项，不写成事实
 ```
 

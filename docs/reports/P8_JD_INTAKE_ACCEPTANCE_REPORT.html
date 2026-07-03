@@ -37,7 +37,7 @@
     <h1>P8-JD Intake 与定制简历自动化验收报告</h1>
     <p><span class="badge">passed</span></p>
     <p class="meta">验证 P8 已实现资料准备向导、JD 手动导入、岗位目标选择、JD 定制简历和可追溯导出前检查；不声明平台自动化、真实 provider 或真实个人资料通过。</p>
-    <p class="meta">Started: 2026-07-01T15:36:45.984Z · Ended: 2026-07-01T15:36:58.112Z · Report: <code>/mnt/c/workspace/interview_service/docs/reports/P8_JD_INTAKE_ACCEPTANCE_REPORT.html</code></p>
+    <p class="meta">Started: 2026-07-01T17:35:15.967Z · Ended: 2026-07-01T17:35:25.511Z · Report: <code>/mnt/c/workspace/interview_service/docs/reports/P8_JD_INTAKE_ACCEPTANCE_REPORT.html</code></p>
   </header>
   <main>
     <section>
@@ -75,10 +75,45 @@
     </section>
     <section>
       <h2>命令结果</h2>
-      <table><thead><tr><th>命令</th><th>状态</th><th>证据</th></tr></thead><tbody><tr><td><code>.venv/bin/python -m pytest tests/evals/test_p8_jd_intake_resume_generation_eval.py</code></td><td class="passed">passed</td><td>3 passed，覆盖 P8 API、DB、ChatCore intent。</td></tr>
-<tr><td><code>.venv/bin/python -m pytest tests/evals/test_p8_acceptance_report_eval.py</code></td><td class="passed">passed</td><td>2 passed，覆盖 HTML 报告结构、截图证据和 false-green 禁止语。</td></tr>
-<tr><td><code>npm --prefix apps/chatbox run build</code></td><td class="passed">passed</td><td>TypeScript 与 Vite build 通过。</td></tr>
-<tr><td><code>API evidence JSON: docs/reports/evidence/p8_jd_intake/p8_api_evidence.json</code></td><td class="passed">passed</td><td>resume_version=resume_9acb794494d8，blocking=2。</td></tr></tbody></table>
+      <table><thead><tr><th>命令</th><th>状态</th><th>证据</th></tr></thead><tbody><tr><td><code>/mnt/c/workspace/interview_service/.venv/bin/python -m pytest --ignore=tests/evals/test_p8_acceptance_report_eval.py</code></td><td class="passed">passed</td><td>tests/evals/test_provider_timeout_mapping_eval.py .                      [ 93%]
+tests/evals/test_realtime_safety_eval.py ..                              [ 94%]
+tests/evals/test_schema_and_docs_hardening_eval.py ...                   [ 97%]
+tests/evals/test_workspace_privacy_eval.py .                             [ 98%]
+tests/test_demo_flow.py .                                                [ 99%]
+tests/test_workspace_security.py .                                       [100%]
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/starlette/formparsers.py:12
+  /mnt/c/workspace/interview_service/.venv/lib/python3.12/site-packages/starlette/formparsers.py:12: PendingDeprecationWarning: Please use `import python_multipart` instead.
+    import multipart
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+================== 116 passed, 1 warning in 73.94s (0:01:13) ===================</td></tr>
+<tr><td><code>/mnt/c/workspace/interview_service/.venv/bin/python -m pytest tests/evals/test_p8_jd_intake_resume_generation_eval.py</code></td><td class="passed">passed</td><td>platform linux -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0
+rootdir: /mnt/c/workspace/interview_service
+configfile: pyproject.toml
+plugins: anyio-4.4.0
+collected 3 items
+tests/evals/test_p8_jd_intake_resume_generation_eval.py ...              [100%]
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/starlette/formparsers.py:12
+  /mnt/c/workspace/interview_service/.venv/lib/python3.12/site-packages/starlette/formparsers.py:12: PendingDeprecationWarning: Please use `import python_multipart` instead.
+    import multipart
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+========================= 3 passed, 1 warning in 2.80s =========================</td></tr>
+<tr><td><code>npm --prefix apps/chatbox run build</code></td><td class="passed">passed</td><td>&gt; @jobpilot/chatbox@0.1.0 build
+&gt; tsc &amp;&amp; vite build
+vite v7.3.5 building client environment for production...
+transforming...
+✓ 1578 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.38 kB │ gzip:  0.27 kB
+dist/assets/index-CzdV4eY1.css   35.92 kB │ gzip:  7.34 kB
+dist/assets/index-KSWHjfrQ.js   255.50 kB │ gzip: 80.70 kB
+✓ built in 8.15s</td></tr>
+<tr><td><code>/mnt/c/workspace/interview_service/.venv/bin/python -c from pathlib import Path; import xml.etree.ElementTree as ET; path=Path('docs/active/jobpilot-stage-gap-and-acceptance.drawio'); ET.parse(path); print(f'drawio XML parse passed: {path} ({path.stat().st_size} bytes)')</code></td><td class="passed">passed</td><td>drawio XML parse passed: docs/active/jobpilot-stage-gap-and-acceptance.drawio (34233 bytes)</td></tr>
+<tr><td><code>git diff --check</code></td><td class="passed">passed</td><td></td></tr>
+<tr><td><code>API evidence JSON: docs/reports/evidence/p8_jd_intake/p8_api_evidence.json</code></td><td class="passed">passed</td><td>resume_version=resume_4df60a575bd9，blocking=2。</td></tr>
+<tr><td><code>Command evidence JSON: docs/reports/evidence/p8_jd_intake/p8_command_evidence.json</code></td><td class="passed">passed</td><td>命令结果由报告生成器实际执行并落盘，不使用静态 passed 文案。</td></tr></tbody></table>
     </section>
     <section>
       <h2>PRD 规格检视</h2>
@@ -100,10 +135,114 @@
       <table><thead><tr><th>区域</th><th>结论</th><th>状态</th></tr></thead><tbody><tr><td>P8 docs</td><td>实现边界与 P8 文档一致：手动 JD 导入、资料向导、定制简历。</td><td class="passed">passed</td></tr>
 <tr><td>False green</td><td>平台自动化、真实 provider、真实个人资料均未写成通过。</td><td class="passed">passed</td></tr></tbody></table>
     </section>
+
     <section>
-      <h2>多背景多轮对话补证</h2>
-      <p class="meta">以下 transcript 来自合成资料和 fake provider opt-in 自动化路径，用于证明长程对话、上下文边界、脱敏日志和不同背景覆盖；未覆盖真实 LLM/provider 的回复质量、成本、稳定性或可用性验收。</p>
-      <p>Scenario did not define multi-turn dialogue evidence.</p>
+      <h2>审计结论总览</h2>
+      <table><tbody>
+        <tr><th>阶段</th><td>P8-JD Intake 与简历生成体验强化自动化候选</td></tr>
+        <tr><th>结论</th><td class="passed">本地/mock + examples/受控真实感数据路径通过；可进入人工体验复核或下一阶段规划。</td></tr>
+        <tr><th>Git HEAD</th><td><code>2e60219</code></td></tr>
+        <tr><th>工作区状态</th><td><pre>M docs/reports/P8_JD_INTAKE_ACCEPTANCE_REPORT.html
+ M docs/reports/evidence/p8_jd_intake/p8_api_evidence.json
+ M docs/reports/evidence/p8_jd_intake/p8_browser_scenario.json
+ M docs/reports/evidence/p8_jd_intake/p8_desktop_initial.png
+ M docs/reports/evidence/p8_jd_intake/p8_desktop_resume_generated.png
+ M docs/reports/evidence/p8_jd_intake/p8_mobile_390.png
+ M docs/reports/evidence/p8_jd_intake/p8_tablet_720.png
+ M scripts/generate_p8_jd_intake_acceptance.py
+ M tests/evals/test_p8_acceptance_report_eval.py
+?? docs/reports/evidence/p8_jd_intake/p8_command_evidence.json
+?? docs/reports/evidence/p8_jd_intake/p8_post_report_evidence.json</pre></td></tr>
+        <tr><th>workspace</th><td><code>ws_baa1d54aabff</code> / <code>.tmp/p8_jd_intake_acceptance_workspace_20260701T173336Z</code></td></tr>
+        <tr><th>审计边界</th><td>不证明真实 provider、真实个人资料、招聘平台自动接入、自动沟通或自动投递通过。</td></tr>
+      </tbody></table>
+    </section>
+    <section>
+      <h2>审计包索引</h2>
+      <table><thead><tr><th>类别</th><th>路径 / 实体</th><th>审计用途</th></tr></thead><tbody>
+        <tr><td>PRD</td><td><code>docs/active/01_STAGE_PRD.md</code></td><td>核对 P8 目标体验、非目标和用户路径。</td></tr>
+        <tr><td>目标架构</td><td><code>docs/active/02_TARGET_ARCHITECTURE.md</code></td><td>核对 UI/API/Domain/Storage/Evidence 分层和代码实体关系。</td></tr>
+        <tr><td>验收门槛</td><td><code>docs/active/04_ACCEPTANCE_GATES.md</code></td><td>核对截图、eval、false-green 和高风险边界。</td></tr>
+        <tr><td>追踪矩阵</td><td><code>docs/active/06_TRACEABILITY_MATRIX.md</code></td><td>核对需求到实现、测试、证据的映射。</td></tr>
+        <tr><td>阶段计划</td><td><code>docs/active/21_P8_JD_INTAKE_AND_RESUME_GENERATION_PLAN.md</code></td><td>核对 P8-M1 到 P8-M5 工作包。</td></tr>
+        <tr><td>自动化审计</td><td><code>docs/active/stage-reviews/P8_AUTOMATED_DEVELOPMENT_AND_ACCEPTANCE_AUDIT.md</code></td><td>核对子阶段开发和 PRD 规格检视结论。</td></tr>
+        <tr><td>报告生成器</td><td><code>scripts/generate_p8_jd_intake_acceptance.py</code></td><td>复现 API flow、浏览器截图和本 HTML 报告。</td></tr>
+        <tr><td>专项 eval</td><td><code>tests/evals/test_p8_jd_intake_resume_generation_eval.py</code><br><code>tests/evals/test_p8_acceptance_report_eval.py</code></td><td>核对业务闭环和报告质量门槛。</td></tr>
+        <tr><td>命令证据</td><td><code>docs/reports/evidence/p8_jd_intake/p8_command_evidence.json</code></td><td>核对实际执行命令、退出码和输出摘要。</td></tr>
+        <tr><td>截图证据</td><td><code>docs/reports/evidence/p8_jd_intake/</code></td><td>核对真实界面路径、响应式和结果状态。</td></tr>
+      </tbody></table>
+    </section>
+    <section>
+      <h2>命令证据明细</h2>
+      <p class="meta">以下命令由 <code>scripts/generate_p8_jd_intake_acceptance.py</code> 在生成本报告时实际执行；完整结构化摘要见 <code>docs/reports/evidence/p8_jd_intake/p8_command_evidence.json</code>。本报告生成后，仍需用 <code>.venv/bin/python -m pytest tests/evals/test_p8_acceptance_report_eval.py</code> 对报告本体做最终质量门槛校验。</p>
+      <table><thead><tr><th>检查</th><th>命令</th><th>状态</th><th>输出摘要</th></tr></thead><tbody><tr><td>全量 pytest（排除报告自举 eval）</td><td><code>/mnt/c/workspace/interview_service/.venv/bin/python -m pytest --ignore=tests/evals/test_p8_acceptance_report_eval.py</code></td><td class="passed">passed</td><td><pre>tests/evals/test_provider_timeout_mapping_eval.py .                      [ 93%]
+tests/evals/test_realtime_safety_eval.py ..                              [ 94%]
+tests/evals/test_schema_and_docs_hardening_eval.py ...                   [ 97%]
+tests/evals/test_workspace_privacy_eval.py .                             [ 98%]
+tests/test_demo_flow.py .                                                [ 99%]
+tests/test_workspace_security.py .                                       [100%]
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/starlette/formparsers.py:12
+  /mnt/c/workspace/interview_service/.venv/lib/python3.12/site-packages/starlette/formparsers.py:12: PendingDeprecationWarning: Please use `import python_multipart` instead.
+    import multipart
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+================== 116 passed, 1 warning in 73.94s (0:01:13) ===================</pre></td></tr>
+<tr><td>P8 业务 eval</td><td><code>/mnt/c/workspace/interview_service/.venv/bin/python -m pytest tests/evals/test_p8_jd_intake_resume_generation_eval.py</code></td><td class="passed">passed</td><td><pre>platform linux -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0
+rootdir: /mnt/c/workspace/interview_service
+configfile: pyproject.toml
+plugins: anyio-4.4.0
+collected 3 items
+tests/evals/test_p8_jd_intake_resume_generation_eval.py ...              [100%]
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/starlette/formparsers.py:12
+  /mnt/c/workspace/interview_service/.venv/lib/python3.12/site-packages/starlette/formparsers.py:12: PendingDeprecationWarning: Please use `import python_multipart` instead.
+    import multipart
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+========================= 3 passed, 1 warning in 2.80s =========================</pre></td></tr>
+<tr><td>Chatbox build</td><td><code>npm --prefix apps/chatbox run build</code></td><td class="passed">passed</td><td><pre>&gt; @jobpilot/chatbox@0.1.0 build
+&gt; tsc &amp;&amp; vite build
+vite v7.3.5 building client environment for production...
+transforming...
+✓ 1578 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.38 kB │ gzip:  0.27 kB
+dist/assets/index-CzdV4eY1.css   35.92 kB │ gzip:  7.34 kB
+dist/assets/index-KSWHjfrQ.js   255.50 kB │ gzip: 80.70 kB
+✓ built in 8.15s</pre></td></tr>
+<tr><td>drawio XML parse</td><td><code>/mnt/c/workspace/interview_service/.venv/bin/python -c from pathlib import Path; import xml.etree.ElementTree as ET; path=Path(&#x27;docs/active/jobpilot-stage-gap-and-acceptance.drawio&#x27;); ET.parse(path); print(f&#x27;drawio XML parse passed: {path} ({path.stat().st_size} bytes)&#x27;)</code></td><td class="passed">passed</td><td><pre>drawio XML parse passed: docs/active/jobpilot-stage-gap-and-acceptance.drawio (34233 bytes)</pre></td></tr>
+<tr><td>diff whitespace check</td><td><code>git diff --check</code></td><td class="passed">passed</td><td><pre></pre></td></tr></tbody></table>
+    </section>
+    <section>
+      <h2>API Evidence 摘要</h2>
+      <table><tbody>
+        <tr><th>资料文件</th><td><table><thead><tr><th>kind</th><th>路径</th><th>document/source</th></tr></thead><tbody><tr><td>resume</td><td><code>examples/resumes/transition_frontend_resume.md</code></td><td>doc_1e9e33e7c79a</td></tr>
+<tr><td>project</td><td><code>examples/projects/todoplus_README.md</code></td><td>doc_0c625597b3b9</td></tr>
+<tr><td>jd</td><td><code>examples/jds/junior_frontend_jd.md</code></td><td>https://example.invalid/manual/jobpilot-p8</td></tr></tbody></table></td></tr>
+        <tr><th>JD 导入</th><td>job_id=<code>job_184165272c34</code>；标题=Junior Frontend Developer；平台=公司官网手动粘贴；来源 URL=<code>https://example.invalid/manual/jobpilot-p8</code>；匹配=比较适合；说明=JD 已手动导入并设为当前目标岗位。source_url 仅作为来源归档，未触发网页抓取。</td></tr>
+        <tr><th>岗位列表</th><td>返回 1 个岗位；当前目标=True；import_method=manual_paste。</td></tr>
+        <tr><th>定制简历</th><td>resume_version_id=<code>resume_4df60a575bd9</code>；package_id=<code>pkg_e0a4095efeab</code>；source refs=14；pending confirmations=3；blocking=2；preflight=存在 blocking 待确认项，正式导出前需要先确认事实。</td></tr>
+      </tbody></table>
+    </section>
+    <section>
+      <h2>需求到证据追踪矩阵</h2>
+      <table><thead><tr><th>PRD 目标</th><th>代码实体</th><th>自动化证据</th><th>人工审计看点</th></tr></thead><tbody>
+        <tr><td>用户知道需要提供什么资料</td><td><code>MaterialIntakeWizard</code>、<code>/api/files/upload?kind=...</code>、<code>document.kind</code></td><td><code>p8_desktop_initial.png</code>、P8 upload kind eval</td><td>五类资料卡是否清楚，上传入口是否贴近输入区且不误导为平台接入。</td></tr>
+        <tr><td>手动导入 JD 并保存来源</td><td><code>JDIntakeCenter</code>、<code>POST /api/job/intake</code>、<code>job.source_url/platform/import_method</code></td><td><code>p8_desktop_job_intake.png</code>、<code>p8_api_evidence.json</code></td><td>URL 只归档，不触发抓取；缺失信息进入待确认。</td></tr>
+        <tr><td>多 JD 目标岗位选择</td><td><code>JobTargetList</code>、<code>GET /api/jobs</code>、<code>POST /api/jobs/{job_id}/select</code>、<code>job.is_current_target</code></td><td>P8 list/select eval、岗位列表截图</td><td>当前目标岗位是否明确，不静默覆盖其他 JD。</td></tr>
+        <tr><td>JD 定制简历可追溯</td><td><code>ResumeGenerationPlane</code>、<code>POST /api/resume/generate</code>、<code>resume_version</code>、<code>application_package</code></td><td><code>p8_desktop_resume_generated.png</code>、resume source refs/pending/preflight JSON</td><td>草稿是否绑定当前 JD，source refs、pending confirmations 和导出阻塞是否可见。</td></tr>
+        <tr><td>不做虚假验收</td><td>Provider policy、未验证范围、report eval forbidden claims</td><td><code>test_p8_acceptance_report_eval.py</code>、未验证范围 section</td><td>报告是否没有把真实 provider、真实个人资料、招聘平台自动化写成通过。</td></tr>
+      </tbody></table>
+    </section>
+    <section>
+      <h2>人工复核清单与打回条件</h2>
+      <table><thead><tr><th>检查项</th><th>通过标准</th><th>打回条件</th></tr></thead><tbody>
+        <tr><td>截图可见性</td><td>5 张截图均能在 HTML 中直接显示，且分别覆盖桌面初始、JD 导入、简历生成、720px、390px。</td><td>任一图片缺失、不可见、不是当前界面或不能证明对应步骤。</td></tr>
+        <tr><td>命令证据</td><td>全量 pytest、P8 eval、前端 build、drawio parse 均给出命令和结果摘要。</td><td>只写“通过”但没有命令、输出摘要或可复现路径。</td></tr>
+        <tr><td>代码实体映射</td><td>UI/API/Domain/Storage/Evidence 均能映射到具体文件、函数或数据列。</td><td>只写抽象概念，无法定位到实现实体。</td></tr>
+        <tr><td>真实能力边界</td><td>明确未验收真实 provider、真实个人资料、招聘平台自动化、自动投递。</td><td>出现任何默认通过、已接入、已自动投递等不实口径。</td></tr>
+        <tr><td>用户体验路径</td><td>能从报告中复现资料准备、JD 导入、目标选择、定制简历和导出前检查。</td><td>缺少关键步骤或截图不能支撑路径闭环。</td></tr>
+      </tbody></table>
     </section>
     <section>
       <h2>截图证据</h2>
@@ -113,6 +252,28 @@
 <figure><img src="evidence/p8_jd_intake/p8_tablet_720.png" alt="720px P8 工作区"><figcaption>720px P8 工作区<br><code>evidence/p8_jd_intake/p8_tablet_720.png</code></figcaption></figure>
 <figure><img src="evidence/p8_jd_intake/p8_mobile_390.png" alt="390px P8 工作区"><figcaption>390px P8 工作区<br><code>evidence/p8_jd_intake/p8_mobile_390.png</code></figcaption></figure></div>
     </section>
+    <!-- P8_POST_REPORT_VALIDATION_START -->
+    <section>
+      <h2>生成后报告自检</h2>
+      <p class="meta">以下检查在 HTML 报告生成并增强后执行，用于证明本报告本体、图片引用和 false-green 禁止语也已通过自动化门槛。结构化证据见 <code>docs/reports/evidence/p8_jd_intake/p8_post_report_evidence.json</code>。</p>
+      <table><thead><tr><th>检查</th><th>命令</th><th>状态</th><th>输出摘要</th></tr></thead><tbody><tr><td>报告本体 eval</td><td><code>/mnt/c/workspace/interview_service/.venv/bin/python -m pytest tests/evals/test_p8_acceptance_report_eval.py</code></td><td class="passed">passed</td><td><pre>============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0
+rootdir: /mnt/c/workspace/interview_service
+configfile: pyproject.toml
+plugins: anyio-4.4.0
+collected 4 items
+tests/evals/test_p8_acceptance_report_eval.py ....                       [100%]
+============================== 4 passed in 0.18s ===============================</pre></td></tr>
+<tr><td>报告图片与 false-green 快速检查</td><td><code>/mnt/c/workspace/interview_service/.venv/bin/python -c from pathlib import Path; import re; report=Path(&#x27;docs/reports/P8_JD_INTAKE_ACCEPTANCE_REPORT.html&#x27;); html=report.read_text(encoding=&#x27;utf-8&#x27;); missing=[]
+for src in re.findall(r&#x27;&lt;img[^&gt;]+src=&quot;([^&quot;]+)&quot;&#x27;, html):
+ p=(report.parent/src).resolve();
+ missing.append(src) if (not p.exists() or p.stat().st_size &lt;= 1024) else None
+forbidden=[&#x27;BOSS &#x27;+&#x27;已接入&#x27;,&#x27;招聘平台自动&#x27;+&#x27;接入通过&#x27;,&#x27;真实 provider &#x27;+&#x27;质量通过&#x27;,&#x27;真实个人资料路径&#x27;+&#x27;通过&#x27;,&#x27;自动投递&#x27;+&#x27;已实现&#x27;,&#x27;Scenario did not define &#x27;+&#x27;multi-turn dialogue evidence&#x27;,&#x27;No screenshots &#x27;+&#x27;captured&#x27;]
+hits=[m for m in forbidden if m in html]
+print(f&#x27;image refs={len(re.findall(r&quot;&lt;img[^&gt;]+src=\&quot;([^\&quot;]+)\&quot;&quot;, html))}; missing={missing}; forbidden={hits}&#x27;)
+raise SystemExit(1 if missing or hits else 0)</code></td><td class="passed">passed</td><td><pre>image refs=5; missing=[]; forbidden=[]</pre></td></tr></tbody></table>
+    </section>
+    <!-- P8_POST_REPORT_VALIDATION_END -->
     <section>
       <h2>未验证范围与审计意见</h2>
       <ul><li>未接入 BOSS/猎聘/拉勾等招聘平台账号、登录、抓取、自动沟通或自动投递。</li><li>未调用真实外部 LLM provider；本报告不证明真实 provider 质量。</li><li>未使用用户真实个人资料；本报告使用 examples 和受控真实感 fixture。</li><li>source_url 只作为归档证据保存，没有执行网页抓取。</li></ul>

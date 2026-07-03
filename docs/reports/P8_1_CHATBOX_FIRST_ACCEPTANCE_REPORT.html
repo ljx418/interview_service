@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>P8.1 Chatbox-first 工作台自动化验收报告 - Browser Acceptance Report</title>
+  <style>
+    body { margin: 0; font: 15px/1.55 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #1f2933; background: #f6f8fb; }
+    header, main { max-width: 1120px; margin: 0 auto; padding: 28px; }
+    header { padding-top: 36px; }
+    h1 { margin: 0 0 10px; font-size: 30px; letter-spacing: 0; }
+    h2 { margin: 28px 0 12px; font-size: 19px; }
+    .meta { color: #52606d; }
+    .badge { display: inline-block; padding: 5px 10px; border-radius: 6px; font-weight: 700; background: #d9f9e6; color: #0f6b3d; }
+    section { background: #fff; border: 1px solid #d9e2ec; border-radius: 8px; padding: 18px; margin: 18px 0; }
+    table { width: 100%; border-collapse: collapse; background: #fff; }
+    th, td { text-align: left; border-bottom: 1px solid #e4e7eb; padding: 10px; vertical-align: top; }
+    th { color: #52606d; font-size: 13px; }
+    code { background: #eef2f7; padding: 2px 5px; border-radius: 4px; }
+    .passed { color: #0f6b3d; font-weight: 700; }
+    .failed { color: #a61b1b; font-weight: 700; }
+    .warning { color: #8a4b0f; font-weight: 700; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+    figure { margin: 0; border: 1px solid #d9e2ec; border-radius: 8px; overflow: hidden; background: #fff; }
+    img { display: block; width: 100%; height: auto; border-bottom: 1px solid #d9e2ec; }
+    figcaption { padding: 10px 12px; color: #52606d; font-size: 13px; }
+    h3 { margin: 18px 0 8px; font-size: 17px; }
+    h4 { margin: 18px 0 8px; font-size: 15px; color: #334e68; }
+    details { border: 1px solid #d9e2ec; border-radius: 6px; padding: 10px 12px; margin: 8px 0; background: #fbfdff; }
+    details p { margin: 10px 0 0; color: #334e68; }
+    .dialogue-case { border: 1px solid #bcccdc; border-radius: 8px; padding: 14px; margin: 14px 0; background: #fff; }
+    pre { white-space: pre-wrap; overflow-wrap: anywhere; background: #fff4f4; color: #7f1d1d; padding: 12px; border-radius: 6px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>P8.1 Chatbox-first 工作台自动化验收报告</h1>
+    <p><span class="badge">passed</span></p>
+    <p class="meta">验证 P8.1 已把中央首屏恢复为 Chatbox 主路径，并保留资料准备、JD 导入、岗位选择和 JD 定制简历能力。</p>
+    <p class="meta">Started: 2026-07-03T04:56:35.474Z · Ended: 2026-07-03T04:56:43.225Z · Report: <code>/mnt/c/workspace/interview_service/docs/reports/P8_1_CHATBOX_FIRST_ACCEPTANCE_REPORT.html</code></p>
+  </header>
+  <main>
+    <section>
+      <h2>目标架构</h2>
+      <ul><li>User Guidance：左侧解释资料清单、缺失影响、示例路径和安全边界。</li><li>Conversation Plane：中央优先展示 Agent 状态、聊天时间线、输入框和紧贴输入框的工具入口。</li><li>Workbench：右侧展示岗位、候选人画像、简历草稿、source refs、pending confirmations 和 export preflight。</li><li>FastAPI / Domain / SQLite 业务语义保持 P8 已实现路径，不由 P8.1 重写。</li></ul>
+      <h2>当前实现</h2>
+      <ul><li>apps/chatbox/src/main.tsx 新增 ComposerWorkflowDock，资料/JD/岗位/简历入口紧贴输入框。</li><li>中央渲染顺序为 ConversationHeader -&gt; timeline -&gt; composer，不再把 p8-workflow-strip 放在 timeline 之前。</li><li>Workbench 接入 JobTargetList 和 ResumeGenerationPlane，岗位与简历结果进入右侧产物区。</li><li>apps/chatbox/src/styles.css 新增 composer-tool-rail 和 composer-workflow-panel，并覆盖桌面、平板、移动响应式规则。</li></ul>
+    </section>
+    <section>
+      <h2>自动化步骤</h2>
+      <table><thead><tr><th>#</th><th>步骤</th><th>动作</th><th>结果</th></tr></thead><tbody><tr><td>1</td><td>打开 1920 桌面首屏</td><td><code>goto</code></td><td class="passed">passed</td></tr>
+<tr><td>2</td><td>等待 Chatbox 标题</td><td><code>waitText</code></td><td class="passed">passed</td></tr>
+<tr><td>3</td><td>验证 timeline 在 workflow 之前</td><td><code>evaluate</code></td><td class="passed">passed</td></tr>
+<tr><td>4</td><td>1920 Chatbox-first 首屏</td><td><code>screenshot</code></td><td class="passed">passed</td></tr>
+<tr><td>5</td><td>打开 JD 工具面板</td><td><code>clickText</code></td><td class="passed">passed</td></tr>
+<tr><td>6</td><td>填写 JD 文本</td><td><code>fill</code></td><td class="passed">passed</td></tr>
+<tr><td>7</td><td>填写平台</td><td><code>fill</code></td><td class="passed">passed</td></tr>
+<tr><td>8</td><td>导入 JD</td><td><code>clickText</code></td><td class="passed">passed</td></tr>
+<tr><td>9</td><td>等待 JD 导入反馈</td><td><code>waitText</code></td><td class="passed">passed</td></tr>
+<tr><td>10</td><td>JD 导入与工作台</td><td><code>screenshot</code></td><td class="passed">passed</td></tr>
+<tr><td>11</td><td>打开 1440 首屏</td><td><code>goto</code></td><td class="passed">passed</td></tr>
+<tr><td>12</td><td>等待 1440 标题</td><td><code>waitText</code></td><td class="passed">passed</td></tr>
+<tr><td>13</td><td>1440 Chatbox-first</td><td><code>screenshot</code></td><td class="passed">passed</td></tr>
+<tr><td>14</td><td>打开 1200 首屏</td><td><code>goto</code></td><td class="passed">passed</td></tr>
+<tr><td>15</td><td>等待 1200 标题</td><td><code>waitText</code></td><td class="passed">passed</td></tr>
+<tr><td>16</td><td>1200 Chatbox-first</td><td><code>screenshot</code></td><td class="passed">passed</td></tr>
+<tr><td>17</td><td>打开 720 平板首屏</td><td><code>goto</code></td><td class="passed">passed</td></tr>
+<tr><td>18</td><td>等待 720 标题</td><td><code>waitText</code></td><td class="passed">passed</td></tr>
+<tr><td>19</td><td>720 Chatbox 优先</td><td><code>screenshot</code></td><td class="passed">passed</td></tr>
+<tr><td>20</td><td>打开 390 移动首屏</td><td><code>goto</code></td><td class="passed">passed</td></tr>
+<tr><td>21</td><td>等待 390 标题</td><td><code>waitText</code></td><td class="passed">passed</td></tr>
+<tr><td>22</td><td>390 Chatbox 输入区可达</td><td><code>screenshot</code></td><td class="passed">passed</td></tr></tbody></table>
+      
+    </section>
+    <section>
+      <h2>验收标准</h2>
+      <ul><li>首屏主路径是 Chatbox，而不是资料/JD/简历生成大表单。</li><li>上传资料、粘贴 JD、选择岗位、生成简历入口紧贴输入框或位于清晰辅助区域。</li><li>右侧工作台展示岗位、画像、简历草稿、source refs、pending confirmations 和 export preflight。</li><li>1920px、1440px、1200px、720px、390px 截图无明显按钮错位、文字重叠或核心入口不可达。</li><li>报告不得声称招聘平台自动接入、真实 provider、真实个人资料、自动投递、SaaS、ASR 或会议平台已通过。</li></ul>
+    </section>
+    <section>
+      <h2>命令结果</h2>
+      <table><thead><tr><th>命令</th><th>状态</th><th>证据</th></tr></thead><tbody><tr><td><code>npm --prefix apps/chatbox run build</code></td><td class="passed">passed</td><td>&gt; @jobpilot/chatbox@0.1.0 build
+&gt; tsc &amp;&amp; vite build
+vite v7.3.5 building client environment for production...
+transforming...
+✓ 1578 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.38 kB │ gzip:  0.26 kB
+dist/assets/index-B9qJwEiw.css   37.83 kB │ gzip:  7.63 kB
+dist/assets/index-BXHabywX.js   257.75 kB │ gzip: 81.30 kB
+✓ built in 20.69s</td></tr>
+<tr><td><code>/mnt/c/workspace/interview_service/.venv/bin/python -c from pathlib import Path; import xml.etree.ElementTree as ET; p=Path('docs/active/jobpilot-stage-gap-and-acceptance.drawio'); ET.parse(p); print('drawio ok', p.stat().st_size)</code></td><td class="passed">passed</td><td>drawio ok 34873</td></tr>
+<tr><td><code>static AST/text guard</code></td><td class="passed">passed</td><td>{
+  &quot;workflow_strip_before_timeline&quot;: false,
+  &quot;composer_workflow_dock&quot;: true,
+  &quot;workbench_job_list&quot;: true,
+  &quot;composer_tool_rail_css&quot;: true,
+  &quot;workflow_panel_max_height&quot;: true,
+  &quot;mobile_two_column_tools&quot;: true
+}</td></tr></tbody></table>
+    </section>
+    <section>
+      <h2>PRD 规格检视</h2>
+      <table><thead><tr><th>PRD / Gate 要求</th><th>证据</th><th>结论</th></tr></thead><tbody><tr><td>Chatbox-first</td><td>截图中中央先展示 Agent 状态和聊天时间线；P8 面板只在输入区工具坞按需展开。</td><td class="passed">PASS</td></tr>
+<tr><td>资料/JD 入口紧贴输入框</td><td>composer-tool-rail 包含上传资料、粘贴 JD、选择岗位、生成简历。</td><td class="passed">PASS</td></tr>
+<tr><td>工作台承载产物</td><td>Workbench 渲染岗位列表、候选人画像、简历草稿和 artifact cards。</td><td class="passed">PASS</td></tr>
+<tr><td>多视口可用</td><td>本报告包含 1920/1440/1200/720/390 Headless Chrome 截图。</td><td class="passed">PASS</td></tr>
+<tr><td>高风险边界</td><td>本验收只使用本地 mock/示例 workspace，不外呼真实 provider，不接入招聘平台。</td><td class="passed">PASS</td></tr></tbody></table>
+    </section>
+    <section>
+      <h2>代码检视</h2>
+      <table><thead><tr><th>区域</th><th>结论</th><th>级别</th></tr></thead><tbody><tr><td>Conversation Plane</td><td>p8-workflow-strip 不再出现在 timeline 之前，符合主路径修正。</td><td class="passed">passed</td></tr>
+<tr><td>ComposerWorkflowDock</td><td>P8 能力入口复用现有 handler，不重写后端 API。</td><td class="passed">passed</td></tr>
+<tr><td>Workbench</td><td>岗位和简历结果进入右侧工作台，减少中央表单压力。</td><td class="passed">passed</td></tr>
+<tr><td>Responsive CSS</td><td>工具入口小屏两列、展开面板限高滚动，降低遮挡和重叠风险。</td><td class="passed">passed</td></tr></tbody></table>
+    </section>
+    <section>
+      <h2>文档审计</h2>
+      <table><thead><tr><th>区域</th><th>结论</th><th>状态</th></tr></thead><tbody><tr><td>PRD</td><td>P8.1 目标体验与本实现方向一致。</td><td class="passed">passed</td></tr>
+<tr><td>目标架构</td><td>未改变 API、Domain、SQLite、Artifact 业务语义。</td><td class="passed">passed</td></tr>
+<tr><td>验收门槛</td><td>截图、build、drawio parse、静态 guard 均纳入证据。</td><td class="passed">passed</td></tr></tbody></table>
+    </section>
+    <section>
+      <h2>P8.1 阶段聊天能力边界</h2>
+      <p class="meta">P8.1 的验收重点是 Chatbox-first 信息架构、输入区工具入口、工作台分工和多视口真实界面截图。连续多轮对话、真实 provider 回复质量和真实个人资料路径属于既有 P6/P7/P8 证据或后续独立验收，不作为本阶段新增通过结论。</p>
+      <table><thead><tr><th>能力</th><th>本阶段结论</th><th>说明</th></tr></thead><tbody>
+        <tr><td>自由聊天入口</td><td class="passed">保留</td><td>中央 Chatbox 和输入框仍是默认主路径。</td></tr>
+        <tr><td>多轮对话质量</td><td class="warning">非本阶段新增验收</td><td>不在 P8.1 报告中重复声明真实 provider 或长程对话质量通过。</td></tr>
+        <tr><td>真实 provider</td><td class="warning">未执行</td><td>本轮未外呼 MiniMax、DeepSeek 或 OpenAI-compatible provider。</td></tr>
+      </tbody></table>
+    </section>
+    <section>
+      <h2>截图证据</h2>
+      <div class="grid"><figure><img src="evidence/p8_1_chatbox_first/p8_1_chatbox_first_1920.png" alt="1920 Chatbox-first 首屏"><figcaption>1920 Chatbox-first 首屏<br><code>evidence/p8_1_chatbox_first/p8_1_chatbox_first_1920.png</code></figcaption></figure>
+<figure><img src="evidence/p8_1_chatbox_first/p8_1_jd_intake_workbench_1920.png" alt="JD 导入与工作台"><figcaption>JD 导入与工作台<br><code>evidence/p8_1_chatbox_first/p8_1_jd_intake_workbench_1920.png</code></figcaption></figure>
+<figure><img src="evidence/p8_1_chatbox_first/p8_1_chatbox_first_1440.png" alt="1440 Chatbox-first"><figcaption>1440 Chatbox-first<br><code>evidence/p8_1_chatbox_first/p8_1_chatbox_first_1440.png</code></figcaption></figure>
+<figure><img src="evidence/p8_1_chatbox_first/p8_1_chatbox_first_1200.png" alt="1200 Chatbox-first"><figcaption>1200 Chatbox-first<br><code>evidence/p8_1_chatbox_first/p8_1_chatbox_first_1200.png</code></figcaption></figure>
+<figure><img src="evidence/p8_1_chatbox_first/p8_1_chatbox_first_720.png" alt="720 Chatbox 优先"><figcaption>720 Chatbox 优先<br><code>evidence/p8_1_chatbox_first/p8_1_chatbox_first_720.png</code></figcaption></figure>
+<figure><img src="evidence/p8_1_chatbox_first/p8_1_chatbox_first_390.png" alt="390 Chatbox 输入区可达"><figcaption>390 Chatbox 输入区可达<br><code>evidence/p8_1_chatbox_first/p8_1_chatbox_first_390.png</code></figcaption></figure></div>
+    </section>
+    <section>
+      <h2>未验证范围与审计意见</h2>
+      <ul><li>未验证真实 MiniMax、DeepSeek 或 OpenAI-compatible provider 回复质量。</li><li>未读取用户真实个人资料路径。</li><li>未登录、抓取、自动沟通或自动投递 BOSS/猎聘/拉勾等招聘平台。</li><li>未实现 SaaS、ASR、会议平台、自动投递或 MCP/CLI。</li></ul>
+      <p>P8.1 自动化候选可按本报告截图和命令证据审查；若人工发现小屏遮挡或实际体验不符合 Chatbox-first，应打回 M4/M5。</p>
+    </section>
+  </main>
+</body>
+</html>

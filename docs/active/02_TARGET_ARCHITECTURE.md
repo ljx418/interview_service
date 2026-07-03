@@ -1,5 +1,72 @@
 # JobPilot AI P8-JD Intake 与简历生成体验强化目标架构
 
+## -5. P8.1 Chatbox-first 工作台信息架构目标
+
+P8.1 当前只做文档开发，不新增代码实现。目标是在 P8 已完成能力基础上修正前端信息架构，让 `apps/chatbox/src/main.tsx` 中的三栏工作台恢复为 Chatbox-first：
+
+```text
+User
+→ Chatbox Experience Shell (`apps/chatbox/src/main.tsx`)
+  → DesktopContextPanel / User Guidance（左侧，辅助）
+  → Conversation Plane / Chatbox（中央，主路径）
+    → Agent State Machine（紧凑状态）
+    → Message Timeline（首屏可见）
+    → Composer（始终可达）
+    → Composer Tool Rail（上传资料 / 粘贴 JD / 选择岗位 / 生成简历）
+  → Workbench（右侧，产物和确认）
+    → Job Target List
+    → Candidate Profile Summary
+    → Resume Draft / Resume Version
+    → Source refs / Pending confirmations / Export preflight
+→ FastAPI Agent Service (`services/api/main.py`, `services/api/schemas.py`)
+→ Domain Tools (`services/tools/jobpilot.py`, `services/profile/candidate.py`)
+→ SQLite Workspace / Artifact / Evidence
+```
+
+P8.1 不改变 API、Domain Tool、SQLite 或 Artifact 的业务语义。它只规定 UI 平面的职责和首屏优先级：
+
+| UI / 代码实体 | 当前 P8 风险 | P8.1 目标职责 | 状态 |
+| --- | --- | --- | --- |
+| `DesktopContextPanel` | 左侧指导弱，用户仍依赖中央表单理解资料需求 | 展示资料清单、缺失影响、示例路径和下一步建议 | 待 P8.1 实现 |
+| `Conversation Plane` | `p8-workflow-strip` 位于 timeline 前，抢占中央首屏 | 作为中央主路径，优先展示 Agent 状态、聊天时间线和输入框 | 待 P8.1 修改 |
+| `p8-workflow-strip` | 把资料/JD/简历生成入口做成中央大块任务区 | 降级为输入框附近工具条、弹层、抽屉或左右辅助面板入口 | 待 P8.1 修改 |
+| `MaterialIntakeWizard` | 可见但过重，容易让用户先填表而不是聊天 | 提供资料说明和补充入口，优先由左侧指导或轻弹层承载 | 待 P8.1 调整 |
+| `JDIntakeCenter` | 可见但与聊天主路径竞争 | 通过输入框工具入口触发，结果进入右侧岗位列表 | 待 P8.1 调整 |
+| `JobTargetList` | 与资料/JD/简历入口混在中央任务区 | 右侧工作台展示多个 JD、当前目标和匹配摘要 | 待 P8.1 调整 |
+| `ResumeGenerationPlane` | 作为表单入口抢占对话区 | 由对话意图或输入框工具触发，结果进入右侧简历草稿 | 待 P8.1 调整 |
+| `Workbench` | 空态和产物职责需要更稳定 | 展示岗位、画像、简历、source refs、待确认项和导出前检查 | 待 P8.1 强化 |
+| `styles.css` responsive rules | 不同屏幕下容易出现优先级混乱或按钮错位 | 桌面三栏、平板/移动 Chatbox 默认优先，辅助面板可抽屉化 | 待 P8.1 强化 |
+
+P8.1 代码实体与分层关系必须按以下方向表达，后续 drawio 和开发计划不得改写为抽象能力清单：
+
+```text
+User action
+→ DesktopContextPanel（辅助说明，不写业务数据）
+→ Conversation Plane（主路径：状态机、timeline、composer、tool rail）
+→ P8 UI tools（Material/JD/Job/Resume 只作为轻入口）
+→ FastAPI Boundary（现有 P8 API，不由 P8.1 重写语义）
+→ Domain Tools（jobpilot / candidate profile / export guard）
+→ SQLite Workspace + Artifact（document/job/match_report/resume_version）
+→ Workbench（右侧读取产物和确认项）
+→ Evidence（真实截图、HTML 报告、PRD 检视）
+```
+
+实体状态定义：
+
+- `已实现自动化候选`：P8 或更早阶段已经有本地/mock、fake provider、synthetic-style workspace、dry-run 或截图证据；
+- `P8.1 待修改`：本阶段后续自动化开发需要调整布局、状态展示或响应式行为的现有实体；
+- `P8 能力保留但重排`：业务能力已存在，但入口位置和视觉优先级必须调整；
+- `禁止/高风险`：不得在 P8.1 默认实现，包含平台抓取、真实 provider 默认外呼、真实资料默认读取和自动投递。
+
+P8.1 架构不变量：
+
+- Chatbox 是默认入口和中央主路径；
+- 资料准备、JD 导入和简历生成能力必须保留，但不得把聊天挤出首屏；
+- 普通聊天不静默写 artifact，明确生成/刷新/导出才进入工具路径；
+- `source_url` 仍只归档，不触发平台抓取；
+- Chatbox 不直接写 SQLite、不保存 API Key、不直连真实 provider；
+- 报告必须用真实界面截图验证多视口，不得用设计稿替代。
+
 ## -4. P8-JD Intake 与简历生成体验强化目标架构
 
 当前文档阶段的目标是把“用户不知道该提供什么资料”“没有清晰 JD 导入路径”“简历生成不够围绕目标岗位”三个体验问题转化为可执行架构规格。本阶段只做文档开发，不新增代码实体。

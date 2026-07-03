@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>P8.1 Chatbox-first Target Mock</title>
+  <style>
+    :root {
+      --bg: #f5f7f4;
+      --panel: #ffffff;
+      --ink: #15231f;
+      --muted: #60716a;
+      --line: #d9e3dd;
+      --guide: #e8f5f0;
+      --guide-line: #91b9ad;
+      --chat: #fdfefd;
+      --work: #fff7e9;
+      --work-line: #dfbc83;
+      --primary: #246b60;
+      --accent: #b96b2c;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; font-family: Inter, "Segoe UI", system-ui, sans-serif; color: var(--ink); background: var(--bg); }
+    .top { height: 68px; display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 0 28px; border-bottom: 1px solid var(--line); background: rgba(255,255,255,.9); }
+    .top h1 { margin: 0; font-size: 22px; letter-spacing: 0; }
+    .tag { border: 1px solid #d0ddd7; border-radius: 6px; padding: 7px 10px; color: #31534b; background: #f9fcfb; font-weight: 700; font-size: 13px; }
+    .stage { color: #8a4b0f; background: #fff7e9; border-color: #e6cda8; }
+    .shell { height: calc(100vh - 68px); display: grid; grid-template-columns: 300px minmax(0, 1fr) 360px; }
+    aside, main { min-width: 0; }
+    .guide { background: var(--guide); border-right: 1px solid var(--guide-line); padding: 20px; overflow: auto; }
+    .workbench { background: var(--work); border-left: 1px solid var(--work-line); padding: 20px; overflow: auto; }
+    .chat { display: flex; flex-direction: column; min-height: 0; background: var(--chat); }
+    .agent { padding: 18px 26px; border-bottom: 1px solid var(--line); display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 14px; align-items: center; }
+    .agent h2 { margin: 0 0 6px; font-size: 20px; }
+    .agent p, .card p { margin: 0; color: var(--muted); line-height: 1.45; }
+    .state { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+    .state span { border: 1px solid #cbdad3; border-radius: 6px; padding: 7px 9px; font-size: 12px; font-weight: 700; background: #fff; }
+    .state .on { background: #e1f4ed; border-color: #8cc7b4; color: #195b4f; }
+    .timeline { flex: 1; min-height: 0; overflow: auto; padding: 26px; display: flex; flex-direction: column; gap: 14px; }
+    .bubble { max-width: 78%; border-radius: 10px; padding: 14px 16px; border: 1px solid var(--line); box-shadow: 0 8px 18px rgba(34,47,42,.05); }
+    .assistant { background: #eff8f4; align-self: flex-start; }
+    .user { background: #eef2ff; align-self: flex-end; }
+    .composer { border-top: 1px solid var(--line); padding: 12px 26px 16px; background: rgba(255,255,255,.96); }
+    .tools { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 8px; margin-bottom: 10px; }
+    button { border: 1px solid #c8d8d1; background: #fff; border-radius: 7px; min-height: 40px; font-weight: 800; color: #20352f; }
+    .inputrow { display: grid; grid-template-columns: minmax(0,1fr) 112px; gap: 10px; }
+    textarea { resize: none; min-height: 58px; border: 1px solid #c8d8d1; border-radius: 10px; padding: 13px 14px; font: inherit; }
+    .send { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .card { border: 1px solid var(--line); border-radius: 10px; background: rgba(255,255,255,.82); padding: 14px; margin-bottom: 12px; }
+    .card h3 { margin: 0 0 8px; font-size: 16px; }
+    .list { display: grid; gap: 8px; margin-top: 12px; }
+    .row { display: flex; justify-content: space-between; gap: 12px; border: 1px solid #dde8e2; border-radius: 7px; background: #fff; padding: 10px; font-size: 13px; }
+    .watermark { position: fixed; right: 18px; bottom: 14px; color: #9a3412; background: #fff7ed; border: 1px solid #fed7aa; border-radius: 7px; padding: 8px 10px; font-size: 12px; font-weight: 900; }
+    @media (max-width: 900px) {
+      .top { height: auto; align-items: flex-start; flex-direction: column; padding: 14px 16px; }
+      .shell { height: auto; min-height: calc(100vh - 96px); grid-template-columns: 1fr; }
+      .guide { order: 2; border-right: 0; border-top: 1px solid var(--guide-line); display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; }
+      .chat { order: 1; min-height: 72vh; }
+      .workbench { order: 3; border-left: 0; border-top: 1px solid var(--work-line); display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; }
+      .card { margin-bottom: 0; }
+      .agent { grid-template-columns: 1fr; }
+      .state { justify-content: flex-start; }
+      .tools { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    }
+    @media (max-width: 520px) {
+      .top h1 { font-size: 18px; }
+      .tag { font-size: 12px; }
+      .guide, .workbench { display: none; }
+      .chat { min-height: calc(100vh - 92px); }
+      .agent { padding: 14px 16px; }
+      .agent h2 { font-size: 18px; }
+      .timeline { padding: 16px; padding-bottom: 178px; }
+      .bubble { max-width: 96%; }
+      .composer { position: fixed; left: 0; right: 0; bottom: 0; padding: 10px 12px 12px; box-shadow: 0 -16px 34px rgba(17,27,24,.12); }
+      .inputrow { grid-template-columns: 1fr; }
+      .tools { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      button { min-height: 38px; font-size: 13px; }
+      .watermark { left: 10px; right: 10px; bottom: 146px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+  <header class="top">
+    <div><h1>求职材料工作台</h1><span>目标概念：Chatbox 是主路径</span></div>
+    <div><span class="tag stage">目标概念图 / 非当前实现</span> <span class="tag">本地 mock / 不外呼</span></div>
+  </header>
+  <div class="shell">
+    <aside class="guide">
+      <section class="card"><h3>当前任务</h3><p>先通过聊天明确目标岗位，再补材料。</p></section>
+      <section class="card"><h3>资料清单</h3><div class="list"><div class="row"><span>简历</span><b>需要</b></div><div class="row"><span>项目经历</span><b>缺失影响高</b></div><div class="row"><span>目标 JD</span><b>可粘贴</b></div></div></section>
+      <section class="card"><h3>缺失影响</h3><p>缺项目经历会影响 STAR 故事和简历证据。</p></section>
+    </aside>
+    <main class="chat">
+      <section class="agent">
+        <div><h2>对话与材料处理</h2><p>中央只放紧凑状态、聊天时间线和输入框；资料/JD 入口贴近输入框。</p></div>
+        <div class="state"><span class="on">可继续对话</span><span>0 个产物</span><span>本地 mock</span></div>
+      </section>
+      <section class="timeline">
+        <div class="bubble assistant">我可以先和你聊目标岗位，也可以在你粘贴 JD 后生成定制简历。</div>
+        <div class="bubble user">帮我生成一版前端岗位简历，需要我提供什么？</div>
+        <div class="bubble assistant">请先补充简历、一个项目经历和目标 JD。我会在右侧显示 source refs 和待确认项。</div>
+      </section>
+      <form class="composer">
+        <div class="tools"><button>上传资料</button><button>粘贴 JD</button><button>选择岗位</button><button>生成简历</button></div>
+        <div class="inputrow"><textarea>可以连续追问、补充偏好，或直接粘贴目标岗位 JD...</textarea><button class="send">发送任务</button></div>
+      </form>
+    </main>
+    <aside class="workbench">
+      <section class="card"><h3>当前目标 JD</h3><p>前端工程师 / 公司官网手动粘贴</p></section>
+      <section class="card"><h3>画像摘要</h3><p>React 项目经验可用；工程化证据待补。</p></section>
+      <section class="card"><h3>简历草稿</h3><p>绑定目标 JD，缺证据内容进入待确认。</p></section>
+      <section class="card"><h3>导出前检查</h3><p>2 个 source refs，1 个 blocking confirmation。</p></section>
+    </aside>
+  </div>
+  <div class="watermark">目标概念图 / 非当前实现截图 / 不代表 P8.1 已完成</div>
+</body>
+</html>

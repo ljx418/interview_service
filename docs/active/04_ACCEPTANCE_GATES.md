@@ -1,5 +1,82 @@
 # JobPilot AI P8-JD Intake 与简历生成体验强化验收门槛
 
+## 当前阶段文档门槛 - P8.1 Chatbox-first 工作台信息架构
+
+这些门槛只验收文档和架构方向是否足以支撑后续 P8.1 自动化开发，不代表 Chatbox-first UI 已经实现，不代表真实 provider、真实个人资料、招聘平台接入或自动投递已通过。
+
+### P8.1 文档门槛 A - Chatbox 第一优先
+
+通过条件：
+
+- 文档明确三栏结构为“用户指导 - Chatbox - 工作台”；
+- 中央 Chatbox 是第一优先展示和第一交互路径；
+- 聊天时间线、Agent 状态和输入框不得被大型 workflow strip 或表单挤出首屏；
+- 资料准备、JD 导入和简历生成入口必须围绕 Chatbox 组织。
+
+不通过条件：
+
+- 文档继续把中央大型资料/JD/简历表单作为首屏主路径；
+- 用户必须先理解 workspace、artifact、job、resume_version 等内部概念才能开始聊天；
+- 将 P8.1 写成只做视觉美化而不是信息架构修正。
+
+### P8.1 文档门槛 B - 三栏职责稳定
+
+通过条件：
+
+- 左侧用户指导只承载资料清单、缺失影响、示例路径和下一步建议；
+- 中央 Chatbox 承载连续对话、Agent 状态、时间线、输入框和紧邻输入框的工具入口；
+- 右侧工作台承载岗位列表、当前目标 JD、画像、简历草稿、source refs、pending confirmations 和 export preflight；
+- 文档列出 `DesktopContextPanel`、`Conversation Plane`、`p8-workflow-strip`、`MaterialIntakeWizard`、`JDIntakeCenter`、`JobTargetList`、`ResumeGenerationPlane`、`Workbench` 和 `styles.css` 的调整职责。
+
+不通过条件：
+
+- 左、中、右栏目职责互相重复或冲突；
+- 资料/JD/简历生成入口没有明确迁移路径；
+- 工作台空态、待确认、可导出和失败恢复没有验收要求。
+
+### P8.1 文档门槛 C - 多视口体验可验收
+
+通过条件：
+
+- 1200px、1440px、1920px 桌面视口下，中央 Chatbox 首屏优先可见；
+- 720px 平板视口下，Chatbox 是默认主视图，指导和工作台可作为次级区域；
+- 390px 移动视口下，输入框、发送、上传资料、粘贴 JD 或等价入口可达；
+- 验收报告必须使用真实界面截图证明无按钮错位、文字重叠、核心入口不可达。
+
+不通过条件：
+
+- 只用设计稿或合成图替代真实界面截图；
+- 只验收桌面，不验收窄屏；
+- 窄屏默认进入资料表单而不是 Chatbox。
+
+### P8.1 文档门槛 D - 边界不虚假
+
+通过条件：
+
+- 文档明确 P8.1 不登录、不抓取、不自动沟通、不自动投递招聘平台；
+- 不默认调用真实 MiniMax、DeepSeek 或 OpenAI-compatible provider；
+- 不读取未授权真实个人资料；
+- 不执行 workspace 删除、迁移 apply 或不可逆操作；
+- 不把 P8.1 文档开发写成代码实现通过。
+
+P8.1 后续自动化验收最低证据：
+
+```bash
+.venv/bin/python -m pytest
+npm --prefix apps/chatbox run build
+drawio XML parse
+P8.1 browser acceptance screenshots: 1200px, 1440px, 1920px, 720px, 390px
+P8.1 Chinese HTML acceptance report
+```
+
+P8.1 后续自动化验收报告必须逐项说明：
+
+- 当前截图是否证明 Chatbox 首屏优先；
+- 输入框工具入口是否紧贴输入框或处于清晰辅助面板；
+- 左侧用户指导、中央 Chatbox、右侧工作台是否职责稳定；
+- Agent 状态机、岗位、画像、简历草稿、source refs、pending confirmations、export preflight 是否在正确区域可见；
+- 任何目标概念图、设计图或 AI 图像不得替代真实实现截图。
+
 ## 当前阶段文档门槛 - P8-JD Intake 与简历生成体验强化
 
 这些门槛只验收文档和架构方向是否足以支撑后续 P8 自动化开发，不代表 BOSS/招聘平台接入、自动投递、真实 provider、真实个人资料或最终产品化已通过。
