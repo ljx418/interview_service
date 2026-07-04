@@ -107,7 +107,7 @@ def _static_code_checks() -> dict:
 def _run_validation_commands() -> dict:
     static_checks = _static_code_checks()
     results = [
-        _run_command("Full backend and eval pytest", [PYTHON_BIN, "-m", "pytest"], 420, env={"JOBPILOT_P9_REPORT_GENERATING": "1"}),
+        _run_command("Full backend and eval pytest", [PYTHON_BIN, "-m", "pytest"], 420),
         _run_command("Chatbox production build", "npm --prefix apps/chatbox run build", 180),
         _run_command(
             "drawio XML parse",
