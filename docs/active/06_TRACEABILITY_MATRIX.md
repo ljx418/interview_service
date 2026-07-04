@@ -1,38 +1,38 @@
 # JobPilot AI P9 Chatbox-native 求职情报与申请包工作台追踪矩阵
 
-## -6. 当前文档阶段 P9 Chatbox-native 追踪矩阵
+## -6. 当前自动化候选收口阶段 P9 Chatbox-native 追踪矩阵
 
 | 当前目标 | 文档 / 实体边界 | 主要文件 / 模块 | 当前证据 | 验收门槛 |
 | --- | --- | --- | --- | --- |
-| Chatbox-native 主路径 | `ConversationPlane`, `JourneyStateHeader`, `ComposerToolRail` | `apps/chatbox/src/main.tsx`, `apps/chatbox/src/styles.css` | P8.1 自动化候选保留；P9 需避免向导卡片主导 | P9 门槛 A |
-| 顶部服务中心 | `TopServiceBar`, service health summary | future UI module, `services/api/main.py`, provider diagnostics | provider/settings 基础存在；P9 待新增统一状态栏 | P9 门槛 C |
-| 左侧求职态势图 | `LeftIntelligencePanel`, `MarketMapView`, `OpportunityMatchPanel`, `ApplicationPipelineView` | future UI module, job/search/pipeline data | P9 审查页和态势细化文档；代码待开发 | P9 门槛 B |
-| JD 搜索和招聘信息汇总 | `JobSourceConnector`, `JobSearchRun`, `NormalizedJobPost` | future API/domain/storage | P8 已有手动 JD 导入；P9 待扩展合规 source run | P9 门槛 B/C |
-| Chatbox/ASR 资料补全 | `ChatboxCommandRouter`, `VoiceIntakeSession`, `StoryBank` | future API/domain; ASR opt-in boundary | P4/P6 有连续对话基线；ASR 未实现 | P9 门槛 C/D |
-| 多 JD 申请包 | `ResumePackageGenerator`, `ApplicationPackageVersion` | existing resume routes + future story/package layer | P8 已有 JD 定制简历；P9 待扩展故事和多版本申请包 | P9 门槛 D |
-| Chatbox 驱动流程更新 | `ApplicationPipelineService`, pipeline storage | future API/domain/storage | 当前无完整流程服务；P9 待新增 | P9 门槛 D |
-| 可视化验收 | browser screenshots, HTML report | `docs/reports/`, evidence scripts | P9 审查页已有基线图；真实实现截图待 P9-M9 | P9 门槛 A/B/C/D |
-| P9 实施范围锁 | UI/Visualization scope guard | active docs, stage reviews, drawio, report false-green scan | 外部审计意见已采纳；P9 限定为 UI/信息结构/可视化层 | P9 门槛 E |
+| Chatbox-native 主路径 | `ConversationPlane`, Agent State, composer tool actions | `apps/chatbox/src/main.tsx`, `apps/chatbox/src/styles.css` | P9 已完成中央 Chatbox 主路径和输入区优先截图 | P9 门槛 A |
+| 顶部服务中心 | `TopServiceCenter`, service health summary | `apps/chatbox/src/main.tsx`, `apps/chatbox/src/styles.css` | P9 首屏截图和静态 guard 已覆盖 provider/JD/ASR/MCP/Skill/workspace 状态 | P9 门槛 C |
+| 左侧求职态势图 | `LeftIntelligencePanel`, `MarketMapView`, `OpportunityMatchPanel`, `ApplicationPipelineView` | `apps/chatbox/src/main.tsx`, `apps/chatbox/src/styles.css` | P9 已完成三页签、地图图钉、缩放、拖动、流程态势和多视口截图 | P9 门槛 B |
+| JD 搜索和招聘信息汇总 | `handleP9Command`, local search run state, existing `job` data | `apps/chatbox/src/main.tsx`, existing API/domain/storage | P9 只实现用户粘贴、fixture、已导入 JD 和本地 search run 表达；不抓取平台 | P9 门槛 B/C |
+| Chatbox/ASR 资料补全 | `handleP9Command`, local story draft state, ASR opt-in boundary | `apps/chatbox/src/main.tsx`, existing profile/resume/artifact routes | Chatbox 引导式资料和故事补全已覆盖自动化候选；真实 ASR 未实现且未声明通过 | P9 门槛 C/D |
+| 多 JD 申请包 | existing resume routes, `P9ArtifactOverview`, local package summary | `apps/chatbox/src/main.tsx`, existing resume/artifact capabilities | P8 JD 定制简历能力被 P9 产物台和 Chatbox 路径复用；故事/申请包为本地草稿表达 | P9 门槛 D |
+| Chatbox 驱动流程更新 | `handleP9Command`, local pipeline state, `ApplicationPipelineView` | `apps/chatbox/src/main.tsx`, `localStorage` key `jobpilot:p9:pipeline` | P9 已支持本地流程状态更新；不对外沟通、不自动投递 | P9 门槛 D |
+| 可视化验收 | browser screenshots, HTML report | `docs/reports/`, `scripts/generate_p9_stage_closure_acceptance.py`, report evals | P9 已生成 7 张真实界面截图、中文报告、结构化 JSON 和 eval | P9 门槛 A/B/C/D |
+| P9 实施范围锁 | UI/Visualization scope guard | active docs, stage reviews, drawio, report false-green scan | 外部审计意见已采纳；P9 限定为 UI/信息结构/可视化层，未实现高风险外部系统 | P9 门槛 E |
 
 P9 代码实体状态追踪：
 
 | 层级 | 实体 | 当前状态 | 关系 | 验收证据 |
 | --- | --- | --- | --- | --- |
-| UI | `TopServiceBar` | 待新增 | 读取 provider/ASR/MCP/Skill/search/workspace 状态；不保存密钥 | 顶部状态截图 |
-| UI | `LeftIntelligencePanel` | 待新增 | 读取 job/search/pipeline 摘要；点击后联动 Chatbox | 三大页签截图 |
-| UI | `MarketMapView` | 待新增 | 上游 `JobMarketInsight`；下游城市/技术栈追问 | 地图缩放拖动截图 |
-| UI | `ConversationPlane` | 需修改 | 中央主路径，触发 command router 和 API | 首屏 Chatbox 截图 |
-| UI | `RightArtifactBench` | 需修改 | 读取 profile/resume/story/package/pending confirmations | 产物台截图 |
-| API | `JobSourceConnector` routes | 待新增 | 管理 search run 和 source refs；默认不登录招聘平台 | API/eval 证据 |
-| Domain | `StoryBank` | 待新增或强化 | 从用户资料/Chatbox/ASR 汇总项目故事和能力证据 | 故事 source refs 证据 |
-| Domain | `ApplicationPipelineService` | 待新增 | 通过 Chatbox 更新投递流程和历史 | 流程更新 eval |
+| UI | `TopServiceCenter` | 已实现自动化候选 | 读取 provider/ASR/MCP/Skill/search/workspace 状态；不保存密钥 | 顶部状态截图 |
+| UI | `LeftIntelligencePanel` | 已实现自动化候选 | 读取 job/search/pipeline 摘要；点击后联动 Chatbox | 三大页签截图 |
+| UI | `MarketMapView` | 已实现自动化候选 | 上游本地城市/search run 摘要；下游城市/技术栈追问 | 地图缩放拖动截图 |
+| UI | `ConversationPlane` | 已修改为 P9 主路径 | 中央主路径，触发 `handleP9Command` 和现有 API | 首屏 Chatbox 截图 |
+| UI | `Workbench / P9ArtifactOverview` | 已实现自动化候选 | 读取 profile/resume/story/package/pending confirmations 和本地 P9 state | 产物台截图 |
+| API | `JobSourceConnector` routes | 未新增独立服务；P9 复用现有 API 边界 | 管理本地 search run 表达和 source refs；默认不登录招聘平台 | 报告边界和截图证据 |
+| Domain | `StoryBank` | 未新增独立服务；P9 用本地故事草稿覆盖自动化候选 | 从用户资料/Chatbox 汇总项目故事和能力证据 | 多轮对话补证 |
+| Domain | `ApplicationPipelineService` | 未新增独立服务；P9 用 local pipeline state 覆盖自动化候选 | 通过 Chatbox 更新本地投递流程和历史 | 流程更新截图/eval |
 | Storage | `job`, `match_report`, `candidate_profile`, `resume_version`, `artifact` | 已实现自动化候选 | P9 复用并扩展展示 | 回归测试 |
-| Evidence | `docs/reports/` / screenshots | 已有机制，P9 待新增报告 | 证明真实实现，不证明高风险外部能力 | 中文 HTML 报告 |
+| Evidence | `docs/reports/` / screenshots | P9 阶段收口报告已完成 | 证明真实实现，不证明高风险外部能力 | 中文 HTML 报告 |
 | Scope | P9 scope guard | 文档约束，开发阶段必须复核 | 不新增真实数据源系统、外部平台接入、长期任务系统或独立业务服务 | P9-M0 / P9-M9 审计 |
 
 P9 当前阶段不得用以下内容替代验收：
 
-- 不得写成：P9 文档通过等于 P9 UI 已实现；
+- 不得写成：P9 UI 自动化候选通过等于最终产品化完成；
 - 不得写成：保存 URL 或手动粘贴 JD 等于招聘平台自动接入；
 - 不得写成：fixture/search mock 等于全网 JD 搜索；
 - 不得写成：配置页显示 provider 等于真实 provider 质量通过；

@@ -157,3 +157,42 @@ def test_p9_stage_closure_drawio_text_mirror_is_synced() -> None:
     names = [diagram.attrib.get("name", "") for diagram in diagrams]
     assert "3 代码实体与分层" in names
     assert "7 里程碑门槛出门" in names
+
+
+def test_p9_current_active_docs_do_not_use_stale_document_stage_status() -> None:
+    current_docs = [
+        ROOT / "docs/active/01_STAGE_PRD.md",
+        ROOT / "docs/active/02_TARGET_ARCHITECTURE.md",
+        ROOT / "docs/active/04_ACCEPTANCE_GATES.md",
+        ROOT / "docs/active/06_TRACEABILITY_MATRIX.md",
+        ROOT / "docs/active/23_P9_CHATBOX_NATIVE_JOB_INTELLIGENCE_PLAN.md",
+        ROOT / "docs/active/jobpilot-stage-gap-and-acceptance.md",
+        ROOT / "docs/active/stage-reviews/P9_M9_AUTOMATED_ACCEPTANCE_AUDIT.md",
+    ]
+    stale_markers = [
+        "当前文档阶段 P9",
+        "P9 文档阶段",
+        "当前最新文档阶段",
+        "文档不得把 P9 目标写成 P9 已实现",
+        "P9 待",
+        "代码待开发",
+        "真实实现截图待 P9-M9",
+        "TopServiceBar",
+        "future UI",
+        "future API",
+        "当前无完整流程服务",
+        "待新增统一状态栏",
+    ]
+    for path in current_docs:
+        text = path.read_text(encoding="utf-8")
+        for marker in stale_markers:
+            assert marker not in text, f"{path} still contains stale P9 status marker: {marker}"
+
+    architecture = (ROOT / "docs/active/02_TARGET_ARCHITECTURE.md").read_text(encoding="utf-8")
+    for marker in [
+        "TopServiceCenter",
+        "handleP9Command",
+        "Workbench / P9ArtifactOverview",
+        "未新增独立服务",
+    ]:
+        assert marker in architecture
