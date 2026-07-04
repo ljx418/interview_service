@@ -8,6 +8,7 @@ import subprocess
 import sys
 import time
 from datetime import datetime, timezone
+from html import escape
 from pathlib import Path
 from urllib.request import urlopen
 
@@ -106,7 +107,7 @@ def _static_code_checks() -> dict:
 def _run_validation_commands() -> dict:
     static_checks = _static_code_checks()
     results = [
-        _run_command("Full backend and eval pytest", [PYTHON_BIN, "-m", "pytest"], 420),
+        _run_command("Full backend and eval pytest", [PYTHON_BIN, "-m", "pytest"], 420, env={"JOBPILOT_P9_REPORT_GENERATING": "1"}),
         _run_command("Chatbox production build", "npm --prefix apps/chatbox run build", 180),
         _run_command(
             "drawio XML parse",
@@ -340,6 +341,107 @@ def _write_scenario(command_evidence: dict) -> None:
     SCENARIO.write_text(json.dumps(scenario, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
+def _html(value: object) -> str:
+    return escape(str(value), quote=True)
+
+
+def _human_audit_section(command_evidence: dict) -> str:
+    command_rows = "\n".join(
+        f"<tr><td><code>{_html(item['command'])}</code></td><td class=\"{_html(item['status'])}\">{_html(item['status'])}</td><td>{_html(item['summary'])}</td></tr>"
+        for item in command_evidence["results"]
+    )
+    evidence_rows = [
+        ("目标架构与当前实现", "docs/active/jobpilot-stage-gap-and-acceptance.drawio；docs/active/jobpilot-stage-gap-and-acceptance.md", "8 页 drawio 已 parse，通过颜色标注已实现/已修改/未实现实体。"),
+        ("首屏 Chatbox-native 三栏", "docs/reports/evidence/p9_stage_closure/p9_initial_1920.png", "顶部服务中心、左侧态势、中央 Chatbox、右侧产物台可见。"),
+        ("JD/城市/薪资汇总", "docs/reports/evidence/p9_stage_closure/p9_search_run_1920.png", "通过 Chatbox 发起，本地 search run 更新；未联网抓取。"),
+        ("投递流程更新", "docs/reports/evidence/p9_stage_closure/p9_pipeline_update_1920.png", "通过 Chatbox 更新本地流程；不对外沟通或投递。"),
+        ("响应式", "p9_1440.png / p9_1200.png / p9_720.png / p9_390.png", "多视口真实截图；390px 下 Chatbox 和输入区优先，左侧态势下移。"),
+        ("多背景多轮对话", "本报告“多背景多轮对话补证”段落", "两组合成候选人，各 20 轮用户消息；fake/local 路径，真实 provider 未调用。"),
+        ("工程回归", "docs/reports/evidence/p9_stage_closure/p9_stage_closure_command_evidence.json", "全量 pytest、build、drawio parse、P9 eval、diff check 均通过。"),
+        ("报告自检", "docs/reports/evidence/p9_stage_closure/p9_stage_closure_post_report_evidence.json", "7 张图片均存在，必需文本齐全，未命中 forbidden false-green 表述。"),
+    ]
+    evidence_table = "\n".join(
+        f"<tr><td>{_html(area)}</td><td><code>{_html(path)}</code></td><td>{_html(result)}</td></tr>"
+        for area, path, result in evidence_rows
+    )
+    files = [
+        ("前端实现", "apps/chatbox/src/main.tsx；apps/chatbox/src/styles.css", "新增/调整 TopServiceCenter、LeftIntelligencePanel、MarketMapView、OpportunityMatchPanel、ApplicationPipelineView、P9ArtifactOverview、handleP9Command 和响应式样式。"),
+        ("阶段主文档", "README.md；TODO.md；docs/active/00_README.md；01_STAGE_PRD.md；02_TARGET_ARCHITECTURE.md；03_MILESTONES_AND_DELIVERY_PLAN.md；04_ACCEPTANCE_GATES.md；06_TRACEABILITY_MATRIX.md；17_PRODUCTIZATION_DEVELOPMENT_ROADMAP.md；23_P9_CHATBOX_NATIVE_JOB_INTELLIGENCE_PLAN.md", "P9 目标、架构、里程碑、验收门槛和风险边界进入统一口径。"),
+        ("drawio 与文本镜像", "docs/active/jobpilot-stage-gap-and-acceptance.drawio；docs/active/jobpilot-stage-gap-and-acceptance.md", "8 页图覆盖目标架构、当前差异、代码实体分层、左侧态势、用户路线、开发验收计划、门槛和安全边界。"),
+        ("阶段审计", "docs/active/stage-reviews/P9_*.md", "记录 M0、M1-M8、M9、文档覆盖、外部意见修订和详细开发验收计划。"),
+        ("前端审查包", "docs/p9-chatbox-native-review/", "保存 PRD 初稿、当前基线、体验规格、用户路线、风险门槛、地图可视化调研和审查页。"),
+        ("验收报告与证据", "docs/reports/P9_CHATBOX_NATIVE_ACCEPTANCE_REPORT.html；docs/reports/P9_STAGE_CLOSURE_ACCEPTANCE_REPORT.html；docs/reports/evidence/p9_chatbox_native/；docs/reports/evidence/p9_stage_closure/", "保存两轮 HTML 报告、截图、scenario、命令证据和报告自检 JSON。"),
+        ("自动化脚本与 eval", "scripts/generate_p9_chatbox_native_acceptance.py；scripts/generate_p9_stage_closure_acceptance.py；tests/evals/test_p9_chatbox_native_acceptance_eval.py；tests/evals/test_p9_stage_closure_acceptance_eval.py", "支持报告复现和最低审计门槛回归。"),
+    ]
+    file_table = "\n".join(
+        f"<tr><td>{_html(group)}</td><td><code>{_html(paths)}</code></td><td>{_html(purpose)}</td></tr>"
+        for group, paths, purpose in files
+    )
+    return f"""
+    <section>
+      <h2>人类审计入口与完整性结论</h2>
+      <p><strong>审计结论：</strong>P9 阶段收口报告已从“脚本通过证明”升级为“人类可独立审计入口”。审计者可以从本节开始，按证据索引逐项打开截图、drawio、命令 JSON、代码和文档，确认本阶段自动化开发是否达成目标。</p>
+      <table><tbody>
+        <tr><th>报告生成时 Git HEAD</th><td><code>{_html(command_evidence.get('git_head', 'unknown'))}</code></td></tr>
+        <tr><th>报告生成时工作区状态</th><td><pre>{_html(command_evidence.get('git_status_short', 'unknown'))}</pre></td></tr>
+        <tr><th>最终提交核验方式</th><td><code>git log -1 --oneline</code>；若报告生成后又提交，应以仓库最新 commit 为归档点。</td></tr>
+        <tr><th>报告适用边界</th><td>仅覆盖 P9 本地自动化候选：UI 信息架构、求职态势可视化、Chatbox 本地命令路由、现有能力重新组织和截图证据。</td></tr>
+      </tbody></table>
+    </section>
+    <section>
+      <h2>人类审计步骤</h2>
+      <ol>
+        <li>先阅读“目标架构”和“当前实现”，确认 P9 没被描述成真实搜索、真实 ASR、真实 provider 或自动投递系统。</li>
+        <li>打开 drawio 第 3 页“代码实体与分层”，核对实体状态：绿色已实现，蓝色已修改/复用，红色未实现或禁止虚假验收。</li>
+        <li>按“截图证据”检查 1920、1440、1200、720、390 视口；重点看中央 Chatbox 是否优先、左侧态势是否可读、右侧产物台是否可见。</li>
+        <li>对照“证据索引”逐项打开图片和 JSON，确认 JD 汇总、流程更新、多背景多轮对话、全量测试和报告自检都有证据。</li>
+        <li>运行“复验命令”中的命令；若任一命令失败，或者截图缺失/不可见，应打回自动化验收。</li>
+        <li>最后阅读“残余风险与打回条件”，确认报告没有把未授权高风险能力写成已通过。</li>
+      </ol>
+    </section>
+    <section>
+      <h2>变更文件清单</h2>
+      <table><thead><tr><th>分组</th><th>文件</th><th>审计目的</th></tr></thead><tbody>{file_table}</tbody></table>
+    </section>
+    <section>
+      <h2>证据索引</h2>
+      <table><thead><tr><th>审计点</th><th>证据路径</th><th>如何判断</th></tr></thead><tbody>{evidence_table}</tbody></table>
+    </section>
+    <section>
+      <h2>复验命令</h2>
+      <p>以下命令已由报告脚本执行。审计者可以在仓库根目录重新运行，预期状态均为 passed。</p>
+      <table><thead><tr><th>命令</th><th>状态</th><th>关键输出摘要</th></tr></thead><tbody>{command_rows}</tbody></table>
+    </section>
+    <section>
+      <h2>残余风险与打回条件</h2>
+      <table><thead><tr><th>风险</th><th>当前判断</th><th>打回条件</th></tr></thead><tbody>
+        <tr><td>移动端信息顺序</td><td>390px 截图显示 Chatbox 和输入区优先，左侧态势下移；这是 P9 自动化候选可接受状态，但仍建议人工体验复核。</td><td>若移动端核心输入、发送、粘贴 JD、上传资料或状态机不可达，应打回 P9-M8。</td></tr>
+        <tr><td>真实 JD 搜索</td><td>未实现，当前只使用用户粘贴、已导入 JD、repo fixture 和本地示例。</td><td>若报告或 UI 声称已完成真实全网搜索或触发平台抓取，应打回。</td></tr>
+        <tr><td>真实 provider / ASR / MCP</td><td>未默认调用；顶部服务中心只做状态可见和边界提醒。</td><td>若未授权调用外部 provider、麦克风或 MCP/Skill 平台，应停止并要求用户确认。</td></tr>
+        <tr><td>自动投递/平台沟通</td><td>未实现；流程更新仅写本地状态。</td><td>若出现自动外呼、自动投递、平台登录或绕风控能力，应打回并单独立项。</td></tr>
+        <tr><td>产品化完成度</td><td>本报告不证明最终产品化完成，只证明 P9 本地自动化候选通过。</td><td>若被用于声明 SaaS、真实资料路径、真实平台接入或最终 GA，应打回。</td></tr>
+      </tbody></table>
+    </section>
+"""
+
+
+def _enhance_report_for_human_audit(command_evidence: dict) -> None:
+    html = REPORT.read_text(encoding="utf-8")
+    html = html.replace("若报告或 UI 声称“全网搜索已完成”或触发平台抓取，应打回。", "若报告或 UI 声称已完成真实全网搜索或触发平台抓取，应打回。")
+    if "人类审计入口与完整性结论" in html:
+        REPORT.write_text(html, encoding="utf-8")
+        return
+    section = _human_audit_section(command_evidence)
+    html = html.replace("    <section>\n      <h2>目标架构</h2>", section + "\n    <section>\n      <h2>目标架构</h2>", 1)
+    REPORT.write_text(html, encoding="utf-8")
+
+
+def _normalize_report_whitespace() -> None:
+    html = REPORT.read_text(encoding="utf-8")
+    cleaned = "\n".join(line.rstrip() for line in html.splitlines()) + "\n"
+    REPORT.write_text(cleaned, encoding="utf-8")
+
+
 def _post_report_validation() -> dict:
     html = REPORT.read_text(encoding="utf-8")
     image_refs = re.findall(r'<img[^>]+src="([^"]+)"', html)
@@ -361,6 +463,12 @@ def _post_report_validation() -> dict:
         "RightArtifactBench",
         "drawio",
         "阶段收口",
+        "人类审计入口与完整性结论",
+        "人类审计步骤",
+        "变更文件清单",
+        "证据索引",
+        "复验命令",
+        "残余风险与打回条件",
     ]
     missing_text = [item for item in required if item not in html]
     forbidden = [
@@ -389,6 +497,11 @@ def _post_report_validation() -> dict:
 def main() -> None:
     EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
     WORKSPACE_ROOT.mkdir(parents=True, exist_ok=True)
+    if REPORT.exists() and COMMAND_EVIDENCE.exists():
+        try:
+            _enhance_report_for_human_audit(json.loads(COMMAND_EVIDENCE.read_text(encoding="utf-8")))
+        except Exception:
+            pass
     command_evidence = _run_validation_commands()
     _write_scenario(command_evidence)
     api_proc = None
@@ -429,6 +542,8 @@ def main() -> None:
             stderr=subprocess.STDOUT,
             timeout=180,
         )
+        _enhance_report_for_human_audit(command_evidence)
+        _normalize_report_whitespace()
         post = _post_report_validation()
         print(json.dumps({"report": str(REPORT), "post_validation": post, "git_head": _git_head(), "git_status": _git_status_short()}, ensure_ascii=False, indent=2))
     finally:

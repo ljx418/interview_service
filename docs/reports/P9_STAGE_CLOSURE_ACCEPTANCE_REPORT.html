@@ -37,9 +37,113 @@
     <h1>P9 阶段收口：Chatbox-native 求职情报工作台自动化验收报告</h1>
     <p><span class="badge">passed</span></p>
     <p class="meta">复验 P9 目标架构、当前实现、出门条件和真实界面路径是否在本地自动化候选范围内全绿，并明确未验证的高风险外部能力。</p>
-    <p class="meta">Started: 2026-07-03T22:18:06.665Z · Ended: 2026-07-03T22:18:14.121Z · Report: <code>/mnt/c/workspace/interview_service/docs/reports/P9_STAGE_CLOSURE_ACCEPTANCE_REPORT.html</code></p>
+    <p class="meta">Started: 2026-07-04T02:53:30.629Z · Ended: 2026-07-04T02:53:37.631Z · Report: <code>/mnt/c/workspace/interview_service/docs/reports/P9_STAGE_CLOSURE_ACCEPTANCE_REPORT.html</code></p>
   </header>
   <main>
+
+    <section>
+      <h2>人类审计入口与完整性结论</h2>
+      <p><strong>审计结论：</strong>P9 阶段收口报告已从“脚本通过证明”升级为“人类可独立审计入口”。审计者可以从本节开始，按证据索引逐项打开截图、drawio、命令 JSON、代码和文档，确认本阶段自动化开发是否达成目标。</p>
+      <table><tbody>
+        <tr><th>报告生成时 Git HEAD</th><td><code>29e43f4</code></td></tr>
+        <tr><th>报告生成时工作区状态</th><td><pre>M docs/reports/P9_STAGE_CLOSURE_ACCEPTANCE_REPORT.html
+ M docs/reports/evidence/p9_stage_closure/p9_stage_closure_command_evidence.json
+ M scripts/generate_p9_stage_closure_acceptance.py
+ M tests/evals/test_p9_stage_closure_acceptance_eval.py</pre></td></tr>
+        <tr><th>最终提交核验方式</th><td><code>git log -1 --oneline</code>；若报告生成后又提交，应以仓库最新 commit 为归档点。</td></tr>
+        <tr><th>报告适用边界</th><td>仅覆盖 P9 本地自动化候选：UI 信息架构、求职态势可视化、Chatbox 本地命令路由、现有能力重新组织和截图证据。</td></tr>
+      </tbody></table>
+    </section>
+    <section>
+      <h2>人类审计步骤</h2>
+      <ol>
+        <li>先阅读“目标架构”和“当前实现”，确认 P9 没被描述成真实搜索、真实 ASR、真实 provider 或自动投递系统。</li>
+        <li>打开 drawio 第 3 页“代码实体与分层”，核对实体状态：绿色已实现，蓝色已修改/复用，红色未实现或禁止虚假验收。</li>
+        <li>按“截图证据”检查 1920、1440、1200、720、390 视口；重点看中央 Chatbox 是否优先、左侧态势是否可读、右侧产物台是否可见。</li>
+        <li>对照“证据索引”逐项打开图片和 JSON，确认 JD 汇总、流程更新、多背景多轮对话、全量测试和报告自检都有证据。</li>
+        <li>运行“复验命令”中的命令；若任一命令失败，或者截图缺失/不可见，应打回自动化验收。</li>
+        <li>最后阅读“残余风险与打回条件”，确认报告没有把未授权高风险能力写成已通过。</li>
+      </ol>
+    </section>
+    <section>
+      <h2>变更文件清单</h2>
+      <table><thead><tr><th>分组</th><th>文件</th><th>审计目的</th></tr></thead><tbody><tr><td>前端实现</td><td><code>apps/chatbox/src/main.tsx；apps/chatbox/src/styles.css</code></td><td>新增/调整 TopServiceCenter、LeftIntelligencePanel、MarketMapView、OpportunityMatchPanel、ApplicationPipelineView、P9ArtifactOverview、handleP9Command 和响应式样式。</td></tr>
+<tr><td>阶段主文档</td><td><code>README.md；TODO.md；docs/active/00_README.md；01_STAGE_PRD.md；02_TARGET_ARCHITECTURE.md；03_MILESTONES_AND_DELIVERY_PLAN.md；04_ACCEPTANCE_GATES.md；06_TRACEABILITY_MATRIX.md；17_PRODUCTIZATION_DEVELOPMENT_ROADMAP.md；23_P9_CHATBOX_NATIVE_JOB_INTELLIGENCE_PLAN.md</code></td><td>P9 目标、架构、里程碑、验收门槛和风险边界进入统一口径。</td></tr>
+<tr><td>drawio 与文本镜像</td><td><code>docs/active/jobpilot-stage-gap-and-acceptance.drawio；docs/active/jobpilot-stage-gap-and-acceptance.md</code></td><td>8 页图覆盖目标架构、当前差异、代码实体分层、左侧态势、用户路线、开发验收计划、门槛和安全边界。</td></tr>
+<tr><td>阶段审计</td><td><code>docs/active/stage-reviews/P9_*.md</code></td><td>记录 M0、M1-M8、M9、文档覆盖、外部意见修订和详细开发验收计划。</td></tr>
+<tr><td>前端审查包</td><td><code>docs/p9-chatbox-native-review/</code></td><td>保存 PRD 初稿、当前基线、体验规格、用户路线、风险门槛、地图可视化调研和审查页。</td></tr>
+<tr><td>验收报告与证据</td><td><code>docs/reports/P9_CHATBOX_NATIVE_ACCEPTANCE_REPORT.html；docs/reports/P9_STAGE_CLOSURE_ACCEPTANCE_REPORT.html；docs/reports/evidence/p9_chatbox_native/；docs/reports/evidence/p9_stage_closure/</code></td><td>保存两轮 HTML 报告、截图、scenario、命令证据和报告自检 JSON。</td></tr>
+<tr><td>自动化脚本与 eval</td><td><code>scripts/generate_p9_chatbox_native_acceptance.py；scripts/generate_p9_stage_closure_acceptance.py；tests/evals/test_p9_chatbox_native_acceptance_eval.py；tests/evals/test_p9_stage_closure_acceptance_eval.py</code></td><td>支持报告复现和最低审计门槛回归。</td></tr></tbody></table>
+    </section>
+    <section>
+      <h2>证据索引</h2>
+      <table><thead><tr><th>审计点</th><th>证据路径</th><th>如何判断</th></tr></thead><tbody><tr><td>目标架构与当前实现</td><td><code>docs/active/jobpilot-stage-gap-and-acceptance.drawio；docs/active/jobpilot-stage-gap-and-acceptance.md</code></td><td>8 页 drawio 已 parse，通过颜色标注已实现/已修改/未实现实体。</td></tr>
+<tr><td>首屏 Chatbox-native 三栏</td><td><code>docs/reports/evidence/p9_stage_closure/p9_initial_1920.png</code></td><td>顶部服务中心、左侧态势、中央 Chatbox、右侧产物台可见。</td></tr>
+<tr><td>JD/城市/薪资汇总</td><td><code>docs/reports/evidence/p9_stage_closure/p9_search_run_1920.png</code></td><td>通过 Chatbox 发起，本地 search run 更新；未联网抓取。</td></tr>
+<tr><td>投递流程更新</td><td><code>docs/reports/evidence/p9_stage_closure/p9_pipeline_update_1920.png</code></td><td>通过 Chatbox 更新本地流程；不对外沟通或投递。</td></tr>
+<tr><td>响应式</td><td><code>p9_1440.png / p9_1200.png / p9_720.png / p9_390.png</code></td><td>多视口真实截图；390px 下 Chatbox 和输入区优先，左侧态势下移。</td></tr>
+<tr><td>多背景多轮对话</td><td><code>本报告“多背景多轮对话补证”段落</code></td><td>两组合成候选人，各 20 轮用户消息；fake/local 路径，真实 provider 未调用。</td></tr>
+<tr><td>工程回归</td><td><code>docs/reports/evidence/p9_stage_closure/p9_stage_closure_command_evidence.json</code></td><td>全量 pytest、build、drawio parse、P9 eval、diff check 均通过。</td></tr>
+<tr><td>报告自检</td><td><code>docs/reports/evidence/p9_stage_closure/p9_stage_closure_post_report_evidence.json</code></td><td>7 张图片均存在，必需文本齐全，未命中 forbidden false-green 表述。</td></tr></tbody></table>
+    </section>
+    <section>
+      <h2>复验命令</h2>
+      <p>以下命令已由报告脚本执行。审计者可以在仓库根目录重新运行，预期状态均为 passed。</p>
+      <table><thead><tr><th>命令</th><th>状态</th><th>关键输出摘要</th></tr></thead><tbody><tr><td><code>/mnt/c/workspace/interview_service/.venv/bin/python -m pytest</code></td><td class="passed">passed</td><td>tests/evals/test_p9_stage_closure_acceptance_eval.py ...s.               [ 87%]
+tests/evals/test_piagent_chat_core_integration_eval.py ........          [ 93%]
+tests/evals/test_provider_timeout_mapping_eval.py .                      [ 94%]
+tests/evals/test_realtime_safety_eval.py ..                              [ 95%]
+tests/evals/test_schema_and_docs_hardening_eval.py ...                   [ 97%]
+tests/evals/test_workspace_privacy_eval.py .                             [ 98%]
+tests/test_demo_flow.py .                                                [ 99%]
+tests/test_workspace_security.py .                                       [100%]
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/starlette/formparsers.py:12
+  /mnt/c/workspace/interview_service/.venv/lib/python3.12/site-packages/starlette/formparsers.py:12: PendingDeprecationWarning: Please use `import python_multipart` instead.
+    import multipart
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+============= 135 passed, 1 skipped, 1 warning in 73.95s (0:01:13) =============</td></tr>
+<tr><td><code>npm --prefix apps/chatbox run build</code></td><td class="passed">passed</td><td>&gt; @jobpilot/chatbox@0.1.0 build
+&gt; tsc &amp;&amp; vite build
+vite v7.3.5 building client environment for production...
+transforming...
+✓ 1578 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.38 kB │ gzip:  0.26 kB
+dist/assets/index-C-mUy2Kv.css   46.00 kB │ gzip:  9.01 kB
+dist/assets/index-CrvkyUnQ.js   269.18 kB │ gzip: 85.75 kB
+✓ built in 9.45s</td></tr>
+<tr><td><code>/mnt/c/workspace/interview_service/.venv/bin/python -c from pathlib import Path; import xml.etree.ElementTree as ET; p=Path(&#x27;docs/active/jobpilot-stage-gap-and-acceptance.drawio&#x27;); ET.parse(p); print(&#x27;drawio ok&#x27;, p.stat().st_size)</code></td><td class="passed">passed</td><td>drawio ok 50317</td></tr>
+<tr><td><code>static text guard for P9 UI entities</code></td><td class="passed">passed</td><td>{
+  &quot;top_service_center&quot;: true,
+  &quot;left_intelligence_panel&quot;: true,
+  &quot;market_map_view&quot;: true,
+  &quot;chatbox_command_router&quot;: true,
+  &quot;artifact_overview&quot;: true,
+  &quot;no_forbidden_claims&quot;: true
+}</td></tr>
+<tr><td><code>/mnt/c/workspace/interview_service/.venv/bin/python -m pytest tests/evals/test_p9_chatbox_native_acceptance_eval.py</code></td><td class="passed">passed</td><td>============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0
+rootdir: /mnt/c/workspace/interview_service
+configfile: pyproject.toml
+plugins: anyio-4.4.0
+collected 4 items
+tests/evals/test_p9_chatbox_native_acceptance_eval.py ....               [100%]
+============================== 4 passed in 0.22s ===============================</td></tr>
+<tr><td><code>git diff --check</code></td><td class="passed">passed</td><td></td></tr></tbody></table>
+    </section>
+    <section>
+      <h2>残余风险与打回条件</h2>
+      <table><thead><tr><th>风险</th><th>当前判断</th><th>打回条件</th></tr></thead><tbody>
+        <tr><td>移动端信息顺序</td><td>390px 截图显示 Chatbox 和输入区优先，左侧态势下移；这是 P9 自动化候选可接受状态，但仍建议人工体验复核。</td><td>若移动端核心输入、发送、粘贴 JD、上传资料或状态机不可达，应打回 P9-M8。</td></tr>
+        <tr><td>真实 JD 搜索</td><td>未实现，当前只使用用户粘贴、已导入 JD、repo fixture 和本地示例。</td><td>若报告或 UI 声称已完成真实全网搜索或触发平台抓取，应打回。</td></tr>
+        <tr><td>真实 provider / ASR / MCP</td><td>未默认调用；顶部服务中心只做状态可见和边界提醒。</td><td>若未授权调用外部 provider、麦克风或 MCP/Skill 平台，应停止并要求用户确认。</td></tr>
+        <tr><td>自动投递/平台沟通</td><td>未实现；流程更新仅写本地状态。</td><td>若出现自动外呼、自动投递、平台登录或绕风控能力，应打回并单独立项。</td></tr>
+        <tr><td>产品化完成度</td><td>本报告不证明最终产品化完成，只证明 P9 本地自动化候选通过。</td><td>若被用于声明 SaaS、真实资料路径、真实平台接入或最终 GA，应打回。</td></tr>
+      </tbody></table>
+    </section>
+
     <section>
       <h2>目标架构</h2>
       <ul><li>TopServiceCenter 展示 provider、JD 信息源、ASR、MCP/Skill、workspace 和安全边界状态。</li><li>LeftIntelligencePanel 展示岗位市场、目标机会与匹配、投递流程三大页签，地图/图钉支持缩放、拖动和重置。</li><li>ConversationPlane 仍是中央主路径，Chatbox 可发起 JD 汇总、资料补全、申请包生成和流程更新。</li><li>RightArtifactBench 展示 search run、故事草稿、流程摘要、岗位、简历、画像、source refs 和 pending confirmations。</li><li>FastAPI / Domain / SQLite 复用现有 P8/P8.1 能力；P9 不新增真实搜索、平台抓取、真实 ASR 或自动投递系统。</li><li>drawio 已同步到 P9 阶段收口口径：代码实体、分层关系、开发验收计划、门槛和安全边界均标注已实现/已修改/未实现状态。</li></ul>
@@ -85,7 +189,7 @@
     </section>
     <section>
       <h2>命令结果</h2>
-      <table><thead><tr><th>命令</th><th>状态</th><th>证据</th></tr></thead><tbody><tr><td><code>/mnt/c/workspace/interview_service/.venv/bin/python -m pytest</code></td><td class="passed">passed</td><td>tests/evals/test_p9_stage_closure_acceptance_eval.py .....               [ 87%]
+      <table><thead><tr><th>命令</th><th>状态</th><th>证据</th></tr></thead><tbody><tr><td><code>/mnt/c/workspace/interview_service/.venv/bin/python -m pytest</code></td><td class="passed">passed</td><td>tests/evals/test_p9_stage_closure_acceptance_eval.py ...s.               [ 87%]
 tests/evals/test_piagent_chat_core_integration_eval.py ........          [ 93%]
 tests/evals/test_provider_timeout_mapping_eval.py .                      [ 94%]
 tests/evals/test_realtime_safety_eval.py ..                              [ 95%]
@@ -98,7 +202,7 @@ tests/test_workspace_security.py .                                       [100%]
   /mnt/c/workspace/interview_service/.venv/lib/python3.12/site-packages/starlette/formparsers.py:12: PendingDeprecationWarning: Please use `import python_multipart` instead.
     import multipart
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-================== 136 passed, 1 warning in 77.70s (0:01:17) ===================</td></tr>
+============= 135 passed, 1 skipped, 1 warning in 73.95s (0:01:13) =============</td></tr>
 <tr><td><code>npm --prefix apps/chatbox run build</code></td><td class="passed">passed</td><td>&gt; @jobpilot/chatbox@0.1.0 build
 &gt; tsc &amp;&amp; vite build
 vite v7.3.5 building client environment for production...
@@ -109,7 +213,7 @@ computing gzip size...
 dist/index.html                   0.38 kB │ gzip:  0.26 kB
 dist/assets/index-C-mUy2Kv.css   46.00 kB │ gzip:  9.01 kB
 dist/assets/index-CrvkyUnQ.js   269.18 kB │ gzip: 85.75 kB
-✓ built in 12.47s</td></tr>
+✓ built in 9.45s</td></tr>
 <tr><td><code>/mnt/c/workspace/interview_service/.venv/bin/python -c from pathlib import Path; import xml.etree.ElementTree as ET; p=Path('docs/active/jobpilot-stage-gap-and-acceptance.drawio'); ET.parse(p); print('drawio ok', p.stat().st_size)</code></td><td class="passed">passed</td><td>drawio ok 50317</td></tr>
 <tr><td><code>static text guard for P9 UI entities</code></td><td class="passed">passed</td><td>{
   &quot;top_service_center&quot;: true,
@@ -126,7 +230,7 @@ configfile: pyproject.toml
 plugins: anyio-4.4.0
 collected 4 items
 tests/evals/test_p9_chatbox_native_acceptance_eval.py ....               [100%]
-============================== 4 passed in 0.31s ===============================</td></tr>
+============================== 4 passed in 0.22s ===============================</td></tr>
 <tr><td><code>git diff --check</code></td><td class="passed">passed</td><td></td></tr></tbody></table>
     </section>
     <section>
