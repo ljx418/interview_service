@@ -21,6 +21,7 @@ SCENARIO = EVIDENCE_DIR / "p9_browser_scenario.json"
 COMMAND_EVIDENCE = EVIDENCE_DIR / "p9_command_evidence.json"
 POST_REPORT_EVIDENCE = EVIDENCE_DIR / "p9_post_report_evidence.json"
 CHATBOX_PORT = "5174"
+API_PORT = "18080"
 WORKSPACE_ROOT = ROOT / ".tmp" / "p9_chatbox_native_workspace"
 
 
@@ -292,16 +293,16 @@ def main() -> None:
     vite_proc = None
     try:
         try:
-            _wait_url("http://127.0.0.1:8000/api/health", timeout=2)
+            _wait_url(f"http://127.0.0.1:{API_PORT}/api/health", timeout=2)
         except Exception:
             api_proc = _start_process(
-                [PYTHON_BIN, "-m", "uvicorn", "services.api.main:app", "--host", "127.0.0.1", "--port", "8000"],
+                [PYTHON_BIN, "-m", "uvicorn", "services.api.main:app", "--host", "127.0.0.1", "--port", API_PORT],
                 EVIDENCE_DIR / "api.log",
             )
-            _wait_url("http://127.0.0.1:8000/api/health", timeout=40)
+            _wait_url(f"http://127.0.0.1:{API_PORT}/api/health", timeout=40)
 
         vite_proc = _start_process(
-            ["bash", "-lc", f"cd apps/chatbox && npx vite --host 127.0.0.1 --port {CHATBOX_PORT} --strictPort"],
+            ["bash", "-lc", f"cd apps/chatbox && VITE_API_BASE_URL=http://127.0.0.1:{API_PORT} npx vite --host 127.0.0.1 --port {CHATBOX_PORT} --strictPort"],
             EVIDENCE_DIR / "vite.log",
         )
         _wait_url(f"http://127.0.0.1:{CHATBOX_PORT}/", timeout=40)
