@@ -241,12 +241,12 @@
     {
       "command": "npm --prefix apps/chatbox run build",
       "status": "passed",
-      "evidence": "> @jobpilot/chatbox@0.1.0 build\n> tsc && vite build\nvite v7.3.5 building client environment for production...\ntransforming...\n✓ 1578 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/index.html                   0.38 kB │ gzip:  0.26 kB\ndist/assets/index-C-mUy2Kv.css   46.00 kB │ gzip:  9.01 kB\ndist/assets/index-CrvkyUnQ.js   269.18 kB │ gzip: 85.75 kB\n✓ built in 8.23s"
+      "evidence": "> @jobpilot/chatbox@0.1.0 build\n> tsc && vite build\nvite v7.3.5 building client environment for production...\ntransforming...\n✓ 1578 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/index.html                   0.38 kB │ gzip:  0.26 kB\ndist/assets/index-C-mUy2Kv.css   46.00 kB │ gzip:  9.01 kB\ndist/assets/index-CrvkyUnQ.js   269.18 kB │ gzip: 85.75 kB\n✓ built in 8.95s"
     },
     {
       "command": "/mnt/c/workspace/interview_service/.venv/bin/python -c from pathlib import Path; import xml.etree.ElementTree as ET; p=Path('docs/active/jobpilot-stage-gap-and-acceptance.drawio'); ET.parse(p); print('drawio ok', p.stat().st_size)",
       "status": "passed",
-      "evidence": "drawio ok 40902"
+      "evidence": "drawio ok 50308"
     },
     {
       "command": "static text guard for P9 UI entities",

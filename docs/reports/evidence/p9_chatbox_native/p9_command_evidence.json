@@ -1,21 +1,21 @@
 {
-  "generated_at": "2026-07-03T14:45:49.137694+00:00",
-  "git_head": "89f0ada",
-  "git_status_short": "M README.md\n M TODO.md\n M apps/chatbox/src/main.tsx\n M apps/chatbox/src/styles.css\n M docs/active/00_README.md\n M docs/active/01_STAGE_PRD.md\n M docs/active/02_TARGET_ARCHITECTURE.md\n M docs/active/03_MILESTONES_AND_DELIVERY_PLAN.md\n M docs/active/04_ACCEPTANCE_GATES.md\n M docs/active/06_TRACEABILITY_MATRIX.md\n M docs/active/17_PRODUCTIZATION_DEVELOPMENT_ROADMAP.md\n M docs/active/jobpilot-stage-gap-and-acceptance.drawio\n M docs/active/jobpilot-stage-gap-and-acceptance.md\n?? docs/active/23_P9_CHATBOX_NATIVE_JOB_INTELLIGENCE_PLAN.md\n?? docs/active/stage-reviews/P9_DETAILED_DEVELOPMENT_AND_ACCEPTANCE_PLAN.md\n?? docs/active/stage-reviews/P9_DOCUMENTATION_COVERAGE_REAUDIT.md\n?? docs/active/stage-reviews/P9_DOCUMENTATION_DEVELOPMENT_AUDIT.md\n?? docs/active/stage-reviews/P9_EXTERNAL_REVIEW_REVISION_AUDIT.md\n?? docs/active/stage-reviews/P9_M0_START_AUDIT.md\n?? docs/active/stage-reviews/P9_M1_TO_M8_IMPLEMENTATION_AUDIT.md\n?? docs/p9-chatbox-native-review/\n?? docs/reports/P9_CHATBOX_NATIVE_ACCEPTANCE_REPORT.html\n?? docs/reports/evidence/p9_chatbox_native/\n?? scripts/generate_p9_chatbox_native_acceptance.py\n?? tests/evals/test_p9_chatbox_native_acceptance_eval.py",
+  "generated_at": "2026-07-05T22:38:34.589424+00:00",
+  "git_head": "48225bb",
+  "git_status_short": "M docs/reports/evidence/p9_chatbox_native/p9_browser_scenario.json\n M docs/reports/evidence/p9_chatbox_native/p9_command_evidence.json",
   "results": [
     {
       "label": "Chatbox production build",
       "command": "npm --prefix apps/chatbox run build",
       "status": "passed",
       "returncode": 0,
-      "summary": "> @jobpilot/chatbox@0.1.0 build\n> tsc && vite build\nvite v7.3.5 building client environment for production...\ntransforming...\n✓ 1578 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/index.html                   0.38 kB │ gzip:  0.26 kB\ndist/assets/index-C-mUy2Kv.css   46.00 kB │ gzip:  9.01 kB\ndist/assets/index-CrvkyUnQ.js   269.18 kB │ gzip: 85.75 kB\n✓ built in 8.23s"
+      "summary": "> @jobpilot/chatbox@0.1.0 build\n> tsc && vite build\nvite v7.3.5 building client environment for production...\ntransforming...\n✓ 1578 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/index.html                   0.38 kB │ gzip:  0.26 kB\ndist/assets/index-C-mUy2Kv.css   46.00 kB │ gzip:  9.01 kB\ndist/assets/index-CrvkyUnQ.js   269.18 kB │ gzip: 85.75 kB\n✓ built in 8.95s"
     },
     {
       "label": "drawio XML parse",
       "command": "/mnt/c/workspace/interview_service/.venv/bin/python -c from pathlib import Path; import xml.etree.ElementTree as ET; p=Path('docs/active/jobpilot-stage-gap-and-acceptance.drawio'); ET.parse(p); print('drawio ok', p.stat().st_size)",
       "status": "passed",
       "returncode": 0,
-      "summary": "drawio ok 40902"
+      "summary": "drawio ok 50308"
     },
     {
       "label": "P9 static implementation guard",
