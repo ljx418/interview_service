@@ -30,7 +30,7 @@ def test_p9_report_has_required_human_audit_sections_and_images() -> None:
         "TopServiceCenter",
         "LeftIntelligencePanel",
         "ConversationPlane",
-        "RightArtifactBench",
+        "Workbench / P9ArtifactOverview",
     ]
     for marker in required:
         assert marker in html

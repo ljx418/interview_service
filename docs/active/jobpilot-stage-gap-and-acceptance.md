@@ -32,7 +32,7 @@ P9 目标体验固定为四块：
 - 顶部服务中心 `TopServiceCenter`：provider、JD 信息源、ASR、MCP/Skill、workspace、安全边界状态可见；
 - 左侧求职态势 `LeftIntelligencePanel`：岗位市场地图、机会匹配、投递流程三页签，可缩放、拖动和重置；
 - 中央 `ConversationPlane` / Chatbox：第一交互路径，用户通过对话发起 JD 汇总、资料补全、申请包生成和流程更新；
-- 右侧 `RightArtifactBench` / Workbench：展示 search run、故事草稿、流程摘要、岗位、画像、简历、source refs 和 pending confirmations。
+- 右侧 Workbench / `P9ArtifactOverview`：展示 search run、故事草稿、流程摘要、岗位、画像、简历、source refs 和 pending confirmations。
 
 本页同时用红色标出 P9 未通过范围：真实全网 JD 搜索、BOSS/猎聘/拉勾登录抓取、真实 ASR、真实 provider 质量、MCP/Skill 平台连通、自动沟通/自动投递和 SaaS。
 
@@ -67,7 +67,7 @@ User
   → ApplicationPipelineView
   → ConversationPlane / Composer
   → handleP9Command
-  → RightArtifactBench / P9ArtifactOverview
+  → Workbench / P9ArtifactOverview
 → API Boundary
   → services/api/main.py
   → services/api/schemas.py

@@ -45,10 +45,10 @@ P9 目标体验已经形成一致口径：
 
 P9 架构已经落到可审查代码实体：
 
-- `apps/chatbox/src/main.tsx`：Chatbox Experience Shell、ConversationPlane、RightArtifactBench 的主要承载位置。
+- `apps/chatbox/src/main.tsx`：Chatbox Experience Shell、ConversationPlane、Workbench / P9ArtifactOverview 的主要承载位置。
 - `apps/chatbox/src/styles.css`：响应式、三栏比例、态势图和产物台可读性的主要承载位置。
-- `TopServiceBar`、`LeftIntelligencePanel`、`MarketMapView`、`OpportunityMatchPanel`、`ApplicationPipelineView`：P9 待新增 UI 实体。
-- `ChatboxCommandRouter`、`JobSourceConnector`、`ApplicationPipelineService`、`StoryBank`：P9 待新增或强化的前后端协作实体。
+- `TopServiceCenter`、`LeftIntelligencePanel`、`MarketMapView`、`OpportunityMatchPanel`、`ApplicationPipelineView`：P9 已落地的 UI 自动化候选实体。
+- `handleP9Command`、本地 search run、local pipeline state、本地故事草稿：P9 已落地的前端编排边界；`JobSourceConnector`、`ApplicationPipelineService`、`StoryBank` 未新增为独立服务。
 - `job`、`match_report`、`candidate_profile`、`resume_version`、`artifact`：P8/P5.5 已实现自动化候选实体，P9 复用并扩展体验组织。
 
 当前文档没有要求重写全部业务层，也没有把平台自动化、真实 provider、ASR 或 SaaS 混入默认实现。

@@ -16,7 +16,7 @@
         <mxCell id="5" value="中央 ConversationPlane / Chatbox&#10;第一交互路径；用户通过对话发起 JD 汇总、资料补全、申请包生成、流程更新&#10;状态：已修改并作为主路径保留" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5f5e3;strokeColor=#1e8449;fontColor=#10201d;fontStyle=1;spacing=8;arcSize=8;" vertex="1" parent="1">
           <mxGeometry x="560" y="300" width="480" height="200" as="geometry" />
         </mxCell>
-        <mxCell id="6" value="右侧 RightArtifactBench / Workbench&#10;展示 search run、故事草稿、流程摘要、岗位、画像、简历、source refs、pending confirmations&#10;状态：已实现自动化候选" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5f5e3;strokeColor=#1e8449;fontColor=#10201d;fontStyle=1;spacing=8;arcSize=8;" vertex="1" parent="1">
+        <mxCell id="6" value="右侧 Workbench / P9ArtifactOverview&#10;展示 search run、故事草稿、流程摘要、岗位、画像、简历、source refs、pending confirmations&#10;状态：已实现自动化候选" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5f5e3;strokeColor=#1e8449;fontColor=#10201d;fontStyle=1;spacing=8;arcSize=8;" vertex="1" parent="1">
           <mxGeometry x="1100" y="310" width="420" height="180" as="geometry" />
         </mxCell>
         <mxCell id="7" value="不在 P9 声明通过&#10;真实全网 JD 搜索、BOSS/猎聘/拉勾登录抓取、真实 ASR、真实 provider 质量、MCP/Skill 平台连通、自动沟通/自动投递、SaaS" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fadbd8;strokeColor=#c0392b;fontColor=#10201d;fontStyle=1;spacing=8;arcSize=8;" vertex="1" parent="1">
@@ -128,7 +128,7 @@
         <mxCell id="7" value="ConversationPlane + Composer&#10;handleP9Command 本地命令路由&#10;已修改/已实现" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5f5e3;strokeColor=#1e8449;fontColor=#10201d;fontStyle=1;spacing=8;arcSize=8;" vertex="1" parent="1">
           <mxGeometry x="820" y="330" width="360" height="105" as="geometry" />
         </mxCell>
-        <mxCell id="8" value="RightArtifactBench / P9ArtifactOverview&#10;复用 Workbench / Resume / Job / Profile&#10;已实现" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5f5e3;strokeColor=#1e8449;fontColor=#10201d;fontStyle=1;spacing=8;arcSize=8;" vertex="1" parent="1">
+        <mxCell id="8" value="Workbench / P9ArtifactOverview&#10;复用 Resume / Job / Profile / Artifact&#10;已实现" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5f5e3;strokeColor=#1e8449;fontColor=#10201d;fontStyle=1;spacing=8;arcSize=8;" vertex="1" parent="1">
           <mxGeometry x="820" y="470" width="360" height="105" as="geometry" />
         </mxCell>
         <mxCell id="9" value="API Boundary&#10;services/api/main.py / schemas.py&#10;/api/jobs / /api/resume/generate / /api/profile/candidate&#10;状态：复用已实现" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d6eaf8;strokeColor=#2874a6;fontColor=#10201d;fontStyle=1;spacing=8;arcSize=8;" vertex="1" parent="1">

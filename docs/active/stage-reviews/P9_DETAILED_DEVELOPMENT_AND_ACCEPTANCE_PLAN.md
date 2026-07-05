@@ -106,7 +106,7 @@ P9-M0 启动审计
 
 开发范围：
 
-- 新增或改造 `TopServiceBar`；
+- 实现或复核 `TopServiceCenter`；
 - 展示 provider、ASR、MCP、Skill、外部搜索、workspace、安全边界状态；
 - 状态必须区分 `unavailable`、`not_configured`、`configured`、`connected`、`disabled`、`requires_confirmation`；
 - 未验证服务不得显示为已连通。
@@ -184,8 +184,8 @@ P9-M0 启动审计
 
 开发范围：
 
-- 新增或强化 `ChatboxCommandRouter`；
-- 新增或强化 `StoryBank` / `CandidateFactGraph`；
+- 实现或复核 `handleP9Command` 的 Chatbox 命令解析与本地编排；
+- 以本地故事草稿、既有 profile/resume/artifact 能力覆盖 P9 自动化候选；`StoryBank` / `CandidateFactGraph` 作为后续独立服务边界，不在 P9 新增；
 - 通过对话收集事实、故事、证据、作品链接和偏好；
 - 缺证据内容进入 pending confirmations；
 - ASR 只展示入口状态、不可用/需确认说明或后续规划，不采集麦克风，不调用外部语音服务。
