@@ -37,7 +37,7 @@
     <h1>P9 阶段收口：Chatbox-native 求职情报工作台自动化验收报告</h1>
     <p><span class="badge">passed</span></p>
     <p class="meta">复验 P9 目标架构、当前实现、出门条件和真实界面路径是否在本地自动化候选范围内全绿，并明确未验证的高风险外部能力。</p>
-    <p class="meta">Started: 2026-07-04T05:21:29.428Z · Ended: 2026-07-04T05:21:36.592Z · Report: <code>/mnt/c/workspace/interview_service/docs/reports/P9_STAGE_CLOSURE_ACCEPTANCE_REPORT.html</code></p>
+    <p class="meta">Started: 2026-07-05T22:41:01.260Z · Ended: 2026-07-05T22:41:07.487Z · Report: <code>/mnt/c/workspace/interview_service/docs/reports/P9_STAGE_CLOSURE_ACCEPTANCE_REPORT.html</code></p>
   </header>
   <main>
 
@@ -45,7 +45,7 @@
       <h2>人类审计入口与完整性结论</h2>
       <p><strong>审计结论：</strong>P9 阶段收口报告已从“脚本通过证明”升级为“人类可独立审计入口”。审计者可以从本节开始，按证据索引逐项打开截图、drawio、命令 JSON、代码和文档，确认本阶段自动化开发是否达成目标。</p>
       <table><tbody>
-        <tr><th>报告生成时 Git HEAD</th><td><code>c36be4f</code></td></tr>
+        <tr><th>报告生成时 Git HEAD</th><td><code>706f54c</code></td></tr>
         <tr><th>报告生成时工作区状态</th><td><pre>clean</pre></td></tr>
         <tr><th>最终提交核验方式</th><td><code>git log -1 --oneline</code>；若报告生成后又提交，应以仓库最新 commit 为归档点。</td></tr>
         <tr><th>报告适用边界</th><td>仅覆盖 P9 本地自动化候选：UI 信息架构、求职态势可视化、Chatbox 本地命令路由、现有能力重新组织和截图证据。</td></tr>
@@ -99,7 +99,7 @@ tests/test_workspace_security.py .                                       [100%]
   /mnt/c/workspace/interview_service/.venv/lib/python3.12/site-packages/starlette/formparsers.py:12: PendingDeprecationWarning: Please use `import python_multipart` instead.
     import multipart
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-================== 137 passed, 1 warning in 83.00s (0:01:23) ===================</td></tr>
+================== 137 passed, 1 warning in 86.84s (0:01:26) ===================</td></tr>
 <tr><td><code>npm --prefix apps/chatbox run build</code></td><td class="passed">passed</td><td>&gt; @jobpilot/chatbox@0.1.0 build
 &gt; tsc &amp;&amp; vite build
 vite v7.3.5 building client environment for production...
@@ -110,8 +110,8 @@ computing gzip size...
 dist/index.html                   0.38 kB │ gzip:  0.26 kB
 dist/assets/index-C-mUy2Kv.css   46.00 kB │ gzip:  9.01 kB
 dist/assets/index-CrvkyUnQ.js   269.18 kB │ gzip: 85.75 kB
-✓ built in 10.60s</td></tr>
-<tr><td><code>/mnt/c/workspace/interview_service/.venv/bin/python -c from pathlib import Path; import xml.etree.ElementTree as ET; p=Path(&#x27;docs/active/jobpilot-stage-gap-and-acceptance.drawio&#x27;); ET.parse(p); print(&#x27;drawio ok&#x27;, p.stat().st_size)</code></td><td class="passed">passed</td><td>drawio ok 50317</td></tr>
+✓ built in 8.99s</td></tr>
+<tr><td><code>/mnt/c/workspace/interview_service/.venv/bin/python -c from pathlib import Path; import xml.etree.ElementTree as ET; p=Path(&#x27;docs/active/jobpilot-stage-gap-and-acceptance.drawio&#x27;); ET.parse(p); print(&#x27;drawio ok&#x27;, p.stat().st_size)</code></td><td class="passed">passed</td><td>drawio ok 50308</td></tr>
 <tr><td><code>static text guard for P9 UI entities</code></td><td class="passed">passed</td><td>{
   &quot;top_service_center&quot;: true,
   &quot;left_intelligence_panel&quot;: true,
@@ -127,7 +127,7 @@ configfile: pyproject.toml
 plugins: anyio-4.4.0
 collected 4 items
 tests/evals/test_p9_chatbox_native_acceptance_eval.py ....               [100%]
-============================== 4 passed in 0.24s ===============================</td></tr>
+============================== 4 passed in 0.23s ===============================</td></tr>
 <tr><td><code>git diff --check</code></td><td class="passed">passed</td><td></td></tr></tbody></table>
     </section>
     <section>
@@ -199,7 +199,7 @@ tests/test_workspace_security.py .                                       [100%]
   /mnt/c/workspace/interview_service/.venv/lib/python3.12/site-packages/starlette/formparsers.py:12: PendingDeprecationWarning: Please use `import python_multipart` instead.
     import multipart
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-================== 137 passed, 1 warning in 83.00s (0:01:23) ===================</td></tr>
+================== 137 passed, 1 warning in 86.84s (0:01:26) ===================</td></tr>
 <tr><td><code>npm --prefix apps/chatbox run build</code></td><td class="passed">passed</td><td>&gt; @jobpilot/chatbox@0.1.0 build
 &gt; tsc &amp;&amp; vite build
 vite v7.3.5 building client environment for production...
@@ -210,8 +210,8 @@ computing gzip size...
 dist/index.html                   0.38 kB │ gzip:  0.26 kB
 dist/assets/index-C-mUy2Kv.css   46.00 kB │ gzip:  9.01 kB
 dist/assets/index-CrvkyUnQ.js   269.18 kB │ gzip: 85.75 kB
-✓ built in 10.60s</td></tr>
-<tr><td><code>/mnt/c/workspace/interview_service/.venv/bin/python -c from pathlib import Path; import xml.etree.ElementTree as ET; p=Path('docs/active/jobpilot-stage-gap-and-acceptance.drawio'); ET.parse(p); print('drawio ok', p.stat().st_size)</code></td><td class="passed">passed</td><td>drawio ok 50317</td></tr>
+✓ built in 8.99s</td></tr>
+<tr><td><code>/mnt/c/workspace/interview_service/.venv/bin/python -c from pathlib import Path; import xml.etree.ElementTree as ET; p=Path('docs/active/jobpilot-stage-gap-and-acceptance.drawio'); ET.parse(p); print('drawio ok', p.stat().st_size)</code></td><td class="passed">passed</td><td>drawio ok 50308</td></tr>
 <tr><td><code>static text guard for P9 UI entities</code></td><td class="passed">passed</td><td>{
   &quot;top_service_center&quot;: true,
   &quot;left_intelligence_panel&quot;: true,
@@ -227,7 +227,7 @@ configfile: pyproject.toml
 plugins: anyio-4.4.0
 collected 4 items
 tests/evals/test_p9_chatbox_native_acceptance_eval.py ....               [100%]
-============================== 4 passed in 0.24s ===============================</td></tr>
+============================== 4 passed in 0.23s ===============================</td></tr>
 <tr><td><code>git diff --check</code></td><td class="passed">passed</td><td></td></tr></tbody></table>
     </section>
     <section>
