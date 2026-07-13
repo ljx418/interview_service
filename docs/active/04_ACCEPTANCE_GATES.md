@@ -1,4 +1,332 @@
-# JobPilot AI P9 Chatbox-native 求职情报与申请包工作台验收门槛
+# JobPilot AI P11 / P10-CLI / P9.1 Chatbox-native 求职工作台验收门槛
+
+## 当前收口门槛 - P11 真实市场数据 Provider Opt-in Level1
+
+这些门槛验收 P11 Level1 自动化候选是否完成：本地/fixture/recorded/manual/public market provider 状态、授权拒绝、安全门、search run、normalization、snapshot、source refs、CLI 状态、Chatbox 联动、专项 eval 和中文 HTML 报告。它们不代表指定真实 market provider 已完成 Level2 opt-in 调用，不代表全网 JD 搜索、招聘平台、真实 LLM provider、真实资料、ASR、MCP、会议平台、自动投递或 SaaS 通过。
+
+### P11 门槛 A - Level1 用户目标和非目标清楚
+
+通过条件：
+
+- PRD 明确 P11 Level1 解决的是“市场地图和求职情报缺少可追溯 market provider 边界和 evidence”，Level2 才验证指定真实 provider；
+- 文档和实现说明 P11 面向 Chatbox、市场地图、右侧产物台、CLI/报告的统一 market source 状态；
+- 文档明确 provider configured / consented / called / failed / fallback 的差异；
+- 非目标明确排除招聘平台登录/抓取/绕风控、长期爬虫、真实 LLM provider、ASR、MCP、自动投递、SaaS 和未授权真实资料。
+
+不通过条件：
+
+- 把 P11 写成招聘平台自动接入、全网 JD 搜索或爬虫系统；
+- 没有列出授权门、调用次数、费用/隐私提示或失败/fallback 处理；
+- 把 P11 Level1 写成真实 provider 或全网市场已通过。
+
+### P11 门槛 B - 代码实体和架构关系可验收
+
+通过条件：
+
+- 目标架构和当前实现明确 `JobMarketProviderRegistry`、`MarketProviderPolicyGate`、`MarketProviderClient`、`MarketProviderInvocationLog`、`JobSearchRunService`、`MarketDataNormalizer`、`SourceRefBinder`、`ConfidenceScorer`、`NormalizedJobPost`、`JobMarketSnapshot` 的状态、职责、上游和下游；
+- 目标架构明确 UI Control Plane、Market Provider Boundary、Market Normalization Domain、Existing Boundary、Evidence Layer 五层关系；
+- 文档列出 Chatbox market query、provider consent preview、Level1 local run、normalization、snapshot、map/workbench/report 的数据流；Level2 one-shot real provider call 仍待授权；
+- 文档说明 P11 不保存或打印 API Key，不把真实 LLM provider 与 market provider 混用；
+- 文档说明每个市场指标必须能追溯到 `NormalizedJobPost` 或 `RegionSourceRef`；
+- 文档说明 provider 失败、无结果、低置信度、fixture fallback 的输出和验收方向。
+
+不通过条件：
+
+- 架构图或文档只列“真实市场数据”抽象词，缺少具体代码实体；
+- provider 命令流没有授权门、调用日志或 source refs；
+- 计划默认抓取招聘平台、扫描用户目录或长期后台运行；
+- 没有安全门、失败/fallback 或 evidence 设计。
+
+### P11 门槛 C - drawio 和文本镜像可审计
+
+通过条件：
+
+- drawio 不超过 8 页；
+- 图中包含目标架构与当前架构差异、开发及验收计划、项目里程碑、验收门槛和出门条件；
+- 第 3 或第 4 页必须展示具体代码实体与分层交互关系；
+- 使用状态颜色标注：绿色 Level1 已实现、蓝色 Level2 待授权/待新增、黄色需人工复核或需修改、红色高风险禁止、灰色审计/边界；
+- 文本镜像能让不打开 drawio 的审计者理解每页内容。
+
+不通过条件：
+
+- drawio 页数超过 8 页；
+- 图中出现重复、冲突或过度承诺；
+- 图中没有明确 provider boundary、normalizer、workspace、map、evidence 的调用关系。
+
+### P11 门槛 D - Level1 实现验收可执行
+
+通过条件：
+
+- 文档定义 P11-M0 到 M5 的开发顺序，并同步为当前 Level1 已执行状态；
+- P11-M0 必须冻结四项工程边界：不抓招聘平台、不默认真实外呼、不长期爬虫、失败不伪造真实市场；
+- 文档和报告定义 provider status 和调用 evidence，至少包含 provider、query 摘要、授权范围、状态、耗时、错误、source refs、redacted=true；
+- 文档定义至少三条工作流树：provider status、provider check、market search run，并列出 parse、policy gate、client call、normalization、source refs、render、audit 的顺序；
+- 文档定义 FastAPI handoff，至少包含 `/api/market/providers/status`、`/api/market/providers/check`、`/api/market/search-runs`、`/api/market/search-runs/{run_id}`、`/api/market/snapshots/{run_id}`、`/api/market/source-refs/{source_ref_id}`；
+- 文档定义存储和证据实体，至少包含 `job_market_providers`、`job_search_runs`、`normalized_job_posts`、`job_market_snapshots`、`region_source_refs`、`market_provider_invocation_logs`；
+- 文档和报告定义验收分级：Level 1 为本地实现通过，Level 2 才是指定真实 provider opt-in 调用通过；
+- 当前收口最低验收命令清楚：
+
+```bash
+python3 -m pytest
+npm --prefix apps/chatbox run build
+drawio XML parse for docs/active/jobpilot-p11-market-provider-optin-gap.drawio
+tests/evals/test_p11_market_provider_optin_eval.py
+python3 scripts/generate_p11_market_provider_acceptance.py
+P11 Chinese HTML acceptance report
+```
+
+- 报告明确哪些 provider 真实调用、哪些仍为 fixture/manual/public/fallback；
+- 没有真实 provider 凭据时不得声明 Level 2；
+- 文档要求真实 provider 调用成功时必须提供脱敏 invocation log、source refs、snapshot 和截图证据；
+- 文档要求后续报告不得把 configured、fixture、manual paste 或 public sample 写成真实全网市场通过。
+
+不通过条件：
+
+- 后续验收只写“真实市场可用”，没有具体 provider、调用日志和 source refs；
+- 没有授权门、调用证据、失败/fallback 或 false-green 扫描；
+- 没有明确 Level 1 / Level 2 验收差异；
+- 没有定义无凭据、provider 失败、无结果、fallback-only 时的声明边界；
+- 没有 PRD 规格检视或高风险打回条件。
+
+### P11 门槛 E - 高风险能力不混入
+
+通过条件：
+
+- 文档明确 P11 不实现招聘平台账号登录、抓取、绕验证码或绕风控；
+- 不默认读取 `.env` API Key 并触发真实外呼；
+- 不扫描个人目录，不读取未授权真实资料；
+- 不新增长期爬虫、队列、定时任务或后台服务；
+- 不开启 ASR、麦克风、会议平台、MCP server 或自动投递；
+- 不把 provider configured 写成 called。
+
+不通过条件：
+
+- 任一高风险能力被写入 P11 默认实现或出门条件；
+- 文档缺少“发现高风险能力时打回计划阶段”的规则。
+
+P11 Level1 收口最低检查：
+
+```bash
+python3 -m pytest
+npm --prefix apps/chatbox run build
+python3 -m pytest tests/evals/test_p11_market_provider_optin_eval.py tests/evals/test_p11_market_provider_acceptance_report_eval.py
+python3 scripts/generate_p11_market_provider_acceptance.py
+drawio XML parse for docs/active/jobpilot-p11-market-provider-optin-gap.drawio
+rg "P11|JobMarketProviderRegistry|MarketProviderPolicyGate|JobMarketSnapshot" docs/active README.md TODO.md
+rg "真实市场 provider 已接入|招聘平台已接入|自动投递已实现|ASR 已实现|MCP 已实现" docs/active README.md TODO.md
+```
+
+## 上一自动化候选门槛 - P10-CLI 本地命令入口
+
+这些门槛用于保留 P10-CLI 的文档和实现验收基线。P10-CLI 本地命令入口自动化候选已完成，但不代表 MCP、真实 provider、真实资料、招聘平台、真实市场 provider、ASR、会议平台或自动投递通过。
+
+### P10-CLI 门槛 A - 命令体验和非目标清楚
+
+通过条件：
+
+- PRD 明确 `jobpilot --help`、`workspace status`、`demo run --example`、`jobs list`、`artifacts list/show`、`reports open` 的目标用户、行为和输出；
+- 文档说明 CLI 面向人类、本地 Agent、Codex CLI、ClaudeCode CLI 等本机调用者；
+- 文档明确 P10-CLI 只包装现有本地 API、examples/fixture、workspace、artifact 和 report 能力；
+- 非目标明确排除 MCP server、真实 provider、真实个人资料、招聘平台抓取、真实市场 provider、ASR、会议平台、自动投递、SaaS 和不可逆 workspace 操作。
+
+不通过条件：
+
+- 把 CLI 写成外部平台接入、MCP server、ASR 或自动投递系统；
+- 没有列出命令清单、输出要求或失败提示；
+- 把 P10-CLI 文档阶段写成 CLI 已实现。
+
+### P10-CLI 门槛 B - 代码实体和架构关系可执行
+
+通过条件：
+
+- 目标架构明确 `JobPilotCLI`、`CLICommandRouter`、`CLIConfigResolver`、`WorkspaceSelector`、`CommandSafetyGate`、`ApiClient`、`OutputRenderer`、`ExitCodePolicy`、`CommandAuditLog` 的状态、职责、上游和下游；
+- 目标架构明确 CLI Presentation、CLI Application、CLI Adapter、Existing Boundary 四层关系，且说明 CLI 只能通过本地 FastAPI 和本地报告目录适配现有能力；
+- 文档列出 `workspace status`、`demo run --example`、`jobs list`、`artifacts list/show`、`reports open --no-browser` 到现有 API / 本地文件入口的映射和适配缺口；
+- 文档定义 `ApiClient`、`LocalReportLocator`、`BrowserOpenAdapter`、`JsonEnvelopeAdapter` 的边界，说明哪些属于待新增 adapter，哪些属于已实现复用边界；
+- 文档明确 P10-CLI v1 不自动启动 FastAPI，服务不可用时只返回 exit 2 和启动建议；
+- 文档明确 `reports open` 只定位和打开已有报告，不生成、修复或重写报告；
+- 文档明确 workspace 解析优先级：`--workspace` > `JOBPILOT_WORKSPACE` > 当前目录 `.jobpilot_workspace` > 失败 exit 3；
+- 文档说明 CLI 只通过本地 API / Domain 边界复用能力，不直接写 SQLite；
+- 文档说明服务未启动、workspace 不存在、命令参数错误、高风险操作被拒绝时的输出和 exit code 验收方向；
+- 文档明确 configured 不等于 consented，不等于 called。
+
+不通过条件：
+
+- 架构图或文档只列“CLI 能力”抽象词，缺少具体代码实体；
+- 命令没有映射到现有 API、本地文件或明确待适配 adapter；
+- CLI 计划自动拉起 FastAPI、生成报告或扫描 workspace；
+- CLI 绕过 Provider Policy Gate 或绕过 API/Domain 直接操作数据库；
+- 没有安全门或错误码设计。
+
+### P10-CLI 门槛 C - drawio 和文本镜像可审计
+
+通过条件：
+
+- drawio 不超过 8 页；
+- 图中包含目标架构与当前架构差异、开发及验收计划、项目里程碑、验收门槛和出门条件；
+- 第 3 或第 4 页必须展示具体代码实体与分层交互关系；
+- 使用状态颜色标注：绿色已实现复用、蓝色待新增、黄色需适配、红色高风险禁止、灰色审计/边界；
+- 文本镜像能让不打开 drawio 的审计者理解每页内容。
+
+不通过条件：
+
+- drawio 页数超过 8 页；
+- 图中出现重复、冲突或过度承诺；
+- 图中没有明确 CLI 与 FastAPI、Domain、Workspace、Evidence 的调用关系。
+
+### P10-CLI 门槛 D - 后续实现验收可执行
+
+通过条件：
+
+- 文档定义 P10-CLI-M0 到 M5 的后续开发顺序；
+- P10-CLI-M0 必须把三项工程边界作为进入 M1 的前置审计项：FastAPI 不自动启动、`reports open` 不生成报告、workspace 解析优先级固定；
+- 文档定义统一输出 envelope，至少包含 `ok`、`command`、`workspace_id`、`data_source`、`provider_state`、`warnings`、`next_actions` 和失败时的 `error.code`、`message`、`hint`、`exit_code`；
+- 文档定义稳定 exit code：0 成功、1 参数错误、2 服务不可用、3 workspace 不存在、4 安全门拒绝、5 本地数据为空、10 内部错误；
+- 文档定义至少三条工作流树：`workspace status`、`demo run --example`、`artifacts show <id>`，并列出 parse、config、safety gate、API fetch、render、audit 的顺序；
+- 文档定义 handoff contract：router 到 handler、handler 到 safety gate、handler 到 API client、handler 到 renderer、handler 到 audit log 的输入输出和失败处理；
+- 后续实现最低验收命令清楚：
+
+```bash
+python3 -m pytest
+npm --prefix apps/chatbox run build
+drawio XML parse for docs/active/jobpilot-p10-cli-local-entry-gap.drawio
+jobpilot --help
+jobpilot workspace status
+jobpilot demo run --example
+jobpilot jobs list
+jobpilot artifacts list
+jobpilot reports open --no-browser
+P10-CLI Chinese HTML acceptance report
+```
+
+- 文档要求报告明确哪些命令真实可运行、哪些能力仍未验证；
+- 文档要求后续报告不得把 examples/fixture/mock/fake provider 写成真实 provider 或真实资料通过。
+
+不通过条件：
+
+- 后续验收只写“CLI 可用”，没有具体命令和证据；
+- 没有 JSON envelope、exit code、工作流树或 handoff contract；
+- 没有 M0 工程边界冻结记录；
+- 缺少 PRD 规格检视、false-green 扫描或高风险打回条件；
+- 没有要求清理浏览器或报告证据边界。
+
+### P10-CLI 门槛 E - 高风险能力不混入
+
+通过条件：
+
+- 文档明确 P10-CLI 不实现 MCP server；
+- 不读取 `.env` API Key 并触发真实外呼；
+- 不扫描个人目录，不读取未授权真实资料；
+- 不自动启动 FastAPI 或管理后台服务生命周期；
+- 不通过 `reports open` 生成、修复、重写报告；
+- 不抓取招聘平台，不读取 `source_url` 网页；
+- 不执行 workspace 删除、cleanup apply、migration apply；
+- 不开启 ASR、麦克风、会议平台或自动投递。
+
+不通过条件：
+
+- 任一高风险能力被写入 P10-CLI 默认实现或出门条件；
+- 文档缺少“发现高风险能力时打回计划阶段”的规则。
+
+P10-CLI 文档阶段最低检查：
+
+```bash
+drawio XML parse for docs/active/jobpilot-p10-cli-local-entry-gap.drawio
+rg "P10-CLI|JobPilotCLI|CommandSafetyGate|jobpilot --help" docs/active README.md TODO.md
+rg "真实 provider 已通过|CLI 已实现|MCP 已实现|自动投递已实现" docs/active README.md TODO.md
+```
+
+## 当前自动化候选门槛 - P9.1 行政区划市场地图与苏格拉底式资料补全
+
+这些门槛验收 P9.1 本地自动化候选是否完成：行政区划下钻式市场地图、Market Provider 未配置状态、Socratic Intake、产物台联动、多视口截图和中文 HTML 报告。它们不代表真实市场 provider、招聘平台接入、真实 ASR、真实 provider、MCP/Skill、自动投递或真实个人资料路径已经通过。
+
+### P9.1 门槛 A - 行政区划下钻式市场地图原型
+
+通过条件：
+
+- HTML 原型页展示当前 P9 实际截图和 P9.1 目标地图图样；
+- 目标地图包含全国/省/市/区县行政区划下钻、行政区划颜色深浅、城市气泡、visualMap、tooltip、toolbox、面包屑返回、薪资直方图、技术栈热度、来源可信度和 Chatbox 联动；
+- 目标地图说明 `AdministrativeDrilldownMap`、`RegionDrilldownController`、`AdministrativeRegionLayer` 和 `RegionInsightPanel` 的职责，避免实现继续停留在静态 SVG 或装饰图；
+- 目标地图明确 fixture、用户粘贴、公开源、opt-in API 的差异；
+- 原型自检说明目标图样不是生产截图，不替代真实实现验收。
+
+不通过条件：
+
+- 仍只是低保真装饰地图、静态 SVG、普通瓦片地图或暗色假大屏；
+- 目标图样暗示真实平台已经接入；
+- 没有说明多视口下地图如何折叠、展开、下钻、返回或 fallback。
+
+### P9.1 门槛 B - 真实市场数据 provider 边界
+
+通过条件：
+
+- 文档列出 opt-in provider 候选和不默认调用原则；
+- `JobMarketProvider`、`JobSearchRun`、`NormalizedJobPost`、`JobMarketSnapshot` 数据契约清楚；
+- 未配置、未授权、调用失败、fixture fallback 均有清晰文案和验收边界；
+- 明确禁止默认抓取 BOSS、猎聘、拉勾、LinkedIn 或绕风控。
+
+不通过条件：
+
+- 把 fixture 写成真实市场；
+- 把 configured 写成 connected 或 called；
+- 默认规划平台登录、抓取、自动沟通或自动投递。
+
+### P9.1 门槛 C - Socratic Intake
+
+通过条件：
+
+- 文档定义一问一答式资料补全策略；
+- 至少两个技术背景样例覆盖目标岗位、项目背景、本人职责、技术难点、行动、指标、证据、边界和 JD 映射；
+- 输出结构包含事实摘要、项目故事草稿、JD 映射、source refs、pending confirmations 和不可声明清单；
+- 明确 P9.1 先做事实采集，不把 mock interview scoring 写成已实现。
+
+不通过条件：
+
+- 变成一次性长表单；
+- 一轮里问多个互相竞争的问题；
+- 缺少事实边界和待确认项；
+- 编造学历、公司、年限、贡献或量化指标。
+
+### P9.1 门槛 D - 架构和实体状态一致
+
+通过条件：
+
+- PRD、目标架构、里程碑、追踪矩阵、drawio 和文本镜像都使用同一套 P9.1 实体命名；
+- drawio 明确区分 P9 已实现自动化候选、P9.1 本地自动化候选已实现、后续 opt-in 能力和禁止默认实现；
+- `MarketIntelligenceMap`、`AdministrativeDrilldownMap`、`RegionDrilldownController`、`AdministrativeRegionLayer`、`MarketSourceLegend`、`MarketInsightDrilldown`、`SocraticIntakeSession`、`SocraticQuestionPlanner`、`JobMarketProvider`、`JobSearchRun`、`NormalizedJobPost`、`JobMarketSnapshot`、`AdministrativeRegionNode`、`RegionJobDistributionSnapshot` 的上下游关系可追踪；
+- 架构图包含目标架构与当前 P9 架构差异、开发及验收计划、项目里程碑、验收门槛和出门条件。
+
+不通过条件：
+
+- drawio 只列功能词，缺少具体代码实体；
+- 文档把 P9 已完成能力、P9.1 待开发能力和后续高风险能力混为一谈；
+- 架构图页数超过 8 页，或出现重复、冲突、不可执行的设计承诺。
+
+### P9.1 门槛 E - 自动化开发准入与完成证据
+
+通过条件：
+
+- P9.1-DOC-M0 到 DOC-M3 均有可审计证据；
+- 进入 P9.1-M0 前，必须有阶段审计说明文档已完整支撑 M1 到 M5；
+- 开发计划明确每个子阶段的端到端验收、PRD 规格检视、失败打回和 false-green 扫描；
+- 任何真实 provider、真实市场数据、ASR、招聘平台、自动投递能力都必须单独授权。
+
+不通过条件：
+
+- 未完成人工或外部审计就进入代码开发；
+- 将 P9.1 本地自动化候选写成真实数据 provider 或招聘平台验收通过；
+- 后续开发计划没有覆盖行政区划下钻地图体验、合法 GeoJSON/fallback、数据来源、Socratic 对话、产物台联动和中文验收报告。
+
+P9.1 自动化候选最低证据：
+
+```bash
+drawio XML parse for docs/active/jobpilot-p9-1-market-socratic-gap.drawio
+npm --prefix apps/chatbox run build
+python3 scripts/generate_p9_1_market_socratic_acceptance.py
+python3 -m pytest tests/evals/test_p9_1_market_socratic_acceptance_eval.py
+python3 -m pytest
+git diff --check
+```
 
 ## 当前阶段自动化候选收口门槛 - P9 Chatbox-native 求职情报与申请包工作台
 

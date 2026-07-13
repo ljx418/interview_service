@@ -26,6 +26,8 @@ from services.api.schemas import (
     JobIntakeRequest,
     JobSelectRequest,
     MatchProfileRequest,
+    MarketProviderCheckRequest,
+    MarketSearchRunRequest,
     ParseJdRequest,
     ProviderConsentRequest,
     ProjectCardRequest,
@@ -51,6 +53,7 @@ from services.chat.context import build_chat_context
 from services.chat.provider_backed import handle_provider_backed_message
 from services.llm.contracts import JobParseOutput
 from services.llm.provider import ProviderError, get_provider, normalize_provider_name, provider_status
+from services.market import provider as market_provider
 from services.profile import get_candidate_profile, refresh_candidate_profile
 from services.storage.db import rows_to_dicts
 from services.storage.workspace import safe_child
@@ -66,7 +69,14 @@ _PROVIDER_CONSENTS: dict[str, dict] = {}
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:5174", "http://127.0.0.1:5174"],
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "http://localhost:5174",
+        "http://127.0.0.1:5174",
+        "http://localhost:5175",
+        "http://127.0.0.1:5175",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -92,6 +102,17 @@ def run_tool(fn: Callable, *args, **kwargs):
         )
     except ValueError as exc:
         message = str(exc)
+        market_error_codes = {
+            "PROVIDER_NOT_CONFIGURED",
+            "CONSENT_REQUIRED",
+            "PROVIDER_CALL_FAILED",
+            "NO_RESULTS",
+            "FALLBACK_ONLY",
+            "POLICY_REJECTED",
+        }
+        for error_code in market_error_codes:
+            if message.startswith(error_code):
+                raise HTTPException(status_code=400, detail={"ok": False, "error_code": error_code, "message": message.split(":", 1)[-1].strip() or message, "recoverable": error_code not in {"POLICY_REJECTED"}})
         if "VALIDATION_FAILED" in message:
             raise HTTPException(status_code=422, detail={"ok": False, "error_code": "VALIDATION_FAILED", "message": "工具输出未通过结构化校验。", "recoverable": True, "suggested_action": "请检查输入或切换 mock provider 后重试。"})
         if "EXPORT_PRECHECK_FAILED" in message:
@@ -260,6 +281,68 @@ def provider_preferences_set(req: ProviderPreferencesRequest):
         return _provider_runtime_config()
 
     return run_tool(_set)
+
+
+@app.get("/api/market/providers/status")
+def market_provider_status_api(workspace_id: str | None = None):
+    def _status():
+        return market_provider.provider_status(workspace_id=workspace_id)
+
+    return run_tool(_status)
+
+
+@app.post("/api/market/providers/check")
+def market_provider_check_api(req: MarketProviderCheckRequest):
+    def _check():
+        return market_provider.check_provider(
+            workspace_id=req.workspace_id,
+            provider_id=req.provider_id,
+            consent_preview_id=req.consent_preview_id,
+            confirm=req.confirm,
+        )
+
+    return run_tool(_check)
+
+
+@app.post("/api/market/search-runs")
+def market_search_run_create_api(req: MarketSearchRunRequest):
+    def _create():
+        return market_provider.create_search_run(
+            workspace_id=req.workspace_id,
+            query=req.query,
+            city_filters=req.city_filters,
+            salary_range=req.salary_range,
+            tech_stack=req.tech_stack,
+            provider_ids=req.provider_ids,
+            consent_id=req.consent_id,
+            source_policy=req.source_policy,
+        )
+
+    return run_tool(_create)
+
+
+@app.get("/api/market/search-runs/{run_id}")
+def market_search_run_get_api(run_id: str, workspace_id: str):
+    def _get():
+        return market_provider.get_search_run(workspace_id=workspace_id, run_id=run_id)
+
+    return run_tool(_get)
+
+
+@app.get("/api/market/snapshots/{run_id}")
+def market_snapshot_get_api(run_id: str, workspace_id: str):
+    def _get():
+        return market_provider.get_snapshot(workspace_id=workspace_id, run_id=run_id)
+
+    return run_tool(_get)
+
+
+@app.get("/api/market/source-refs/{source_ref_id}")
+def market_source_ref_get_api(source_ref_id: str, workspace_id: str):
+    def _get():
+        return market_provider.get_source_ref(workspace_id=workspace_id, source_ref_id=source_ref_id)
+
+    return run_tool(_get)
 
 
 @app.post("/api/provider/consent")

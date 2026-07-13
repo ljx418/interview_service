@@ -1,0 +1,2 @@
+"""Local JobPilot CLI package."""
+

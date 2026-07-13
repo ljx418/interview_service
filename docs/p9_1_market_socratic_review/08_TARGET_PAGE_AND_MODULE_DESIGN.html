@@ -1,0 +1,1728 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>JobPilot AI P9.1 统一前端原型设计页</title>
+  <style>
+    :root {
+      --bg: #f6f8f6;
+      --surface: #ffffff;
+      --surface-soft: #eef5f1;
+      --ink: #10201d;
+      --muted: #60746d;
+      --line: #d8e4de;
+      --brand: #176b5b;
+      --brand-2: #0f766e;
+      --blue: #2563eb;
+      --amber: #b7791f;
+      --red: #c2410c;
+      --purple: #6d5bd0;
+      --shadow: 0 18px 50px rgba(15, 35, 30, 0.08);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: linear-gradient(180deg, #f8fbf8 0%, var(--bg) 32%, #f2f5f3 100%);
+      color: var(--ink);
+      line-height: 1.6;
+      letter-spacing: 0;
+    }
+    header {
+      padding: 42px clamp(18px, 4vw, 56px) 24px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255,255,255,0.86);
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      backdrop-filter: blur(14px);
+    }
+    main { max-width: 1480px; margin: 0 auto; padding: 24px clamp(16px, 3vw, 36px) 72px; }
+    h1, h2, h3 { margin: 0; line-height: 1.22; }
+    h1 { font-size: 30px; }
+    h2 { font-size: 22px; margin-bottom: 12px; }
+    h3 { font-size: 16px; margin-bottom: 8px; }
+    p { margin: 0; color: var(--muted); }
+    .eyebrow { font-size: 12px; font-weight: 800; text-transform: uppercase; color: var(--brand); letter-spacing: .08em; }
+    .lede { max-width: 960px; margin-top: 12px; font-size: 15px; }
+    .section {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 22px;
+      margin-top: 20px;
+      box-shadow: var(--shadow);
+    }
+    .grid { display: grid; gap: 16px; }
+    .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid.four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 16px;
+      min-width: 0;
+    }
+    .soft { background: var(--surface-soft); }
+    .warning { background: #fff8ed; border-color: #edcf9a; }
+    .danger { background: #fff3ef; border-color: #f3b9a0; }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      color: var(--ink);
+      font-size: 12px;
+      font-weight: 700;
+      background: #fff;
+      white-space: nowrap;
+    }
+    .tag.green { background: #e6f6ef; border-color: #94d3b1; color: #176b5b; }
+    .tag.blue { background: #eaf1ff; border-color: #a8bff6; color: #1d4ed8; }
+    .tag.amber { background: #fff5df; border-color: #e4be73; color: #8a5a13; }
+    .tag.red { background: #fff0eb; border-color: #efa58d; color: #a33a16; }
+    .tag.purple { background: #f2efff; border-color: #beb5f2; color: #5a49ba; }
+    .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    img {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      display: block;
+      background: #f8faf9;
+    }
+    figure { margin: 0; }
+    figcaption { margin-top: 8px; font-size: 12px; color: var(--muted); }
+    svg { width: 100%; height: auto; display: block; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { border-bottom: 1px solid var(--line); padding: 10px 8px; text-align: left; vertical-align: top; }
+    th { color: var(--brand); font-size: 12px; text-transform: uppercase; }
+    .spec-list { margin: 12px 0 0; padding-left: 18px; color: var(--muted); }
+    .spec-list li { margin: 6px 0; }
+    .app-shell {
+      border: 1px solid #cbded6;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #f8faf8;
+    }
+    .app-top {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+    }
+    .service-strip { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+    .app-grid {
+      display: grid;
+      grid-template-columns: minmax(280px, 0.95fr) minmax(460px, 1.9fr) minmax(320px, 1.05fr);
+      min-height: 620px;
+    }
+    .pane {
+      padding: 16px;
+      border-right: 1px solid var(--line);
+      background: #fff;
+    }
+    .pane.chat { background: #fbfdfb; }
+    .pane.workbench { border-right: 0; background: #fffaf1; }
+    .tabbar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 12px 0; }
+    .tab { border: 1px solid var(--line); border-radius: 7px; padding: 8px; text-align: center; font-size: 12px; font-weight: 800; background: #fff; }
+    .tab.active { background: var(--brand); border-color: var(--brand); color: #fff; }
+    .market-card { border: 1px solid var(--line); border-radius: 8px; padding: 12px; background: #f8fcfa; }
+    .admin-map-shell {
+      border: 1px solid #cbded6;
+      border-radius: 8px;
+      overflow: hidden;
+      background: linear-gradient(180deg, #f7fbf8, #edf5f0);
+      position: relative;
+    }
+    .admin-map-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 9px 10px;
+      background: rgba(255,255,255,.94);
+      border-bottom: 1px solid var(--line);
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .admin-map-stage {
+      min-height: 320px;
+      width: 100%;
+      background:
+        linear-gradient(90deg, rgba(23,107,91,.04) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(23,107,91,.04) 1px, transparent 1px),
+        #f7fbf8;
+      background-size: 28px 28px;
+      position: relative;
+      padding: 12px;
+    }
+    .admin-map-stage svg {
+      width: 100%;
+      min-height: 300px;
+      display: block;
+    }
+    .map-source-note {
+      padding: 8px 10px;
+      background: #fff;
+      border-top: 1px solid var(--line);
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .design-rationale {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .design-rationale .card { background: #fbfdfb; }
+    .echarts-board {
+      border: 1px solid #cddfd7;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #ffffff;
+      box-shadow: 0 12px 32px rgba(16, 32, 29, .08);
+    }
+    .echarts-board-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+      padding: 11px 12px;
+      border-bottom: 1px solid #e2ece7;
+      background: #fbfdfb;
+    }
+    .echarts-title { font-size: 13px; font-weight: 900; color: #10201d; }
+    .echarts-subtitle { margin-top: 2px; font-size: 11px; color: #60746d; }
+    .echarts-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 10px 12px 0;
+      background: #fff;
+    }
+    .echarts-tab {
+      border: 1px solid #d8e4de;
+      border-radius: 999px;
+      padding: 5px 8px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #45645b;
+      background: #fff;
+    }
+    .echarts-tab.active { background: #176b5b; color: #fff; border-color: #176b5b; }
+    .echarts-body {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 142px;
+      gap: 0;
+      min-height: 360px;
+      padding: 12px;
+    }
+    .echarts-canvas {
+      position: relative;
+      min-height: 330px;
+      border: 1px solid #e0ece6;
+      border-radius: 8px 0 0 8px;
+      overflow: hidden;
+      background:
+        linear-gradient(90deg, rgba(23,107,91,.035) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(23,107,91,.035) 1px, transparent 1px),
+        linear-gradient(180deg, #fbfdfb, #f3f8f5);
+      background-size: 28px 28px, 28px 28px, auto;
+    }
+    .echarts-canvas svg {
+      position: absolute;
+      inset: 32px 22px 42px;
+      width: calc(100% - 44px);
+      height: calc(100% - 74px);
+    }
+    .echarts-region { stroke: #fff; stroke-width: 2; }
+    .echarts-region.low { fill: #dceee7; }
+    .echarts-region.mid { fill: #9acaba; }
+    .echarts-region.high { fill: #4d9c88; }
+    .echarts-region.hot { fill: #176b5b; stroke: #10201d; stroke-width: 2.5; }
+    .echarts-map-label {
+      font-size: 12px;
+      font-weight: 900;
+      fill: #10201d;
+      paint-order: stroke;
+      stroke: #fff;
+      stroke-width: 4px;
+    }
+    .echarts-bubble {
+      position: absolute;
+      left: var(--x);
+      top: var(--y);
+      width: var(--s);
+      height: var(--s);
+      transform: translate(-50%, -50%);
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 900;
+      background: var(--c);
+      border: 3px solid #fff;
+      box-shadow: 0 6px 18px rgba(16,32,29,.18);
+    }
+    .echarts-bubble span {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 50%;
+      transform: translateX(-50%);
+      white-space: nowrap;
+      color: #10201d;
+      font-size: 10px;
+      font-weight: 800;
+    }
+    .echarts-tooltip {
+      position: absolute;
+      right: 12px;
+      top: 12px;
+      width: 178px;
+      border: 1px solid #d7e5df;
+      border-radius: 8px;
+      background: rgba(255,255,255,.96);
+      box-shadow: 0 12px 28px rgba(16,32,29,.12);
+      padding: 10px;
+      font-size: 11px;
+    }
+    .echarts-tooltip strong { display: block; font-size: 13px; color: #10201d; margin-bottom: 4px; }
+    .echarts-mini-bars { display: grid; grid-template-columns: repeat(6, 1fr); gap: 3px; align-items: end; height: 36px; margin-top: 8px; }
+    .echarts-mini-bars i { display: block; border-radius: 3px 3px 0 0; background: #b7791f; min-height: 5px; }
+    .echarts-toolbox {
+      position: absolute;
+      left: 10px;
+      top: 10px;
+      display: grid;
+      gap: 6px;
+    }
+    .echarts-tool {
+      width: 31px;
+      height: 31px;
+      display: grid;
+      place-items: center;
+      border: 1px solid #d8e4de;
+      border-radius: 7px;
+      background: #fff;
+      color: #176b5b;
+      font-size: 12px;
+      font-weight: 900;
+      box-shadow: 0 6px 16px rgba(16,32,29,.08);
+    }
+    .echarts-legend {
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      bottom: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      padding: 7px 9px;
+      border: 1px solid #e0ece6;
+      border-radius: 7px;
+      background: rgba(255,255,255,.92);
+      font-size: 10px;
+      color: #60746d;
+    }
+    .legend-swatch { width: 18px; height: 9px; border-radius: 999px; display: inline-block; margin-right: 4px; vertical-align: middle; }
+    .echarts-side {
+      border: 1px solid #e0ece6;
+      border-left: 0;
+      border-radius: 0 8px 8px 0;
+      background: #fbfdfb;
+      padding: 10px;
+      min-width: 0;
+    }
+    .region-card {
+      border: 1px solid #e0ece6;
+      border-radius: 7px;
+      padding: 9px;
+      background: #fff;
+      margin-bottom: 8px;
+    }
+    .region-card strong { display: block; color: #10201d; font-size: 12px; margin-bottom: 4px; }
+    .region-card p { font-size: 11px; line-height: 1.45; }
+    .insight-list { display: grid; gap: 6px; margin-top: 8px; }
+    .insight-pill {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      border: 1px solid #e6efea;
+      border-radius: 6px;
+      padding: 5px 7px;
+      background: #fff;
+      font-size: 10px;
+      color: #60746d;
+    }
+    .echarts-data-strip {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      padding: 0 12px 12px;
+    }
+    .data-chip {
+      border: 1px solid #e0ece6;
+      border-radius: 7px;
+      padding: 8px;
+      background: #fbfdfb;
+      min-width: 0;
+    }
+    .data-chip b { display: block; color: #10201d; font-size: 15px; line-height: 1.1; }
+    .data-chip span { display: block; margin-top: 3px; color: #60746d; font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .market-expanded {
+      border: 1px solid #cddfd7;
+      border-radius: 10px;
+      overflow: hidden;
+      background:
+        linear-gradient(#ffffff, #ffffff) padding-box,
+        linear-gradient(135deg, rgba(23,107,91,.34), rgba(37,99,235,.18), rgba(183,121,31,.20)) border-box;
+      box-shadow: 0 18px 48px rgba(16,32,29,.11), 0 1px 0 rgba(255,255,255,.9) inset;
+      margin-top: 16px;
+    }
+    .market-expanded-top {
+      display: grid;
+      grid-template-columns: minmax(260px, 1fr) auto;
+      gap: 14px;
+      align-items: center;
+      padding: 14px 16px;
+      border-bottom: 1px solid #e0ece6;
+      background:
+        radial-gradient(circle at 8% 10%, rgba(23,107,91,.08), transparent 28%),
+        linear-gradient(180deg, #fbfdfb, #f7fbf8);
+    }
+    .market-query {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: center;
+      min-width: 0;
+    }
+    .query-box {
+      border: 1px solid #d8e4de;
+      border-radius: 8px;
+      padding: 10px 12px;
+      background: #fff;
+      color: #10201d;
+      font-size: 13px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .query-action {
+      border: 0;
+      border-radius: 8px;
+      background: linear-gradient(180deg, #1e7a68, #176b5b);
+      color: #fff;
+      padding: 10px 12px;
+      font-size: 12px;
+      font-weight: 900;
+      box-shadow: 0 8px 18px rgba(23,107,91,.20);
+      transition: transform .16s ease, box-shadow .16s ease, background .16s ease;
+    }
+    .query-action:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 24px rgba(23,107,91,.25);
+    }
+    .market-expanded-grid {
+      display: grid;
+      grid-template-columns: 176px minmax(420px, 1fr) 260px;
+      min-height: 620px;
+    }
+    .market-layer-panel,
+    .market-detail-panel {
+      padding: 14px;
+      background: #fbfdfb;
+      border-right: 1px solid #e0ece6;
+      min-width: 0;
+    }
+    .market-detail-panel {
+      border-right: 0;
+      border-left: 1px solid #e0ece6;
+      background: #fff;
+    }
+    .layer-section { margin-bottom: 14px; }
+    .layer-section h4,
+    .detail-section h4 {
+      margin: 0 0 8px;
+      color: #10201d;
+      font-size: 12px;
+      font-weight: 900;
+    }
+    .layer-option {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      border: 1px solid #e0ece6;
+      border-radius: 7px;
+      padding: 8px;
+      margin-bottom: 7px;
+      background: #fff;
+      color: #45645b;
+      font-size: 11px;
+      font-weight: 800;
+      transition: transform .16s ease, border-color .16s ease, background .16s ease, box-shadow .16s ease;
+    }
+    .layer-option:hover {
+      transform: translateX(2px);
+      border-color: #b7d4c9;
+      box-shadow: 0 6px 16px rgba(16,32,29,.06);
+    }
+    .layer-option.active { border-color: #176b5b; color: #176b5b; background: #eef8f3; box-shadow: 0 0 0 3px rgba(23,107,91,.08); }
+    .layer-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: #9acaba;
+      flex: 0 0 auto;
+    }
+    .layer-dot.blue { background: #2563eb; }
+    .layer-dot.amber { background: #b7791f; }
+    .layer-dot.purple { background: #6d5bd0; }
+    .filter-pill-row { display: flex; flex-wrap: wrap; gap: 6px; }
+    .filter-pill {
+      border: 1px solid #d8e4de;
+      border-radius: 999px;
+      padding: 4px 7px;
+      background: #fff;
+      color: #60746d;
+      font-size: 10px;
+      font-weight: 800;
+      transition: background .16s ease, color .16s ease, transform .16s ease;
+    }
+    .filter-pill:hover { transform: translateY(-1px); border-color: #b7d4c9; }
+    .filter-pill.active { background: #176b5b; border-color: #176b5b; color: #fff; }
+    .expanded-map-canvas {
+      position: relative;
+      min-height: 620px;
+      background:
+        radial-gradient(circle at 58% 48%, rgba(23,107,91,.12), transparent 22%),
+        radial-gradient(circle at 72% 76%, rgba(183,121,31,.10), transparent 18%),
+        linear-gradient(90deg, rgba(23,107,91,.03) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(23,107,91,.03) 1px, transparent 1px),
+        #f7fbf8;
+      background-size: 32px 32px;
+      overflow: hidden;
+    }
+    .expanded-map-canvas svg {
+      position: absolute;
+      inset: 74px 54px 92px;
+      width: calc(100% - 108px);
+      height: calc(100% - 166px);
+    }
+    .map-floating-toolbar {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      right: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      z-index: 1;
+    }
+    .map-chip-group { display: flex; flex-wrap: wrap; gap: 7px; }
+    .map-chip {
+      border: 1px solid #d8e4de;
+      border-radius: 999px;
+      padding: 6px 9px;
+      background: rgba(255,255,255,.92);
+      color: #45645b;
+      font-size: 11px;
+      font-weight: 900;
+      box-shadow: 0 6px 16px rgba(16,32,29,.06);
+      transition: transform .16s ease, border-color .16s ease, background .16s ease;
+    }
+    .map-chip:hover { transform: translateY(-1px); border-color: #b7d4c9; }
+    .map-chip.active { background: #176b5b; color: #fff; border-color: #176b5b; }
+    .tool-stack { display: flex; gap: 6px; }
+    .tool-btn {
+      width: 34px;
+      height: 34px;
+      border: 1px solid #d8e4de;
+      border-radius: 7px;
+      display: grid;
+      place-items: center;
+      background: rgba(255,255,255,.94);
+      color: #176b5b;
+      font-size: 12px;
+      font-weight: 900;
+      box-shadow: 0 6px 16px rgba(16,32,29,.08);
+      transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+    }
+    .tool-btn:hover { transform: translateY(-1px); border-color: #9fc6b8; box-shadow: 0 10px 20px rgba(16,32,29,.12); }
+    .expanded-region { stroke: #fff; stroke-width: 2.5; }
+    .expanded-region.low { fill: #e5f2ed; }
+    .expanded-region.mid { fill: #a9d5c6; }
+    .expanded-region.high { fill: #63af99; }
+    .expanded-region.hot { fill: #176b5b; stroke: #0d332c; stroke-width: 3.2; }
+    .expanded-region {
+      transition: filter .16s ease, opacity .16s ease, transform .16s ease;
+      transform-origin: center;
+    }
+    .expanded-region.hot {
+      filter: drop-shadow(0 10px 18px rgba(23,107,91,.22));
+    }
+    .expanded-label {
+      font-size: 13px;
+      font-weight: 900;
+      fill: #10201d;
+      paint-order: stroke;
+      stroke: #fff;
+      stroke-width: 4px;
+    }
+    .expanded-city {
+      position: absolute;
+      left: var(--x);
+      top: var(--y);
+      width: var(--s);
+      height: var(--s);
+      transform: translate(-50%, -50%);
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      border: 3px solid #fff;
+      background: var(--c);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 900;
+      box-shadow: 0 9px 22px rgba(16,32,29,.20);
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+    .expanded-city:hover,
+    .expanded-city.is-selected {
+      transform: translate(-50%, -50%) scale(1.06);
+      box-shadow: 0 0 0 8px rgba(23,107,91,.10), 0 14px 28px rgba(16,32,29,.24);
+    }
+    .expanded-city.is-selected::before {
+      content: "";
+      position: absolute;
+      inset: -11px;
+      border: 1px solid rgba(23,107,91,.26);
+      border-radius: inherit;
+      animation: pulseRing 2.4s ease-out infinite;
+    }
+    .expanded-city span {
+      position: absolute;
+      top: calc(100% + 5px);
+      left: 50%;
+      transform: translateX(-50%);
+      color: #10201d;
+      font-size: 11px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+    .map-tooltip-card {
+      position: absolute;
+      left: 54%;
+      top: 34%;
+      width: 220px;
+      border: 1px solid #d7e5df;
+      border-radius: 8px;
+      background: rgba(255,255,255,.97);
+      box-shadow: 0 16px 32px rgba(16,32,29,.14);
+      padding: 12px;
+      z-index: 2;
+      animation: floatIn .42s ease both;
+    }
+    .map-tooltip-card strong { display: block; color: #10201d; font-size: 14px; margin-bottom: 4px; }
+    .tooltip-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-top: 8px; }
+    .tooltip-metric { border: 1px solid #e6efea; border-radius: 6px; padding: 6px; font-size: 10px; color: #60746d; }
+    .tooltip-metric b { display: block; color: #10201d; font-size: 13px; }
+    .visual-map-legend {
+      position: absolute;
+      left: 18px;
+      bottom: 18px;
+      width: 220px;
+      border: 1px solid #d8e4de;
+      border-radius: 8px;
+      background: rgba(255,255,255,.94);
+      padding: 10px;
+      font-size: 10px;
+      color: #60746d;
+    }
+    .legend-gradient {
+      height: 9px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #e5f2ed, #a9d5c6, #63af99, #176b5b);
+      margin: 7px 0;
+    }
+    .map-status-note {
+      position: absolute;
+      right: 18px;
+      bottom: 18px;
+      max-width: 300px;
+      border: 1px solid #e4be73;
+      border-radius: 8px;
+      background: #fff8ed;
+      color: #8a5a13;
+      padding: 9px 10px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .map-connection-line {
+      position: absolute;
+      left: 58%;
+      top: 47%;
+      width: 180px;
+      height: 92px;
+      border-top: 2px solid rgba(23,107,91,.32);
+      border-right: 2px solid rgba(23,107,91,.32);
+      border-radius: 0 18px 0 0;
+      pointer-events: none;
+    }
+    .map-connection-line::after {
+      content: "";
+      position: absolute;
+      right: -5px;
+      top: 86px;
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: #176b5b;
+      box-shadow: 0 0 0 6px rgba(23,107,91,.10);
+    }
+    .interaction-feedback {
+      position: absolute;
+      top: 58px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid #cfe2da;
+      border-radius: 999px;
+      background: rgba(255,255,255,.94);
+      box-shadow: 0 12px 26px rgba(16,32,29,.10);
+      padding: 7px 10px;
+      color: #45645b;
+      font-size: 11px;
+      font-weight: 800;
+      z-index: 2;
+    }
+    .feedback-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #176b5b;
+      box-shadow: 0 0 0 5px rgba(23,107,91,.10);
+    }
+    .interaction-steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      padding: 12px 14px;
+      border-top: 1px solid #e0ece6;
+      background: #fff;
+    }
+    .interaction-step {
+      border: 1px solid #e0ece6;
+      border-radius: 8px;
+      padding: 9px;
+      background: #fbfdfb;
+      min-width: 0;
+    }
+    .interaction-step b {
+      display: block;
+      color: #10201d;
+      font-size: 12px;
+      margin-bottom: 3px;
+    }
+    .interaction-step span {
+      display: block;
+      color: #60746d;
+      font-size: 10px;
+      line-height: 1.4;
+    }
+    .interaction-step.active {
+      border-color: #176b5b;
+      background: #eef8f3;
+      box-shadow: 0 0 0 3px rgba(23,107,91,.08);
+    }
+    .detail-section {
+      border: 1px solid #e0ece6;
+      border-radius: 8px;
+      padding: 10px;
+      background: #fbfdfb;
+      margin-bottom: 10px;
+    }
+    .detail-kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+    .detail-kpi {
+      border: 1px solid #e6efea;
+      border-radius: 7px;
+      padding: 8px;
+      background: #fff;
+    }
+    .detail-kpi b { display: block; color: #10201d; font-size: 16px; line-height: 1.1; }
+    .detail-kpi span { display: block; margin-top: 4px; color: #60746d; font-size: 10px; }
+    .mini-histogram { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; align-items: end; height: 54px; margin-top: 8px; }
+    .mini-histogram i { display: block; min-height: 6px; border-radius: 4px 4px 0 0; background: #b7791f; }
+    .stack-row { display: flex; justify-content: space-between; gap: 8px; margin-top: 7px; font-size: 11px; color: #60746d; }
+    .stack-row span:last-child { color: #10201d; font-weight: 900; }
+    .source-row {
+      display: grid;
+      grid-template-columns: 78px 1fr auto;
+      gap: 7px;
+      align-items: center;
+      border-top: 1px solid #e6efea;
+      padding-top: 7px;
+      margin-top: 7px;
+      font-size: 10px;
+      color: #60746d;
+    }
+    .source-bar { height: 7px; border-radius: 999px; background: #edf4f1; overflow: hidden; }
+    .source-bar span { display: block; height: 100%; background: #176b5b; }
+    .prompt-preview {
+      border: 1px solid #bcd3fb;
+      border-radius: 8px;
+      background: #f3f8ff;
+      color: #1d4ed8;
+      padding: 9px;
+      font-size: 11px;
+      font-weight: 700;
+      line-height: 1.45;
+    }
+    .prompt-preview::before {
+      content: "已生成可编辑草稿";
+      display: inline-flex;
+      margin-bottom: 6px;
+      padding: 3px 6px;
+      border-radius: 999px;
+      background: #eaf1ff;
+      color: #1d4ed8;
+      font-size: 10px;
+      font-weight: 900;
+    }
+    .market-bottom-strip {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      padding: 12px 14px;
+      border-top: 1px solid #e0ece6;
+      background: #fbfdfb;
+    }
+    .bottom-evidence {
+      border: 1px solid #e0ece6;
+      border-radius: 7px;
+      background: #fff;
+      padding: 9px;
+      min-width: 0;
+    }
+    .bottom-evidence b { display: block; color: #10201d; font-size: 12px; margin-bottom: 3px; }
+    .bottom-evidence span { color: #60746d; font-size: 10px; }
+    .opensource-board {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 16px;
+    }
+    .oss-card {
+      border: 1px solid #d8e4de;
+      border-radius: 8px;
+      background: #fff;
+      padding: 14px;
+      display: grid;
+      gap: 10px;
+      min-width: 0;
+      box-shadow: 0 10px 26px rgba(16,32,29,.06);
+    }
+    .oss-card.recommended {
+      border-color: #94c9b7;
+      box-shadow: 0 0 0 3px rgba(23,107,91,.08), 0 14px 32px rgba(16,32,29,.08);
+    }
+    .oss-card h3 { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .oss-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      color: #60746d;
+      font-size: 11px;
+      font-weight: 800;
+    }
+    .oss-meta span {
+      border: 1px solid #e0ece6;
+      border-radius: 999px;
+      padding: 3px 7px;
+      background: #fbfdfb;
+    }
+    .oss-card a { color: #176b5b; font-weight: 800; text-decoration: none; }
+    .oss-pattern {
+      border-left: 3px solid #176b5b;
+      padding-left: 9px;
+      color: #45645b;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    .oss-risk {
+      border: 1px solid #edcf9a;
+      border-radius: 7px;
+      background: #fff8ed;
+      color: #8a5a13;
+      padding: 8px;
+      font-size: 11px;
+      line-height: 1.45;
+    }
+    .pattern-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .pattern-card {
+      border: 1px solid #d8e4de;
+      border-radius: 8px;
+      background: #fbfdfb;
+      padding: 12px;
+    }
+    .pattern-card b { display: block; color: #10201d; font-size: 13px; margin-bottom: 5px; }
+    .pattern-card span { color: #60746d; font-size: 11px; line-height: 1.45; }
+    @keyframes pulseRing {
+      0% { opacity: .72; transform: scale(.92); }
+      100% { opacity: 0; transform: scale(1.34); }
+    }
+    @keyframes floatIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .region { stroke: #fff; stroke-width: 2; rx: 8; }
+    .region.level-1 { fill: #dceee7; }
+    .region.level-2 { fill: #b9dacd; }
+    .region.level-3 { fill: #7bbca8; }
+    .region.level-4 { fill: #176b5b; }
+    .region.selected { stroke: #10201d; stroke-width: 3; }
+    .city-bubble { stroke: rgba(255,255,255,.95); stroke-width: 4; filter: drop-shadow(0 8px 16px rgba(15,35,30,.18)); }
+    .map-label { font-size: 12px; font-weight: 800; fill: #10201d; paint-order: stroke; stroke: #fff; stroke-width: 4px; }
+    .map-small-label { font-size: 10px; font-weight: 700; fill: #60746d; }
+    .metric-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 10px; }
+    .metric { background: #fff; border: 1px solid #e2ece7; border-radius: 7px; padding: 9px; font-size: 12px; }
+    .journey { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; }
+    .journey span { flex: 1; height: 8px; border-radius: 999px; background: #dbe9e3; }
+    .journey span.active { background: var(--brand); }
+    .message { max-width: 78%; border: 1px solid var(--line); border-radius: 8px; padding: 11px 12px; margin: 10px 0; background: #fff; }
+    .message.agent { border-left: 4px solid var(--brand); }
+    .message.user { margin-left: auto; background: #eaf4ff; border-color: #bcd3fb; }
+    .composer-tools { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 28px; }
+    .tool { border: 1px solid var(--line); border-radius: 7px; padding: 9px; background: #fff; font-size: 12px; font-weight: 800; text-align: center; }
+    .composer { display: grid; grid-template-columns: 1fr auto; gap: 8px; margin-top: 8px; }
+    .input { border: 1px solid var(--line); border-radius: 8px; min-height: 56px; padding: 12px; color: var(--muted); background: #fff; }
+    .send { border: 0; border-radius: 8px; padding: 0 18px; background: var(--brand); color: #fff; font-weight: 800; }
+    .artifact { border: 1px solid #ead8b5; background: #fff; border-radius: 8px; padding: 12px; margin-top: 10px; }
+    .mini-bars { display: grid; gap: 7px; margin-top: 10px; }
+    .bar { height: 9px; border-radius: 999px; background: #edf2ef; overflow: hidden; }
+    .bar span { display: block; height: 100%; border-radius: inherit; background: var(--brand); }
+    .module-layout {
+      display: grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 14px;
+      align-items: stretch;
+    }
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .step {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 12px;
+      min-height: 118px;
+    }
+    .step strong { display: block; color: var(--brand); margin-bottom: 6px; }
+    .note { font-size: 13px; color: var(--muted); }
+    @media (max-width: 1180px) {
+      .grid.two, .grid.three, .grid.four, .module-layout { grid-template-columns: 1fr; }
+      .app-grid { grid-template-columns: 1fr; }
+      .pane { border-right: 0; border-bottom: 1px solid var(--line); }
+      .flow { grid-template-columns: 1fr 1fr; }
+      .echarts-body { grid-template-columns: 1fr; }
+      .echarts-canvas { border-radius: 8px 8px 0 0; }
+      .echarts-side { border-left: 1px solid #e0ece6; border-top: 0; border-radius: 0 0 8px 8px; }
+      .market-expanded-top { grid-template-columns: 1fr; }
+      .market-expanded-grid { grid-template-columns: 1fr; }
+      .market-layer-panel { border-right: 0; border-bottom: 1px solid #e0ece6; }
+      .market-detail-panel { border-left: 0; border-top: 1px solid #e0ece6; }
+      .market-bottom-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .opensource-board { grid-template-columns: 1fr; }
+      .pattern-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 640px) {
+      header { position: static; padding: 28px 16px 18px; }
+      main { padding: 16px 12px 48px; }
+      h1 { font-size: 24px; }
+      .section { padding: 16px; }
+      .app-top { grid-template-columns: 1fr; }
+      .composer-tools { grid-template-columns: repeat(2, 1fr); }
+      .composer { grid-template-columns: 1fr; }
+      .flow { grid-template-columns: 1fr; }
+      .message { max-width: 100%; }
+      .echarts-board-head, .echarts-data-strip { grid-template-columns: 1fr 1fr; }
+      .echarts-body { padding: 10px; }
+      .echarts-canvas { min-height: 410px; }
+      .echarts-canvas svg { inset: 62px 18px 96px; width: calc(100% - 36px); height: calc(100% - 158px); }
+      .echarts-tooltip { left: 10px; right: 10px; top: auto; bottom: 54px; width: auto; }
+      .market-query { grid-template-columns: 1fr; }
+      .expanded-map-canvas { min-height: 520px; }
+      .expanded-map-canvas svg { inset: 94px 16px 150px; width: calc(100% - 32px); height: calc(100% - 244px); }
+      .map-floating-toolbar { align-items: flex-start; flex-direction: column; }
+      .map-tooltip-card { left: 12px; right: 12px; top: auto; bottom: 96px; width: auto; }
+      .visual-map-legend { left: 12px; right: 12px; bottom: 44px; width: auto; }
+      .map-status-note { position: static; margin: 8px 12px 12px; max-width: none; }
+      .market-bottom-strip { grid-template-columns: 1fr; }
+      .pattern-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="eyebrow">JobPilot AI / P9.1 Prototype Review</div>
+    <h1>P9.1 统一前端原型设计页</h1>
+    <p class="lede">本页是 P9.1 前端原型的唯一主审查页，已把旧版视觉审查、前端原型审查和新目标页面/模块设计收敛到同一个 HTML 内。当前内容是文档和原型，不代表 P9.1 产品代码已经实现。</p>
+    <div class="tags">
+      <span class="tag green">Chatbox-first</span>
+      <span class="tag blue">招聘情报地图</span>
+      <span class="tag purple">Socratic Intake</span>
+      <span class="tag amber">真实 provider 仅 opt-in 规划</span>
+      <span class="tag red">禁止虚假验收</span>
+    </div>
+  </header>
+
+  <main>
+    <section class="section">
+      <h2>1. 设计结论</h2>
+      <div class="card warning" style="margin-bottom:16px;">
+        <h3>统一页面说明</h3>
+        <p>后续审查、原型评审和自动化开发设计基线均以本页为准。旧页面 `05_VISUAL_REVIEW_PAGE.html` 和 `07_FRONTEND_PROTOTYPE_REVIEW.html` 只保留为跳转入口，避免同一阶段出现多套原型口径。</p>
+      </div>
+      <div class="grid three">
+        <div class="card soft">
+          <h3>目标体验</h3>
+          <p>用户打开工作台后，中间不是向导卡片，而是可以直接发起市场查询、补项目故事和调整申请包的 Chatbox。</p>
+        </div>
+        <div class="card soft">
+          <h3>页面结构</h3>
+          <p>顶部服务中心解释系统边界，左侧展示招聘态势，中央负责对话，右侧承接事实、故事和申请包产物。</p>
+        </div>
+        <div class="card warning">
+          <h3>能力边界</h3>
+          <p>P9.1 不声明真实市场 provider、招聘平台抓取、真实 ASR、自动投递或 MCP/Skill 连通性已经通过。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>2. 当前实际实现基线截图</h2>
+      <p class="note">以下为 P9 已有真实界面截图，仅用于说明当前基线问题，不是 P9.1 目标实现证据。</p>
+      <div class="grid three" style="margin-top:14px;">
+        <figure>
+          <img src="../reports/evidence/p9_stage_closure/p9_initial_1920.png" alt="P9 1920px 初始界面截图" />
+          <figcaption>P9 初始工作台：四区结构已出现，但中央仍被大块任务卡抢占。</figcaption>
+        </figure>
+        <figure>
+          <img src="../reports/evidence/p9_stage_closure/p9_search_run_1920.png" alt="P9 市场搜索截图" />
+          <figcaption>P9 市场 search run：能表达本地/fixture 状态，但地图仍像低保真示意。</figcaption>
+        </figure>
+        <figure>
+          <img src="../reports/evidence/p9_stage_closure/p9_390.png" alt="P9 移动端截图" />
+          <figcaption>P9 移动端：P9.1 后续必须保证 Chatbox 默认优先，态势图变成可打开面板。</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>3.0 开源地图体验参照与备选方案</h2>
+      <p class="note">本节暂停当前自制方案，先审查成熟开源项目的交互模式。仓库信息通过 GitHub CLI 核验；以下内容是方案参照，不代表本项目已经引入依赖或完成代码实现。</p>
+      <div class="opensource-board">
+        <div class="oss-card recommended">
+          <h3>Apache ECharts <span class="tag green">首选</span></h3>
+          <div class="oss-meta"><span>apache/echarts</span><span>66.7k stars</span><span>Apache-2.0</span></div>
+          <p><a href="https://github.com/apache/echarts">github.com/apache/echarts</a></p>
+          <div class="oss-pattern">可借鉴体验：`visualMap` 解释颜色语义，`tooltip` 做城市/区域浮层，`toolbox` 提供缩放/还原/导出证据，`geo + scatter` 同时表达行政区划和城市岗位量。</div>
+          <div class="oss-risk">适配判断：最适合 JobPilot 左侧情报面板。风险是 GeoJSON 质量和 ECharts option 复杂度，需要明确 fallback 和 source refs。</div>
+        </div>
+
+        <div class="oss-card">
+          <h3>Kepler.gl <span class="tag blue">交互参考</span></h3>
+          <div class="oss-meta"><span>keplergl/kepler.gl</span><span>11.9k stars</span><span>MIT</span></div>
+          <p><a href="https://github.com/keplergl/kepler.gl">github.com/keplergl/kepler.gl</a></p>
+          <div class="oss-pattern">可借鉴体验：左侧图层/过滤器、地图画布、右侧或浮层详情、时间/来源控制、图层打开关闭和数据探索感。</div>
+          <div class="oss-risk">适配判断：适合借鉴“图层面板 + 地图探索”体验，不建议直接嵌入，否则 JobPilot 会膨胀成 GIS/BI 工具。</div>
+        </div>
+
+        <div class="oss-card">
+          <h3>deck.gl <span class="tag purple">高级视觉</span></h3>
+          <div class="oss-meta"><span>visgl/deck.gl</span><span>14.3k stars</span><span>MIT</span></div>
+          <p><a href="https://github.com/visgl/deck.gl">github.com/visgl/deck.gl</a></p>
+          <div class="oss-pattern">可借鉴体验：高性能 WebGL 点层、热力、弧线、聚合、动画过渡，适合大规模岗位点位或跨城市流向。</div>
+          <div class="oss-risk">适配判断：视觉上限高，但对 P9.1 左侧面板偏重。更适合后续真实数据规模变大后作为二期路线。</div>
+        </div>
+
+        <div class="oss-card">
+          <h3>AntV L7 <span class="tag blue">国产地理可视化</span></h3>
+          <div class="oss-meta"><span>antvis/L7</span><span>4.0k stars</span><span>MIT</span></div>
+          <p><a href="https://github.com/antvis/L7">github.com/antvis/L7</a></p>
+          <div class="oss-pattern">可借鉴体验：polygon/point/heatmap 图层、WebGL 地理分析、地图控件、城市级下钻和更精致的空间视觉。</div>
+          <div class="oss-risk">适配判断：适合中国语境和 GeoJSON 图层，但依赖栈比 ECharts 更重，首版应作为备选而不是默认路线。</div>
+        </div>
+
+        <div class="oss-card">
+          <h3>MapLibre GL JS <span class="tag amber">真实地图路线</span></h3>
+          <div class="oss-meta"><span>maplibre/maplibre-gl-js</span><span>11.0k stars</span><span>BSD-style</span></div>
+          <p><a href="https://github.com/maplibre/maplibre-gl-js">github.com/maplibre/maplibre-gl-js</a></p>
+          <div class="oss-pattern">可借鉴体验：真实矢量瓦片地图、流畅 zoom/pan、地图控件、地理定位式探索。</div>
+          <div class="oss-risk">适配判断：用户已明确更偏行政区划态势图，不是街道导航地图；仅在未来需要真实底图时使用。</div>
+        </div>
+
+        <div class="oss-card">
+          <h3>react-simple-maps <span class="tag blue">轻量 SVG</span></h3>
+          <div class="oss-meta"><span>zcreativelabs/react-simple-maps</span><span>3.3k stars</span><span>MIT</span></div>
+          <p><a href="https://github.com/zcreativelabs/react-simple-maps">github.com/zcreativelabs/react-simple-maps</a></p>
+          <div class="oss-pattern">可借鉴体验：React 声明式 SVG 地图、d3-geo/topojson 投影，适合轻量行政区划图和自定义交互。</div>
+          <div class="oss-risk">适配判断：比手写 SVG 好，但图层、tooltip、visualMap、统计图联动都要自己补，整体不如 ECharts 省力。</div>
+        </div>
+      </div>
+
+      <div class="pattern-grid">
+        <div class="pattern-card"><b>应借鉴 1：图层面板</b><span>像 Kepler.gl 一样把机会、薪资、技术栈、来源可信度做成可切换图层，而不是把所有信息塞进地图。</span></div>
+        <div class="pattern-card"><b>应借鉴 2：语义图例</b><span>像 ECharts visualMap 一样让颜色有明确含义，并始终可见，避免用户误读样例数据。</span></div>
+        <div class="pattern-card"><b>应借鉴 3：探索反馈</b><span>hover 预览、click 选中、右侧详情同步、Chatbox 草稿生成要形成完整反馈链。</span></div>
+        <div class="pattern-card"><b>应避免：BI 工具化</b><span>不要照搬 Kepler/Superset/Grafana 的完整数据平台体验，JobPilot 的主路径仍是 Chatbox。</span></div>
+      </div>
+
+      <div class="card warning" style="margin-top:14px;">
+        <h3>已调研但不建议作为本模块主路线</h3>
+        <table style="margin-top:10px;">
+          <thead><tr><th>项目</th><th>GitHub 核验</th><th>不作为主路线的原因</th></tr></thead>
+          <tbody>
+            <tr><td>Apache Superset</td><td>apache/superset · 73.7k stars · Apache-2.0</td><td>它是完整 BI / 数据探索平台，适合参考 dashboard 信息层级，不适合塞进 Chatbox 左侧辅助面板。</td></tr>
+            <tr><td>Grafana</td><td>grafana/grafana · 75.3k stars · AGPL-3.0</td><td>强项是监控、时序、告警和多数据源面板；许可证和产品语义都不适合作为当前嵌入式求职地图主路线。</td></tr>
+            <tr><td>TerriaJS</td><td>TerriaJS/terriajs · 1.3k stars · Apache-2.0</td><td>适合构建大型 2D/3D 地理数据平台，包含 catalog/globe/WMS 等重能力，超出 P9.1 范围。</td></tr>
+            <tr><td>Streamlit</td><td>streamlit/streamlit · 45.2k stars · Apache-2.0</td><td>适合快速数据 App 原型，不适合作为 React Chatbox 工作台内的地图交互组件。</td></tr>
+          </tbody>
+        </table>
+        <div class="oss-grid" style="margin-top:14px;">
+          <div class="oss-card">
+            <h3>确定主路线</h3>
+            <div class="oss-pattern">`ECharts map/geo + 合法 GeoJSON + visualMap + scatter + drilldown`。默认左侧面板是二维行政区划情报图，不是街道瓦片地图。</div>
+            <div class="oss-risk">`globe.gl` 只作为展开态“大地图/地球仪感”的交互参考，不替代行政区划下钻主图。</div>
+          </div>
+          <div class="oss-card">
+            <h3>下钻状态机</h3>
+            <div class="oss-pattern">全国 → 省/直辖市 → 城市 → 区县。每次点击更新 `current_adcode`、`level`、`breadcrumb`、`selected_region`、`hover_region`、`fallback_state`。</div>
+            <div class="oss-risk">下钻失败、GeoJSON 缺失或许可不清时必须显示 fallback，不能空白通过，也不能静默改用 fixture 后宣称真实市场。</div>
+          </div>
+          <div class="oss-card">
+            <h3>力感反馈</h3>
+            <div class="oss-pattern">hover 区域抬升/描边/tooltip，click 后区域加深、城市气泡放大、详情面板同步、Chatbox 草稿出现，breadcrumb 可返回。</div>
+            <div class="oss-risk">反馈只证明交互设计，不证明真实 provider、招聘平台抓取或真实市场数据已经接入。</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card soft" style="margin-top:14px;">
+        <h3>更贴近目标交互的开源代码候选</h3>
+        <p class="note">以下仓库更接近“行政区划颜色深浅、点击下钻、真实边界、hover/click 有反馈、大地图/地球仪感”的目标体验。它们是下一轮原型重构的优先参考，而不是当前已经引入的依赖。</p>
+        <table style="margin-top:10px;">
+          <thead><tr><th>候选</th><th>已验证能力</th><th>可借鉴到 JobPilot 的体验</th><th>风险</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><a href="https://github.com/TangSY/echarts-map-demo">TangSY/echarts-map-demo</a><br/>2.1k stars</td>
+              <td>README 明确支持省、市、区县、乡镇多级边界数据和下钻；代码使用 AMap DistrictSearch 获取行政区划边界，并渲染到 ECharts。</td>
+              <td>最接近“真实行政区划 + 多级下钻”。可借鉴行政编码、下级区划加载、边界数据获取和下载流程。</td>
+              <td>依赖高德地图服务与数据授权；不能默认联网抓取或默认作为真实市场数据。</td>
+            </tr>
+            <tr>
+              <td><a href="https://github.com/liupl/echarts-china-map-drill-down">liupl/echarts-china-map-drill-down</a><br/>MIT</td>
+              <td>README 写明“ECharts 中国地图下钻至县级带数据展示”；代码中点击区域后 `goCity`，加载对应 GeoJSON，`echarts.registerMap` 后重新 `setOption`。</td>
+              <td>可直接参考“点击省份/城市 -> 放大展示下一层区划 -> visualMap 按岗位数着色”的核心实现路径。</td>
+              <td>仓库 star 少、示例老，需要重写为 React/Vite/TypeScript，并替换示例数据与视觉系统。</td>
+            </tr>
+            <tr>
+              <td><a href="https://github.com/microsoft/powerbi-visuals-drilldown-choropleth">microsoft/powerbi-visuals-drilldown-choropleth</a></td>
+              <td>README 明确支持 hierarchical map set、颜色填充 choropleth、state -> county -> precinct 等层级 drilldown。</td>
+              <td>可借鉴“数据层级字段 + map level URL + value color scale”的产品模型，尤其适合岗位数按区划层级钻取。</td>
+              <td>PowerBI 自定义视觉生态，不适合直接嵌入当前 React Chatbox；许可证信息需要进一步审查。</td>
+            </tr>
+            <tr>
+              <td><a href="https://github.com/vasturiano/globe.gl">vasturiano/globe.gl</a><br/>3.1k stars · MIT</td>
+              <td>官方示例支持 choropleth countries、elevated polygons、polygon hover 改变高度/颜色、globe auto-rotate。</td>
+              <td>最接近“大地图、地球仪、有力感反馈”：可借鉴 polygonAltitude、polygonCapColor、onPolygonHover、transitionDuration。</td>
+              <td>3D 地球仪很吸引，但对中国省市区县下钻不是开箱即用；更适合作为展开态或展示模式，不建议替代主二维行政区划图。</td>
+            </tr>
+            <tr>
+              <td><a href="https://github.com/vasturiano/react-globe.gl">vasturiano/react-globe.gl</a><br/>1.4k stars · MIT</td>
+              <td>globe.gl 的 React 封装，适合当前 React/Vite 项目。</td>
+              <td>如果要做“地球仪感”的视觉模式，应优先看这个 React 绑定，而不是直接用 vanilla globe.gl。</td>
+              <td>仍需要行政区划 GeoJSON 转换、层级 drilldown、性能和移动端交互验收。</td>
+            </tr>
+            <tr>
+              <td><a href="https://github.com/echarts-maps/echarts-china-cities-js">echarts-maps/echarts-china-cities-js</a><br/>577 stars · MIT code</td>
+              <td>收集中国城市级 ECharts 地图，包含 internal borders；README 提供 ECharts usage。</td>
+              <td>可作为市级边界静态资产参考，降低自建 GeoJSON 成本。</td>
+              <td>其 README 明确地图文件来自 AMap，商业/公开使用需遵守 AMap 服务和内容许可；不能无审查直接打包进产品。</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>3. 目标页面总体设计图</h2>
+      <p class="note">该图是 P9.1 目标原型，用于指导实现。它统一了顶部、左侧、中央、右侧的视觉语言和职责边界。</p>
+      <div class="app-shell" style="margin-top:14px;">
+        <div class="app-top">
+          <div>
+            <div class="eyebrow">JobPilot AI</div>
+            <h3>Chatbox-native 求职情报与申请包工作台</h3>
+          </div>
+          <div class="service-strip">
+            <span class="tag amber">Market Provider 未配置</span>
+            <span class="tag amber">LLM 需确认</span>
+            <span class="tag red">ASR 未开启</span>
+            <span class="tag blue">Workspace 本地</span>
+          </div>
+        </div>
+        <div class="app-grid">
+          <aside class="pane">
+            <div class="eyebrow">Job Market Intelligence</div>
+            <h3>求职市场情报</h3>
+            <div class="tabbar">
+              <div class="tab active">市场</div>
+              <div class="tab">匹配</div>
+              <div class="tab">流程</div>
+            </div>
+            <div class="market-card">
+              <div class="echarts-board" aria-label="ECharts 行政区划求职情报板目标原型">
+                <div class="echarts-board-head">
+                  <div>
+                    <div class="echarts-title">行政区划下钻求职情报板</div>
+                    <div class="echarts-subtitle">ECharts map/geo + 合法 GeoJSON · 全国 / 省 / 市 / 区县 drilldown · fixture/manual 示例，Market Provider 未配置</div>
+                  </div>
+                  <span class="tag blue">推荐主方案</span>
+                </div>
+                <div class="echarts-tabs" aria-label="地图图层">
+                  <span class="echarts-tab active">机会热度</span>
+                  <span class="echarts-tab">薪资中位</span>
+                  <span class="echarts-tab">技术栈</span>
+                  <span class="echarts-tab">来源可信度</span>
+                </div>
+                <div class="echarts-body">
+                  <div class="echarts-canvas" role="img" aria-label="浅色 ECharts 风格行政区划热力图和城市气泡">
+                    <div class="echarts-toolbox" aria-label="地图工具箱">
+                      <div class="echarts-tool">+</div>
+                      <div class="echarts-tool">-</div>
+                      <div class="echarts-tool">↺</div>
+                    </div>
+                    <div class="map-chip-group" style="position:absolute;left:14px;top:12px;z-index:3;">
+                      <span class="map-chip active">全国</span>
+                      <span class="map-chip">长三角</span>
+                      <span class="map-chip">上海</span>
+                    </div>
+                    <svg viewBox="0 0 440 310" aria-hidden="true">
+                      <polygon class="echarts-region mid" points="64,48 128,30 166,72 142,122 78,118 44,82"/>
+                      <polygon class="echarts-region low" points="168,42 228,38 258,78 236,122 178,116 148,76"/>
+                      <polygon class="echarts-region low" points="262,58 340,56 376,104 344,150 278,136 246,96"/>
+                      <polygon class="echarts-region mid" points="78,138 152,126 190,172 162,226 88,222 48,176"/>
+                      <polygon class="echarts-region hot" points="196,132 290,122 334,174 302,244 210,232 166,178"/>
+                      <polygon class="echarts-region low" points="330,156 392,160 410,214 366,258 314,230"/>
+                      <polygon class="echarts-region low" points="98,234 176,238 206,286 146,306 76,284"/>
+                      <polygon class="echarts-region high" points="232,248 316,246 358,292 284,314 218,292"/>
+                      <text class="echarts-map-label" x="78" y="84">京津冀</text>
+                      <text class="echarts-map-label" x="198" y="86">山东</text>
+                      <text class="echarts-map-label" x="294" y="106">华北</text>
+                      <text class="echarts-map-label" x="104" y="180">成渝</text>
+                      <text class="echarts-map-label" x="226" y="184">长三角</text>
+                      <text class="echarts-map-label" x="346" y="214">福建</text>
+                      <text class="echarts-map-label" x="112" y="270">华中</text>
+                      <text class="echarts-map-label" x="262" y="282">珠三角</text>
+                    </svg>
+                    <div class="echarts-bubble" style="--x:20%;--y:23%;--s:40px;--c:#2563eb;">42<span>北京</span></div>
+                    <div class="echarts-bubble" style="--x:58%;--y:47%;--s:36px;--c:#176b5b;">31<span>上海</span></div>
+                    <div class="echarts-bubble" style="--x:65%;--y:58%;--s:33px;--c:#6d5bd0;">28<span>杭州</span></div>
+                    <div class="echarts-bubble" style="--x:74%;--y:74%;--s:38px;--c:#b7791f;">35<span>深圳</span></div>
+                    <div class="echarts-bubble" style="--x:30%;--y:52%;--s:30px;--c:#0f766e;">18<span>成都</span></div>
+                    <div class="echarts-tooltip" aria-label="选中区域 tooltip">
+                      <strong>上海 · LLM 前端</strong>
+                      <p>31 条样例 JD · 22-35k · 来源 fixture/manual，未调用真实 provider。</p>
+                      <div class="echarts-mini-bars" aria-label="薪资段直方图">
+                        <i style="height:28%"></i><i style="height:44%"></i><i style="height:82%"></i><i style="height:66%"></i><i style="height:36%"></i><i style="height:20%"></i>
+                      </div>
+                    </div>
+                    <div class="echarts-legend" aria-label="visualMap 和来源图例">
+                      <span><i class="legend-swatch" style="background:#dceee7"></i>低机会</span>
+                      <span><i class="legend-swatch" style="background:#9acaba"></i>中等</span>
+                      <span><i class="legend-swatch" style="background:#176b5b"></i>高机会</span>
+                      <span><i class="legend-swatch" style="background:#2563eb"></i>城市岗位量</span>
+                      <span>source: fixture/manual</span>
+                    </div>
+                  </div>
+                  <div class="echarts-side" aria-label="区域洞察侧栏">
+                    <div class="region-card">
+                      <strong>区域洞察</strong>
+                      <p>长三角样例机会更集中，适合优先比较上海、杭州岗位要求。</p>
+                    </div>
+                    <div class="region-card">
+                      <strong>技术需求</strong>
+                      <div class="insight-list">
+                        <span class="insight-pill"><span>React</span><b>高</b></span>
+                        <span class="insight-pill"><span>TypeScript</span><b>高</b></span>
+                        <span class="insight-pill"><span>LLM UI</span><b>中</b></span>
+                      </div>
+                    </div>
+                    <div class="region-card">
+                      <strong>Chatbox 下一步</strong>
+                      <p>点击城市后生成“比较该城市岗位要求，并追问我缺少的项目证据”。</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="echarts-data-strip">
+                  <div class="data-chip"><b>154</b><span>当前可审计 JD</span></div>
+                  <div class="data-chip"><b>27.8k</b><span>样例薪资中位</span></div>
+                  <div class="data-chip"><b>38%</b><span>远程/混合占比</span></div>
+                  <div class="data-chip"><b>0</b><span>真实 provider 调用</span></div>
+                </div>
+                <div class="map-source-note">这是 ECharts 行政区划下钻情报板目标原型：强调真实区划边界、下钻交互和可审计数据边界，不声明真实全网招聘数据、平台抓取或 provider 调用已实现。</div>
+              </div>
+              <div class="design-rationale">
+                <div class="card">
+                  <h3>为什么打回暗色大屏</h3>
+                  <p>暗色控制中心视觉容易变成假大屏，信息密度高但与 JobPilot 的左侧辅助面板不匹配，也不利于用户扫读。</p>
+                </div>
+                <div class="card">
+                  <h3>为什么选 ECharts</h3>
+                  <p>ECharts 原生支持 map/geo、visualMap、scatter、tooltip、toolbox、registerMap 和 drilldown，更适合行政区划下钻式求职态势。</p>
+                </div>
+                <div class="card warning">
+                  <h3>不能虚假承诺</h3>
+                  <p>可以把地图做得精致，但真实市场数据仍需要 opt-in provider、source refs 和验收证据，不能用视觉效果冒充真实接入。</p>
+                </div>
+              </div>
+              <div class="metric-grid">
+                <div class="metric"><strong>北京</strong><br/>LLM 前端 42 个 / 25-40k</div>
+                <div class="metric"><strong>上海</strong><br/>平台前端 31 个 / 22-35k</div>
+                <div class="metric"><strong>杭州</strong><br/>AI 应用 28 个 / 20-32k</div>
+                <div class="metric"><strong>来源</strong><br/>fixture + manual，未调用真实 API</div>
+              </div>
+            </div>
+          </aside>
+
+          <section class="pane chat">
+            <div class="eyebrow">Conversation Plane</div>
+            <h3>Chatbox 主控台</h3>
+            <div class="journey" aria-label="用户历程状态">
+              <span class="active"></span><span class="active"></span><span></span><span></span><span></span>
+            </div>
+            <div class="message agent">
+              我可以先帮你比较北京、上海、杭州的 LLM 前端岗位。但当前 Market Provider 未配置，只能使用本地 fixture、你粘贴的 JD 和公开源状态，不会伪造成真实全网结果。
+            </div>
+            <div class="message user">帮我看北京和上海 LLM 前端岗位，再把智能客服项目整理成故事。</div>
+            <div class="message agent">
+              先问一个关键问题：这段智能客服项目主要想支持哪个目标岗位，LLM 应用前端、AI 平台前端，还是全栈应用开发？
+            </div>
+            <div class="composer-tools">
+              <div class="tool">查市场</div>
+              <div class="tool">粘贴 JD</div>
+              <div class="tool">补故事</div>
+              <div class="tool">生成申请包</div>
+            </div>
+            <div class="composer">
+              <div class="input">继续输入城市、薪资、项目经历或目标 JD...</div>
+              <button class="send">发送</button>
+            </div>
+          </section>
+
+          <aside class="pane workbench">
+            <div class="eyebrow">Artifact Workbench</div>
+            <h3>产物台</h3>
+            <div class="artifact">
+              <strong>事实摘要</strong>
+              <p class="note">目标岗位：LLM 应用前端；项目：智能客服控制台；待确认：性能指标来源。</p>
+            </div>
+            <div class="artifact">
+              <strong>项目故事草稿</strong>
+              <p class="note">按 STAR/CAR 组织，区分事实、建议表达和不可写边界。</p>
+            </div>
+            <div class="artifact">
+              <strong>JD 关键词映射</strong>
+              <div class="mini-bars">
+                <div class="bar"><span style="width:82%"></span></div>
+                <div class="bar"><span style="width:64%; background:#2563eb"></span></div>
+                <div class="bar"><span style="width:44%; background:#b7791f"></span></div>
+              </div>
+            </div>
+            <div class="artifact">
+              <strong>Pending Confirmations</strong>
+              <p class="note">首屏 2.8s → 1.6s 需 source ref；团队贡献不可写成本人独立完成。</p>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>3.1 市场地图模块展开设计</h2>
+      <p class="note">左侧三栏中的地图只承载摘要；用户点击“展开市场情报”后，应进入 `MarketExpandedView` 模块级视图。该视图仍然是辅助分析，不改变中央 Chatbox 是主路径的产品定义。</p>
+      <div class="market-expanded" aria-label="市场地图模块展开态设计">
+        <div class="market-expanded-top">
+          <div>
+            <div class="eyebrow">Expanded Market Intelligence</div>
+            <h3>岗位市场态势 · 行政区划下钻情报视图</h3>
+            <p class="note">目标：让用户快速判断城市、薪资、技术栈、来源可信度，并把洞察带回 Chatbox 继续追问。</p>
+          </div>
+          <div class="market-query" aria-label="市场查询输入">
+            <div class="query-box">LLM 前端 / 20-35k / 北京、上海、杭州 / 最近 30 天</div>
+            <button class="query-action" type="button">同步到 Chatbox</button>
+          </div>
+        </div>
+        <div class="market-expanded-grid">
+          <aside class="market-layer-panel" aria-label="图层和筛选面板">
+            <div class="layer-section">
+              <h4>图层</h4>
+              <div class="layer-option active"><span><i class="layer-dot"></i> 机会热度</span><span>154</span></div>
+              <div class="layer-option"><span><i class="layer-dot amber"></i> 薪资中位</span><span>27.8k</span></div>
+              <div class="layer-option"><span><i class="layer-dot purple"></i> 技术栈</span><span>React</span></div>
+              <div class="layer-option"><span><i class="layer-dot blue"></i> 来源可信度</span><span>fixture</span></div>
+            </div>
+            <div class="layer-section">
+              <h4>城市组</h4>
+              <div class="filter-pill-row">
+                <span class="filter-pill active">长三角</span>
+                <span class="filter-pill">京津冀</span>
+                <span class="filter-pill">珠三角</span>
+                <span class="filter-pill">成渝</span>
+              </div>
+            </div>
+            <div class="layer-section">
+              <h4>数据源</h4>
+              <div class="layer-option active"><span>fixture</span><span>可见</span></div>
+              <div class="layer-option active"><span>manual JD</span><span>可见</span></div>
+              <div class="layer-option"><span>public source</span><span>未接入</span></div>
+              <div class="layer-option"><span>provider API</span><span>0 调用</span></div>
+            </div>
+          </aside>
+
+          <div class="expanded-map-canvas" aria-label="展开态行政区划地图画布">
+            <div class="map-floating-toolbar">
+              <div class="map-chip-group">
+                <span class="map-chip active">全国</span>
+                <span class="map-chip">长三角</span>
+                <span class="map-chip">城市 / 区县下钻</span>
+                <span class="map-chip">source refs</span>
+              </div>
+              <div class="tool-stack" aria-label="ECharts toolbox">
+                <div class="tool-btn">+</div>
+                <div class="tool-btn">-</div>
+                <div class="tool-btn">↺</div>
+                <div class="tool-btn">⤢</div>
+              </div>
+            </div>
+            <div class="interaction-feedback"><span class="feedback-dot"></span>路径：全国 / 长三角 / 上海。已选中上海，区域洞察和 Chatbox 草稿已同步预览</div>
+            <svg viewBox="0 0 620 420" aria-hidden="true">
+              <polygon class="expanded-region mid" points="82,72 164,42 220,94 190,164 104,158 54,108"/>
+              <polygon class="expanded-region low" points="226,62 318,56 360,112 322,172 238,158 198,100"/>
+              <polygon class="expanded-region low" points="366,82 482,72 548,134 504,214 390,190 342,124"/>
+              <polygon class="expanded-region mid" points="96,196 206,174 260,246 218,326 108,318 52,246"/>
+              <polygon class="expanded-region hot" points="274,186 420,166 486,244 436,354 298,336 232,256"/>
+              <polygon class="expanded-region low" points="468,250 562,252 592,328 526,392 450,352"/>
+              <polygon class="expanded-region low" points="132,334 238,338 282,402 194,430 88,398"/>
+              <polygon class="expanded-region high" points="330,362 462,354 526,420 410,454 306,418"/>
+              <text class="expanded-label" x="108" y="114">京津冀</text>
+              <text class="expanded-label" x="264" y="112">山东</text>
+              <text class="expanded-label" x="430" y="148">华北</text>
+              <text class="expanded-label" x="132" y="252">成渝</text>
+              <text class="expanded-label" x="340" y="260">长三角</text>
+              <text class="expanded-label" x="498" y="324">福建</text>
+              <text class="expanded-label" x="156" y="386">华中</text>
+              <text class="expanded-label" x="386" y="410">珠三角</text>
+            </svg>
+            <div class="expanded-city" style="--x:20%;--y:26%;--s:48px;--c:#2563eb;">42<span>北京</span></div>
+            <div class="expanded-city is-selected" style="--x:58%;--y:48%;--s:45px;--c:#176b5b;">31<span>上海</span></div>
+            <div class="expanded-city" style="--x:64%;--y:60%;--s:40px;--c:#6d5bd0;">28<span>杭州</span></div>
+            <div class="expanded-city" style="--x:71%;--y:77%;--s:46px;--c:#b7791f;">35<span>深圳</span></div>
+            <div class="expanded-city" style="--x:30%;--y:56%;--s:36px;--c:#0f766e;">18<span>成都</span></div>
+            <div class="map-connection-line" aria-hidden="true"></div>
+            <div class="map-tooltip-card">
+              <strong>上海 · LLM 前端</strong>
+              <p>该浮层应由 ECharts tooltip 承载，展示岗位、薪资、技术栈、来源边界和下一层区划入口。</p>
+              <div class="tooltip-grid">
+                <div class="tooltip-metric"><b>31</b>样例 JD</div>
+                <div class="tooltip-metric"><b>22-35k</b>薪资段</div>
+                <div class="tooltip-metric"><b>React</b>最高频</div>
+                <div class="tooltip-metric"><b>0</b>provider 调用</div>
+              </div>
+            </div>
+            <div class="visual-map-legend">
+              <strong>visualMap · 机会热度</strong>
+              <div class="legend-gradient"></div>
+              <div style="display:flex;justify-content:space-between;"><span>低</span><span>中</span><span>高</span></div>
+            </div>
+            <div class="map-status-note">当前仅展示 fixture/manual 示例；不得把该地图写成真实全网搜索或招聘平台抓取结果。</div>
+          </div>
+
+          <aside class="market-detail-panel" aria-label="选区洞察面板">
+            <div class="detail-section">
+              <h4>选中区域：长三角</h4>
+              <div class="detail-kpi-grid">
+                <div class="detail-kpi"><b>59</b><span>样例 JD</span></div>
+                <div class="detail-kpi"><b>26.4k</b><span>薪资中位</span></div>
+                <div class="detail-kpi"><b>34%</b><span>远程/混合</span></div>
+                <div class="detail-kpi"><b>中高</b><span>竞争强度</span></div>
+              </div>
+            </div>
+            <div class="detail-section">
+              <h4>薪资分布</h4>
+              <div class="mini-histogram" aria-label="薪资分布柱图">
+                <i style="height:24%"></i><i style="height:38%"></i><i style="height:72%"></i><i style="height:92%"></i><i style="height:64%"></i><i style="height:40%"></i><i style="height:22%"></i>
+              </div>
+            </div>
+            <div class="detail-section">
+              <h4>技术栈需求</h4>
+              <div class="stack-row"><span>React / TypeScript</span><span>高</span></div>
+              <div class="stack-row"><span>LLM Streaming UI</span><span>中高</span></div>
+              <div class="stack-row"><span>地图 / ECharts</span><span>中</span></div>
+              <div class="stack-row"><span>Node / BFF</span><span>中</span></div>
+            </div>
+            <div class="detail-section">
+              <h4>来源可信度</h4>
+              <div class="source-row"><span>fixture</span><div class="source-bar"><span style="width:65%"></span></div><b>65%</b></div>
+              <div class="source-row"><span>manual JD</span><div class="source-bar"><span style="width:35%; background:#2563eb"></span></div><b>35%</b></div>
+              <div class="source-row"><span>provider</span><div class="source-bar"><span style="width:0%"></span></div><b>0%</b></div>
+            </div>
+            <div class="detail-section">
+              <h4>Chatbox 联动草稿</h4>
+              <div class="prompt-preview">“帮我比较上海和杭州 LLM 前端 JD，把差异映射到我的智能客服项目，并指出还缺哪些可验证证据。”</div>
+            </div>
+          </aside>
+        </div>
+        <div class="market-bottom-strip" aria-label="证据和验收栏">
+          <div class="bottom-evidence"><b>图表引擎</b><span>Apache ECharts + echarts-for-react，后续实现需真实安装并截图验收。</span></div>
+          <div class="bottom-evidence"><b>地图数据</b><span>合法 GeoJSON 行政区划；加载失败必须 fallback，不得空白通过。</span></div>
+          <div class="bottom-evidence"><b>数据来源</b><span>fixture/manual/public/provider 必须分层展示，provider 未配置不外呼。</span></div>
+          <div class="bottom-evidence"><b>主路径</b><span>展开态用于分析，最终动作回到 Chatbox 继续追问和生成产物。</span></div>
+        </div>
+        <div class="interaction-steps" aria-label="交互反馈路线">
+          <div class="interaction-step"><b>1. Hover 预览</b><span>移动到城市或区域时出现 tooltip，不改变右侧产物。</span></div>
+          <div class="interaction-step active"><b>2. Click 选中</b><span>城市气泡脉冲、区域加深，右侧洞察面板同步。</span></div>
+          <div class="interaction-step"><b>3. Draft 生成</b><span>自动生成可编辑 Chatbox 追问，不直接外呼 provider。</span></div>
+          <div class="interaction-step"><b>4. Sync 回写</b><span>用户确认后写入 market insight 和 source refs。</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>4. 前端模块详细设计图</h2>
+      <div class="card soft" style="margin-bottom:16px;">
+        <h3>4.0 GitHub CLI 地图库调研与选型</h3>
+        <p>经过重新评估，P9.1 不再采用 Leaflet/OSM 真实地图作为主方案。左侧模块目标是“求职态势理解”，不是导航定位，因此主方案改为 ECharts map/geo + 合法 GeoJSON 行政区划下钻可视化；真实地图仅作为被否定的备选路线记录。</p>
+        <table style="margin-top:12px;">
+          <thead><tr><th>候选模块</th><th>适配判断</th><th>阶段结论</th></tr></thead>
+          <tbody>
+            <tr><td>Apache ECharts map/geo + GeoJSON</td><td>最适合行政区划色块、城市气泡、薪资直方图和技术栈图层，能自然承载求职态势。</td><td>推荐作为 P9.1 下一阶段主路线。</td></tr>
+            <tr><td>D3 + GeoJSON / TopoJSON</td><td>自由度最高，适合变形地图和复杂交互，但工程成本更高。</td><td>作为高级备选。</td></tr>
+            <tr><td>Leaflet / MapLibre / OpenLayers</td><td>更适合真实地理地图、导航、瓦片和 GIS 场景。</td><td>不作为当前主方案，仅保留备选。</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="grid two">
+        <div class="card">
+          <h3>4.1 TopServiceCenter</h3>
+          <div class="module-layout">
+            <svg viewBox="0 0 560 220" role="img" aria-label="顶部服务中心设计图">
+              <rect x="18" y="34" width="524" height="150" rx="8" fill="#fff" stroke="#d8e4de"/>
+              <text x="38" y="66" font-size="18" font-weight="800" fill="#10201d">TopServiceCenter</text>
+              <g font-size="12" font-weight="700">
+                <rect x="38" y="92" width="110" height="56" rx="7" fill="#fff5df" stroke="#e4be73"/><text x="52" y="116">LLM Provider</text><text x="52" y="134" fill="#8a5a13">需确认</text>
+                <rect x="158" y="92" width="122" height="56" rx="7" fill="#fff5df" stroke="#e4be73"/><text x="171" y="116">Market Provider</text><text x="171" y="134" fill="#8a5a13">not_configured</text>
+                <rect x="290" y="92" width="70" height="56" rx="7" fill="#fff0eb" stroke="#efa58d"/><text x="310" y="116">ASR</text><text x="305" y="134" fill="#a33a16">关闭</text>
+                <rect x="370" y="92" width="84" height="56" rx="7" fill="#eaf1ff" stroke="#a8bff6"/><text x="389" y="116">MCP</text><text x="389" y="134" fill="#1d4ed8">状态</text>
+                <rect x="464" y="92" width="58" height="56" rx="7" fill="#e6f6ef" stroke="#94d3b1"/><text x="478" y="116">本地</text><text x="478" y="134" fill="#176b5b">安全</text>
+              </g>
+            </svg>
+            <div>
+              <p>顶部只解释系统能力状态，不是业务主入口。所有外部能力必须区分未配置、已配置、已连通、已调用、失败和 fallback。</p>
+              <ul class="spec-list">
+                <li>点击配置只打开设置或说明，不默认外呼。</li>
+                <li>市场 provider 未授权时显示 not_configured。</li>
+                <li>不得把配置展示写成真实连通验收。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>4.2 MarketIntelligenceMap</h3>
+          <div class="module-layout">
+            <div>
+              <div class="admin-map-shell">
+                <div class="admin-map-toolbar">
+                  <span>ECharts 情报板模块结构</span>
+                  <span class="tag blue">ECharts + GeoJSON</span>
+                </div>
+                <div style="padding:14px; background:#fff;">
+                  <strong>组件分层</strong>
+                  <ul class="spec-list">
+                    <li>`MarketIntelligenceBoard`：左侧完整求职情报板，保持 Chatbox 辅助角色。</li>
+                    <li>`EChartsOptionBuilder`：生成 map/geo、visualMap、scatter、tooltip、toolbox 的 option。</li>
+                    <li>`RegionOpportunityMap`：基于 GeoJSON 的行政区划 choropleth。</li>
+                    <li>`CityScatterLayer`：重点城市气泡，尺寸表达岗位量，颜色表达薪资或热度。</li>
+                    <li>`MarketLayerTabs`：机会热度、薪资中位、技术栈、来源可信度图层。</li>
+                    <li>`RegionInsightPanel`：选区详情、薪资分布、技术栈需求和 Chatbox 下一步。</li>
+                    <li>`SourceTrustLegend`：fixture / manual / public / opt-in API 固定可见。</li>
+                    <li>`ChatboxPromptBridge`：点击城市、薪资段或技术栈后生成可编辑追问草稿。</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div>
+              <p>地图是 ECharts 行政区划求职情报板，不是暗色大屏，也不是普通导航地图。它要服务求职决策：区域机会、薪资层、技术栈热度、来源可信度和 Chatbox 追问。</p>
+              <ul class="spec-list">
+                <li>必须有行政区划色块、城市气泡、visualMap、tooltip、toolbox、图层切换、选区详情和 source filter。</li>
+                <li>点击省份、城市群或城市后产生 Chatbox 追问上下文，并在右侧产物台记录 market insight。</li>
+                <li>每个数字有 source refs 或 fixture 标签。</li>
+                <li>行政区划 GeoJSON 加载失败时必须显示 fallback，不得空白通过。</li>
+                <li>不得再采用假控制中心暗色皮肤；控件、图例、选区和数据边界必须可读、可验收。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>4.3 SocraticChatbox</h3>
+          <div class="module-layout">
+            <svg viewBox="0 0 560 260" role="img" aria-label="Socratic Chatbox 模块设计图">
+              <rect x="20" y="22" width="520" height="216" rx="8" fill="#fbfdfb" stroke="#d8e4de"/>
+              <text x="42" y="54" font-size="16" font-weight="800">Conversation Plane</text>
+              <g font-size="11" fill="#60746d">
+                <rect x="42" y="72" width="62" height="8" rx="4" fill="#176b5b"/><rect x="110" y="72" width="62" height="8" rx="4" fill="#176b5b"/><rect x="178" y="72" width="62" height="8" rx="4" fill="#dbe9e3"/><rect x="246" y="72" width="62" height="8" rx="4" fill="#dbe9e3"/><text x="322" y="80">role_alignment → project_context → evidence_check</text>
+              </g>
+              <rect x="42" y="104" width="325" height="42" rx="8" fill="#fff" stroke="#d8e4de"/><text x="58" y="130" font-size="12" fill="#10201d">Agent：先问一个问题，这段项目支持哪个目标岗位？</text>
+              <rect x="154" y="158" width="310" height="40" rx="8" fill="#eaf1ff" stroke="#a8bff6"/><text x="170" y="183" font-size="12" fill="#10201d">User：LLM 应用前端，强调流式体验和稳定性。</text>
+              <rect x="42" y="210" width="380" height="18" rx="5" fill="#fff5df" stroke="#e4be73"/><text x="54" y="223" font-size="11" fill="#8a5a13">Fact strip：已确认 / 待确认 / 不可写，每 3-5 轮更新</text>
+            </svg>
+            <div>
+              <p>Chatbox 负责推进事实采集。它不抛出大表单，不一次问多个问题，而是每轮选择一个最能提升事实质量的问题。</p>
+              <ul class="spec-list">
+                <li>状态机从目标岗位到证据检查再到故事草稿。</li>
+                <li>不确定事实进入 pending confirmations。</li>
+                <li>禁止编造学历、年限、公司、指标和本人贡献。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>4.4 ArtifactWorkbench</h3>
+          <div class="module-layout">
+            <svg viewBox="0 0 560 260" role="img" aria-label="产物台模块设计图">
+              <rect x="24" y="22" width="512" height="216" rx="8" fill="#fffaf1" stroke="#ead8b5"/>
+              <text x="46" y="54" font-size="16" font-weight="800">Artifact Workbench</text>
+              <rect x="46" y="76" width="218" height="54" rx="8" fill="#fff" stroke="#ead8b5"/><text x="62" y="101" font-size="12" font-weight="800">CandidateFactSummary</text><text x="62" y="119" font-size="11" fill="#60746d">目标 / 背景 / 本人职责</text>
+              <rect x="280" y="76" width="218" height="54" rx="8" fill="#fff" stroke="#ead8b5"/><text x="296" y="101" font-size="12" font-weight="800">ProjectStoryDraft</text><text x="296" y="119" font-size="11" fill="#60746d">STAR/CAR 草稿</text>
+              <rect x="46" y="144" width="218" height="54" rx="8" fill="#fff" stroke="#ead8b5"/><text x="62" y="169" font-size="12" font-weight="800">JDKeywordMapping</text><text x="62" y="187" font-size="11" fill="#60746d">关键词覆盖与缺口</text>
+              <rect x="280" y="144" width="218" height="54" rx="8" fill="#fff0eb" stroke="#efa58d"/><text x="296" y="169" font-size="12" font-weight="800">PendingConfirmations</text><text x="296" y="187" font-size="11" fill="#a33a16">导出前必须处理</text>
+            </svg>
+            <div>
+              <p>产物台不是新的表单入口，而是对话过程中的事实和产物审查区。它让用户随时看到哪些内容可写、哪些还缺证据。</p>
+              <ul class="spec-list">
+                <li>source refs 和 pending confirmations 固定可见。</li>
+                <li>Chatbox 修改事实后，产物台同步更新。</li>
+                <li>blocking 待确认项未处理时不得正式导出。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>5. 用户操作 / 体验路线图</h2>
+      <div class="flow">
+        <div class="step">
+          <strong>1. 打开工作台</strong>
+          顶部看到 provider 和安全边界，中央 Chatbox 默认可输入，左侧是市场情报。
+        </div>
+        <div class="step">
+          <strong>2. 查询市场</strong>
+          用户问北京/上海 LLM 前端岗位，系统先说明数据来源和 provider 状态。
+        </div>
+        <div class="step">
+          <strong>3. 操作地图</strong>
+          用户缩放、拖动、点击城市或筛选技术栈，Chatbox 获得上下文。
+        </div>
+        <div class="step">
+          <strong>4. Socratic 补故事</strong>
+          Agent 一问一答采集目标岗位、背景、职责、难点、行动、指标和证据。
+        </div>
+        <div class="step">
+          <strong>5. 审查产物</strong>
+          右侧展示事实摘要、故事草稿、JD 映射、source refs 和待确认项。
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>6. 响应式设计约束</h2>
+      <table>
+        <thead><tr><th>视口</th><th>目标布局</th><th>验收重点</th></tr></thead>
+        <tbody>
+          <tr><td>1920 / 1440</td><td>顶部服务中心 + 左中右三栏同时可见，中央 Chatbox 宽度最大。</td><td>地图、对话和产物台可同时扫读，无文字重叠。</td></tr>
+          <tr><td>1200</td><td>三栏保留但压缩左/右宽度，Chatbox 输入框和路线状态仍优先。</td><td>工具按钮不换行挤压，地图图例不遮挡图钉。</td></tr>
+          <tr><td>720</td><td>Chatbox 为默认主视图，市场和产物进入可切换辅助面板。</td><td>输入框、发送、查市场、补故事入口可达。</td></tr>
+          <tr><td>390</td><td>默认只展示 Chatbox；态势和产物以全屏抽屉或页签打开。</td><td>不会用地图或产物卡压住聊天主路径。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section">
+      <h2>7. 设计一致性与事实边界自检</h2>
+      <div class="grid two">
+        <div class="card soft">
+          <h3>一致性通过项</h3>
+          <ul class="spec-list">
+            <li>始终采用顶部服务中心、左侧市场情报、中央 Chatbox、右侧产物台四区结构。</li>
+            <li>视觉 token 使用克制商务色，加入数据蓝、薪资琥珀、证据紫灰和风险红。</li>
+            <li>所有目标图均为原型，不写成真实界面验收证据。</li>
+            <li>Chatbox 是主路径，左侧和右侧只做辅助信息与产物审查。</li>
+          </ul>
+        </div>
+        <div class="card danger">
+          <h3>不可声明能力</h3>
+          <ul class="spec-list">
+            <li>不得声明 P9.1 UI 已实现或已人工验收。</li>
+            <li>不得声明真实市场 provider、BOSS/猎聘/拉勾/LinkedIn 抓取已接入。</li>
+            <li>不得声明真实 ASR、真实 LLM provider、自动投递、MCP/Skill 连通性通过。</li>
+            <li>不得用 fixture 图表冒充真实市场数据。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>8. 后续自动化开发验收映射</h2>
+      <table>
+        <thead><tr><th>阶段</th><th>本页设计依据</th><th>后续必须提供的真实证据</th></tr></thead>
+        <tbody>
+          <tr><td>P9.1-M1 行政区划下钻式市场地图 UI</td><td>目标页面总体设计、4.2 地图模块</td><td>多视口真实截图，证明行政区划颜色深浅、下钻、breadcrumb、tooltip、图钉、薪资、热度、来源可信度和缩放拖动可读。</td></tr>
+          <tr><td>P9.1-M2 provider 状态</td><td>4.1 顶部服务中心、地图 source legend</td><td>未配置 provider 显示 not_configured，未授权不调用，不把 fixture 写成真实市场。</td></tr>
+          <tr><td>P9.1-M3 Socratic Intake</td><td>4.3 Chatbox 模块、路线第 4 步</td><td>至少两个技术背景、各 10 轮以上一问一答日志和产物台截图。</td></tr>
+          <tr><td>P9.1-M4 三栏联动</td><td>总体设计、4.2、4.4、路线第 3-5 步</td><td>城市/技术栈点击后 Chatbox 追问，右侧事实摘要和故事草稿同步更新。</td></tr>
+          <tr><td>P9.1-M5 中文报告</td><td>本页事实边界和验收映射</td><td>中文 HTML 报告必须区分真实截图、原型图、fixture、未验证能力。</td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</body>
+</html>

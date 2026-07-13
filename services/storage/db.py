@@ -340,6 +340,7 @@ def connect(db_path: Path) -> sqlite3.Connection:
     migrate_p1_artifact_versions(conn)
     migrate_p6_provider_chat_invocations(conn)
     migrate_p8_job_intake(conn)
+    migrate_p11_market_provider(conn)
     return conn
 
 
@@ -445,6 +446,104 @@ def migrate_p8_job_intake(conn: sqlite3.Connection) -> None:
         conn.execute("ALTER TABLE job ADD COLUMN parse_status TEXT NOT NULL DEFAULT 'parsed'")
     if "is_current_target" not in columns:
         conn.execute("ALTER TABLE job ADD COLUMN is_current_target INTEGER NOT NULL DEFAULT 0")
+
+
+def migrate_p11_market_provider(conn: sqlite3.Connection) -> None:
+    conn.executescript(
+        """
+        CREATE TABLE IF NOT EXISTS job_market_providers (
+          provider_id TEXT PRIMARY KEY,
+          provider_name TEXT NOT NULL,
+          provider_type TEXT NOT NULL,
+          configured_state TEXT NOT NULL,
+          requires_key INTEGER NOT NULL DEFAULT 0,
+          rate_limit TEXT,
+          license_note TEXT NOT NULL,
+          last_checked_at TEXT,
+          updated_at TEXT NOT NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS job_search_runs (
+          run_id TEXT PRIMARY KEY,
+          workspace_id TEXT NOT NULL,
+          query TEXT NOT NULL,
+          city_filters TEXT NOT NULL DEFAULT '[]',
+          salary_range TEXT,
+          tech_stack TEXT NOT NULL DEFAULT '[]',
+          source_policy TEXT NOT NULL,
+          provider_ids TEXT NOT NULL DEFAULT '[]',
+          consent_id TEXT,
+          started_at TEXT NOT NULL,
+          completed_at TEXT,
+          status TEXT NOT NULL,
+          result_count INTEGER NOT NULL DEFAULT 0,
+          source_refs TEXT NOT NULL DEFAULT '[]',
+          boundary_note TEXT NOT NULL,
+          error_code TEXT
+        );
+
+        CREATE TABLE IF NOT EXISTS normalized_job_posts (
+          job_id TEXT PRIMARY KEY,
+          workspace_id TEXT NOT NULL,
+          run_id TEXT NOT NULL,
+          title TEXT NOT NULL,
+          company TEXT,
+          city TEXT NOT NULL,
+          salary_range TEXT,
+          seniority TEXT,
+          tech_stack TEXT NOT NULL DEFAULT '[]',
+          source_url TEXT,
+          source_type TEXT NOT NULL,
+          fetched_at TEXT NOT NULL,
+          confidence REAL NOT NULL,
+          source_ref_id TEXT NOT NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS job_market_snapshots (
+          snapshot_id TEXT PRIMARY KEY,
+          workspace_id TEXT NOT NULL,
+          run_id TEXT NOT NULL,
+          city_stats TEXT NOT NULL DEFAULT '[]',
+          salary_histogram TEXT NOT NULL DEFAULT '[]',
+          tech_heatmap TEXT NOT NULL DEFAULT '[]',
+          source_breakdown TEXT NOT NULL DEFAULT '{}',
+          remote_ratio REAL NOT NULL DEFAULT 0,
+          competition_level TEXT NOT NULL,
+          trend_summary TEXT NOT NULL,
+          low_confidence_notes TEXT NOT NULL DEFAULT '[]',
+          source_refs TEXT NOT NULL DEFAULT '[]',
+          created_at TEXT NOT NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS region_source_refs (
+          source_ref_id TEXT PRIMARY KEY,
+          workspace_id TEXT NOT NULL,
+          run_id TEXT NOT NULL,
+          region_code TEXT NOT NULL,
+          region_name TEXT NOT NULL,
+          metric_name TEXT NOT NULL,
+          source_type TEXT NOT NULL,
+          source_ref_ids TEXT NOT NULL DEFAULT '[]',
+          source_summary TEXT NOT NULL,
+          source_url TEXT,
+          confidence REAL NOT NULL,
+          fetched_at TEXT NOT NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS market_provider_invocation_logs (
+          invocation_id TEXT PRIMARY KEY,
+          workspace_id TEXT,
+          provider_id TEXT NOT NULL,
+          run_id TEXT,
+          query_summary TEXT NOT NULL DEFAULT '{}',
+          status TEXT NOT NULL,
+          duration_ms INTEGER NOT NULL DEFAULT 0,
+          error_code TEXT,
+          redacted INTEGER NOT NULL DEFAULT 1,
+          created_at TEXT NOT NULL
+        );
+        """
+    )
 
 
 def row_to_dict(row: sqlite3.Row | None) -> dict[str, Any] | None:

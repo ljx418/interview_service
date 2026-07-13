@@ -1,6 +1,187 @@
-# JobPilot AI P9 Chatbox-native 求职情报与申请包工作台里程碑与交付计划
+# JobPilot AI P11 / P10-CLI / P9 Chatbox-native 求职工作台里程碑与交付计划
 
-## 当前文档阶段：P9 Chatbox-native 求职情报与申请包工作台
+## 当前收口阶段：P11 真实市场数据 Provider Opt-in Level1
+
+P11 是 P9.1 和 P10 之后的低风险下一阶段。P11 文档开发已经完成，P11-M0 到 P11-M5 的 Level1 自动化候选也已实现并进入阶段性验收收口。当前允许声明的是：本地/fixture/recorded/manual/public 路径具备 market provider 状态、授权拒绝、search run、snapshot、source refs、CLI 状态、Chatbox 联动、专项 eval 和中文 HTML 报告。当前不得声明指定真实 market provider 已完成 Level2 opt-in 调用，不得声明全网 JD 搜索、招聘平台抓取、ASR、MCP、自动投递或 SaaS 通过。
+
+执行顺序：
+
+```text
+P11-DOC-M0 阶段口径和范围锁定
+→ P11-DOC-M1 PRD / 目标架构 / provider 契约 / 实体状态落盘
+→ P11-DOC-M2 README / TODO / active docs / roadmap / drawio / 文本镜像同步
+→ P11-DOC-M3 文档覆盖度复审和 false-green 扫描
+→ P11-M0 开发前启动审计
+→ P11-M1 到 M5 Level1 自动化开发和验收
+→ P11 阶段性审计、drawio 同步、中文报告和 Git 收口
+```
+
+P11 文档阶段：
+
+| 阶段 | 交付物 | 出门条件 |
+| --- | --- | --- |
+| P11-DOC-M0 | 当前阶段口径、非目标和高风险边界 | 已完成；明确 P11 不默认触发真实 provider、招聘平台抓取、ASR、MCP、自动投递或 SaaS |
+| P11-DOC-M1 | PRD、目标架构、provider 契约、实体状态 | 已完成；`JobMarketProviderRegistry`、`MarketProviderPolicyGate`、`JobSearchRunService`、`MarketDataNormalizer`、`SourceRefBinder`、`JobMarketSnapshot` 职责清楚 |
+| P11-DOC-M2 | README、TODO、active docs、roadmap、drawio 和文本镜像同步 | 已完成并随 Level1 收口复核；drawio 不超过 8 页，目标架构、差异、计划、里程碑、门槛和出门条件完整 |
+| P11-DOC-M3 | 文档覆盖度复审和外部审计包 | 已完成；未发现阻塞 Level1 自动化开发的致命或重大规格偏差 |
+
+P11 后续自动化开发计划：
+
+| 阶段 | 目标 | 验收证据 |
+| --- | --- | --- |
+| P11-M0 | 开发前启动审计 | 已完成；stage review 证明文档足以进入 P11 Level1 自动化开发，且未混入平台抓取、真实 LLM provider、ASR、MCP、自动投递、长期爬虫或 SaaS |
+| P11-M1 | market provider 状态 API 和配置摘要 | 已实现；provider status 可显示 Level1/local/fixture/fallback 状态；不保存或打印 API Key |
+| P11-M2 | provider check 授权门和调用日志 | 已实现 Level1；未确认真实 opt-in provider 时返回安全拒绝；本地 provider check 有脱敏证据 |
+| P11-M3 | market search run、normalization、snapshot | 已实现；`JobSearchRun`、`NormalizedJobPost`、`JobMarketSnapshot` 和 source refs 可验收 |
+| P11-M4 | Chatbox / 地图 / 产物台联动 | 已实现 Level1；本地 source 映射到市场地图、Chatbox 回复、CLI status 和右侧 Market Insight；不声明真实市场 |
+| P11-M5 | 中文自动化验收报告 | 已实现；pytest、frontend build、provider opt-in eval、drawio parse、中文 HTML 报告和 PRD 规格检视作为收口证据 |
+
+P11 验收分级：
+
+| 级别 | 触发条件 | 里程碑影响 |
+| --- | --- | --- |
+| Level 0 | 当前文档、drawio、门槛和审计完成 | 已完成；允许进入 P11-M0，不代表实现通过 |
+| Level 1 | fixture/recorded/public/manual 完成 provider 状态、授权门、normalization、snapshot、UI/CLI 联动和报告 | 当前验收目标；可声明本地实现通过，不可声明真实 provider 通过 |
+| Level 2 | 用户提供合法 provider 凭据或无需密钥的合法公开 provider，且至少一次真实调用成功，有脱敏日志和 source refs | 可声明指定 provider opt-in 路径通过 |
+| Level 3 | 多 provider 或多公开源完成对比，有一致性和差异说明 | 可声明指定来源组合通过，不可扩展为全网 JD 搜索 |
+
+当前没有用户明确提供的合法 provider 凭据和外呼授权，因此 P11-M5 只能以 Level 1 收口。Level 2 真实 provider opt-in 必须在用户提供 provider、凭据、调用范围和一次性外呼确认后单独执行。
+
+P11 完成后呈现的目标体验：
+
+```text
+用户不再只能看到 fixture 市场地图
+→ 顶部显示真实 market provider 是否配置、授权、调用、失败或 fallback
+→ Chatbox 发起真实市场查询时先展示授权预览
+→ 授权后只执行一次可审计 JobSearchRun
+→ 地图和产物台展示岗位数、薪资、技术栈热度、source refs 和置信度
+→ 报告明确真实 provider 调用次数、失败路径、fallback 和未验证范围
+```
+
+P11 高风险打回条件：
+
+- 文档或实现默认登录、抓取或绕过 BOSS、猎聘、拉勾、LinkedIn 等招聘平台；
+- 默认读取 API Key 并外呼 provider；
+- provider configured 被写成 connected、consented 或 called；
+- provider 失败后静默回退 fixture 并声明真实市场；
+- 新增长期爬虫、队列、定时任务或后台抓取服务；
+- 把真实 LLM provider、ASR、MCP、自动投递或 SaaS 塞入 P11 默认范围；
+- drawio 缺少具体代码实体、状态颜色、上下游关系或出门门槛。
+
+## 上一自动化候选阶段：P10-CLI 本地命令入口
+
+P10-CLI 本地命令入口自动化候选已完成。`jobpilot` CLI 已覆盖 help、workspace status、demo、jobs、artifacts、reports、`--json`、exit code、安全门、脱敏审计和中文 HTML 报告。P10 仍不代表 MCP、真实 provider、真实资料、招聘平台抓取、真实市场 provider、ASR、会议平台、自动投递或 SaaS 通过。
+
+执行顺序：
+
+```text
+P10-CLI-DOC-M0 阶段口径和范围锁定
+→ P10-CLI-DOC-M1 PRD / 目标架构 / 命令契约 / 实体状态落盘
+→ P10-CLI-DOC-M2 README / TODO / active docs / roadmap / drawio / 文本镜像同步
+→ P10-CLI-DOC-M3 文档覆盖度复审和 false-green 扫描
+→ P10-CLI-M0 后续开发前启动审计
+→ P10-CLI-M1 到 M5 自动化开发和验收
+```
+
+P10-CLI 文档阶段：
+
+| 阶段 | 交付物 | 出门条件 |
+| --- | --- | --- |
+| P10-CLI-DOC-M0 | 当前阶段口径、非目标和高风险边界 | 明确 P10-CLI 是文档开发，不是 CLI 实现；MCP、真实 provider、真实资料、平台抓取、ASR、自动投递均不在默认范围 |
+| P10-CLI-DOC-M1 | PRD、目标架构、命令契约、实体状态 | `JobPilotCLI`、`CLICommandRouter`、`CLIConfigResolver`、`WorkspaceSelector`、`CommandSafetyGate`、`ApiClient`、`OutputRenderer`、`ExitCodePolicy`、`CommandAuditLog` 职责清楚 |
+| P10-CLI-DOC-M2 | README、TODO、active docs、roadmap、drawio 和文本镜像同步 | drawio 不超过 8 页；目标架构与当前架构差异、开发计划、里程碑、验收门槛和出门条件完整 |
+| P10-CLI-DOC-M3 | 文档覆盖度复审和外部审计包 | 无新增致命或重大规格偏差；列出少于 20 个可交给 ChatGPT 审计的文档路径 |
+
+P10-CLI 后续自动化开发计划：
+
+| 阶段 | 目标 | 验收证据 |
+| --- | --- | --- |
+| P10-CLI-M0 | 开发前启动审计 | stage review 证明文档足以进入 P10-CLI 自动化开发启动，且未混入 MCP、真实 provider、真实资料、平台接入、ASR 或自动投递；冻结 FastAPI 不自动启动、`reports open` 不生成报告、workspace 解析优先级 |
+| P10-CLI-M1 | CLI 框架和帮助命令 | `jobpilot --help` 可运行；中文帮助和非目标清楚 |
+| P10-CLI-M2 | workspace status 和 safety gate | `jobpilot workspace status` 可区分服务、workspace、provider、market provider、reports 状态；高风险默认拒绝 |
+| P10-CLI-M3 | demo/jobs/artifacts/reports 命令 | `demo run --example`、`jobs list`、`artifacts list/show`、`reports open` 覆盖本地 examples/fixture/workspace/report 路径 |
+| P10-CLI-M4 | Agent-friendly 输出和错误码 | `--json`、stdout/stderr、exit code 可被自动化脚本判断；服务未启动、无报告、参数错误、安全拒绝均可验收 |
+| P10-CLI-M5 | 中文自动化验收报告 | pytest、frontend build、CLI eval、drawio parse、中文 HTML 报告和 PRD 规格检视通过 |
+
+P10-CLI 完成后呈现的目标体验：
+
+```text
+用户或本地 Agent 不需要记忆多个脚本和 API
+→ 通过 jobpilot --help 找到本地命令
+→ 通过 workspace status 判断服务和数据状态
+→ 通过 demo run --example 验证本地 examples 路径
+→ 通过 jobs/artifacts/reports 命令检查岗位、产物和证据
+→ 命令输出清楚标明 mock/fake provider、fixture、本地 workspace 和未验证能力
+```
+
+P10-CLI 高风险打回条件：
+
+- 文档或实现把 CLI 写成 MCP server 或外部 Agent 平台；
+- CLI 默认读取真实 API Key 并外呼 provider；
+- CLI 默认扫描真实个人资料目录；
+- CLI 自动启动 FastAPI、管理后台进程生命周期或新增端口守护逻辑；
+- `reports open` 自动生成、修复或重写验收报告；
+- workspace 解析没有固定为 `--workspace` > `JOBPILOT_WORKSPACE` > 当前目录 `.jobpilot_workspace` > 失败；
+- CLI 读取 `source_url` 网页或登录招聘平台；
+- CLI 执行 workspace 删除、cleanup apply、migration apply；
+- 报告把 CLI 文档开发写成命令已实现；
+- drawio 缺少具体代码实体、状态颜色、上下游关系或出门门槛。
+
+## 当前自动化候选阶段：P9.1 行政区划市场地图与苏格拉底式资料补全
+
+P9 已完成第一轮本地自动化候选实现，但人工体验反馈仍指出三类缺陷：市场地图体验粗糙，当前数据仍以 fixture / 用户粘贴 / 已导入 JD 为主，Chatbox 缺少苏格拉底式追问来补齐简历事实和项目故事。P9.1 当前本地自动化候选已完成：实现 ECharts 行政区划下钻式市场地图、Market Provider 未配置状态、Socratic Intake、产物台联动和中文 HTML 验收报告。该结论不代表真实市场 provider、招聘平台抓取、真实 ASR、真实 provider、自动投递或 MCP/Skill 连通性已经完成。
+
+执行顺序：
+
+```text
+P9.1-DOC-M0 PRD 扩展、原型审查包和用户路线锁定
+→ P9.1-DOC-M1 README / TODO / active docs / roadmap / drawio 同步
+→ P9.1-DOC-M2 文档覆盖度复审和 false-green 扫描
+→ P9.1-DOC-M3 人工或外部审计认可后，才允许进入 P9.1-M0
+→ P9.1-M0 开发前启动审计
+→ P9.1-M1 到 P9.1-M5 自动化开发和验收完成
+```
+
+| 阶段 | 交付物 | 出门条件 |
+| --- | --- | --- |
+| P9.1-DOC-M0 | P9.1 PRD 扩展、行政区划下钻式市场地图原型规格、真实市场数据 provider 调研、Socratic Intake 规格、HTML 审查页 | 人类能理解当前 P9 基线、P9.1 目标体验、数据边界和用户操作路线 |
+| P9.1-DOC-M1 | README、TODO、PRD、目标架构、里程碑、验收门槛、追踪矩阵、roadmap、drawio 和文本镜像同步 | 当时阶段明确为 P9.1 文档开发；当前已由 P9.1 本地自动化候选接续完成 |
+| P9.1-DOC-M2 | 文档覆盖度复审、false-green 扫描、drawio XML parse、HTML 引用检查 | 无新增致命或重大规格偏差；高风险边界清楚 |
+| P9.1-DOC-M3 | 人工或外部审计结论 | 明确是否可进入 P9.1-M0；若发现过度承诺或架构不清晰，打回文档阶段 |
+
+P9.1 自动化开发完成记录：
+
+| 阶段 | 目标 | 验收证据 |
+| --- | --- | --- |
+| P9.1-M0 | 开发前启动审计 | stage review 证明文档足以进入实现，且未把真实 provider / 平台抓取 / ASR 写入默认实现 |
+| P9.1-M1 | 行政区划下钻式市场地图 UI | 1920px、1440px、1200px、720px、390px 截图；全国/省/市/区县下钻、行政区划颜色深浅、城市气泡、visualMap、tooltip、toolbox、面包屑、薪资直方图、技术栈热度、来源可信度可见 |
+| P9.1-M2 | opt-in 市场数据 provider 状态表达 | `JobMarketProvider`、`JobSearchRun`、`NormalizedJobPost`、`JobMarketSnapshot` 的本地/fixture/opt-in 状态验收；未授权不外呼 |
+| P9.1-M3 | Socratic Intake Chatbox 路径 | 至少两个技术背景的 10 轮以上一问一答样例；事实摘要、故事草稿、source refs、pending confirmations 可见 |
+| P9.1-M4 | 地图、Chatbox、产物台联动 | 点击城市/技术栈/岗位后 Chatbox 可追问，右侧产物台更新市场摘要、事实摘要和故事草稿 |
+| P9.1-M5 | 中文自动化验收报告 | `docs/reports/P9_1_MARKET_SOCRATIC_ACCEPTANCE_REPORT.html` 区分真实界面截图、fixture 数据、opt-in provider 未验证范围和 PRD 规格检视 |
+
+P9.1 完成后呈现的目标体验：
+
+```text
+打开 Chatbox-native 工作台
+→ 左侧市场地图像行政区划下钻式招聘情报产品，而不是示意图、静态 SVG 或普通瓦片地图
+→ 用户能看到数据来源和可信度，不会误以为 fixture 是真实市场
+→ 用户通过 Chatbox 查询城市、薪资、JD 和技术栈
+→ Agent 若无 provider 授权会明确说明无法给出真实市场结论
+→ 用户进入 Socratic Intake 后，Agent 一次只问一个高价值问题
+→ 右侧产物台持续展示事实摘要、项目故事草稿、source refs 和待确认项
+```
+
+P9.1 高风险打回条件：
+
+- 实现或报告把 fixture / 原型图写成真实市场数据；
+- 默认登录或抓取 BOSS、猎聘、拉勾、LinkedIn 等招聘平台；
+- provider configured 被写成 connected 或 called；
+- ASR 未经用户确认采集麦克风或调用外部语音服务；
+- Socratic Intake 退化为一次性表单，或编造学历、年限、公司、贡献、指标；
+- drawio 缺少具体代码实体、行政区划下钻关系、实体状态、分层关系或出门门槛。
+
+## 上一自动化候选阶段：P9 Chatbox-native 求职情报与申请包工作台
 
 P9 已完成第一轮自动化候选实现。P8.1 自动化候选作为前端基线保留；P9 进一步回应用户对“不要大量向导卡片、需要 JD 搜索、Chatbox/ASR 资料补全、申请包生成、左侧可视化态势、顶部服务状态”的新目标。当前结论仅覆盖本地 UI 信息架构、求职态势可视化层和现有能力重新组织，不代表真实全网搜索、真实 ASR、真实 provider、招聘平台接入或自动投递完成。
 
@@ -42,7 +223,7 @@ P9 高风险打回条件：
 - 顶部服务中心把未配置服务显示为已连通。
 - JD 搜索触发平台登录、绕风控、自动沟通或自动投递。
 - ASR 未经用户确认采集麦克风或调用外部语音服务。
-- 报告把 P9 写成真实 provider、真实个人资料、招聘平台自动接入、MCP/Skill 连通性或自动投递已通过。
+- 报告不得把 P9 写成真实 provider、真实个人资料、招聘平台自动接入、MCP/Skill 连通性或自动投递已通过。
 
 P9 开发范围锁定：
 

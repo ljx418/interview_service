@@ -1,0 +1,153 @@
+<mxfile host="app.diagrams.net" modified="2026-07-09T00:00:00.000Z" agent="Codex" version="24.7.17" type="device">
+  <diagram id="p10-cli-page-1" name="1 P10-CLI目标体验与边界">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="title1" value="P10-CLI 本地命令入口：目标体验与阶段边界&#xa;状态：文档开发阶段，不代表 CLI 已实现" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1f2937;fontColor=#ffffff;strokeColor=#111827;fontStyle=1;fontSize=18;" vertex="1" parent="1"><mxGeometry x="40" y="30" width="1280" height="70" as="geometry"/></mxCell>
+        <mxCell id="user1" value="用户 / Codex CLI / ClaudeCode CLI / 本地 Agent" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e0f2fe;strokeColor=#0284c7;fontSize=15;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="70" y="150" width="260" height="70" as="geometry"/></mxCell>
+        <mxCell id="help1" value="jobpilot --help&#xa;查看命令、示例、非目标" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dbeafe;strokeColor=#2563eb;fontSize=14;" vertex="1" parent="1"><mxGeometry x="390" y="130" width="210" height="70" as="geometry"/></mxCell>
+        <mxCell id="status1" value="workspace status&#xa;查看本地服务、workspace、provider、reports 状态" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dbeafe;strokeColor=#2563eb;fontSize=14;" vertex="1" parent="1"><mxGeometry x="650" y="130" width="250" height="80" as="geometry"/></mxCell>
+        <mxCell id="demo1" value="demo run --example&#xa;运行 examples / fixture 演示路径" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dbeafe;strokeColor=#2563eb;fontSize=14;" vertex="1" parent="1"><mxGeometry x="950" y="130" width="250" height="80" as="geometry"/></mxCell>
+        <mxCell id="jobs1" value="jobs list&#xa;查看本地岗位、目标岗位、source refs" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dbeafe;strokeColor=#2563eb;fontSize=14;" vertex="1" parent="1"><mxGeometry x="390" y="260" width="210" height="80" as="geometry"/></mxCell>
+        <mxCell id="artifacts1" value="artifacts list / show&#xa;查看产物、版本、待确认项、source refs" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dbeafe;strokeColor=#2563eb;fontSize=14;" vertex="1" parent="1"><mxGeometry x="650" y="260" width="250" height="80" as="geometry"/></mxCell>
+        <mxCell id="reports1" value="reports open&#xa;打开或列出中文验收报告" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dbeafe;strokeColor=#2563eb;fontSize=14;" vertex="1" parent="1"><mxGeometry x="950" y="260" width="250" height="80" as="geometry"/></mxCell>
+        <mxCell id="scope1" value="允许范围&#xa;本地 API / examples / fixture / workspace / artifact / reports&#xa;中文输出 / 可选 JSON / 稳定 exit code" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dcfce7;strokeColor=#16a34a;fontSize=14;" vertex="1" parent="1"><mxGeometry x="70" y="430" width="520" height="140" as="geometry"/></mxCell>
+        <mxCell id="ban1" value="禁止默认实现&#xa;MCP server / 真实 provider / 真实资料 / 招聘平台抓取&#xa;真实市场 provider / ASR / 会议平台 / 自动投递 / SaaS / 不可逆 workspace 操作" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fee2e2;strokeColor=#dc2626;fontSize=14;" vertex="1" parent="1"><mxGeometry x="650" y="430" width="570" height="140" as="geometry"/></mxCell>
+        <mxCell id="note1" value="本页验收重点：人类能快速理解 P10-CLI 是本地命令入口文档阶段，不能把文档写成已实现。" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f3f4f6;strokeColor=#9ca3af;fontSize=13;" vertex="1" parent="1"><mxGeometry x="70" y="640" width="1150" height="60" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="p10-cli-page-2" name="2 当前架构与CLI差距">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="title2" value="当前架构与 P10-CLI 差距" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1f2937;fontColor=#ffffff;strokeColor=#111827;fontStyle=1;fontSize=18;" vertex="1" parent="1"><mxGeometry x="40" y="30" width="1280" height="60" as="geometry"/></mxCell>
+        <mxCell id="cur2" value="当前已实现复用（绿色）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dcfce7;strokeColor=#16a34a;fontStyle=1;fontSize=15;" vertex="1" parent="1"><mxGeometry x="70" y="130" width="470" height="50" as="geometry"/></mxCell>
+        <mxCell id="cur2a" value="Chatbox UI&#xa;FastAPI Agent Service&#xa;Domain Tools&#xa;SQLite Workspace&#xa;Artifact / Resume / Job / Profile&#xa;HTML reports / screenshots&#xa;examples / fixture automation" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f0fdf4;strokeColor=#16a34a;fontSize=14;" vertex="1" parent="1"><mxGeometry x="70" y="210" width="470" height="300" as="geometry"/></mxCell>
+        <mxCell id="gap2" value="P10-CLI 缺口（蓝色）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dbeafe;strokeColor=#2563eb;fontStyle=1;fontSize=15;" vertex="1" parent="1"><mxGeometry x="780" y="130" width="470" height="50" as="geometry"/></mxCell>
+        <mxCell id="gap2a" value="缺少 jobpilot 命令入口&#xa;缺少命令路由和配置解析&#xa;缺少 workspace 选择和安全门&#xa;缺少本地 ApiClient&#xa;缺少中文/JSON 输出渲染&#xa;缺少稳定 exit code&#xa;缺少脱敏命令审计&#xa;缺少 CLI 级验收报告" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeColor=#2563eb;fontSize=14;" vertex="1" parent="1"><mxGeometry x="780" y="210" width="470" height="300" as="geometry"/></mxCell>
+        <mxCell id="risk2" value="不能跨越的红线：CLI 不是新平台，不绕过 API/Domain，不直连 DB，不触发真实 provider、平台抓取、ASR 或自动投递。" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fee2e2;strokeColor=#dc2626;fontSize=14;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="210" y="620" width="900" height="80" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="p10-cli-page-3" name="3 目标架构与实体状态">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="title3" value="P10-CLI 目标架构与代码实体状态" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1f2937;fontColor=#ffffff;strokeColor=#111827;fontStyle=1;fontSize=18;" vertex="1" parent="1"><mxGeometry x="40" y="30" width="1280" height="60" as="geometry"/></mxCell>
+        <mxCell id="actor3" value="User / Local Agent" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e0f2fe;strokeColor=#0284c7;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="60" y="150" width="160" height="60" as="geometry"/></mxCell>
+        <mxCell id="cli3" value="JobPilotCLI&#xa;待新增" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dbeafe;strokeColor=#2563eb;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="280" y="140" width="170" height="80" as="geometry"/></mxCell>
+        <mxCell id="router3" value="CLICommandRouter&#xa;待新增" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dbeafe;strokeColor=#2563eb;" vertex="1" parent="1"><mxGeometry x="520" y="120" width="190" height="60" as="geometry"/></mxCell>
+        <mxCell id="config3" value="CLIConfigResolver&#xa;待新增" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dbeafe;strokeColor=#2563eb;" vertex="1" parent="1"><mxGeometry x="520" y="210" width="190" height="60" as="geometry"/></mxCell>
+        <mxCell id="workspace3" value="WorkspaceSelector&#xa;待新增" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dbeafe;strokeColor=#2563eb;" vertex="1" parent="1"><mxGeometry x="520" y="300" width="190" height="60" as="geometry"/></mxCell>
+        <mxCell id="safety3" value="CommandSafetyGate&#xa;待新增，安全门" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fee2e2;strokeColor=#dc2626;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="760" y="210" width="210" height="70" as="geometry"/></mxCell>
+        <mxCell id="api3" value="ApiClient&#xa;待新增，本地 127.0.0.1 API" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dbeafe;strokeColor=#2563eb;" vertex="1" parent="1"><mxGeometry x="1030" y="210" width="230" height="70" as="geometry"/></mxCell>
+        <mxCell id="render3" value="OutputRenderer&#xa;待新增，中文/JSON" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dbeafe;strokeColor=#2563eb;" vertex="1" parent="1"><mxGeometry x="520" y="420" width="190" height="60" as="geometry"/></mxCell>
+        <mxCell id="exit3" value="ExitCodePolicy&#xa;待新增" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dbeafe;strokeColor=#2563eb;" vertex="1" parent="1"><mxGeometry x="760" y="420" width="190" height="60" as="geometry"/></mxCell>
+        <mxCell id="audit3" value="CommandAuditLog&#xa;待新增，脱敏审计" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dbeafe;strokeColor=#2563eb;" vertex="1" parent="1"><mxGeometry x="1030" y="420" width="230" height="60" as="geometry"/></mxCell>
+        <mxCell id="fastapi3" value="Existing FastAPI Agent Service&#xa;已实现复用，部分 status/report/demo 汇总需适配" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fef3c7;strokeColor=#d97706;" vertex="1" parent="1"><mxGeometry x="250" y="560" width="300" height="80" as="geometry"/></mxCell>
+        <mxCell id="domain3" value="Existing Domain Tools&#xa;已实现复用" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dcfce7;strokeColor=#16a34a;" vertex="1" parent="1"><mxGeometry x="600" y="560" width="250" height="80" as="geometry"/></mxCell>
+        <mxCell id="storage3" value="SQLite Workspace / Artifact / Evidence&#xa;已实现复用" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dcfce7;strokeColor=#16a34a;" vertex="1" parent="1"><mxGeometry x="900" y="560" width="300" height="80" as="geometry"/></mxCell>
+        <mxCell id="edge3a" style="endArrow=block;html=1;rounded=0;strokeColor=#4b5563;" edge="1" parent="1" source="actor3" target="cli3"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="edge3b" style="endArrow=block;html=1;rounded=0;strokeColor=#4b5563;" edge="1" parent="1" source="cli3" target="router3"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="edge3c" style="endArrow=block;html=1;rounded=0;strokeColor=#4b5563;" edge="1" parent="1" source="router3" target="safety3"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="edge3d" style="endArrow=block;html=1;rounded=0;strokeColor=#4b5563;" edge="1" parent="1" source="safety3" target="api3"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="edge3e" style="endArrow=block;html=1;rounded=0;strokeColor=#4b5563;" edge="1" parent="1" source="api3" target="fastapi3"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="edge3f" style="endArrow=block;html=1;rounded=0;strokeColor=#4b5563;" edge="1" parent="1" source="fastapi3" target="domain3"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="edge3g" style="endArrow=block;html=1;rounded=0;strokeColor=#4b5563;" edge="1" parent="1" source="domain3" target="storage3"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="p10-cli-page-4" name="4 命令流与数据流">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="title4" value="CLI 命令流与数据流" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1f2937;fontColor=#ffffff;strokeColor=#111827;fontStyle=1;fontSize=18;" vertex="1" parent="1"><mxGeometry x="40" y="30" width="1280" height="60" as="geometry"/></mxCell>
+        <mxCell id="cmd4a" value="jobpilot workspace status" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e0f2fe;strokeColor=#0284c7;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="70" y="130" width="260" height="60" as="geometry"/></mxCell>
+        <mxCell id="flow4a" value="Router → ConfigResolver → SafetyGate → ApiClient GET /api/health + status summaries → OutputRenderer → ExitCodePolicy" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeColor=#2563eb;fontSize=14;" vertex="1" parent="1"><mxGeometry x="390" y="120" width="800" height="80" as="geometry"/></mxCell>
+        <mxCell id="cmd4b" value="jobpilot demo run --example" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e0f2fe;strokeColor=#0284c7;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="70" y="250" width="260" height="60" as="geometry"/></mxCell>
+        <mxCell id="flow4b" value="Router → SafetyGate confirms local examples only → existing demo path / API → artifact ids + report paths → redacted audit" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeColor=#2563eb;fontSize=14;" vertex="1" parent="1"><mxGeometry x="390" y="240" width="800" height="80" as="geometry"/></mxCell>
+        <mxCell id="cmd4c" value="jobs / artifacts / reports" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e0f2fe;strokeColor=#0284c7;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="70" y="370" width="260" height="60" as="geometry"/></mxCell>
+        <mxCell id="flow4c" value="Router → ApiClient → existing job/artifact/report data → OutputRenderer prints summary, source refs, pending confirmations, report paths" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeColor=#2563eb;fontSize=14;" vertex="1" parent="1"><mxGeometry x="390" y="360" width="800" height="80" as="geometry"/></mxCell>
+        <mxCell id="data4" value="数据边界&#xa;只来自本地 API、examples、fixture、workspace、artifact、reports&#xa;不读取 source_url 网页 / 不扫描个人目录 / 不直连真实 provider / 不执行不可逆操作" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dcfce7;strokeColor=#16a34a;fontSize=14;" vertex="1" parent="1"><mxGeometry x="120" y="540" width="540" height="120" as="geometry"/></mxCell>
+        <mxCell id="deny4" value="安全拒绝&#xa;真实外呼、平台抓取、ASR、自动投递、workspace 删除、cleanup apply、migration apply" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fee2e2;strokeColor=#dc2626;fontSize=14;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="720" y="540" width="540" height="120" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="p10-cli-page-5" name="5 开发计划与验收门槛">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="title5" value="开发计划、里程碑和验收门槛" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1f2937;fontColor=#ffffff;strokeColor=#111827;fontStyle=1;fontSize=18;" vertex="1" parent="1"><mxGeometry x="40" y="30" width="1280" height="60" as="geometry"/></mxCell>
+        <mxCell id="doc5" value="文档阶段（当前）&#xa;DOC-M0 阶段口径&#xa;DOC-M1 PRD / 架构 / 命令契约&#xa;DOC-M2 active docs / drawio 同步&#xa;DOC-M3 覆盖度复审" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3f4f6;strokeColor=#6b7280;fontSize=14;" vertex="1" parent="1"><mxGeometry x="70" y="140" width="340" height="210" as="geometry"/></mxCell>
+        <mxCell id="impl5" value="后续实现阶段（待批准）&#xa;M0 开发前启动审计&#xa;M1 CLI help&#xa;M2 status + safety gate&#xa;M3 demo/jobs/artifacts/reports&#xa;M4 JSON / stdout / stderr / exit code&#xa;M5 中文 HTML 验收报告" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dbeafe;strokeColor=#2563eb;fontSize=14;" vertex="1" parent="1"><mxGeometry x="500" y="140" width="380" height="230" as="geometry"/></mxCell>
+        <mxCell id="gate5" value="最低验收命令&#xa;python3 -m pytest&#xa;npm --prefix apps/chatbox run build&#xa;drawio XML parse&#xa;jobpilot --help&#xa;jobpilot workspace status&#xa;jobpilot demo run --example&#xa;jobpilot jobs list&#xa;jobpilot artifacts list&#xa;jobpilot reports open --no-browser" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fef3c7;strokeColor=#d97706;fontSize=13;" vertex="1" parent="1"><mxGeometry x="960" y="130" width="310" height="270" as="geometry"/></mxCell>
+        <mxCell id="report5" value="中文验收报告必须说明：哪些命令真实可运行；哪些数据来自 examples / fixture / local workspace；哪些能力仍未验证；不做虚假验收。" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dcfce7;strokeColor=#16a34a;fontSize=14;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="190" y="520" width="960" height="90" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="p10-cli-page-6" name="6 出门条件与后续路线">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="title6" value="出门条件、false-green 边界和后续路线" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1f2937;fontColor=#ffffff;strokeColor=#111827;fontStyle=1;fontSize=18;" vertex="1" parent="1"><mxGeometry x="40" y="30" width="1280" height="60" as="geometry"/></mxCell>
+        <mxCell id="exit6" value="文档阶段出门条件&#xa;active 文档口径一致&#xa;drawio XML 可解析且不超过 8 页&#xa;实体状态、命令清单、上下游关系清楚&#xa;审计明确不进入代码实现" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dcfce7;strokeColor=#16a34a;fontSize=14;" vertex="1" parent="1"><mxGeometry x="80" y="140" width="360" height="180" as="geometry"/></mxCell>
+        <mxCell id="false6" value="不得声明&#xa;CLI 已实现&#xa;MCP server 已实现&#xa;真实 provider / 真实市场 provider 已通过&#xa;真实个人资料路径已通过&#xa;招聘平台抓取 / ASR / 会议平台 / 自动投递 / SaaS 已通过&#xa;examples / fixture 等于真实验收" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fee2e2;strokeColor=#dc2626;fontSize=14;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="520" y="130" width="360" height="230" as="geometry"/></mxCell>
+        <mxCell id="next6" value="后续路线&#xa;P10-CLI 覆盖度复审&#xa;→ P10-CLI-M0 开发前启动审计&#xa;→ P10-CLI-M1 到 M5 自动化开发&#xa;→ P10-MCP 或 P10-MARKET-OPTIN 另行立项" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fef3c7;strokeColor=#d97706;fontSize=14;" vertex="1" parent="1"><mxGeometry x="960" y="140" width="320" height="180" as="geometry"/></mxCell>
+        <mxCell id="audit6" value="审计结论口径：本图证明 P10-CLI 文档开发目标、架构、命令范围和验收门槛已落盘；不证明任何 CLI 命令已经可运行。" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f3f4f6;strokeColor=#9ca3af;fontSize=14;" vertex="1" parent="1"><mxGeometry x="130" y="520" width="1080" height="70" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="p10-cli-page-7" name="7 API契约与适配缺口">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="title7" value="P10-CLI API 契约与适配缺口" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1f2937;fontColor=#ffffff;strokeColor=#111827;fontStyle=1;fontSize=18;" vertex="1" parent="1"><mxGeometry x="40" y="30" width="1280" height="60" as="geometry"/></mxCell>
+        <mxCell id="legend7" value="绿色=已存在入口  黄色=需 CLI 聚合/适配  红色=禁止默认实现" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3f4f6;strokeColor=#9ca3af;fontSize=14;" vertex="1" parent="1"><mxGeometry x="90" y="105" width="1120" height="44" as="geometry"/></mxCell>
+        <mxCell id="col7a" value="CLI 命令" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dbeafe;strokeColor=#2563eb;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="80" y="180" width="260" height="42" as="geometry"/></mxCell>
+        <mxCell id="col7b" value="现有入口 / 数据源" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dcfce7;strokeColor=#16a34a;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="360" y="180" width="430" height="42" as="geometry"/></mxCell>
+        <mxCell id="col7c" value="P10-CLI 适配要求" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fef3c7;strokeColor=#d97706;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="810" y="180" width="480" height="42" as="geometry"/></mxCell>
+        <mxCell id="r7a1" value="workspace status" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeColor=#2563eb;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="80" y="235" width="260" height="70" as="geometry"/></mxCell>
+        <mxCell id="r7a2" value="GET /api/health&#xa;GET /api/workspace/status&#xa;GET /api/provider/status&#xa;GET /api/provider/runtime-config" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f0fdf4;strokeColor=#16a34a;fontSize=12;" vertex="1" parent="1"><mxGeometry x="360" y="235" width="430" height="70" as="geometry"/></mxCell>
+        <mxCell id="r7a3" value="ApiClient.status() 聚合服务、workspace、provider、market provider、reports 状态；configured / consented / called 必须分开。" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fffbeb;strokeColor=#d97706;fontSize=12;" vertex="1" parent="1"><mxGeometry x="810" y="235" width="480" height="70" as="geometry"/></mxCell>
+        <mxCell id="r7b1" value="demo run --example" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeColor=#2563eb;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="80" y="315" width="260" height="60" as="geometry"/></mxCell>
+        <mxCell id="r7b2" value="POST /api/workflows/p2-demo/run" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f0fdf4;strokeColor=#16a34a;fontSize=12;" vertex="1" parent="1"><mxGeometry x="360" y="315" width="430" height="60" as="geometry"/></mxCell>
+        <mxCell id="r7b3" value="只允许 examples / fixture；不得读取真实资料，不触发真实 provider。" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fffbeb;strokeColor=#d97706;fontSize=12;" vertex="1" parent="1"><mxGeometry x="810" y="315" width="480" height="60" as="geometry"/></mxCell>
+        <mxCell id="r7c1" value="jobs list" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeColor=#2563eb;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="80" y="385" width="260" height="60" as="geometry"/></mxCell>
+        <mxCell id="r7c2" value="GET /api/jobs?workspace_id=..." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f0fdf4;strokeColor=#16a34a;fontSize=12;" vertex="1" parent="1"><mxGeometry x="360" y="385" width="430" height="60" as="geometry"/></mxCell>
+        <mxCell id="r7c3" value="输出标题、城市、来源、当前目标、source refs 数量；不读取 source_url 网页。" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fffbeb;strokeColor=#d97706;fontSize=12;" vertex="1" parent="1"><mxGeometry x="810" y="385" width="480" height="60" as="geometry"/></mxCell>
+        <mxCell id="r7d1" value="artifacts list / show" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeColor=#2563eb;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="80" y="455" width="260" height="70" as="geometry"/></mxCell>
+        <mxCell id="r7d2" value="GET /api/artifacts&#xa;artifact version APIs" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f0fdf4;strokeColor=#16a34a;fontSize=12;" vertex="1" parent="1"><mxGeometry x="360" y="455" width="430" height="70" as="geometry"/></mxCell>
+        <mxCell id="r7d3" value="默认摘要；展示版本、确认状态、source refs、pending confirmations；不得打印敏感全文。" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fffbeb;strokeColor=#d97706;fontSize=12;" vertex="1" parent="1"><mxGeometry x="810" y="455" width="480" height="70" as="geometry"/></mxCell>
+        <mxCell id="r7e1" value="reports open --no-browser" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeColor=#2563eb;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="80" y="535" width="260" height="60" as="geometry"/></mxCell>
+        <mxCell id="r7e2" value="docs/reports/ 本地文件" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f0fdf4;strokeColor=#16a34a;fontSize=12;" vertex="1" parent="1"><mxGeometry x="360" y="535" width="430" height="60" as="geometry"/></mxCell>
+        <mxCell id="r7e3" value="LocalReportLocator 选择最新中文报告；--no-browser 只打印路径；打开失败不能伪造成功。" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fffbeb;strokeColor=#d97706;fontSize=12;" vertex="1" parent="1"><mxGeometry x="810" y="535" width="480" height="60" as="geometry"/></mxCell>
+        <mxCell id="forbid7" value="禁止默认实现：真实 provider adapter、招聘平台 connector、真实市场 provider、ASR adapter、MCP server wrapper、FastAPI 自动启动、报告生成器、workspace 扫描器、cleanup/migration apply。若需要这些能力，必须单独立项。" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fee2e2;strokeColor=#dc2626;fontStyle=1;fontSize=14;" vertex="1" parent="1"><mxGeometry x="130" y="675" width="1090" height="80" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="p10-cli-page-8" name="8 工作流树与错误码">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="title8" value="P10-CLI 工作流树、输出 envelope 与错误码" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1f2937;fontColor=#ffffff;strokeColor=#111827;fontStyle=1;fontSize=18;" vertex="1" parent="1"><mxGeometry x="40" y="30" width="1280" height="60" as="geometry"/></mxCell>
+        <mxCell id="wf8a" value="Workflow A: workspace status&#xa;ParseCommand → ResolveConfig → CommandSafetyGate → ApiHealthCheck → WorkspaceStatusFetch → ProviderStatusFetch → ReportIndexFetch → RenderOutput → CommandAuditLog" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeColor=#2563eb;fontSize=13;" vertex="1" parent="1"><mxGeometry x="70" y="125" width="570" height="105" as="geometry"/></mxCell>
+        <mxCell id="wf8b" value="Workflow B: demo run --example&#xa;ParseCommand → SafetyGate(example only) → EnsureApiAvailable → EnsureWorkspace → RunExistingDemo → SummarizeArtifactsAndReports → RenderOutput → CommandAuditLog" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeColor=#2563eb;fontSize=13;" vertex="1" parent="1"><mxGeometry x="70" y="255" width="570" height="115" as="geometry"/></mxCell>
+        <mxCell id="wf8c" value="Workflow C: artifacts show &lt;id&gt;&#xa;ParseCommand → CommandSafetyGate → FetchArtifactVersions → FetchSelectedVersion → RedactAndSummarize → RenderOutput(source refs / pending confirmations) → CommandAuditLog" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeColor=#2563eb;fontSize=13;" vertex="1" parent="1"><mxGeometry x="70" y="395" width="570" height="115" as="geometry"/></mxCell>
+        <mxCell id="env8" value="统一 JSON envelope&#xa;ok / command / workspace_id / data_source / provider_state / data / warnings / next_actions / meta&#xa;失败时：error.code / message / hint / exit_code" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dcfce7;strokeColor=#16a34a;fontSize=13;" vertex="1" parent="1"><mxGeometry x="720" y="125" width="560" height="115" as="geometry"/></mxCell>
+        <mxCell id="codes8" value="Exit code 策略&#xa;0 成功&#xa;1 参数或用法错误&#xa;2 本地服务不可用&#xa;3 workspace 不存在&#xa;4 安全门拒绝&#xa;5 本地数据为空&#xa;10 未分类内部错误" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fef3c7;strokeColor=#d97706;fontSize=14;" vertex="1" parent="1"><mxGeometry x="720" y="285" width="250" height="230" as="geometry"/></mxCell>
+        <mxCell id="handoff8" value="Handoff contracts&#xa;Router → Handler: ParsedCommand&#xa;Handler → SafetyGate: command / flags / workspace / data_mode&#xa;Handler → ApiClient: method / path / query / body / timeout&#xa;Handler → OutputRenderer: normalized result / warnings / next_actions&#xa;Handler → AuditLog: redacted command summary / exit code" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3f4f6;strokeColor=#6b7280;fontSize=13;" vertex="1" parent="1"><mxGeometry x="1000" y="285" width="280" height="230" as="geometry"/></mxCell>
+        <mxCell id="freeze8" value="M0 冻结项：CLI 不自动启动 FastAPI；reports open 只定位/打开已有报告，不生成报告；workspace 解析优先级固定为 --workspace &gt; JOBPILOT_WORKSPACE &gt; 当前目录 .jobpilot_workspace &gt; 失败 exit 3。" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff7ed;strokeColor=#ea580c;fontStyle=1;fontSize=14;" vertex="1" parent="1"><mxGeometry x="150" y="555" width="1040" height="80" as="geometry"/></mxCell>
+        <mxCell id="deny8" value="失败路径必须可验收：服务未启动→exit 2；workspace 不存在→exit 3；高风险请求→exit 4；无本地数据→exit 5。任何失败都不能伪造成绿色通过。本图只支撑 P10-CLI 自动化开发启动，不支撑整个产品化阶段一次性开工。" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fee2e2;strokeColor=#dc2626;fontStyle=1;fontSize=14;" vertex="1" parent="1"><mxGeometry x="150" y="660" width="1040" height="90" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

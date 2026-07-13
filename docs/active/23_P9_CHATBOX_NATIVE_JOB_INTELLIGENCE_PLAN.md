@@ -1,6 +1,16 @@
 # P9 Chatbox-native 求职情报与申请包工作台计划
 
-状态：P9 自动化候选已完成第一轮实现。本文档不代表全网 JD 搜索、ASR、真实 provider、招聘平台登录、自动投递或 MCP/Skill 连通性已经实现或通过验收。
+状态：P9 自动化候选已完成第一轮实现。P9.1 本地自动化候选也已完成，重点是行政区划下钻式市场地图、真实市场数据 provider 未配置边界和 Socratic Intake。本文档不代表全网 JD 搜索、ASR、真实 provider、招聘平台登录、自动投递或 MCP/Skill 连通性已经实现或通过验收。
+
+## 0. P9.1 后续扩展入口
+
+P9 人工体验反馈后，下一轮文档扩展已落盘到 `24_P9_1_MARKET_DATA_AND_SOCRATIC_PROTOTYPE_PLAN.md` 和 `docs/p9_1_market_socratic_review/`。P9.1 不推翻 P9 自动化候选结论，只处理三个新增缺口：
+
+- 当前 `MarketMapView` 视觉粗糙，需要行政区划下钻式市场地图原型；
+- 当前仍以 fixture、用户粘贴和已导入 JD 为主，需要真实市场数据 opt-in provider 规划；
+- 当前 Chatbox 偏命令式，需要 Socratic Intake 通过启发式追问补齐简历事实、项目故事和能力证据。
+
+P9.1 仍不得声明真实市场 provider、招聘平台自动接入、真实 ASR、真实 provider 质量或自动投递通过。
 
 ## 1. 阶段定位
 

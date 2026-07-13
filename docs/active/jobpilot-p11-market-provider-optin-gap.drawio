@@ -1,0 +1,126 @@
+<mxfile host="app.diagrams.net" modified="2026-07-13T00:00:00.000Z" agent="JobPilot Codex" version="24.7.17" type="device">
+  <diagram id="p11-page-1" name="1 P11目标体验与边界">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="title1" value="P11 真实市场数据 Provider Opt-in：目标体验与边界" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1f4e79;fontColor=#ffffff;strokeColor=#17365d;fontSize=22;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="40" y="30" width="720" height="60" as="geometry"/></mxCell>
+        <mxCell id="goal1" value="目标路径&#xa;Chatbox 发起真实市场查询&#xa;→ 显示 provider 状态 / 费用 / 隐私 / 调用次数&#xa;→ 用户确认一次性 JobSearchRun&#xa;→ NormalizedJobPost / JobMarketSnapshot&#xa;→ 地图、Chatbox、产物台、报告同步 source refs" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d9ead3;strokeColor=#6aa84f;fontSize=16;" vertex="1" parent="1"><mxGeometry x="70" y="140" width="520" height="250" as="geometry"/></mxCell>
+        <mxCell id="boundary1" value="当前 Level1 已实现&#xa;进入阶段性验收收口&#xa;未触发真实外呼&#xa;不声明真实 market provider Level2 通过" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=16;" vertex="1" parent="1"><mxGeometry x="650" y="140" width="360" height="180" as="geometry"/></mxCell>
+        <mxCell id="decision1" value="架构决策&#xa;采用 opt-in API provider&#xa;+ normalization anti-corruption layer&#xa;+ evidence first&#xa;不采用平台 connector / 长期爬虫 / UI 直连 provider&#xa;取舍：覆盖范围变窄，换取合规、安全、可验收、可回滚" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eeeeee;strokeColor=#999999;fontSize=14;" vertex="1" parent="1"><mxGeometry x="650" y="360" width="360" height="210" as="geometry"/></mxCell>
+        <mxCell id="forbid1" value="禁止默认实现&#xa;招聘平台登录 / 抓取 / 绕风控&#xa;长期爬虫 / 定时任务&#xa;默认读取 API Key 外呼&#xa;真实 LLM provider / ASR / MCP&#xa;自动沟通 / 自动投递 / SaaS" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f4cccc;strokeColor=#cc0000;fontSize=16;" vertex="1" parent="1"><mxGeometry x="1080" y="140" width="420" height="250" as="geometry"/></mxCell>
+        <mxCell id="legend1" value="状态色：绿色=Level1 已实现；黄色=需复核/需修改；蓝色=Level2 待授权/待新增；红色=高风险禁止；灰色=审计/证据" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#eeeeee;strokeColor=#999999;fontSize=14;" vertex="1" parent="1"><mxGeometry x="70" y="760" width="1430" height="60" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="p11-page-2" name="2 当前架构与P11差距">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="title2" value="当前架构与 P11 目标差异" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1f4e79;fontColor=#ffffff;strokeColor=#17365d;fontSize=22;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="40" y="30" width="560" height="60" as="geometry"/></mxCell>
+        <mxCell id="current2" value="当前 P9.1 / P10 基线&#xa;TopServiceCenter 已显示 Market Provider not_configured&#xa;MarketIntelligenceMap 已有行政区划下钻&#xa;ConversationPlane 已有 Socratic / market prompt&#xa;ArtifactWorkbench 已有事实与故事草稿&#xa;jobpilot CLI 已完成本地命令入口" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d9ead3;strokeColor=#6aa84f;fontSize=15;" vertex="1" parent="1"><mxGeometry x="80" y="150" width="500" height="330" as="geometry"/></mxCell>
+        <mxCell id="gap2" value="P11 Level1 已补齐&#xa;market provider boundary&#xa;调用前授权拒绝门&#xa;一次性 JobSearchRun&#xa;provider invocation log&#xa;NormalizedJobPost&#xa;JobMarketSnapshot&#xa;source refs / confidence / fallback evidence&#xa;Level2 真实 provider client 待授权" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#cfe2f3;strokeColor=#3c78d8;fontSize=15;" vertex="1" parent="1"><mxGeometry x="1010" y="150" width="460" height="330" as="geometry"/></mxCell>
+        <mxCell id="bridge2" value="复用 Existing Boundary&#xa;FastAPI Agent Service&#xa;SQLite Workspace&#xa;Artifact / Reports&#xa;P10 CLI evidence" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=15;" vertex="1" parent="1"><mxGeometry x="660" y="210" width="270" height="210" as="geometry"/></mxCell>
+        <mxCell id="risk2" value="三类审计风险&#xa;架构风险：UI/CLI 绕过 API 直调 provider → 必须通过 FastAPI + PolicyGate&#xa;PRD 偏移：滑向招聘平台抓取/全网搜索 → P11 只做 opt-in provider&#xa;验收风险：fixture/fallback 冒充真实市场 → Level 1/2 分级 + source refs" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f4cccc;strokeColor=#cc0000;fontSize=14;" vertex="1" parent="1"><mxGeometry x="210" y="560" width="1180" height="150" as="geometry"/></mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="current2" target="bridge2" style="endArrow=block;html=1;strokeColor=#666666;"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="bridge2" target="gap2" style="endArrow=block;html=1;strokeColor=#666666;"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="p11-page-3" name="3 目标架构与实体状态">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="title3" value="P11 五层目标架构与实体状态" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1f4e79;fontColor=#ffffff;strokeColor=#17365d;fontSize=22;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="40" y="30" width="600" height="60" as="geometry"/></mxCell>
+        <mxCell id="ui3" value="UI Control Plane（需修改）&#xa;TopServiceCenter&#xa;ConversationPlane&#xa;MarketIntelligenceMap&#xa;ArtifactWorkbench" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=15;" vertex="1" parent="1"><mxGeometry x="70" y="140" width="280" height="180" as="geometry"/></mxCell>
+        <mxCell id="boundary3" value="Market Provider Boundary（Level1 已实现 / Level2 待授权）&#xa;JobMarketProviderRegistry 已实现&#xa;MarketProviderPolicyGate 已实现&#xa;MarketProviderClient Level2 待授权&#xa;MarketProviderInvocationLog 已实现" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#cfe2f3;strokeColor=#3c78d8;fontSize=15;" vertex="1" parent="1"><mxGeometry x="420" y="140" width="310" height="180" as="geometry"/></mxCell>
+        <mxCell id="domain3" value="Market Normalization Domain（Level1 已实现）&#xa;JobSearchRunService&#xa;MarketDataNormalizer&#xa;SourceRefBinder&#xa;ConfidenceScorer" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#cfe2f3;strokeColor=#3c78d8;fontSize=15;" vertex="1" parent="1"><mxGeometry x="800" y="140" width="310" height="180" as="geometry"/></mxCell>
+        <mxCell id="existing3" value="Existing Boundary（已实现复用）&#xa;FastAPI Agent Service&#xa;SQLite Workspace&#xa;Artifact / Reports&#xa;P10 CLI" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d9ead3;strokeColor=#6aa84f;fontSize=15;" vertex="1" parent="1"><mxGeometry x="1180" y="140" width="300" height="180" as="geometry"/></mxCell>
+        <mxCell id="evidence3" value="Evidence Layer（Level1 已实现）&#xa;P11MarketAcceptanceReport&#xa;provider invocation evidence&#xa;screenshots / command evidence" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eeeeee;strokeColor=#999999;fontSize=15;" vertex="1" parent="1"><mxGeometry x="520" y="470" width="520" height="140" as="geometry"/></mxCell>
+        <mxCell id="chain3" value="强关联实体链&#xa;UI Control Plane → /api/market/* routes → MarketProviderPolicyGate → MarketProviderClient → MarketDataNormalizer → SourceRefBinder / ConfidenceScorer → JobMarketSnapshot → UI / CLI / HTML report&#xa;禁止只有抽象“Provider 层”而缺少上下游实体" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e2f0d9;strokeColor=#6aa84f;fontSize=13;" vertex="1" parent="1"><mxGeometry x="150" y="650" width="1280" height="110" as="geometry"/></mxCell>
+        <mxCell id="a31" edge="1" parent="1" source="ui3" target="boundary3" style="endArrow=block;html=1;strokeColor=#666666;"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="a32" edge="1" parent="1" source="boundary3" target="domain3" style="endArrow=block;html=1;strokeColor=#666666;"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="a33" edge="1" parent="1" source="domain3" target="existing3" style="endArrow=block;html=1;strokeColor=#666666;"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="a34" edge="1" parent="1" source="domain3" target="evidence3" style="endArrow=block;html=1;strokeColor=#666666;"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="p11-page-4" name="4 命令流与数据流">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="title4" value="P11 命令流与数据流" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1f4e79;fontColor=#ffffff;strokeColor=#17365d;fontSize=22;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="40" y="30" width="460" height="60" as="geometry"/></mxCell>
+        <mxCell id="s1" value="1. Provider Status&#xa;GET /api/market/providers/status&#xa;读取 registry / 脱敏配置&#xa;统计 called/failed/fallback&#xa;渲染顶部状态 / CLI" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=15;" vertex="1" parent="1"><mxGeometry x="80" y="150" width="320" height="190" as="geometry"/></mxCell>
+        <mxCell id="s2" value="2. Provider Check&#xa;POST /api/market/providers/check&#xa;构建 consent preview&#xa;用户确认一次性 check&#xa;调用 provider + 写 invocation log" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#cfe2f3;strokeColor=#3c78d8;fontSize=15;" vertex="1" parent="1"><mxGeometry x="620" y="150" width="340" height="190" as="geometry"/></mxCell>
+        <mxCell id="s3" value="3. Market Search Run&#xa;POST /api/market/search-runs&#xa;GET /api/market/snapshots/{run_id}&#xa;GET /api/market/source-refs/{id}&#xa;normalize + snapshot + source refs&#xa;地图/Chatbox/产物台联动" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#cfe2f3;strokeColor=#3c78d8;fontSize=15;" vertex="1" parent="1"><mxGeometry x="1160" y="150" width="340" height="250" as="geometry"/></mxCell>
+        <mxCell id="block4" value="安全门&#xa;UI/CLI 不直调 provider&#xa;不直接写 SQLite&#xa;未确认不外呼&#xa;不抓平台 / 不长期爬虫&#xa;失败或 fallback 不伪造真实市场" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f4cccc;strokeColor=#cc0000;fontSize=15;" vertex="1" parent="1"><mxGeometry x="470" y="520" width="640" height="150" as="geometry"/></mxCell>
+        <mxCell id="errors4" value="失败分支必须可验收&#xa;PROVIDER_NOT_CONFIGURED：不外呼&#xa;CONSENT_REQUIRED：不创建 running run&#xa;PROVIDER_CALL_FAILED：保留脱敏错误&#xa;NO_RESULTS：不伪造岗位&#xa;FALLBACK_ONLY：只能 Level 1&#xa;POLICY_REJECTED：平台抓取/敏感外发被拒绝" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;" vertex="1" parent="1"><mxGeometry x="1160" y="450" width="340" height="250" as="geometry"/></mxCell>
+        <mxCell id="a41" edge="1" parent="1" source="s1" target="s2" style="endArrow=block;html=1;strokeColor=#666666;"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="a42" edge="1" parent="1" source="s2" target="s3" style="endArrow=block;html=1;strokeColor=#666666;"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="p11-page-5" name="5 数据契约与证据链">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="title5" value="P11 数据契约与证据链" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1f4e79;fontColor=#ffffff;strokeColor=#17365d;fontSize=22;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="40" y="30" width="500" height="60" as="geometry"/></mxCell>
+        <mxCell id="d1" value="JobMarketProvider&#xa;provider_id / type&#xa;configured_state&#xa;license / rate_limit" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#cfe2f3;strokeColor=#3c78d8;fontSize=15;" vertex="1" parent="1"><mxGeometry x="80" y="150" width="250" height="150" as="geometry"/></mxCell>
+        <mxCell id="d2" value="JobSearchRun&#xa;query / city / salary / tech&#xa;consent_id&#xa;status / boundary_note" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#cfe2f3;strokeColor=#3c78d8;fontSize=15;" vertex="1" parent="1"><mxGeometry x="390" y="150" width="250" height="150" as="geometry"/></mxCell>
+        <mxCell id="d3" value="NormalizedJobPost&#xa;title / company / city&#xa;salary / tech_stack&#xa;source_ref_id / confidence" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#cfe2f3;strokeColor=#3c78d8;fontSize=15;" vertex="1" parent="1"><mxGeometry x="700" y="150" width="270" height="150" as="geometry"/></mxCell>
+        <mxCell id="d4" value="JobMarketSnapshot&#xa;city_stats&#xa;salary_histogram&#xa;tech_heatmap&#xa;source_breakdown" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#cfe2f3;strokeColor=#3c78d8;fontSize=15;" vertex="1" parent="1"><mxGeometry x="1030" y="150" width="270" height="150" as="geometry"/></mxCell>
+        <mxCell id="d5" value="RegionSourceRef + InvocationLog&#xa;region_source_refs / market_provider_invocation_logs&#xa;每个聚合指标必须可追溯&#xa;redacted=true&#xa;不记录 API Key / raw response / cookie" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eeeeee;strokeColor=#999999;fontSize=15;" vertex="1" parent="1"><mxGeometry x="520" y="470" width="560" height="170" as="geometry"/></mxCell>
+        <mxCell id="chain5" value="证据链判定&#xa;provider called → consent_id → invocation_logs.redacted=true → normalized_job_posts.source_ref_id → region_source_refs.metric_name → job_market_snapshots.source_breakdown → report screenshot / command evidence&#xa;任一环缺失，不得声明 Level 2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce5cd;strokeColor=#e69138;fontSize=13;" vertex="1" parent="1"><mxGeometry x="250" y="690" width="1080" height="110" as="geometry"/></mxCell>
+        <mxCell id="a51" edge="1" parent="1" source="d1" target="d2" style="endArrow=block;html=1;strokeColor=#666666;"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="a52" edge="1" parent="1" source="d2" target="d3" style="endArrow=block;html=1;strokeColor=#666666;"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="a53" edge="1" parent="1" source="d3" target="d4" style="endArrow=block;html=1;strokeColor=#666666;"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="a54" edge="1" parent="1" source="d3" target="d5" style="endArrow=block;html=1;strokeColor=#666666;"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="p11-page-6" name="6 开发及验收计划">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="title6" value="P11 开发及验收计划" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1f4e79;fontColor=#ffffff;strokeColor=#17365d;fontSize=22;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="40" y="30" width="440" height="60" as="geometry"/></mxCell>
+        <mxCell id="doc6" value="文档阶段已执行&#xa;DOC-M0 口径锁定&#xa;DOC-M1 PRD/架构/契约&#xa;DOC-M2 docs/drawio 同步&#xa;DOC-M3 覆盖度复审" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eeeeee;strokeColor=#999999;fontSize=15;" vertex="1" parent="1"><mxGeometry x="90" y="160" width="420" height="210" as="geometry"/></mxCell>
+        <mxCell id="impl6" value="后续实现阶段&#xa;M0 启动审计&#xa;M1 provider 状态 API&#xa;M2 授权门与日志&#xa;M3 search run / snapshot&#xa;M4 UI 联动&#xa;M5 中文验收报告" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#cfe2f3;strokeColor=#3c78d8;fontSize=15;" vertex="1" parent="1"><mxGeometry x="560" y="160" width="390" height="250" as="geometry"/></mxCell>
+        <mxCell id="accept6" value="验收分级与证据&#xa;Level 0 文档通过（已完成）&#xa;Level 1 本地实现通过（当前收口）&#xa;Level 2 指定真实 provider opt-in 待授权&#xa;Level 3 多 provider/source 对比待后续&#xa;无凭据不得声明 Level 2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d9ead3;strokeColor=#6aa84f;fontSize=15;" vertex="1" parent="1"><mxGeometry x="1040" y="160" width="430" height="270" as="geometry"/></mxCell>
+        <mxCell id="rollback6" value="阶段打回条件&#xa;M0：混入平台抓取/长期爬虫/ASR/MCP&#xa;M1：configured 被写成 called&#xa;M2：配置 Key 后自动外呼&#xa;M3：聚合指标没有 source refs&#xa;M4：UI/CLI/report 状态不一致&#xa;M5：无 Level 判定或无截图/命令证据" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f4cccc;strokeColor=#cc0000;fontSize=13;" vertex="1" parent="1"><mxGeometry x="410" y="490" width="760" height="230" as="geometry"/></mxCell>
+        <mxCell id="a61" edge="1" parent="1" source="doc6" target="impl6" style="endArrow=block;html=1;strokeColor=#666666;"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="a62" edge="1" parent="1" source="impl6" target="accept6" style="endArrow=block;html=1;strokeColor=#666666;"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="p11-page-7" name="7 里程碑门槛出门">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="title7" value="P11 里程碑、验收门槛与出门条件" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1f4e79;fontColor=#ffffff;strokeColor=#17365d;fontSize=22;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="40" y="30" width="620" height="60" as="geometry"/></mxCell>
+        <mxCell id="gate7" value="门槛 A 用户目标清楚&#xa;门槛 B 实体和架构可执行&#xa;门槛 C drawio 可审计&#xa;门槛 D 后续验收可执行&#xa;门槛 E 高风险不混入" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d9ead3;strokeColor=#6aa84f;fontSize=16;" vertex="1" parent="1"><mxGeometry x="100" y="160" width="430" height="220" as="geometry"/></mxCell>
+        <mxCell id="exit7" value="出门条件&#xa;active docs 口径一致&#xa;drawio 页数 ≤ 8&#xa;文本镜像可审计&#xa;API / 存储 / 验收分级已落盘&#xa;stage review 存在&#xa;Level1 可声明本地通过&#xa;不声明真实 provider Level2 已接入" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eeeeee;strokeColor=#999999;fontSize=16;" vertex="1" parent="1"><mxGeometry x="620" y="160" width="430" height="280" as="geometry"/></mxCell>
+        <mxCell id="next7" value="下一步&#xa;完成阶段性验收报告和 Git 收口&#xa;Level2 需用户授权后单独启动&#xa;不得并入招聘平台/ASR/MCP/自动投递" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=16;" vertex="1" parent="1"><mxGeometry x="1140" y="160" width="340" height="210" as="geometry"/></mxCell>
+        <mxCell id="audit7" value="人类审核问题清单&#xa;1 能否看出 Level1 已实现/需修改/Level2 待授权/禁止项？&#xa;2 每个 PRD 承诺是否落到代码实体或 API？&#xa;3 无真实 provider 凭据时是否不能 Level 2 出门？&#xa;4 failed / fallback / no-results 如何报告？&#xa;5 是否没有承诺平台接入、ASR、MCP、自动投递或 SaaS？" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce5cd;strokeColor=#e69138;fontSize=13;" vertex="1" parent="1"><mxGeometry x="230" y="520" width="1140" height="190" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="p11-page-8" name="8 安全边界与后续路线">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="title8" value="P11 安全边界与后续路线" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1f4e79;fontColor=#ffffff;strokeColor=#17365d;fontSize=22;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="40" y="30" width="520" height="60" as="geometry"/></mxCell>
+        <mxCell id="forbid8" value="高风险禁止默认实现&#xa;招聘平台登录/抓取/绕风控&#xa;长期爬虫/队列/定时任务&#xa;默认 API Key 外呼&#xa;真实 LLM provider&#xa;ASR / MCP / 自动投递 / SaaS" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f4cccc;strokeColor=#cc0000;fontSize=16;" vertex="1" parent="1"><mxGeometry x="90" y="150" width="480" height="260" as="geometry"/></mxCell>
+        <mxCell id="allow8" value="P11 Level1 已实现 / Level2 允许规划&#xa;opt-in provider 状态&#xa;一次性授权调用（Level2 待授权）&#xa;NormalizedJobPost&#xa;JobMarketSnapshot&#xa;source refs / confidence&#xa;中文验收报告" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#cfe2f3;strokeColor=#3c78d8;fontSize=16;" vertex="1" parent="1"><mxGeometry x="640" y="150" width="400" height="260" as="geometry"/></mxCell>
+        <mxCell id="road8" value="后续路线&#xa;P11 Level1 阶段验收收口&#xa;P11 Level2 指定 provider opt-in（需授权）&#xa;P12 招聘平台合规专项（如需）&#xa;P12 ASR / MCP / 自动投递专项（如需）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eeeeee;strokeColor=#999999;fontSize=16;" vertex="1" parent="1"><mxGeometry x="1110" y="150" width="380" height="260" as="geometry"/></mxCell>
+        <mxCell id="options8" value="备选路线取舍&#xa;Opt-in job API provider：采用；可授权可记录，但覆盖依赖 provider&#xa;用户粘贴/公司官网公开源：fallback/manual；低风险但自动化弱&#xa;招聘平台自动抓取：P11 禁止；合规/账号/验证码/封禁风险高&#xa;长期爬虫/队列：P11 禁止；运维、成本和误用风险高" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;" vertex="1" parent="1"><mxGeometry x="230" y="520" width="1140" height="190" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

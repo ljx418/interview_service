@@ -33,6 +33,24 @@ class ProviderRuntimeConfigRequest(BaseModel):
     max_retries: int = 1
 
 
+class MarketProviderCheckRequest(BaseModel):
+    workspace_id: str | None = None
+    provider_id: str = "fixture_local"
+    consent_preview_id: str | None = None
+    confirm: bool = False
+
+
+class MarketSearchRunRequest(BaseModel):
+    workspace_id: str
+    query: str
+    city_filters: list[str] = Field(default_factory=list)
+    salary_range: str | None = None
+    tech_stack: list[str] = Field(default_factory=list)
+    provider_ids: list[str] = Field(default_factory=lambda: ["fixture_local"])
+    consent_id: str | None = None
+    source_policy: Literal["fixture", "recorded", "manual", "public", "opt_in_api"] = "fixture"
+
+
 class ProviderPreferencesRequest(BaseModel):
     provider: Literal["mock", "openai_compatible", "openai"] = "mock"
     preset: Literal["", "minimax", "deepseek"] = ""

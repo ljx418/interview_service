@@ -1,0 +1,552 @@
+{
+  "name": "P9.1 行政区划市场地图与 Socratic Intake 自动化验收报告",
+  "goal": "验证 P9.1 在本地/fixture 范围内实现行政区划下钻式市场地图、Market Provider 状态、Socratic Intake 和产物台联动；不声明真实 provider、招聘平台抓取、真实 ASR 或自动投递通过。",
+  "url": "http://127.0.0.1:5175/?workspace_root=/mnt/c/workspace/interview_service/.tmp/p9_1_market_socratic_workspace",
+  "targetArchitecture": [
+    "TopServiceCenter 增加 Market Provider 状态，未配置时显示 Market Provider: not_configured。",
+    "LeftIntelligencePanel 的市场页升级为 ECharts 行政区划下钻式市场地图。",
+    "MarketIntelligenceMap 包含 visualMap、tooltip、toolbox、breadcrumb、图层切换、source legend 和 RegionInsightPanel。",
+    "ConversationPlane 支持 Socratic Intake 一问一答事实采集。",
+    "Workbench / P9ArtifactOverview 展示 CandidateFactSummary、ProjectStoryDraft、PendingConfirmations 和 DoNotClaimList。"
+  ],
+  "currentImplementation": [
+    "apps/chatbox/src/main.tsx 使用 echarts.registerMap 和 fixture-only 行政区划数据。",
+    "市场图层支持机会热度、薪资、技术栈、来源可信度；数字均标注 fixture/manual/public/opt-in API 边界。",
+    "Chatbox 本地命令路由实现 Socratic Intake，不调用真实 provider。",
+    "右侧产物台展示 Socratic facts、待确认项和不可声明清单。"
+  ],
+  "viewports": [
+    {
+      "name": "desktop1920",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "name": "desktop1440",
+      "width": 1440,
+      "height": 920
+    },
+    {
+      "name": "desktop1200",
+      "width": 1200,
+      "height": 900
+    },
+    {
+      "name": "tablet720",
+      "width": 720,
+      "height": 920
+    },
+    {
+      "name": "mobile390",
+      "width": 390,
+      "height": 860,
+      "mobile": true
+    }
+  ],
+  "steps": [
+    {
+      "viewport": "desktop1920",
+      "name": "打开 P9.1 工作台",
+      "action": "goto"
+    },
+    {
+      "viewport": "desktop1920",
+      "name": "等待服务中心",
+      "action": "waitText",
+      "text": "Market Provider",
+      "timeoutMs": 30000
+    },
+    {
+      "viewport": "desktop1920",
+      "name": "P9.1 初始行政区划地图",
+      "action": "screenshot",
+      "file": "p9_1_initial_1920.png"
+    },
+    {
+      "viewport": "desktop1920",
+      "name": "点击北京下钻",
+      "action": "clickText",
+      "text": "北京"
+    },
+    {
+      "viewport": "desktop1920",
+      "name": "等待北京市层级",
+      "action": "waitText",
+      "text": "北京市",
+      "timeoutMs": 10000
+    },
+    {
+      "viewport": "desktop1920",
+      "name": "北京下钻证据",
+      "action": "screenshot",
+      "file": "p9_1_beijing_drilldown_1920.png"
+    },
+    {
+      "viewport": "desktop1920",
+      "name": "切换薪资图层",
+      "action": "clickText",
+      "text": "薪资中位"
+    },
+    {
+      "viewport": "desktop1920",
+      "name": "薪资图层证据",
+      "action": "screenshot",
+      "file": "p9_1_salary_layer_1920.png"
+    },
+    {
+      "viewport": "desktop1920",
+      "name": "输入 Socratic 请求",
+      "action": "fill",
+      "selector": "textarea",
+      "value": "帮我整理智能客服控制台项目故事"
+    },
+    {
+      "viewport": "desktop1920",
+      "name": "发送 Socratic 请求",
+      "action": "clickText",
+      "text": "发送任务"
+    },
+    {
+      "viewport": "desktop1920",
+      "name": "等待 Socratic 启动",
+      "action": "waitText",
+      "text": "Socratic Intake",
+      "timeoutMs": 10000
+    },
+    {
+      "viewport": "desktop1920",
+      "name": "回答目标岗位",
+      "action": "fill",
+      "selector": "textarea",
+      "value": "LLM 应用前端工程师"
+    },
+    {
+      "viewport": "desktop1920",
+      "name": "发送目标岗位",
+      "action": "clickText",
+      "text": "发送任务"
+    },
+    {
+      "viewport": "desktop1920",
+      "name": "等待下一问",
+      "action": "waitText",
+      "text": "项目背景",
+      "timeoutMs": 10000
+    },
+    {
+      "viewport": "desktop1920",
+      "name": "Socratic 一问一答证据",
+      "action": "screenshot",
+      "file": "p9_1_socratic_1920.png"
+    },
+    {
+      "viewport": "desktop1440",
+      "name": "1440 重新打开",
+      "action": "goto"
+    },
+    {
+      "viewport": "desktop1440",
+      "name": "1440 等待",
+      "action": "waitText",
+      "text": "Market Provider",
+      "timeoutMs": 30000
+    },
+    {
+      "viewport": "desktop1440",
+      "name": "1440 P9.1 可视度",
+      "action": "screenshot",
+      "file": "p9_1_1440.png"
+    },
+    {
+      "viewport": "desktop1200",
+      "name": "1200 重新打开",
+      "action": "goto"
+    },
+    {
+      "viewport": "desktop1200",
+      "name": "1200 等待",
+      "action": "waitText",
+      "text": "Market Provider",
+      "timeoutMs": 30000
+    },
+    {
+      "viewport": "desktop1200",
+      "name": "1200 P9.1 可视度",
+      "action": "screenshot",
+      "file": "p9_1_1200.png"
+    },
+    {
+      "viewport": "tablet720",
+      "name": "720 重新打开",
+      "action": "goto"
+    },
+    {
+      "viewport": "tablet720",
+      "name": "720 等待",
+      "action": "waitText",
+      "text": "发送任务",
+      "timeoutMs": 30000
+    },
+    {
+      "viewport": "tablet720",
+      "name": "720 Chatbox 优先",
+      "action": "screenshot",
+      "file": "p9_1_720.png"
+    },
+    {
+      "viewport": "mobile390",
+      "name": "390 重新打开",
+      "action": "goto"
+    },
+    {
+      "viewport": "mobile390",
+      "name": "390 等待",
+      "action": "waitText",
+      "text": "发送任务",
+      "timeoutMs": 30000
+    },
+    {
+      "viewport": "mobile390",
+      "name": "390 输入区可达",
+      "action": "screenshot",
+      "file": "p9_1_390.png"
+    }
+  ],
+  "acceptanceCriteria": [
+    "ECharts 行政区划下钻地图可见，含 visualMap、tooltip、toolbox、breadcrumb、source legend。",
+    "地图下钻、图层切换和区域详情能通过真实界面截图证明。",
+    "Market Provider: not_configured 可见，不发生真实 provider 或招聘平台调用。",
+    "Socratic Intake 一次只问一个问题，并在右侧产物台展示事实、待确认项和不可声明清单。",
+    "报告区分真实截图、fixture、未验证 provider 和高风险未完成能力。"
+  ],
+  "commandResults": [
+    {
+      "command": "npm --prefix apps/chatbox run build",
+      "status": "passed",
+      "evidence": "> tsc && vite build\nvite v7.3.5 building client environment for production...\ntransforming...\n✓ 2171 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/index.html                     0.38 kB │ gzip:   0.26 kB\ndist/assets/index-Be-rwRoH.css     49.23 kB │ gzip:   9.71 kB\ndist/assets/index-DgSJ-YCm.js   1,415.40 kB │ gzip: 470.65 kB\n(!) Some chunks are larger than 500 kB after minification. Consider:\n- Using dynamic import() to code-split the application\n- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks\n- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.\n✓ built in 14.53s"
+    },
+    {
+      "command": "/mnt/c/workspace/interview_service/.venv/bin/python -c from pathlib import Path; import xml.etree.ElementTree as ET; p=Path('docs/active/jobpilot-p9-1-market-socratic-gap.drawio'); root=ET.parse(p).getroot(); print('drawio pages', len(root.findall('diagram')), 'size', p.stat().st_size)",
+      "status": "passed",
+      "evidence": "drawio pages 7 size 24061"
+    },
+    {
+      "command": "static text guard for P9.1 UI entities and false-green claims",
+      "status": "passed",
+      "evidence": "{\n  \"echarts_dependency\": true,\n  \"echarts_register_map\": true,\n  \"administrative_region_node\": true,\n  \"market_map_layer_state\": true,\n  \"socratic_session\": true,\n  \"source_legend\": true,\n  \"no_forbidden_claims\": true\n}"
+    },
+    {
+      "command": "/mnt/c/workspace/interview_service/.venv/bin/python -m pytest tests/evals/test_p9_chatbox_native_acceptance_eval.py",
+      "status": "passed",
+      "evidence": "============================= test session starts ==============================\nplatform linux -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0\nrootdir: /mnt/c/workspace/interview_service\nconfigfile: pyproject.toml\nplugins: anyio-4.4.0\ncollected 4 items\ntests/evals/test_p9_chatbox_native_acceptance_eval.py ....               [100%]\n============================== 4 passed in 0.22s ==============================="
+    },
+    {
+      "command": "git diff --check",
+      "status": "passed",
+      "evidence": ""
+    }
+  ],
+  "prdReview": [
+    {
+      "requirement": "行政区划下钻式市场地图",
+      "evidence": "P9.1 截图展示 ECharts map/geo、breadcrumb、图层和区域详情。",
+      "status": "PASS"
+    },
+    {
+      "requirement": "真实市场数据 provider 边界",
+      "evidence": "Market Provider: not_configured 显示在报告正文和真实截图中，报告声明未外呼真实市场 API。",
+      "status": "PASS"
+    },
+    {
+      "requirement": "Socratic Intake",
+      "evidence": "截图和 transcript 展示一问一答事实采集。",
+      "status": "PASS"
+    },
+    {
+      "requirement": "产物台联动",
+      "evidence": "右侧展示 CandidateFactSummary、PendingConfirmations、DoNotClaimList。",
+      "status": "PASS"
+    }
+  ],
+  "codeReview": [
+    {
+      "area": "Frontend map",
+      "finding": "ECharts 行政区划下钻使用 fixture-only GeoJSON；未新增外部地图服务。",
+      "severity": "passed"
+    },
+    {
+      "area": "Socratic route",
+      "finding": "Chatbox 本地状态机处理一问一答，不外呼真实 provider。",
+      "severity": "passed"
+    },
+    {
+      "area": "Residual risk",
+      "finding": "GeoJSON 仍需在真实发布前做许可审查；本轮不声明真实市场。",
+      "severity": "warning"
+    }
+  ],
+  "documentationAudit": [
+    {
+      "area": "P9.1 PRD",
+      "finding": "实现范围与行政区划下钻、provider 状态、Socratic Intake 一致。",
+      "status": "passed"
+    },
+    {
+      "area": "目标架构",
+      "finding": "未扩张为招聘平台抓取、ASR、真实 provider 或自动投递系统。",
+      "status": "passed"
+    },
+    {
+      "area": "验收门槛",
+      "finding": "报告包含真实截图、命令结果、PRD 检视、false-green 边界。",
+      "status": "passed"
+    }
+  ],
+  "multiTurnDialogues": [
+    {
+      "persona": "合成候选人 A",
+      "target_role": "LLM 应用前端工程师",
+      "technical_background": "React / TypeScript / LLM 应用控制台",
+      "provider_path": "local/mock command route；未调用真实 provider",
+      "real_provider_called": false,
+      "turn_count": 10,
+      "message_count": 20,
+      "provider_called_count": 0,
+      "recent_count": 8,
+      "rolling_summary_covered": "yes, synthetic transcript only",
+      "privacy_boundary": {
+        "contains_api_key": "否",
+        "raw_provider_response_included": "否",
+        "full_history_included": "否"
+      },
+      "focus": [
+        "Socratic Intake",
+        "事实采集",
+        "source refs",
+        "pending confirmations",
+        "DoNotClaimList"
+      ],
+      "source_files": [
+        {
+          "label": "虚拟简历资料",
+          "path": "examples/p5_synthetic_personas/*/resume.md",
+          "excerpt": "合成资料仅用于验收，不代表真实个人资料路径通过。"
+        },
+        {
+          "label": "虚拟 JD 资料",
+          "path": "examples/p5_synthetic_personas/*/jd.md",
+          "excerpt": "JD 来自本地 fixture/示例文本，不代表真实全网搜索或招聘平台抓取。"
+        }
+      ],
+      "turns": [
+        {
+          "turn": 1,
+          "user": "我想用智能客服控制台项目投 LLM 应用前端。",
+          "assistant": "目标岗位已记录。下一问：项目解决了什么业务问题？",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/mock",
+          "artifacts_count": 1
+        },
+        {
+          "turn": 2,
+          "user": "客服需要统一处理多渠道会话。",
+          "assistant": "已记录项目背景。下一问：你本人负责哪一部分？",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/mock",
+          "artifacts_count": 1
+        },
+        {
+          "turn": 3,
+          "user": "我负责会话时间线、流式消息和错误重试。",
+          "assistant": "已记录本人职责。下一问：最难的技术问题是什么？",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/mock",
+          "artifacts_count": 2
+        },
+        {
+          "turn": 4,
+          "user": "流式消息乱序和失败恢复。",
+          "assistant": "已记录技术难点。下一问：你采取了哪些具体动作？",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/mock",
+          "artifacts_count": 2
+        },
+        {
+          "turn": 5,
+          "user": "做状态机、幂等消息 ID 和重试策略。",
+          "assistant": "已记录行动过程。下一问：有没有可确认指标？",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/mock",
+          "artifacts_count": 3
+        },
+        {
+          "turn": 6,
+          "user": "首屏从 2.8s 降到 1.6s。",
+          "assistant": "指标进入待确认。下一问：这个指标来源是什么？",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/mock",
+          "artifacts_count": 3
+        },
+        {
+          "turn": 7,
+          "user": "内部性能面板截图。",
+          "assistant": "已添加 source ref。下一问：哪些内容不能写？",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/mock",
+          "artifacts_count": 4
+        },
+        {
+          "turn": 8,
+          "user": "不写模型训练，只写 LLM 应用前端。",
+          "assistant": "已加入 DoNotClaimList。下一问：映射 JD 哪些关键词？",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/mock",
+          "artifacts_count": 4
+        },
+        {
+          "turn": 9,
+          "user": "React、TypeScript、LLM 应用、流式体验。",
+          "assistant": "已生成 JD 映射。下一问：强调技术深度还是业务结果？",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/mock",
+          "artifacts_count": 5
+        },
+        {
+          "turn": 10,
+          "user": "先强调技术深度。",
+          "assistant": "已生成 STAR/CAR 草稿，保留指标待确认项。",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/mock",
+          "artifacts_count": 5
+        }
+      ]
+    },
+    {
+      "persona": "合成候选人 B",
+      "target_role": "AI 平台后端工程师",
+      "technical_background": "Java / Spring Boot / Kafka / MySQL",
+      "provider_path": "local/mock command route；未调用真实 provider",
+      "real_provider_called": false,
+      "turn_count": 10,
+      "message_count": 20,
+      "provider_called_count": 0,
+      "recent_count": 8,
+      "rolling_summary_covered": "yes, synthetic transcript only",
+      "privacy_boundary": {
+        "contains_api_key": "否",
+        "raw_provider_response_included": "否",
+        "full_history_included": "否"
+      },
+      "focus": [
+        "Socratic Intake",
+        "事实采集",
+        "source refs",
+        "pending confirmations",
+        "DoNotClaimList"
+      ],
+      "source_files": [
+        {
+          "label": "虚拟简历资料",
+          "path": "examples/p5_synthetic_personas/*/resume.md",
+          "excerpt": "合成资料仅用于验收，不代表真实个人资料路径通过。"
+        },
+        {
+          "label": "虚拟 JD 资料",
+          "path": "examples/p5_synthetic_personas/*/jd.md",
+          "excerpt": "JD 来自本地 fixture/示例文本，不代表真实全网搜索或招聘平台抓取。"
+        }
+      ],
+      "turns": [
+        {
+          "turn": 1,
+          "user": "我想用实时特征服务投 AI 平台后端。",
+          "assistant": "目标岗位已记录。下一问：项目服务什么业务？",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/mock",
+          "artifacts_count": 1
+        },
+        {
+          "turn": 2,
+          "user": "推荐系统实时特征供给。",
+          "assistant": "已记录项目背景。下一问：你本人负责哪些模块？",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/mock",
+          "artifacts_count": 1
+        },
+        {
+          "turn": 3,
+          "user": "Kafka 消费链路和特征缓存。",
+          "assistant": "已记录本人职责。下一问：技术难点是什么？",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/mock",
+          "artifacts_count": 2
+        },
+        {
+          "turn": 4,
+          "user": "峰值流量下延迟和一致性。",
+          "assistant": "已记录技术难点。下一问：你做了哪些动作？",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/mock",
+          "artifacts_count": 2
+        },
+        {
+          "turn": 5,
+          "user": "分区消费、缓存预热、降级策略。",
+          "assistant": "已记录行动过程。下一问：有量化结果吗？",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/mock",
+          "artifacts_count": 3
+        },
+        {
+          "turn": 6,
+          "user": "QPS 1.2 万，P99 80ms 内。",
+          "assistant": "指标进入待确认。下一问：数据来源能证明吗？",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/mock",
+          "artifacts_count": 3
+        },
+        {
+          "turn": 7,
+          "user": "压测报告和监控截图。",
+          "assistant": "已添加 source refs。下一问：有哪些不能写？",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/mock",
+          "artifacts_count": 4
+        },
+        {
+          "turn": 8,
+          "user": "没做 Kubernetes，不写 K8s 实操。",
+          "assistant": "已加入 DoNotClaimList。下一问：匹配 JD 哪些关键词？",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/mock",
+          "artifacts_count": 4
+        },
+        {
+          "turn": 9,
+          "user": "Kafka、缓存、稳定性、性能优化。",
+          "assistant": "已生成 JD 映射。下一问：是否生成面试故事和简历 bullet？",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/mock",
+          "artifacts_count": 5
+        },
+        {
+          "turn": 10,
+          "user": "先生成草稿，保留待确认。",
+          "assistant": "已生成后端平台故事草稿，保留 QPS/P99 证据待确认。",
+          "provider_invocation_status": "not_called",
+          "chat_mode": "local/mock",
+          "artifacts_count": 5
+        }
+      ]
+    }
+  ],
+  "unverifiedScope": [
+    "未登录、抓取、自动沟通或自动投递 BOSS、猎聘、拉勾、LinkedIn 等招聘平台。",
+    "未执行真实全网 JD 搜索，只使用用户粘贴、已导入 JD、repo fixture 和本地示例表达。",
+    "未默认调用 MiniMax、DeepSeek 或 OpenAI-compatible provider。",
+    "未读取用户真实个人资料路径。",
+    "未采集麦克风，未调用真实 ASR。",
+    "未建设 MCP/Skill 平台、SaaS、多租户、Billing 或会议平台能力。"
+  ],
+  "auditOpinion": "P9.1 自动化候选通过只覆盖本地/fixture 范围内的 UI、状态机和证据链。真实市场 provider、真实招聘平台、真实 ASR 和自动投递仍需独立授权与验收。"
+}

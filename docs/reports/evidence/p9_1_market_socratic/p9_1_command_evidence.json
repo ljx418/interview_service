@@ -1,0 +1,42 @@
+{
+  "generated_at": "2026-07-07T13:37:26.465597+00:00",
+  "git_head": "fcfcc1c",
+  "git_status_short": "M README.md\n M TODO.md\n M apps/chatbox/package-lock.json\n M apps/chatbox/package.json\n M apps/chatbox/src/main.tsx\n M apps/chatbox/src/styles.css\n M docs/active/00_README.md\n M docs/active/01_STAGE_PRD.md\n M docs/active/02_TARGET_ARCHITECTURE.md\n M docs/active/03_MILESTONES_AND_DELIVERY_PLAN.md\n M docs/active/04_ACCEPTANCE_GATES.md\n M docs/active/06_TRACEABILITY_MATRIX.md\n M docs/active/17_PRODUCTIZATION_DEVELOPMENT_ROADMAP.md\n M docs/active/23_P9_CHATBOX_NATIVE_JOB_INTELLIGENCE_PLAN.md\n M services/api/main.py\n?? docs/active/24_P9_1_MARKET_DATA_AND_SOCRATIC_PROTOTYPE_PLAN.md\n?? docs/active/jobpilot-p9-1-market-socratic-gap.drawio\n?? docs/active/jobpilot-p9-1-market-socratic-gap.md\n?? docs/active/stage-reviews/P9_1_DOCUMENTATION_COVERAGE_REAUDIT.md\n?? docs/active/stage-reviews/P9_1_DOCUMENTATION_DEVELOPMENT_AUDIT.md\n?? docs/active/stage-reviews/P9_1_M0_START_AUDIT.md\n?? docs/active/stage-reviews/P9_1_M1_ADMINISTRATIVE_MARKET_MAP_AUDIT.md\n?? docs/active/stage-reviews/P9_1_M2_MARKET_PROVIDER_STATE_AUDIT.md\n?? docs/active/stage-reviews/P9_1_M3_SOCRATIC_INTAKE_AUDIT.md\n?? docs/active/stage-reviews/P9_1_M4_MAP_CHATBOX_WORKBENCH_LINKAGE_AUDIT.md\n?? docs/active/stage-reviews/P9_1_M5_ACCEPTANCE_REPORT_AUDIT.md\n?? docs/p9_1_market_socratic_review/\n?? docs/reports/P9_1_MARKET_SOCRATIC_ACCEPTANCE_REPORT.html\n?? docs/reports/evidence/p9_1_market_socratic/\n?? scripts/generate_p9_1_market_socratic_acceptance.py\n?? tests/evals/test_p9_1_market_socratic_acceptance_eval.py",
+  "results": [
+    {
+      "label": "Chatbox production build",
+      "command": "npm --prefix apps/chatbox run build",
+      "status": "passed",
+      "returncode": 0,
+      "summary": "> tsc && vite build\nvite v7.3.5 building client environment for production...\ntransforming...\n✓ 2171 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/index.html                     0.38 kB │ gzip:   0.26 kB\ndist/assets/index-Be-rwRoH.css     49.23 kB │ gzip:   9.71 kB\ndist/assets/index-DgSJ-YCm.js   1,415.40 kB │ gzip: 470.65 kB\n(!) Some chunks are larger than 500 kB after minification. Consider:\n- Using dynamic import() to code-split the application\n- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks\n- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.\n✓ built in 14.53s"
+    },
+    {
+      "label": "P9.1 drawio XML parse",
+      "command": "/mnt/c/workspace/interview_service/.venv/bin/python -c from pathlib import Path; import xml.etree.ElementTree as ET; p=Path('docs/active/jobpilot-p9-1-market-socratic-gap.drawio'); root=ET.parse(p).getroot(); print('drawio pages', len(root.findall('diagram')), 'size', p.stat().st_size)",
+      "status": "passed",
+      "returncode": 0,
+      "summary": "drawio pages 7 size 24061"
+    },
+    {
+      "label": "P9.1 static implementation guard",
+      "command": "static text guard for P9.1 UI entities and false-green claims",
+      "status": "passed",
+      "returncode": 0,
+      "summary": "{\n  \"echarts_dependency\": true,\n  \"echarts_register_map\": true,\n  \"administrative_region_node\": true,\n  \"market_map_layer_state\": true,\n  \"socratic_session\": true,\n  \"source_legend\": true,\n  \"no_forbidden_claims\": true\n}"
+    },
+    {
+      "label": "P9 baseline report eval",
+      "command": "/mnt/c/workspace/interview_service/.venv/bin/python -m pytest tests/evals/test_p9_chatbox_native_acceptance_eval.py",
+      "status": "passed",
+      "returncode": 0,
+      "summary": "============================= test session starts ==============================\nplatform linux -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0\nrootdir: /mnt/c/workspace/interview_service\nconfigfile: pyproject.toml\nplugins: anyio-4.4.0\ncollected 4 items\ntests/evals/test_p9_chatbox_native_acceptance_eval.py ....               [100%]\n============================== 4 passed in 0.22s ==============================="
+    },
+    {
+      "label": "diff whitespace check",
+      "command": "git diff --check",
+      "status": "passed",
+      "returncode": 0,
+      "summary": ""
+    }
+  ]
+}

@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <title>P10-CLI 自动化验收报告</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; margin: 32px; color: #17201b; background: #f7f8f5; }
+    h1, h2 { color: #173b34; }
+    .card { background: #fff; border: 1px solid #d8ded6; border-radius: 8px; padding: 18px; margin: 16px 0; }
+    table { width: 100%; border-collapse: collapse; background: #fff; }
+    th, td { border: 1px solid #d8ded6; padding: 10px; vertical-align: top; }
+    th { background: #edf3ee; text-align: left; }
+    code { background: #eef3ef; padding: 2px 5px; border-radius: 4px; }
+    pre { white-space: pre-wrap; word-break: break-word; max-height: 260px; overflow: auto; }
+    .pass { color: #166534; font-weight: 700; }
+    .warn { color: #9a3412; font-weight: 700; }
+  </style>
+</head>
+<body>
+  <h1>P10-CLI 自动化验收报告</h1>
+  <div class="card">
+    <p><strong>验收结论：</strong><span class="pass">通过</span></p>
+    <p>本报告验证 P10-CLI 本地命令入口，不代表 MCP、真实 provider、真实个人资料、招聘平台抓取、ASR、自动投递或 SaaS 已通过。</p>
+    <p>数据边界：当前仓库真实 <code>.jobpilot_workspace</code>、<code>docs/reports</code>、本地 FastAPI API、examples/fixture。</p>
+  </div>
+  <h2>目标架构与当前实现</h2>
+  <div class="card">
+    <p>目标架构：薄 CLI → 本地 FastAPI → Domain Tools → SQLite Workspace / Artifact / Evidence。</p>
+    <p>当前实现：<code>services/cli/main.py</code> 提供 CLI presentation/application/adapter；根命令 <code>./jobpilot</code> 调用该模块；CLI 不自动启动 FastAPI。</p>
+  </div>
+  <h2>验收检查</h2>
+  <table><tr><th>检查项</th><th>结果</th></tr><tr><td>help</td><td>通过</td></tr>
+<tr><td>service_unavailable</td><td>通过</td></tr>
+<tr><td>workspace_status</td><td>通过</td></tr>
+<tr><td>demo</td><td>通过</td></tr>
+<tr><td>jobs</td><td>通过</td></tr>
+<tr><td>artifacts</td><td>通过</td></tr>
+<tr><td>reports</td><td>通过</td></tr>
+<tr><td>safety</td><td>通过</td></tr></table>
+  <h2>命令证据</h2>
+  <table><tr><th>命令</th><th>exit code</th><th>stdout</th><th>stderr</th></tr><tr><td><code>./jobpilot --help</code></td><td>0</td><td><pre>usage: jobpilot [-h] [--api-url API_URL] [--json]
+                {workspace,demo,jobs,artifacts,reports} ...
+
+JobPilot 本地 CLI：只包装本地 API、workspace、artifact 和报告能力。
+
+positional arguments:
+  {workspace,demo,jobs,artifacts,reports}
+    workspace           workspace 状态命令
+    demo                examples / fixture 演示命令
+    jobs                岗位命令
+    artifacts           产物命令
+    reports             验收报告命令
+
+options:
+  -h, --help            show this help message and exit
+  --api-url API_URL     本地 FastAPI 地址，默认 http://127.0.0.1:8000
+  --json                输出机器可读 JSON envelope
+</pre></td><td><pre></pre></td></tr>
+<tr><td><code>./jobpilot --api-url http://127.0.0.1:9 workspace status --workspace /mnt/c/workspace/interview_service/.jobpilot_workspace</code></td><td>2</td><td><pre></pre></td><td><pre>JobPilot CLI 错误：本地 FastAPI 服务不可用：HTTP 503
+建议：请确认服务已启动并监听正确端口，CLI 不会自动启动后台服务。
+error_code=SERVICE_UNAVAILABLE exit_code=2
+</pre></td></tr>
+<tr><td><code>./jobpilot --api-url http://127.0.0.1:8765 --json workspace status --workspace /mnt/c/workspace/interview_service/.jobpilot_workspace</code></td><td>0</td><td><pre>{
+  &quot;ok&quot;: true,
+  &quot;command&quot;: &quot;workspace status&quot;,
+  &quot;workspace_id&quot;: &quot;ws_1b777f2cc655&quot;,
+  &quot;data_source&quot;: [
+    &quot;local_api&quot;,
+    &quot;workspace&quot;,
+    &quot;reports&quot;
+  ],
+  &quot;provider_state&quot;: {
+    &quot;configured&quot;: true,
+    &quot;consented&quot;: false,
+    &quot;called&quot;: false,
+    &quot;fallback&quot;: &quot;mock&quot;
+  },
+  &quot;data&quot;: {
+    &quot;health&quot;: {
+      &quot;ok&quot;: true,
+      &quot;service&quot;: &quot;jobpilot-ai&quot;,
+      &quot;version&quot;: &quot;0.1.0&quot;
+    },
+    &quot;workspace&quot;: {
+      &quot;id&quot;: &quot;ws_1b777f2cc655&quot;,
+      &quot;name&quot;: &quot;p2-guided-demo&quot;,
+      &quot;root_path&quot;: &quot;/mnt/c/workspace/interview_service/.jobpilot_workspace&quot;,
+      &quot;llm_provider&quot;: &quot;mock&quot;,
+      &quot;privacy_mode&quot;: &quot;local_first&quot;,
+      &quot;created_at&quot;: &quot;2026-06-12T03:59:13.348523+00:00&quot;,
+      &quot;updated_at&quot;: &quot;2026-07-10T04:50:05.192764+00:00&quot;
+    },
+    &quot;workspace_root&quot;: &quot;/mnt/c/workspace/interview_service/.jobpilot_workspace&quot;,
+    &quot;workspace_source&quot;: &quot;--workspace&quot;,
+    &quot;reports_count&quot;: 29,
+    &quot;latest_report&quot;: &quot;docs/reports/P9_STAGE_CLOSURE_ACCEPTANCE_REPORT.html&quot;
+  },
+  &quot;warnings&quot;: [],
+  &quot;next_actions&quot;: [
+    &quot;运行 demo run --example 验证 examples 路径。&quot;
+  ],
+  &quot;meta&quot;: {
+    &quot;api_url&quot;: &quot;http://127.0.0.1:8765&quot;,
+    &quot;redacted&quot;: true
+  }
+}
+</pre></td><td><pre></pre></td></tr>
+<tr><td><code>./jobpilot --api-url http://127.0.0.1:8765 --json demo run --example --workspace /mnt/c/workspace/interview_service/.jobpilot_workspace</code></td><td>0</td><td><pre>{
+  &quot;ok&quot;: true,
+  &quot;command&quot;: &quot;demo run --example&quot;,
+  &quot;workspace_id&quot;: &quot;ws_1b777f2cc655&quot;,
+  &quot;data_source&quot;: [
+    &quot;local_api&quot;,
+    &quot;examples&quot;,
+    &quot;fixture&quot;
+  ],
+  &quot;provider_state&quot;: {
+    &quot;configured&quot;: false,
+    &quot;consented&quot;: false,
+    &quot;called&quot;: false,
+    &quot;fallback&quot;: &quot;mock&quot;
+  },
+  &quot;data&quot;: {
+    &quot;summary&quot;: {
+      &quot;headline&quot;: &quot;P2 guided demo flow completed&quot;,
+      &quot;documents_imported&quot;: 2,
+      &quot;facts&quot;: 12,
+      &quot;fit_label&quot;: &quot;比较适合&quot;,
+      &quot;package_id&quot;: &quot;pkg_d1f334688137&quot;,
+      &quot;job_id&quot;: &quot;job_c3e138e28d0f&quot;,
+      &quot;exports&quot;: [
+        &quot;/mnt/c/workspace/interview_service/.jobpilot_workspace/exports/pkg_d1f334688137_resume.md&quot;,
+        &quot;/mnt/c/workspace/interview_service/.jobpilot_workspace/exports/pkg_d1f334688137_resume.docx&quot;
+      ],
+      &quot;training_tasks&quot;: 3
+    },
+    &quot;steps&quot;: [
+      {
+        &quot;key&quot;: &quot;import_materials&quot;,
+        &quot;title&quot;: &quot;导入资料&quot;,
+        &quot;status&quot;: &quot;completed&quot;,
+        &quot;summary&quot;: &quot;已导入示例简历 transition_frontend_resume.md 和项目 README todoplus_README.md。&quot;,
+        &quot;artifact_refs&quot;: [
+          {
+            &quot;artifact_id&quot;: &quot;art_6dbb6d97af6d&quot;,
+            &quot;artifact_type&quot;: &quot;document&quot;,
+            &quot;status&quot;: &quot;confirmed&quot;,
+            &quot;current_version_id&quot;: &quot;artver_3e267722c655&quot;,
+            &quot;source_refs&quot;: [
+              {
+                &quot;source_type&quot;: &quot;document&quot;,
+                &quot;source_id&quot;: &quot;doc_2c0082cb6d2e&quot;,
+                &quot;field&quot;: &quot;text&quot;,
+                &quot;quote&quot;: &quot;# Chen Lin\n\nTarget: Junior Frontend Developer\n\n## Summary\n\nFormer operations specialist transitioning into frontend development. Built TodoPlus, a task manageme&quot;,
+                &quot;confidence&quot;: &quot;high</pre></td><td><pre></pre></td></tr>
+<tr><td><code>./jobpilot --api-url http://127.0.0.1:8765 --json jobs list --workspace /mnt/c/workspace/interview_service/.jobpilot_workspace</code></td><td>0</td><td><pre>{
+  &quot;ok&quot;: true,
+  &quot;command&quot;: &quot;jobs list&quot;,
+  &quot;workspace_id&quot;: &quot;ws_1b777f2cc655&quot;,
+  &quot;data_source&quot;: [
+    &quot;local_api&quot;,
+    &quot;workspace&quot;
+  ],
+  &quot;provider_state&quot;: {},
+  &quot;data&quot;: {
+    &quot;jobs&quot;: [
+      {
+        &quot;job_id&quot;: &quot;job_c3e138e28d0f&quot;,
+        &quot;title&quot;: &quot;Junior Frontend Developer&quot;,
+        &quot;city&quot;: null,
+        &quot;source_url_present&quot;: false,
+        &quot;is_current&quot;: false
+      },
+      {
+        &quot;job_id&quot;: &quot;job_9d49a8f3d18b&quot;,
+        &quot;title&quot;: &quot;Junior Frontend Developer&quot;,
+        &quot;city&quot;: null,
+        &quot;source_url_present&quot;: false,
+        &quot;is_current&quot;: false
+      },
+      {
+        &quot;job_id&quot;: &quot;job_cd17c35241d1&quot;,
+        &quot;title&quot;: &quot;Junior Frontend Developer&quot;,
+        &quot;city&quot;: null,
+        &quot;source_url_present&quot;: false,
+        &quot;is_current&quot;: false
+      },
+      {
+        &quot;job_id&quot;: &quot;job_45255310b24e&quot;,
+        &quot;title&quot;: &quot;Junior Frontend Developer&quot;,
+        &quot;city&quot;: null,
+        &quot;source_url_present&quot;: false,
+        &quot;is_current&quot;: false
+      },
+      {
+        &quot;job_id&quot;: &quot;job_170da0e64130&quot;,
+        &quot;title&quot;: &quot;Junior Frontend Developer&quot;,
+        &quot;city&quot;: null,
+        &quot;source_url_present&quot;: false,
+        &quot;is_current&quot;: false
+      },
+      {
+        &quot;job_id&quot;: &quot;job_4a9e42120f28&quot;,
+        &quot;title&quot;: &quot;Junior Frontend Developer&quot;,
+        &quot;city&quot;: null,
+        &quot;source_url_present&quot;: false,
+        &quot;is_current&quot;: false
+      },
+      {
+        &quot;job_id&quot;: &quot;job_6c7965a74d59&quot;,
+        &quot;title&quot;: &quot;Junior Frontend Developer&quot;,
+        &quot;city&quot;: null,
+        &quot;source_url_present&quot;: false,
+        &quot;is_current&quot;: false
+      },
+      {
+        &quot;job_id&quot;: &quot;job_c97cf85ecc7b&quot;,
+        &quot;title&quot;: &quot;Junior Frontend Developer&quot;,
+      </pre></td><td><pre></pre></td></tr>
+<tr><td><code>./jobpilot --api-url http://127.0.0.1:8765 --json artifacts list --workspace /mnt/c/workspace/interview_service/.jobpilot_workspace</code></td><td>0</td><td><pre>{
+  &quot;ok&quot;: true,
+  &quot;command&quot;: &quot;artifacts list&quot;,
+  &quot;workspace_id&quot;: &quot;ws_1b777f2cc655&quot;,
+  &quot;data_source&quot;: [
+    &quot;local_api&quot;,
+    &quot;workspace&quot;
+  ],
+  &quot;provider_state&quot;: {},
+  &quot;data&quot;: {
+    &quot;artifacts&quot;: [
+      {
+        &quot;artifact_id&quot;: &quot;art_f43b79ce0b58&quot;,
+        &quot;type&quot;: &quot;document&quot;,
+        &quot;status&quot;: &quot;confirmed&quot;,
+        &quot;current_version_id&quot;: &quot;artver_7f400e33db88&quot;,
+        &quot;updated_at&quot;: &quot;2026-06-12T03:59:13.359346+00:00&quot;
+      },
+      {
+        &quot;artifact_id&quot;: &quot;art_ad5a0ea8cc3b&quot;,
+        &quot;type&quot;: &quot;document&quot;,
+        &quot;status&quot;: &quot;confirmed&quot;,
+        &quot;current_version_id&quot;: &quot;artver_d723d1f28ade&quot;,
+        &quot;updated_at&quot;: &quot;2026-06-12T03:59:13.377018+00:00&quot;
+      },
+      {
+        &quot;artifact_id&quot;: &quot;art_61f500054797&quot;,
+        &quot;type&quot;: &quot;career_facts&quot;,
+        &quot;status&quot;: &quot;needs_confirmation&quot;,
+        &quot;current_version_id&quot;: &quot;artver_101a7be2ebb9&quot;,
+        &quot;updated_at&quot;: &quot;2026-06-12T03:59:13.417076+00:00&quot;
+      },
+      {
+        &quot;artifact_id&quot;: &quot;art_3a771d1d53e1&quot;,
+        &quot;type&quot;: &quot;tech_project&quot;,
+        &quot;status&quot;: &quot;needs_confirmation&quot;,
+        &quot;current_version_id&quot;: &quot;artver_8194ffe3f9be&quot;,
+        &quot;updated_at&quot;: &quot;2026-06-12T03:59:13.428628+00:00&quot;
+      },
+      {
+        &quot;artifact_id&quot;: &quot;art_1bcfcb01890d&quot;,
+        &quot;type&quot;: &quot;job_parse&quot;,
+        &quot;status&quot;: &quot;needs_confirmation&quot;,
+        &quot;current_version_id&quot;: &quot;artver_786d131d7dc3&quot;,
+        &quot;updated_at&quot;: &quot;2026-06-12T03:59:13.443818+00:00&quot;
+      },
+      {
+        &quot;artifact_id&quot;: &quot;art_a5b7c3f87279&quot;,
+        &quot;type&quot;: &quot;application_package&quot;,
+        &quot;status&quot;: &quot;exported&quot;,
+        &quot;current_version_id&quot;: &quot;artver_863b665cf436&quot;,
+        &quot;updated_at&quot;: &quot;2026-06-12T03:59:13.505974+</pre></td><td><pre></pre></td></tr>
+<tr><td><code>./jobpilot --json reports open --no-browser</code></td><td>0</td><td><pre>{
+  &quot;ok&quot;: true,
+  &quot;command&quot;: &quot;reports open&quot;,
+  &quot;workspace_id&quot;: null,
+  &quot;data_source&quot;: [
+    &quot;local_report&quot;
+  ],
+  &quot;provider_state&quot;: {},
+  &quot;data&quot;: {
+    &quot;report_path&quot;: &quot;/mnt/c/workspace/interview_service/docs/reports/P10_CLI_ACCEPTANCE_REPORT.html&quot;,
+    &quot;windows_path&quot;: &quot;C:\\workspace\\interview_service\\docs\\reports\\P10_CLI_ACCEPTANCE_REPORT.html&quot;,
+    &quot;opened&quot;: false,
+    &quot;no_browser&quot;: true
+  },
+  &quot;warnings&quot;: [],
+  &quot;next_actions&quot;: [],
+  &quot;meta&quot;: {
+    &quot;report_generated&quot;: false,
+    &quot;redacted&quot;: true
+  }
+}
+</pre></td><td><pre></pre></td></tr>
+<tr><td><code>./jobpilot reports open generate-report</code></td><td>4</td><td><pre></pre></td><td><pre>JobPilot CLI 错误：命令被安全门拒绝：generate-report
+建议：P10-CLI 默认不执行真实外呼、平台抓取、ASR、MCP、报告生成或不可逆 workspace 操作。
+error_code=SAFETY_BLOCKED exit_code=4
+</pre></td></tr></table>
+  <h2>未验证范围</h2>
+  <ul>
+    <li>未调用真实 provider。</li>
+    <li>未读取未授权真实个人资料目录。</li>
+    <li>未登录、抓取或联系招聘平台。</li>
+    <li>未实现 MCP server、ASR、会议平台、自动投递或 SaaS。</li>
+    <li><code>reports open</code> 未生成报告，只定位已有报告。</li>
+  </ul>
+  <p>结构化证据：<code>docs/reports/evidence/p10_cli/p10_cli_command_evidence.json</code></p>
+</body>
+</html>

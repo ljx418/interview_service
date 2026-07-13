@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
+import * as echarts from "echarts";
 import {
   Activity,
   AlertCircle,
@@ -37,6 +38,7 @@ import {
 import "./styles.css";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "http://127.0.0.1:8000";
+const MARKET_PROVIDER_LEGACY_NOT_CONFIGURED_LABEL = "Market Provider: not_configured";
 
 type DataMode = "example" | "my_data";
 type ProviderPreset = "" | "minimax" | "deepseek";
@@ -78,6 +80,37 @@ type ProviderRuntimeConfig = {
   model: string;
   timeout_seconds: number;
   max_retries: number;
+};
+
+type MarketProviderState = {
+  level: string;
+  level_label?: string;
+  providers: Array<{
+    provider_id: string;
+    provider_name: string;
+    provider_type: "fixture" | "manual_paste" | "public_source" | "opt_in_api";
+    configured_state: "not_configured" | "configured" | "connected" | "failed" | "disabled";
+    requires_key: boolean;
+    license_note: string;
+    called?: boolean;
+  }>;
+  recent_invocations?: Array<{ provider_id: string; status: string; error_code?: string | null; created_at: string }>;
+  default_policy: string;
+  external_call_enabled: boolean;
+  can_claim_real_market: boolean;
+  warnings?: string[];
+};
+
+type MarketSnapshot = {
+  run_id: string;
+  city_stats: Array<{ city: string; region_code: string; job_count: number; confidence: number; source_refs: string[] }>;
+  salary_histogram: Array<{ range: string; count: number }>;
+  tech_heatmap: Array<{ tech: string; count: number }>;
+  source_breakdown: Record<string, number>;
+  competition_level: string;
+  trend_summary: string;
+  low_confidence_notes: string[];
+  source_refs: string[];
 };
 
 type Message = {
@@ -263,19 +296,56 @@ type ServiceStatusItem = {
   icon: React.ReactNode;
 };
 
+type MarketSourceType = "fixture" | "manual" | "public" | "opt_in_api";
+type AdministrativeLevel = "country" | "province" | "city" | "district";
+type MarketMapLayerState = "jobs" | "salary" | "tech" | "source";
+
+type RegionSourceRef = {
+  source_type: MarketSourceType;
+  label: string;
+  path: string;
+};
+
+type RegionJobDistributionSnapshot = {
+  jobs: number;
+  salaryMedian: number;
+  salaryRange: string;
+  remote: string;
+  competition: "低" | "中" | "高";
+  tech: string[];
+  sourceType: MarketSourceType;
+  confidence: "fixture" | "manual" | "public" | "opt_in";
+  sourceRefs: RegionSourceRef[];
+};
+
+type AdministrativeRegionNode = {
+  adcode: string;
+  name: string;
+  level: AdministrativeLevel;
+  parentAdcode?: string;
+  childrenAdcodes: string[];
+  mapName: string;
+  center: [number, number];
+  stats: RegionJobDistributionSnapshot;
+  licenseNote: string;
+  geoJson: any;
+};
+
 type MarketCity = {
   city: string;
-  x: number;
-  y: number;
+  coord: [number, number];
+  regionAdcode: string;
   jobs: number;
   salary: string;
   remote: string;
   competition: "低" | "中" | "高";
   tech: string[];
   source: string;
+  sourceType: MarketSourceType;
 };
 
 type SearchRun = {
+  runId?: string;
   query: string;
   city: string;
   salary: string;
@@ -283,6 +353,8 @@ type SearchRun = {
   resultCount: number;
   generatedAt: string;
   refs: string[];
+  boundaryNote?: string;
+  status?: string;
 };
 
 type PipelineStage = "待评估" | "待投递" | "已投递" | "HR 沟通" | "笔试" | "面试" | "Offer" | "拒绝" | "搁置";
@@ -306,6 +378,33 @@ type StoryDraft = {
   status: "draft" | "needs_evidence" | "ready";
 };
 
+type SocraticStage =
+  | "role_alignment"
+  | "project_context"
+  | "personal_contribution"
+  | "technical_depth"
+  | "impact_metrics"
+  | "evidence_check"
+  | "boundary_check"
+  | "jd_mapping"
+  | "story_draft"
+  | "confirmation";
+
+type SocraticFact = {
+  stage: SocraticStage;
+  label: string;
+  answer: string;
+  sourceRef: string;
+};
+
+type SocraticSession = {
+  active: boolean;
+  stageIndex: number;
+  facts: SocraticFact[];
+  pendingConfirmations: string[];
+  doNotClaim: string[];
+};
+
 class ApiError extends Error {
   errorCode?: string;
   suggestedAction?: string;
@@ -320,13 +419,288 @@ class ApiError extends Error {
   }
 }
 
+const sourceRefs: Record<string, RegionSourceRef[]> = {
+  bj: [{ source_type: "fixture", label: "北京 LLM 前端 fixture JD", path: "examples/jds/junior_frontend_jd.md" }],
+  sh: [{ source_type: "fixture", label: "上海数据可视化 fixture JD", path: "examples/p5_synthetic_personas/qa_to_fullstack/jd.md" }],
+  sz: [{ source_type: "fixture", label: "深圳 SaaS 前端 fixture JD", path: "examples/p5_synthetic_personas/ops_to_frontend/jd.md" }],
+  hz: [{ source_type: "fixture", label: "杭州平台工程 fixture JD", path: "examples/p5_synthetic_personas/teacher_to_edtech/jd.md" }],
+  cd: [{ source_type: "fixture", label: "成都企业应用 fixture JD", path: "examples/p5_synthetic_personas/ops_to_frontend/jd.md" }],
+};
+
+const makeStats = (
+  jobs: number,
+  salaryMedian: number,
+  salaryRange: string,
+  tech: string[],
+  refs: RegionSourceRef[],
+  sourceType: MarketSourceType = "fixture",
+): RegionJobDistributionSnapshot => ({
+  jobs,
+  salaryMedian,
+  salaryRange,
+  remote: `${Math.max(8, Math.round(jobs * 1.2))}%`,
+  competition: jobs >= 15 ? "高" : jobs >= 9 ? "中" : "低",
+  tech,
+  sourceType,
+  confidence: sourceType === "opt_in_api" ? "opt_in" : sourceType,
+  sourceRefs: refs,
+});
+
+function rectFeature(name: string, adcode: string, west: number, south: number, east: number, north: number) {
+  return {
+    type: "Feature",
+    properties: { name, adcode },
+    geometry: {
+      type: "Polygon",
+      coordinates: [[
+        [west, south],
+        [east, south],
+        [east, north],
+        [west, north],
+        [west, south],
+      ]],
+    },
+  };
+}
+
+function featureCollection(features: any[]) {
+  return { type: "FeatureCollection", features };
+}
+
+const adminRegions: Record<string, AdministrativeRegionNode> = {
+  "100000": {
+    adcode: "100000",
+    name: "全国",
+    level: "country",
+    childrenAdcodes: ["110000", "310000", "440000", "330000", "510000"],
+    mapName: "jobpilot-country-fixture",
+    center: [108, 33],
+    stats: makeStats(59, 28, "14-45k", ["React", "TypeScript", "LLM", "ECharts"], [
+      ...sourceRefs.bj,
+      ...sourceRefs.sh,
+      ...sourceRefs.sz,
+      ...sourceRefs.hz,
+      ...sourceRefs.cd,
+    ]),
+    licenseNote: "fixture-only 行政区划示意；真实 GeoJSON 许可进入 P9.1-M0/M1 前置审计。",
+    geoJson: featureCollection([
+      rectFeature("北京", "110000", 112, 38, 119, 42),
+      rectFeature("上海", "310000", 119, 29, 123, 33),
+      rectFeature("广东", "440000", 109, 20, 117, 25),
+      rectFeature("浙江", "330000", 118, 27, 123, 31),
+      rectFeature("四川", "510000", 97, 26, 108, 34),
+    ]),
+  },
+  "110000": {
+    adcode: "110000",
+    name: "北京",
+    level: "province",
+    parentAdcode: "100000",
+    childrenAdcodes: ["110100"],
+    mapName: "jobpilot-beijing-fixture",
+    center: [116.4, 39.9],
+    stats: makeStats(18, 32, "22-45k", ["LLM", "React", "Python"], sourceRefs.bj),
+    licenseNote: "fixture-only 北京区划示意，不代表真实平台抓取。",
+    geoJson: featureCollection([rectFeature("北京市", "110100", 115.7, 39.3, 117.4, 40.6)]),
+  },
+  "110100": {
+    adcode: "110100",
+    name: "北京市",
+    level: "city",
+    parentAdcode: "110000",
+    childrenAdcodes: ["110108", "110105", "110102"],
+    mapName: "jobpilot-beijing-city-fixture",
+    center: [116.4, 39.9],
+    stats: makeStats(18, 32, "22-45k", ["LLM", "React", "Agent"], sourceRefs.bj),
+    licenseNote: "fixture-only 区县示意。",
+    geoJson: featureCollection([
+      rectFeature("海淀", "110108", 115.9, 39.95, 116.45, 40.35),
+      rectFeature("朝阳", "110105", 116.45, 39.8, 117.05, 40.2),
+      rectFeature("西城", "110102", 116.15, 39.75, 116.55, 39.98),
+    ]),
+  },
+  "310000": {
+    adcode: "310000",
+    name: "上海",
+    level: "province",
+    parentAdcode: "100000",
+    childrenAdcodes: ["310100"],
+    mapName: "jobpilot-shanghai-fixture",
+    center: [121.47, 31.23],
+    stats: makeStats(14, 30, "20-40k", ["数据可视化", "AI 应用", "ECharts"], sourceRefs.sh),
+    licenseNote: "fixture-only 上海区划示意。",
+    geoJson: featureCollection([rectFeature("上海市", "310100", 120.8, 30.7, 122.1, 31.8)]),
+  },
+  "310100": {
+    adcode: "310100",
+    name: "上海市",
+    level: "city",
+    parentAdcode: "310000",
+    childrenAdcodes: ["310115", "310104", "310110"],
+    mapName: "jobpilot-shanghai-city-fixture",
+    center: [121.47, 31.23],
+    stats: makeStats(14, 30, "20-40k", ["前端", "地图", "BI"], sourceRefs.sh),
+    licenseNote: "fixture-only 区县示意。",
+    geoJson: featureCollection([
+      rectFeature("浦东", "310115", 121.55, 30.95, 122.05, 31.55),
+      rectFeature("徐汇", "310104", 121.25, 31.0, 121.55, 31.25),
+      rectFeature("杨浦", "310110", 121.45, 31.22, 121.75, 31.45),
+    ]),
+  },
+  "440000": {
+    adcode: "440000",
+    name: "广东",
+    level: "province",
+    parentAdcode: "100000",
+    childrenAdcodes: ["440300"],
+    mapName: "jobpilot-guangdong-fixture",
+    center: [113.2, 23.1],
+    stats: makeStats(11, 28, "18-38k", ["ToB", "React", "Node"], sourceRefs.sz),
+    licenseNote: "fixture-only 广东区划示意。",
+    geoJson: featureCollection([rectFeature("深圳市", "440300", 113.7, 22.2, 114.7, 22.9)]),
+  },
+  "440300": {
+    adcode: "440300",
+    name: "深圳市",
+    level: "city",
+    parentAdcode: "440000",
+    childrenAdcodes: ["440305", "440304", "440306"],
+    mapName: "jobpilot-shenzhen-city-fixture",
+    center: [114.05, 22.55],
+    stats: makeStats(11, 28, "18-38k", ["SaaS", "协同", "Node"], sourceRefs.sz),
+    licenseNote: "fixture-only 区县示意。",
+    geoJson: featureCollection([
+      rectFeature("南山", "440305", 113.85, 22.42, 114.15, 22.65),
+      rectFeature("福田", "440304", 114.0, 22.45, 114.25, 22.65),
+      rectFeature("宝安", "440306", 113.72, 22.55, 114.05, 22.9),
+    ]),
+  },
+  "330000": {
+    adcode: "330000",
+    name: "浙江",
+    level: "province",
+    parentAdcode: "100000",
+    childrenAdcodes: ["330100"],
+    mapName: "jobpilot-zhejiang-fixture",
+    center: [120.2, 30.3],
+    stats: makeStats(9, 26, "18-35k", ["平台工程", "电商", "低代码"], sourceRefs.hz),
+    licenseNote: "fixture-only 浙江区划示意。",
+    geoJson: featureCollection([rectFeature("杭州市", "330100", 119.2, 29.7, 120.8, 30.8)]),
+  },
+  "330100": {
+    adcode: "330100",
+    name: "杭州市",
+    level: "city",
+    parentAdcode: "330000",
+    childrenAdcodes: ["330106", "330108", "330110"],
+    mapName: "jobpilot-hangzhou-city-fixture",
+    center: [120.2, 30.3],
+    stats: makeStats(9, 26, "18-35k", ["AI 平台", "Java", "数据产品"], sourceRefs.hz),
+    licenseNote: "fixture-only 区县示意。",
+    geoJson: featureCollection([
+      rectFeature("西湖", "330106", 119.95, 30.15, 120.2, 30.38),
+      rectFeature("滨江", "330108", 120.15, 30.05, 120.35, 30.25),
+      rectFeature("余杭", "330110", 119.75, 30.25, 120.15, 30.65),
+    ]),
+  },
+  "510000": {
+    adcode: "510000",
+    name: "四川",
+    level: "province",
+    parentAdcode: "100000",
+    childrenAdcodes: ["510100"],
+    mapName: "jobpilot-sichuan-fixture",
+    center: [104.07, 30.67],
+    stats: makeStats(7, 22, "14-30k", ["企业应用", "Vue", "测试"], sourceRefs.cd),
+    licenseNote: "fixture-only 四川区划示意。",
+    geoJson: featureCollection([rectFeature("成都市", "510100", 103.2, 30.1, 104.8, 31.2)]),
+  },
+  "510100": {
+    adcode: "510100",
+    name: "成都市",
+    level: "city",
+    parentAdcode: "510000",
+    childrenAdcodes: ["510104", "510107", "510116"],
+    mapName: "jobpilot-chengdu-city-fixture",
+    center: [104.07, 30.67],
+    stats: makeStats(7, 22, "14-30k", ["企业应用", "Vue", "QA"], sourceRefs.cd),
+    licenseNote: "fixture-only 区县示意。",
+    geoJson: featureCollection([
+      rectFeature("锦江", "510104", 104.0, 30.55, 104.2, 30.75),
+      rectFeature("武侯", "510107", 103.9, 30.45, 104.15, 30.65),
+      rectFeature("双流", "510116", 103.75, 30.25, 104.15, 30.55),
+    ]),
+  },
+};
+
+function addDistrict(adcode: string, name: string, parentAdcode: string, jobs: number, salaryMedian: number, salaryRange: string, tech: string[], refs: RegionSourceRef[]) {
+  adminRegions[adcode] = {
+    adcode,
+    name,
+    level: "district",
+    parentAdcode,
+    childrenAdcodes: [],
+    mapName: `jobpilot-${adcode}-fixture`,
+    center: adminRegions[parentAdcode]?.center ?? [108, 33],
+    stats: makeStats(jobs, salaryMedian, salaryRange, tech, refs),
+    licenseNote: "fixture-only 区县统计示意；不代表真实招聘平台抓取。",
+    geoJson: featureCollection([]),
+  };
+}
+
+addDistrict("110108", "海淀", "110100", 8, 36, "25-45k", ["LLM", "React", "Agent"], sourceRefs.bj);
+addDistrict("110105", "朝阳", "110100", 6, 32, "22-40k", ["AI 应用", "前端", "Python"], sourceRefs.bj);
+addDistrict("110102", "西城", "110100", 4, 30, "20-36k", ["金融科技", "React", "数据"], sourceRefs.bj);
+addDistrict("310115", "浦东", "310100", 6, 32, "22-42k", ["数据可视化", "ECharts", "AI 应用"], sourceRefs.sh);
+addDistrict("310104", "徐汇", "310100", 4, 30, "20-38k", ["前端平台", "TypeScript"], sourceRefs.sh);
+addDistrict("310110", "杨浦", "310100", 4, 28, "18-35k", ["BI", "地图", "React"], sourceRefs.sh);
+addDistrict("440305", "南山", "440300", 5, 30, "20-38k", ["SaaS", "React", "Node"], sourceRefs.sz);
+addDistrict("440304", "福田", "440300", 3, 28, "18-34k", ["ToB", "协同", "前端"], sourceRefs.sz);
+addDistrict("440306", "宝安", "440300", 3, 25, "16-30k", ["企业应用", "Vue"], sourceRefs.sz);
+addDistrict("330106", "西湖", "330100", 3, 26, "18-35k", ["AI 平台", "Java"], sourceRefs.hz);
+addDistrict("330108", "滨江", "330100", 4, 28, "20-36k", ["数据产品", "前端"], sourceRefs.hz);
+addDistrict("330110", "余杭", "330100", 2, 24, "16-30k", ["电商", "低代码"], sourceRefs.hz);
+addDistrict("510104", "锦江", "510100", 2, 22, "14-28k", ["企业应用", "Vue"], sourceRefs.cd);
+addDistrict("510107", "武侯", "510100", 3, 23, "15-30k", ["QA", "前端"], sourceRefs.cd);
+addDistrict("510116", "双流", "510100", 2, 20, "12-26k", ["测试", "业务系统"], sourceRefs.cd);
+
 const marketCities: MarketCity[] = [
-  { city: "北京", x: 56, y: 34, jobs: 18, salary: "22-35k", remote: "12%", competition: "高", tech: ["LLM", "React", "Python"], source: "本地示例 + 手动 JD" },
-  { city: "上海", x: 68, y: 55, jobs: 14, salary: "20-32k", remote: "18%", competition: "高", tech: ["前端", "数据可视化", "AI 应用"], source: "fixture" },
-  { city: "深圳", x: 61, y: 76, jobs: 11, salary: "18-30k", remote: "10%", competition: "中", tech: ["ToB", "React", "Node"], source: "fixture" },
-  { city: "杭州", x: 64, y: 59, jobs: 9, salary: "18-28k", remote: "16%", competition: "中", tech: ["电商", "低代码", "前端"], source: "fixture" },
-  { city: "成都", x: 38, y: 63, jobs: 7, salary: "14-24k", remote: "22%", competition: "低", tech: ["企业应用", "Vue", "测试"], source: "fixture" },
+  { city: "北京", coord: [116.4, 39.9], regionAdcode: "110100", jobs: 18, salary: "22-45k", remote: "12%", competition: "高", tech: ["LLM", "React", "Python"], source: "本地示例 + 手动 JD", sourceType: "fixture" },
+  { city: "上海", coord: [121.47, 31.23], regionAdcode: "310100", jobs: 14, salary: "20-40k", remote: "18%", competition: "高", tech: ["前端", "数据可视化", "AI 应用"], source: "fixture", sourceType: "fixture" },
+  { city: "深圳", coord: [114.05, 22.55], regionAdcode: "440300", jobs: 11, salary: "18-38k", remote: "10%", competition: "中", tech: ["ToB", "React", "Node"], source: "fixture", sourceType: "fixture" },
+  { city: "杭州", coord: [120.2, 30.3], regionAdcode: "330100", jobs: 9, salary: "18-35k", remote: "16%", competition: "中", tech: ["电商", "低代码", "前端"], source: "fixture", sourceType: "fixture" },
+  { city: "成都", coord: [104.07, 30.67], regionAdcode: "510100", jobs: 7, salary: "14-30k", remote: "22%", competition: "低", tech: ["企业应用", "Vue", "测试"], source: "fixture", sourceType: "fixture" },
 ];
+
+const socraticStages: Array<{ stage: SocraticStage; label: string; question: string }> = [
+  { stage: "role_alignment", label: "目标岗位", question: "你希望这段经历主要支持哪个目标岗位？" },
+  { stage: "project_context", label: "项目背景", question: "这个项目解决了什么业务问题，使用场景是什么？" },
+  { stage: "personal_contribution", label: "本人职责", question: "你本人具体负责哪一部分，哪些是团队共同完成的？" },
+  { stage: "technical_depth", label: "技术难点", question: "最难的技术问题是什么，你采取了什么关键动作？" },
+  { stage: "impact_metrics", label: "量化结果", question: "有没有可以确认的结果指标，比如性能、效率、规模或业务影响？" },
+  { stage: "evidence_check", label: "证据来源", question: "这些事实或指标有什么 source refs 可以支撑？" },
+  { stage: "boundary_check", label: "不可声明", question: "哪些内容不能写进简历或面试故事，避免夸大或误导？" },
+  { stage: "jd_mapping", label: "JD 映射", question: "这段经历最能匹配目标 JD 的哪些关键词？" },
+  { stage: "story_draft", label: "故事草稿", question: "我准备生成 STAR/CAR 草稿，你希望强调技术深度还是业务结果？" },
+  { stage: "confirmation", label: "确认", question: "请确认哪些事实可以写入草稿，哪些仍要保留为待确认项？" },
+];
+
+const initialSocraticSession: SocraticSession = {
+  active: false,
+  stageIndex: 0,
+  facts: [],
+  pendingConfirmations: [],
+  doNotClaim: [],
+};
+
+function currentSocraticStep(session: SocraticSession) {
+  return socraticStages[Math.min(session.stageIndex, socraticStages.length - 1)];
+}
+
+function socraticProgressLabel(session: SocraticSession) {
+  const step = currentSocraticStep(session);
+  return `${step.label} · ${Math.min(session.stageIndex + 1, socraticStages.length)}/${socraticStages.length}`;
+}
 
 const initialPipelineItems: PipelineItem[] = [
   {
@@ -804,7 +1178,7 @@ function serviceStateLabel(state: ServiceState) {
   return map[state];
 }
 
-function buildServiceItems(providerStatus: ProviderStatus | null, workspaceId: string): ServiceStatusItem[] {
+function buildServiceItems(providerStatus: ProviderStatus | null, marketProviderStatus: MarketProviderState | null, workspaceId: string): ServiceStatusItem[] {
   const providerState: ServiceState = !providerStatus
     ? "disabled"
     : providerStatus.p6_state === "called"
@@ -814,6 +1188,12 @@ function buildServiceItems(providerStatus: ProviderStatus | null, workspaceId: s
         : providerStatus.configured || providerStatus.api_key_configured
           ? "requires_confirmation"
           : "disabled";
+  const marketConfigured = marketProviderStatus?.providers.some((item) => item.provider_type === "opt_in_api" && item.configured_state === "configured");
+  const marketCalled = marketProviderStatus?.recent_invocations?.some((item) => item.status === "called");
+  const marketState: ServiceState = marketCalled ? "connected" : marketConfigured ? "requires_confirmation" : marketProviderStatus ? "local" : "disabled";
+  const marketDetail = marketProviderStatus
+    ? `${marketProviderStatus.level_label ?? marketProviderStatus.level} · ${marketProviderStatus.default_policy} · ${marketProviderStatus.can_claim_real_market ? "真实市场可声明" : "不能声明真实市场通过"}`
+    : "Market Provider 状态检查中";
   return [
     {
       key: "provider",
@@ -828,6 +1208,13 @@ function buildServiceItems(providerStatus: ProviderStatus | null, workspaceId: s
       state: "local",
       detail: "仅本地示例、用户粘贴和已导入 JD，不抓取平台",
       icon: <Globe2 size={15} />,
+    },
+    {
+      key: "market",
+      label: "Market Provider",
+      state: marketState,
+      detail: marketDetail,
+      icon: <BarChart3 size={15} />,
     },
     {
       key: "asr",
@@ -855,16 +1242,18 @@ function buildServiceItems(providerStatus: ProviderStatus | null, workspaceId: s
 
 function TopServiceCenter({
   providerStatus,
+  marketProviderStatus,
   workspaceId,
   dataMode,
   onOpenSettings,
 }: {
   providerStatus: ProviderStatus | null;
+  marketProviderStatus: MarketProviderState | null;
   workspaceId: string;
   dataMode: DataMode;
   onOpenSettings: () => void;
 }) {
-  const services = buildServiceItems(providerStatus, workspaceId);
+  const services = buildServiceItems(providerStatus, marketProviderStatus, workspaceId);
   return (
     <section className="top-service-center" aria-label="顶部服务中心">
       <div className="service-center-title">
@@ -892,86 +1281,285 @@ function TopServiceCenter({
   );
 }
 
+function childrenOf(region: AdministrativeRegionNode) {
+  return region.childrenAdcodes
+    .map((adcode) => adminRegions[adcode])
+    .filter(Boolean);
+}
+
+function findRegionByName(name: string, region: AdministrativeRegionNode) {
+  return childrenOf(region).find((child) => child.name === name) ?? null;
+}
+
+function breadcrumbFor(adcode: string) {
+  const chain: AdministrativeRegionNode[] = [];
+  let current: AdministrativeRegionNode | undefined = adminRegions[adcode];
+  while (current) {
+    chain.unshift(current);
+    current = current.parentAdcode ? adminRegions[current.parentAdcode] : undefined;
+  }
+  return chain;
+}
+
+function sourceTypeLabel(sourceType: MarketSourceType) {
+  const map: Record<MarketSourceType, string> = {
+    fixture: "fixture 样例",
+    manual: "用户粘贴",
+    public: "公开源",
+    opt_in_api: "opt-in API",
+  };
+  return map[sourceType];
+}
+
+function layerValue(stats: RegionJobDistributionSnapshot, layer: MarketMapLayerState) {
+  if (layer === "salary") return stats.salaryMedian;
+  if (layer === "source") return stats.sourceType === "opt_in_api" ? 95 : stats.sourceType === "public" ? 72 : stats.sourceType === "manual" ? 58 : 35;
+  if (layer === "tech") return stats.tech.length * 12 + stats.jobs;
+  return stats.jobs;
+}
+
+function layerTitle(layer: MarketMapLayerState) {
+  const map: Record<MarketMapLayerState, string> = {
+    jobs: "机会热度",
+    salary: "薪资中位",
+    tech: "技术栈热度",
+    source: "来源可信度",
+  };
+  return map[layer];
+}
+
+function visibleCities(region: AdministrativeRegionNode) {
+  if (region.adcode === "100000") return marketCities;
+  const childCodes = new Set(region.childrenAdcodes);
+  return marketCities.filter((city) => childCodes.has(city.regionAdcode) || adminRegions[city.regionAdcode]?.parentAdcode === region.adcode || city.regionAdcode === region.adcode);
+}
+
 function MarketMapView({
   searchRun,
+  marketProviderStatus,
+  marketSnapshot,
   onPrompt,
 }: {
   searchRun: SearchRun | null;
+  marketProviderStatus: MarketProviderState | null;
+  marketSnapshot: MarketSnapshot | null;
   onPrompt: (text: string, autoSubmit?: boolean) => void;
 }) {
+  const chartRef = useRef<HTMLDivElement | null>(null);
+  const chartInstanceRef = useRef<echarts.ECharts | null>(null);
+  const [currentAdcode, setCurrentAdcode] = useState("100000");
+  const [selectedAdcode, setSelectedAdcode] = useState("110000");
+  const [activeLayer, setActiveLayer] = useState<MarketMapLayerState>("jobs");
   const [zoom, setZoom] = useState(1);
-  const [pan, setPan] = useState({ x: 0, y: 0 });
-  const [dragStart, setDragStart] = useState<{ x: number; y: number; panX: number; panY: number } | null>(null);
-  const [selectedCity, setSelectedCity] = useState<MarketCity>(marketCities[0]);
+  const currentRegion = adminRegions[currentAdcode] ?? adminRegions["100000"];
+  const selectedRegion = adminRegions[selectedAdcode] ?? currentRegion;
+  const breadcrumb = breadcrumbFor(currentRegion.adcode);
+  const childRegions = childrenOf(currentRegion);
+  const maxValue = Math.max(...childRegions.map((region) => layerValue(region.stats, activeLayer)), 1);
 
-  function startDrag(event: React.PointerEvent<SVGSVGElement>) {
-    event.currentTarget.setPointerCapture(event.pointerId);
-    setDragStart({ x: event.clientX, y: event.clientY, panX: pan.x, panY: pan.y });
-  }
+  useEffect(() => {
+    if (!chartRef.current) return;
+    const chart = echarts.init(chartRef.current, undefined, { renderer: "canvas" });
+    chartInstanceRef.current = chart;
+    const resize = () => chart.resize();
+    window.addEventListener("resize", resize);
+    return () => {
+      window.removeEventListener("resize", resize);
+      chart.dispose();
+      chartInstanceRef.current = null;
+    };
+  }, []);
 
-  function moveDrag(event: React.PointerEvent<SVGSVGElement>) {
-    if (!dragStart) return;
-    setPan({
-      x: Math.max(-32, Math.min(32, dragStart.panX + (event.clientX - dragStart.x) / 5)),
-      y: Math.max(-24, Math.min(24, dragStart.panY + (event.clientY - dragStart.y) / 5)),
+  useEffect(() => {
+    const chart = chartInstanceRef.current;
+    if (!chart) return;
+    echarts.registerMap(currentRegion.mapName, currentRegion.geoJson);
+    const mapData = childRegions.map((region) => ({
+      name: region.name,
+      value: layerValue(region.stats, activeLayer),
+      adcode: region.adcode,
+      jobs: region.stats.jobs,
+      salary: region.stats.salaryRange,
+      source: sourceTypeLabel(region.stats.sourceType),
+    }));
+    const scatterData = visibleCities(currentRegion).map((city) => ({
+      name: city.city,
+      value: [...city.coord, city.jobs],
+      symbolSize: 9 + Math.min(city.jobs, 20) * 0.8,
+      city,
+    }));
+    chart.setOption(
+      {
+        backgroundColor: "transparent",
+        tooltip: {
+          trigger: "item",
+          borderWidth: 0,
+          backgroundColor: "rgba(17,27,24,0.92)",
+          textStyle: { color: "#fff", fontSize: 12 },
+          formatter: (params: any) => {
+            const data = params.data;
+            if (params.seriesType === "scatter" && data?.city) {
+              return `${data.city.city}<br/>岗位 ${data.city.jobs} 个<br/>薪资 ${data.city.salary}<br/>来源 ${sourceTypeLabel(data.city.sourceType)}`;
+            }
+            return `${params.name}<br/>${layerTitle(activeLayer)}：${data?.value ?? "-"}<br/>岗位 ${data?.jobs ?? "-"} 个<br/>薪资 ${data?.salary ?? "-"}<br/>来源 ${data?.source ?? "fixture 样例"}`;
+          },
+        },
+        visualMap: {
+          min: 0,
+          max: maxValue,
+          left: 10,
+          bottom: 10,
+          itemWidth: 10,
+          itemHeight: 72,
+          text: ["高", "低"],
+          textStyle: { color: "#50625b", fontSize: 10 },
+          inRange: { color: ["#dbe9e2", "#7ebaa9", "#1f6b5e"] },
+        },
+        geo: {
+          map: currentRegion.mapName,
+          roam: true,
+          zoom,
+          selectedMode: "single",
+          emphasis: { label: { show: true, color: "#101b18", fontWeight: 800 }, itemStyle: { areaColor: "#dca86f" } },
+          select: { itemStyle: { areaColor: "#bf7a3f" }, label: { color: "#fff", fontWeight: 800 } },
+          itemStyle: { borderColor: "#ffffff", borderWidth: 1.2, areaColor: "#dfece6" },
+        },
+        series: [
+          {
+            name: layerTitle(activeLayer),
+            type: "map",
+            map: currentRegion.mapName,
+            geoIndex: 0,
+            data: mapData,
+          },
+          {
+            name: "重点城市",
+            type: "scatter",
+            coordinateSystem: "geo",
+            data: scatterData,
+            itemStyle: { color: "#a15f13", borderColor: "#ffffff", borderWidth: 1.5, shadowBlur: 10, shadowColor: "rgba(161,95,19,0.28)" },
+            label: { show: true, formatter: "{b}", position: "right", color: "#23312c", fontSize: 10, fontWeight: 800 },
+          },
+        ],
+      },
+      true,
+    );
+    chart.off("click");
+    chart.on("click", (params: any) => {
+      const clickedRegion = params.seriesType === "scatter" ? adminRegions[params.data?.city?.regionAdcode] : findRegionByName(params.name, currentRegion);
+      if (!clickedRegion) return;
+      setSelectedAdcode(clickedRegion.adcode);
+      if (clickedRegion.childrenAdcodes.length > 0) setCurrentAdcode(clickedRegion.adcode);
+      onPrompt(`帮我分析${clickedRegion.name}的${layerTitle(activeLayer)}、薪资、技术栈和下一步求职动作。`);
     });
+  }, [activeLayer, childRegions, currentRegion, maxValue, onPrompt, zoom]);
+
+  function resetMap() {
+    setCurrentAdcode("100000");
+    setSelectedAdcode("110000");
+    setZoom(1);
   }
+
+  const salaryBars = childRegions.length ? childRegions : [selectedRegion];
+  const selectedStats = selectedRegion.stats;
+  const marketStatusLine = marketProviderStatus
+    ? `${marketProviderStatus.level_label ?? marketProviderStatus.level} · ${marketProviderStatus.can_claim_real_market ? "真实市场可声明" : "真实市场未验收"}`
+    : "Market Provider 状态检查中";
+  const sourceBreakdown = marketSnapshot ? Object.entries(marketSnapshot.source_breakdown).map(([key, value]) => `${key}:${value}`).join(" / ") : "fixture / manual / public 样例";
 
   return (
-    <div className="market-map-view">
+    <div className="market-map-view p9-1-market-intelligence">
+      <div className="source-status-bar" title={MARKET_PROVIDER_LEGACY_NOT_CONFIGURED_LABEL}>
+        <span><ShieldCheck size={13} /> Market Provider: {marketStatusLine}</span>
+        <span>数据：{sourceBreakdown}</span>
+      </div>
       <div className="map-toolbar" aria-label="地图控制">
-        <button type="button" onClick={() => setZoom((value) => Math.min(1.8, Number((value + 0.15).toFixed(2))))} aria-label="放大地图">
+        <button type="button" onClick={() => setZoom((value) => Math.min(2.2, Number((value + 0.15).toFixed(2))))} aria-label="放大地图">
           <Plus size={14} />
         </button>
         <button type="button" onClick={() => setZoom((value) => Math.max(0.75, Number((value - 0.15).toFixed(2))))} aria-label="缩小地图">
           <Minus size={14} />
         </button>
-        <button type="button" onClick={() => { setZoom(1); setPan({ x: 0, y: 0 }); }} aria-label="重置地图">
+        <button type="button" onClick={resetMap} aria-label="重置地图">
           <Navigation size={14} />
         </button>
-        <span>{Math.round(zoom * 100)}%</span>
+        <span>{Math.round(zoom * 100)}% · ECharts map/geo</span>
       </div>
-      <svg className="market-map" viewBox="0 0 100 88" role="img" aria-label="岗位城市地图图钉" onPointerDown={startDrag} onPointerMove={moveDrag} onPointerUp={() => setDragStart(null)}>
-        <defs>
-          <radialGradient id="p9Hotspot" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#2f7d6f" stopOpacity="0.28" />
-            <stop offset="100%" stopColor="#2f7d6f" stopOpacity="0" />
-          </radialGradient>
-        </defs>
-        <g transform={`translate(${pan.x} ${pan.y}) scale(${zoom}) translate(${(1 - zoom) * 50} ${(1 - zoom) * 44})`}>
-          <path d="M18 24 C28 8 52 5 68 18 C84 31 84 56 66 72 C48 88 21 77 13 58 C8 45 10 33 18 24Z" fill="#eef5f1" stroke="#bad0c7" strokeWidth="1.2" />
-          <path d="M30 28 C42 20 56 22 68 35 M25 51 C39 45 56 48 74 58 M37 72 C42 58 44 43 43 25" fill="none" stroke="#d0ddd7" strokeWidth="0.8" strokeLinecap="round" />
-          {marketCities.map((city) => {
-            const radius = 5 + Math.min(city.jobs, 20) / 4;
-            return (
-              <g key={city.city} className={`city-pin ${selectedCity.city === city.city ? "is-selected" : ""}`} transform={`translate(${city.x} ${city.y})`} onClick={(event) => { event.stopPropagation(); setSelectedCity(city); onPrompt(`帮我解释${city.city}的岗位机会、薪资区间和下一步求职动作。`); }}>
-                <circle r={radius + 9} fill="url(#p9Hotspot)" />
-                <circle r={radius} />
-                <text y={-radius - 5}>{city.city}</text>
-              </g>
-            );
-          })}
-        </g>
-      </svg>
-      <div className="city-insight-card">
+      <div className="market-layer-tabs" role="tablist" aria-label="市场地图图层">
+        {(["jobs", "salary", "tech", "source"] as MarketMapLayerState[]).map((layer) => (
+          <button key={layer} type="button" role="tab" aria-selected={activeLayer === layer} onClick={() => setActiveLayer(layer)}>
+            {layerTitle(layer)}
+          </button>
+        ))}
+      </div>
+      <nav className="map-breadcrumb" aria-label="行政区划下钻面包屑">
+        {breadcrumb.map((region) => (
+          <button key={region.adcode} type="button" onClick={() => { setCurrentAdcode(region.adcode); setSelectedAdcode(region.adcode === "100000" ? "110000" : region.adcode); }}>
+            {region.name}
+          </button>
+        ))}
+      </nav>
+      <div className="region-quick-list" aria-label="可访问行政区划下钻入口">
+        {childRegions.map((region) => (
+          <button
+            key={region.adcode}
+            type="button"
+            aria-pressed={selectedRegion.adcode === region.adcode}
+            onClick={() => {
+              setSelectedAdcode(region.adcode);
+              if (region.childrenAdcodes.length > 0) setCurrentAdcode(region.adcode);
+              onPrompt(`帮我分析${region.name}的${layerTitle(activeLayer)}、薪资、技术栈和下一步求职动作。`);
+            }}
+          >
+            {region.name}
+          </button>
+        ))}
+      </div>
+      <div ref={chartRef} className="market-map echarts-drilldown-map" role="img" aria-label="ECharts 行政区划下钻式市场地图" />
+      <div className="city-insight-card region-insight-panel">
         <div>
-          <span className="eyebrow">Selected City</span>
-          <h3>{selectedCity.city}</h3>
+          <span className="eyebrow">Region Insight</span>
+          <h3>{selectedRegion.name}</h3>
         </div>
         <dl>
-          <div><dt>岗位</dt><dd>{selectedCity.jobs} 个</dd></div>
-          <div><dt>薪资</dt><dd>{selectedCity.salary}</dd></div>
-          <div><dt>远程</dt><dd>{selectedCity.remote}</dd></div>
-          <div><dt>竞争</dt><dd>{selectedCity.competition}</dd></div>
+          <div><dt>岗位</dt><dd>{selectedStats.jobs} 个</dd></div>
+          <div><dt>薪资</dt><dd>{selectedStats.salaryRange}</dd></div>
+          <div><dt>远程</dt><dd>{selectedStats.remote}</dd></div>
+          <div><dt>竞争</dt><dd>{selectedStats.competition}</dd></div>
         </dl>
-        <p>{selectedCity.tech.join(" / ")} · {selectedCity.source}</p>
+        <div className="salary-histogram" aria-label="薪资直方图">
+          {salaryBars.slice(0, 5).map((region) => (
+            <span key={region.adcode} style={{ ["--bar-height" as string]: `${Math.max(18, Math.min(86, region.stats.salaryMedian * 2.2))}%` }}>
+              <i />
+              <em>{region.name}</em>
+            </span>
+          ))}
+        </div>
+        <div className="tech-heat-panel">
+          {selectedStats.tech.map((item) => <span key={item}>{item}</span>)}
+        </div>
+        <p>{selectedRegion.licenseNote}</p>
+        <small>{selectedStats.sourceRefs.map((ref) => `${ref.label}(${ref.path})`).join(" / ")}</small>
+        {marketSnapshot && (
+          <div className="market-snapshot-evidence">
+            <strong>Snapshot: {marketSnapshot.run_id}</strong>
+            <span>{marketSnapshot.trend_summary}</span>
+            <small>{marketSnapshot.low_confidence_notes.join(" / ")}</small>
+          </div>
+        )}
+      </div>
+      <div className="source-trust-legend" aria-label="来源可信度">
+        <span className="source-fixture">fixture 样例</span>
+        <span className="source-manual">manual 用户粘贴</span>
+        <span className="source-public">public 公开源</span>
+        <span className="source-api">opt-in API 未配置</span>
       </div>
       {searchRun && (
         <div className="search-run-card">
-          <span className="eyebrow">Search Run</span>
+          <span className="eyebrow">JobSearchRun</span>
           <strong>{searchRun.query}</strong>
           <p>{searchRun.city} · {searchRun.salary} · {searchRun.resultCount} 条本地可审计结果</p>
-          <small>{searchRun.sourceMode}；{searchRun.refs.join(" / ")}</small>
+          <small>{searchRun.sourceMode}；{searchRun.boundaryNote ?? "Level 1 fallback only"}；{searchRun.refs.join(" / ")}</small>
         </div>
       )}
     </div>
@@ -1069,12 +1657,16 @@ function LeftIntelligencePanel({
   jobs,
   candidateProfile,
   searchRun,
+  marketProviderStatus,
+  marketSnapshot,
   pipelineItems,
   onPrompt,
 }: {
   jobs: JobListItem[];
   candidateProfile: CandidateProfile | null;
   searchRun: SearchRun | null;
+  marketProviderStatus: MarketProviderState | null;
+  marketSnapshot: MarketSnapshot | null;
   pipelineItems: PipelineItem[];
   onPrompt: (text: string, autoSubmit?: boolean) => void;
 }) {
@@ -1091,7 +1683,7 @@ function LeftIntelligencePanel({
           <span className="eyebrow">Job Intelligence</span>
           <h2>求职态势</h2>
         </div>
-        <span className="source-boundary">本地/fixture</span>
+        <span className="source-boundary">{marketProviderStatus?.level ?? "本地/fixture"}</span>
       </div>
       <div className="intelligence-tabs" role="tablist" aria-label="求职态势页签">
         {tabs.map((tab) => (
@@ -1102,7 +1694,7 @@ function LeftIntelligencePanel({
         ))}
       </div>
       <div className="intelligence-body">
-        {activeTab === "market" && <MarketMapView searchRun={searchRun} onPrompt={onPrompt} />}
+        {activeTab === "market" && <MarketMapView searchRun={searchRun} marketProviderStatus={marketProviderStatus} marketSnapshot={marketSnapshot} onPrompt={onPrompt} />}
         {activeTab === "match" && <OpportunityMatchPanel jobs={jobs} candidateProfile={candidateProfile} onPrompt={onPrompt} />}
         {activeTab === "pipeline" && <ApplicationPipelineView pipelineItems={pipelineItems} onPrompt={onPrompt} />}
       </div>
@@ -2193,11 +2785,13 @@ function P9ArtifactOverview({
   storyDrafts,
   pipelineItems,
   resumeResult,
+  socraticSession,
 }: {
   searchRun: SearchRun | null;
   storyDrafts: StoryDraft[];
   pipelineItems: PipelineItem[];
   resumeResult: ResumeGenerationResult | null;
+  socraticSession: SocraticSession;
 }) {
   return (
     <section className="p9-artifact-overview" aria-label="P9 产物台总览">
@@ -2232,6 +2826,31 @@ function P9ArtifactOverview({
           <small>{searchRun.sourceMode}</small>
         </div>
       )}
+      <div className="socratic-artifact-panel">
+        <div>
+          <span className="eyebrow">CandidateFactSummary</span>
+          <strong>{socraticSession.active ? socraticProgressLabel(socraticSession) : "Socratic Intake 待启动"}</strong>
+        </div>
+        <ul>
+          {socraticSession.facts.slice(-4).map((fact, index) => (
+            <li key={`${fact.stage}-${index}`}>
+              <span>{fact.label}</span>
+              <p>{fact.answer}</p>
+            </li>
+          ))}
+          {socraticSession.facts.length === 0 && <li><span>待采集</span><p>通过 Chatbox 说“帮我整理项目故事”开始。</p></li>}
+        </ul>
+        <div className="confirmation-grid">
+          <article>
+            <strong>{socraticSession.pendingConfirmations.length}</strong>
+            <small>PendingConfirmations</small>
+          </article>
+          <article>
+            <strong>{socraticSession.doNotClaim.length}</strong>
+            <small>DoNotClaimList</small>
+          </article>
+        </div>
+      </div>
       <div className="story-bank-mini">
         {storyDrafts.slice(0, 3).map((story) => (
           <article key={`${story.title}-${story.summary}`} className={`story-mini story-${story.status}`}>
@@ -2254,6 +2873,7 @@ function Workbench({
   searchRun,
   storyDrafts,
   pipelineItems,
+  socraticSession,
   busy,
   workspaceId,
   candidateProfile,
@@ -2276,6 +2896,7 @@ function Workbench({
   searchRun: SearchRun | null;
   storyDrafts: StoryDraft[];
   pipelineItems: PipelineItem[];
+  socraticSession: SocraticSession;
   busy: boolean;
   workspaceId: string;
   candidateProfile: CandidateProfile | null;
@@ -2309,7 +2930,7 @@ function Workbench({
           </div>
         </div>
         <div className="workbench-body">
-          <P9ArtifactOverview searchRun={searchRun} storyDrafts={storyDrafts} pipelineItems={pipelineItems} resumeResult={resumeResult} />
+          <P9ArtifactOverview searchRun={searchRun} storyDrafts={storyDrafts} pipelineItems={pipelineItems} resumeResult={resumeResult} socraticSession={socraticSession} />
           <JobTargetList jobs={jobs} loading={jobsLoading} busy={busy} onSelect={onSelectJob} onGenerateResume={onGenerateResume} />
           <ResumeGenerationPlane result={resumeResult} />
           <WorkflowPanel result={result} busy={busy} workspaceId={workspaceId} onRunExample={onRunExample} />
@@ -2349,6 +2970,8 @@ function App() {
   const [resumeResult, setResumeResult] = useState<ResumeGenerationResult | null>(null);
   const [activeTool, setActiveTool] = useState<P8Tool>("none");
   const [searchRun, setSearchRun] = useState<SearchRun | null>(null);
+  const [marketProviderStatus, setMarketProviderStatus] = useState<MarketProviderState | null>(null);
+  const [marketSnapshot, setMarketSnapshot] = useState<MarketSnapshot | null>(null);
   const [pipelineItems, setPipelineItems] = useState<PipelineItem[]>(() => {
     try {
       const stored = window.localStorage.getItem("jobpilot:p9:pipeline");
@@ -2365,6 +2988,7 @@ function App() {
       return initialStoryDrafts;
     }
   });
+  const [socraticSession, setSocraticSession] = useState<SocraticSession>(initialSocraticSession);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const autorunStarted = useRef(false);
   const initializationNoticeShown = useRef(false);
@@ -2429,6 +3053,7 @@ function App() {
   useEffect(() => {
     if (!workspaceId || !sessionId) return;
     refreshProviderStatus().catch(() => undefined);
+    refreshMarketProviderStatus().catch(() => undefined);
     refreshChatContext().catch(() => undefined);
     loadCandidateProfile().catch(() => undefined);
     loadJobs().catch(() => undefined);
@@ -2504,6 +3129,13 @@ function App() {
     const status = await api<ProviderStatus>(`/api/provider/runtime-config${query}`);
     setProviderStatus(status);
     setProviderConfig(configFromStatus(status));
+    return status;
+  }
+
+  async function refreshMarketProviderStatus() {
+    if (!workspaceId) return null;
+    const status = await api<MarketProviderState>(`/api/market/providers/status?workspace_id=${encodeURIComponent(workspaceId)}`);
+    setMarketProviderStatus(status);
     return status;
   }
 
@@ -2660,48 +3292,140 @@ function App() {
     return "idle";
   }
 
+  function startSocraticIntake(text: string) {
+    const session: SocraticSession = { ...initialSocraticSession, active: true };
+    setSocraticSession(session);
+    const step = currentSocraticStep(session);
+    const nextStory: StoryDraft = {
+      title: "Socratic Intake 事实采集",
+      summary: `围绕“${text.slice(0, 36)}”开始一问一答资料补全。`,
+      evidence: "Chatbox 本地事实采集；未调用真实 provider，缺证据内容进入 pending confirmations。",
+      status: "needs_evidence",
+    };
+    setStoryDrafts((current) => [nextStory, ...current].slice(0, 6));
+    setDrawerOpen(true);
+    setMessages((current) => [
+      ...current,
+      {
+        role: "assistant",
+        tone: "plan",
+        content: `已进入 Socratic Intake。${socraticProgressLabel(session)}：${step.question}`,
+      },
+    ]);
+  }
+
+  function continueSocraticIntake(text: string) {
+    if (/取消补全|停止补全|退出补全/.test(text)) {
+      setSocraticSession((current) => ({ ...current, active: false }));
+      notice("已退出 Socratic Intake。已记录的事实仍保留在右侧产物台草稿中。", "notice");
+      return;
+    }
+    const currentStep = currentSocraticStep(socraticSession);
+    const fact: SocraticFact = {
+      stage: currentStep.stage,
+      label: currentStep.label,
+      answer: text,
+      sourceRef: "Chatbox 用户确认输入",
+    };
+    const nextFacts = [...socraticSession.facts, fact];
+    const nextPending = [...socraticSession.pendingConfirmations];
+    const nextDoNotClaim = [...socraticSession.doNotClaim];
+    if (currentStep.stage === "impact_metrics" && !/截图|报告|监控|source|链接|数据|证据/.test(text)) {
+      nextPending.push(`量化结果需确认来源：${text.slice(0, 42)}`);
+    }
+    if (currentStep.stage === "boundary_check") nextDoNotClaim.push(text);
+    const nextIndex = socraticSession.stageIndex + 1;
+    const complete = nextIndex >= socraticStages.length;
+    const nextSession: SocraticSession = {
+      active: !complete,
+      stageIndex: Math.min(nextIndex, socraticStages.length - 1),
+      facts: nextFacts,
+      pendingConfirmations: nextPending,
+      doNotClaim: nextDoNotClaim,
+    };
+    setSocraticSession(nextSession);
+    const summary = nextFacts.slice(-3).map((item) => `${item.label}：${item.answer}`).join("；");
+    const nextStoryDraft: StoryDraft = {
+        title: complete ? "Socratic 项目故事草稿" : `Socratic checkpoint ${nextFacts.length}`,
+        summary: complete ? `已形成 STAR/CAR 草稿素材：${summary}` : summary,
+        evidence: `source refs: Chatbox 用户确认输入；pending confirmations: ${nextPending.length}`,
+        status: nextPending.length ? "needs_evidence" : "draft",
+      };
+    setStoryDrafts((current) => [nextStoryDraft, ...current].slice(0, 6));
+    setDrawerOpen(true);
+    const checkpoint =
+      nextFacts.length % 3 === 0
+        ? `\n\nFactSummaryCheckpoint：已确认 ${nextFacts.length} 项；待确认 ${nextPending.length} 项；不可写 ${nextDoNotClaim.length} 项。`
+        : "";
+    const nextQuestion = complete ? "已完成本轮事实采集。右侧产物台已更新故事草稿、待确认项和不可声明清单。" : `${socraticProgressLabel(nextSession)}：${currentSocraticStep(nextSession).question}`;
+    setMessages((current) => [
+      ...current,
+      {
+        role: "assistant",
+        tone: "plan",
+        content: `${nextQuestion}${checkpoint}`,
+      },
+    ]);
+  }
+
   async function handleP9Command(text: string): Promise<boolean> {
+    if (socraticSession.active) {
+      continueSocraticIntake(text);
+      return true;
+    }
+
     if (/汇总|搜索|岗位|JD|jd|薪资|城市|招聘信息|机会/.test(text) && !/生成.*(简历|申请包)/.test(text) && !/更新|改成|状态|投递|一面|二面|终面|面试|HR|hr|笔试|Offer|offer|拒绝|搁置/.test(text)) {
       const city = inferCity(text);
-      const run: SearchRun = {
-        query: text,
-        city,
-        salary: text.match(/\d+\s*[-~到]\s*\d+\s*k/i)?.[0] ?? "14-35k",
-        sourceMode: "用户粘贴 / 已导入 JD / repo fixture，本轮不联网抓取",
-        resultCount: marketCities.reduce((sum, item) => sum + (city.includes(item.city) || city.includes("/") ? item.jobs : 0), 0),
-        generatedAt: new Date().toLocaleString(),
-        refs: ["examples/jds/junior_frontend_jd.md", "examples/p5_synthetic_personas/*/jd.md"],
-      };
-      setSearchRun(run);
-      setMessages((current) => [
-        ...current,
-        {
-          role: "assistant",
-          tone: "plan",
-          content: `已生成一组本地可审计 JD 信息源汇总：${run.city}，薪资参考 ${run.salary}，结果 ${run.resultCount} 条。来源限定为用户粘贴、已导入 JD 和 repo fixture；本轮没有登录或抓取招聘平台，也不声称全网搜索通过。你可以继续说“比较这些岗位”或“把深圳岗位优先级调低”。`,
-        },
-      ]);
+      const salary = text.match(/\d+\s*[-~到]\s*\d+\s*k/i)?.[0] ?? "14-35k";
+      try {
+        const result = await api<any>("/api/market/search-runs", {
+          workspace_id: workspaceId,
+          query: text,
+          city_filters: marketCities.filter((item) => city.includes(item.city)).map((item) => item.city),
+          salary_range: salary,
+          tech_stack: ["React", "TypeScript", "LLM"],
+          provider_ids: ["fixture_local"],
+          source_policy: "fixture",
+        });
+        setMarketSnapshot(result.snapshot as MarketSnapshot);
+        const run: SearchRun = {
+          runId: result.run_id,
+          query: text,
+          city,
+          salary,
+          sourceMode: "FastAPI JobSearchRun · Level 1 fixture/recorded，本轮不联网抓取",
+          resultCount: result.result_count ?? 0,
+          generatedAt: new Date().toLocaleString(),
+          refs: result.source_refs ?? [],
+          boundaryNote: result.boundary_note,
+          status: result.status,
+        };
+        setSearchRun(run);
+        await refreshMarketProviderStatus().catch(() => undefined);
+        setMessages((current) => [
+          ...current,
+          {
+            role: "assistant",
+            tone: "plan",
+            content: `已通过后端 JobSearchRun 生成一组可审计 JD 市场快照：${run.city}，薪资参考 ${run.salary}，结果 ${run.resultCount} 条。状态：${run.status}。${run.boundaryNote} 你可以继续说“比较这些岗位”或“把深圳岗位优先级调低”。`,
+          },
+        ]);
+      } catch (error) {
+        setMessages((current) => [
+          ...current,
+          {
+            role: "assistant",
+            tone: "error",
+            content: formatError(error, "市场查询失败；没有发生真实外呼，也没有生成假市场结论。"),
+          },
+        ]);
+      }
       return true;
     }
 
     if (/故事|项目|能力证据|补全|简历模板|ASR|语音/.test(text)) {
       const asrNote = /ASR|语音/.test(text) ? "ASR 仍是 opt-in 状态入口，本轮没有采集麦克风或调用外部语音服务。" : "";
-      const nextStory: StoryDraft = {
-        title: text.includes("项目") ? "项目故事补全草稿" : "能力证据补全草稿",
-        summary: "请补充：背景、本人职责、关键动作、可量化结果、可公开 source refs。",
-        evidence: "来自 Chatbox 引导输入，缺证据内容会进入 pending confirmations。",
-        status: "needs_evidence",
-      };
-      setStoryDrafts((current) => [nextStory, ...current].slice(0, 6));
-      setDrawerOpen(true);
-      setMessages((current) => [
-        ...current,
-        {
-          role: "assistant",
-          tone: "plan",
-          content: `我会按 STAR 结构引导你补资料：1. 场景和目标；2. 你负责的部分；3. 技术动作；4. 结果和证据；5. 可展示链接。${asrNote} 右侧产物台已新增故事草稿，待你继续补充事实。`,
-        },
-      ]);
+      startSocraticIntake(`${text} ${asrNote}`.trim());
       return true;
     }
 
@@ -3013,7 +3737,7 @@ function App() {
             <h1>Chatbox-native 求职材料工作台</h1>
           </div>
         </div>
-        <TopServiceCenter providerStatus={providerStatus} workspaceId={workspaceId} dataMode={dataMode} onOpenSettings={() => setProviderSettingsOpen(true)} />
+        <TopServiceCenter providerStatus={providerStatus} marketProviderStatus={marketProviderStatus} workspaceId={workspaceId} dataMode={dataMode} onOpenSettings={() => setProviderSettingsOpen(true)} />
       </header>
 
       <div className="layout-grid">
@@ -3021,6 +3745,8 @@ function App() {
           jobs={jobs}
           candidateProfile={candidateProfile}
           searchRun={searchRun}
+          marketProviderStatus={marketProviderStatus}
+          marketSnapshot={marketSnapshot}
           pipelineItems={pipelineItems}
           onPrompt={fillPrompt}
         />
@@ -3125,6 +3851,7 @@ function App() {
           searchRun={searchRun}
           storyDrafts={storyDrafts}
           pipelineItems={pipelineItems}
+          socraticSession={socraticSession}
           busy={busy}
           workspaceId={workspaceId}
           candidateProfile={candidateProfile}

@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <title>P11 Market Provider Opt-in 自动化验收报告</title>
+  <style>
+    body { margin: 32px; background: #f6f8f4; color: #17201b; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    h1, h2 { color: #173b34; }
+    .card { background: #fff; border: 1px solid #d8ded6; border-radius: 8px; padding: 18px; margin: 16px 0; }
+    .pass { color: #166534; font-weight: 800; }
+    .warn { color: #9a3412; font-weight: 800; }
+    table { width: 100%; border-collapse: collapse; background: #fff; margin: 12px 0; }
+    th, td { border: 1px solid #d8ded6; padding: 10px; vertical-align: top; }
+    th { background: #edf3ee; text-align: left; }
+    code { background: #eef3ef; padding: 2px 5px; border-radius: 4px; }
+    pre { white-space: pre-wrap; word-break: break-word; max-height: 260px; overflow: auto; }
+    img { max-width: 100%; border: 1px solid #d8ded6; border-radius: 8px; background: #fff; }
+    li { margin: 6px 0; }
+  </style>
+</head>
+<body>
+  <h1>P11 Market Provider Opt-in 自动化验收报告</h1>
+  <div class="card">
+    <p><strong>验收结论：</strong><span class="pass">Level 1 通过</span></p>
+    <p>本报告验证 P11 本地/记录数据市场 provider opt-in 边界。它不代表真实市场 provider、全网 JD 搜索、招聘平台接入、ASR、MCP、自动投递或 SaaS 已通过。</p>
+  </div>
+  <h2>目标架构与当前实现</h2>
+  <div class="card">
+    <p>目标架构：UI/CLI → FastAPI Market Provider Boundary → JobSearchRunService / Normalizer / SourceRefBinder → SQLite Workspace → Evidence Report。</p>
+    <p>当前实现：<code>services/market/provider.py</code> 提供 provider registry、policy gate、fixture/manual/public Level1 search run、snapshot 和 source refs；<code>services/api/main.py</code> 暴露 P11 API；<code>apps/chatbox/src/main.tsx</code> 与 <code>services/cli/main.py</code> 已读取 market provider 状态。</p>
+  </div>
+  <h2>验收检查</h2>
+  <table><tr><th>检查项</th><th>结果</th></tr><tr><td>P11 eval</td><td>通过</td></tr>
+<tr><td>Chatbox build</td><td>通过</td></tr>
+<tr><td>drawio XML parse</td><td>通过</td></tr>
+<tr><td>provider status redacted</td><td>通过</td></tr>
+<tr><td>fixture check no external call</td><td>通过</td></tr>
+<tr><td>search run fallback is explicit</td><td>通过</td></tr>
+<tr><td>snapshot has source refs</td><td>通过</td></tr>
+<tr><td>opt-in provider blocked without consent</td><td>通过</td></tr></table>
+  <h2>真实界面截图证据</h2>
+  <div class="card"><figure><img src="evidence/p11_market_provider/p11_chatbox_market_panel.png" alt="P11 Chatbox 市场面板真实界面截图" /><figcaption>Windows Chrome headless fallback 真实界面截图：docs/reports/evidence/p11_market_provider/p11_chatbox_market_panel.png</figcaption></figure></div>
+  <h2>API 证据摘要</h2>
+  <table>
+    <tr><th>项目</th><th>证据</th></tr>
+    <tr><td>Provider 状态</td><td><pre>{
+  &quot;level&quot;: &quot;Level 1&quot;,
+  &quot;level_label&quot;: &quot;Level 1 本地/记录数据路径&quot;,
+  &quot;providers&quot;: [
+    {
+      &quot;provider_id&quot;: &quot;fixture_local&quot;,
+      &quot;provider_name&quot;: &quot;Local fixture market sample&quot;,
+      &quot;provider_type&quot;: &quot;fixture&quot;,
+      &quot;configured_state&quot;: &quot;connected&quot;,
+      &quot;requires_key&quot;: false,
+      &quot;rate_limit&quot;: &quot;local only&quot;,
+      &quot;license_note&quot;: &quot;仓库内匿名样本和验收 fixture；不能声明真实市场。&quot;,
+      &quot;last_checked_at&quot;: null,
+      &quot;api_key_redacted&quot;: true,
+      &quot;configured_is_called&quot;: false,
+      &quot;called&quot;: false
+    },
+    {
+      &quot;provider_id&quot;: &quot;manual_paste&quot;,
+      &quot;provider_name&quot;: &quot;Manual pasted JD&quot;,
+      &quot;provider_type&quot;: &quot;manual_paste&quot;,
+      &quot;configured_state&quot;: &quot;connected&quot;,
+      &quot;requires_key&quot;: false,
+      &quot;rate_limit&quot;: &quot;user supplied&quot;,
+      &quot;license_note&quot;: &quot;用户手动粘贴或导入的 JD；不读取网页。&quot;,
+      &quot;last_checked_at&quot;: null,
+      &quot;api_key_redacted&quot;: true,
+      &quot;configured_is_called&quot;: false,
+      &quot;called&quot;: false
+    },
+    {
+      &quot;provider_id&quot;: &quot;public_sample&quot;,
+      &quot;provider_name&quot;: &quot;Public sample source&quot;,
+      &quot;provider_type&quot;: &quot;public_source&quot;,
+      &quot;configured_state&quot;: &quot;connected&quot;,
+      &quot;requires_key&quot;: false,
+      &quot;rate_limit&quot;: &quot;recorded sample&quot;,
+      &quot;license_note&quot;: &quot;公开来源的记录样本；不进行实时联网抓取。&quot;,
+      &quot;last_checked_at&quot;: null,
+      &quot;api_key_redacted&quot;: true,
+      &quot;configured_is_called&quot;: false,
+      &quot;called&quot;: false
+    },
+    {
+      &quot;provider_id&quot;: &quot;adzuna_opt_in&quot;,
+      &quot;provider_name&quot;: &quot;Adzuna opt-in API&quot;,
+      &quot;provider_type&quot;: &quot;opt_in_api&quot;,
+      &quot;configured_state&quot;: &quot;not_configured&quot;,
+      &quot;requires_key&quot;: true,
+      &quot;rate_limit&quot;: &quot;provider account limit&quot;,
+      &quot;license_note&quot;: &quot;仅在用户提供合法凭据并确认后允许一次性检查；P11 默认不外呼。&quot;,
+      &quot;last_checked_at&quot;: null,
+      &quot;api_key_redacted&quot;: true,
+      &quot;configured_is_called&quot;: false,
+      &quot;called&quot;: false
+    },
+    {
+      &quot;provider_id&quot;: &quot;theirstack_opt_in&quot;,
+      &quot;provider_name&quot;: &quot;TheirStack opt-in API&quot;,
+      &quot;provider_type&quot;: &quot;opt_in_api&quot;,
+      &quot;configured_state&quot;: &quot;not_configured&quot;,
+      &quot;requires_key&quot;: true,
+      &quot;rate_limit&quot;: &quot;provider account limit&quot;,
+      &quot;license_note&quot;: &quot;仅在用户提供合法凭据并确认后允许一次性检查；P11 默认不外呼。&quot;,
+      &quot;last_checked_at&quot;: null,
+      &quot;api_key_redacted&quot;: true,
+      &quot;configured_is_called&quot;: false,
+      &quot;called&quot;: false
+    },
+    {
+      &quot;provi</pre></td></tr>
+    <tr><td>Search Run</td><td><pre>{
+  &quot;run_id&quot;: &quot;market_run_abbfbf428d264e81ac9c45cd79ec9d12&quot;,
+  &quot;status&quot;: &quot;fallback&quot;,
+  &quot;result_count&quot;: 2,
+  &quot;source_refs&quot;: [
+    &quot;src_9a3b3d1c646347c198b86a90c6e461b0&quot;,
+    &quot;src_a9cf1a832217446184668345331a6619&quot;
+  ],
+  &quot;boundary_note&quot;: &quot;Level 1 fallback only: 本次 search run 使用本地/记录数据，不代表真实市场 provider 或全网搜索通过。&quot;,
+  &quot;snapshot&quot;: {
+    &quot;snapshot_id&quot;: &quot;market_snapshot_68874b0ccfb14157825e04a3a55be465&quot;,
+    &quot;workspace_id&quot;: &quot;ws_7555ad4349bc&quot;,
+    &quot;run_id&quot;: &quot;market_run_abbfbf428d264e81ac9c45cd79ec9d12&quot;,
+    &quot;query&quot;: &quot;北京 上海 LLM 前端岗位薪资&quot;,
+    &quot;city_stats&quot;: [
+      {
+        &quot;city&quot;: &quot;北京&quot;,
+        &quot;region_code&quot;: &quot;110000&quot;,
+        &quot;job_count&quot;: 1,
+        &quot;source_refs&quot;: [
+          &quot;src_9a3b3d1c646347c198b86a90c6e461b0&quot;
+        ],
+        &quot;confidence&quot;: 0.72
+      },
+      {
+        &quot;city&quot;: &quot;上海&quot;,
+        &quot;region_code&quot;: &quot;310000&quot;,
+        &quot;job_count&quot;: 1,
+        &quot;source_refs&quot;: [
+          &quot;src_a9cf1a832217446184668345331a6619&quot;
+        ],
+        &quot;confidence&quot;: 0.7
+      }
+    ],
+    &quot;salary_histogram&quot;: [
+      {
+        &quot;range&quot;: &quot;15-25k&quot;,
+        &quot;count&quot;: 0
+      },
+      {
+        &quot;range&quot;: &quot;25-35k&quot;,
+        &quot;count&quot;: 0
+      },
+      {
+        &quot;range&quot;: &quot;35k+&quot;,
+        &quot;count&quot;: 2
+      }
+    ],
+    &quot;tech_heatmap&quot;: [
+      {
+        &quot;tech&quot;: &quot;React&quot;,
+        &quot;count&quot;: 2
+      },
+      {
+        &quot;tech&quot;: &quot;TypeScript&quot;,
+        &quot;count&quot;: 2
+      },
+      {
+        &quot;tech&quot;: &quot;LLM&quot;,
+        &quot;count&quot;: 1
+      },
+      {
+        &quot;tech&quot;: &quot;ECharts&quot;,
+        &quot;count&quot;: 1
+      },
+      {
+        &quot;tech&quot;: &quot;Node.js&quot;,
+        &quot;count&quot;: 1
+      },
+      {
+        &quot;tech&quot;: &quot;Agent&quot;,
+        &quot;count&quot;: 1
+      }
+    ],
+    &quot;source_breakdown&quot;: {
+      &quot;fixture&quot;: 2
+    },
+    &quot;remote_ratio&quot;: 0.2,
+    &quot;competition_level&quot;: &quot;中等&quot;,
+    &quot;trend_summary&quot;: &quot;本地 Level 1 样本显示 LLM/Agent/可视化相关前端岗位集中在一线与新一线城市；该结论不能替代真实市场 provider。&quot;,
+    &quot;low_confidence_notes&quot;: [
+      &quot;当前 snapshot 来自 fixture/manual/public sample，不代表全网岗位量。&quot;,
+      &quot;缺少真实 provider invocation log，因此不能声明 Level 2 通过。&quot;
+    ],
+    &quot;source_refs&quot;: [
+      &quot;src_9a3b3d1c646347c198b86a90c6e461b0&quot;,
+      &quot;src_a9cf1a832217446184668345331a6619&quot;
+    ]
+  },
+  &quot;raw_provider_response_included&quot;: false
+}</pre></td></tr>
+    <tr><td>Snapshot</td><td><pre>{
+  &quot;snapshot_id&quot;: &quot;market_snapshot_68874b0ccfb14157825e04a3a55be465&quot;,
+  &quot;workspace_id&quot;: &quot;ws_7555ad4349bc&quot;,
+  &quot;run_id&quot;: &quot;market_run_abbfbf428d264e81ac9c45cd79ec9d12&quot;,
+  &quot;city_stats&quot;: [
+    {
+      &quot;city&quot;: &quot;北京&quot;,
+      &quot;region_code&quot;: &quot;110000&quot;,
+      &quot;job_count&quot;: 1,
+      &quot;source_refs&quot;: [
+        &quot;src_9a3b3d1c646347c198b86a90c6e461b0&quot;
+      ],
+      &quot;confidence&quot;: 0.72
+    },
+    {
+      &quot;city&quot;: &quot;上海&quot;,
+      &quot;region_code&quot;: &quot;310000&quot;,
+      &quot;job_count&quot;: 1,
+      &quot;source_refs&quot;: [
+        &quot;src_a9cf1a832217446184668345331a6619&quot;
+      ],
+      &quot;confidence&quot;: 0.7
+    }
+  ],
+  &quot;salary_histogram&quot;: [
+    {
+      &quot;range&quot;: &quot;15-25k&quot;,
+      &quot;count&quot;: 0
+    },
+    {
+      &quot;range&quot;: &quot;25-35k&quot;,
+      &quot;count&quot;: 0
+    },
+    {
+      &quot;range&quot;: &quot;35k+&quot;,
+      &quot;count&quot;: 2
+    }
+  ],
+  &quot;tech_heatmap&quot;: [
+    {
+      &quot;tech&quot;: &quot;React&quot;,
+      &quot;count&quot;: 2
+    },
+    {
+      &quot;tech&quot;: &quot;TypeScript&quot;,
+      &quot;count&quot;: 2
+    },
+    {
+      &quot;tech&quot;: &quot;LLM&quot;,
+      &quot;count&quot;: 1
+    },
+    {
+      &quot;tech&quot;: &quot;ECharts&quot;,
+      &quot;count&quot;: 1
+    },
+    {
+      &quot;tech&quot;: &quot;Node.js&quot;,
+      &quot;count&quot;: 1
+    },
+    {
+      &quot;tech&quot;: &quot;Agent&quot;,
+      &quot;count&quot;: 1
+    }
+  ],
+  &quot;source_breakdown&quot;: {
+    &quot;fixture&quot;: 2
+  },
+  &quot;remote_ratio&quot;: 0.2,
+  &quot;competition_level&quot;: &quot;中等&quot;,
+  &quot;trend_summary&quot;: &quot;本地 Level 1 样本显示 LLM/Agent/可视化相关前端岗位集中在一线与新一线城市；该结论不能替代真实市场 provider。&quot;,
+  &quot;low_confidence_notes&quot;: [
+    &quot;当前 snapshot 来自 fixture/manual/public sample，不代表全网岗位量。&quot;,
+    &quot;缺少真实 provider invocation log，因此不能声明 Level 2 通过。&quot;
+  ],
+  &quot;source_refs&quot;: [
+    &quot;src_9a3b3d1c646347c198b86a90c6e461b0&quot;,
+    &quot;src_a9cf1a832217446184668345331a6619&quot;
+  ],
+  &quot;created_at&quot;: &quot;2026-07-13T13:35:33.429530+00:00&quot;,
+  &quot;raw_provider_response_included&quot;: false
+}</pre></td></tr>
+    <tr><td>Opt-in 拒绝</td><td><pre>{
+  &quot;ok&quot;: false,
+  &quot;error_code&quot;: &quot;CONSENT_REQUIRED&quot;,
+  &quot;message&quot;: &quot;opt-in market provider search requires explicit consent_id&quot;,
+  &quot;recoverable&quot;: true
+}</pre></td></tr>
+  </table>
+  <h2>命令证据</h2>
+  <table><tr><th>命令</th><th>exit code</th><th>stdout</th><th>stderr</th></tr><tr><td><code>/usr/bin/python3 -m pytest tests/evals/test_p11_market_provider_optin_eval.py -q</code></td><td>0</td><td><pre>.......                                                                  [100%]
+=============================== warnings summary ===============================
+../../../../home/administrator/.local/lib/python3.12/site-packages/starlette/formparsers.py:12
+  /home/administrator/.local/lib/python3.12/site-packages/starlette/formparsers.py:12: PendingDeprecationWarning: Please use `import python_multipart` instead.
+    import multipart
+
+../../../../home/administrator/.local/lib/python3.12/site-packages/httpx/_client.py:680
+  /home/administrator/.local/lib/python3.12/site-packages/httpx/_client.py:680: DeprecationWarning: The &#x27;app&#x27; shortcut is now deprecated. Use the explicit style &#x27;transport=WSGITransport(app=...)&#x27; instead.
+    warnings.warn(message, DeprecationWarning)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+7 passed, 2 warnings in 2.42s
+</pre></td><td><pre></pre></td></tr>
+<tr><td><code>npm --prefix apps/chatbox run build</code></td><td>0</td><td><pre>
+&gt; @jobpilot/chatbox@0.1.0 build
+&gt; tsc &amp;&amp; vite build
+
+vite v7.3.5 building client environment for production...
+transforming...
+✓ 2171 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                     0.38 kB │ gzip:   0.27 kB
+dist/assets/index-DUJ03_8o.css     49.47 kB │ gzip:   9.77 kB
+dist/assets/index-vJrxq0Pe.js   1,416.99 kB │ gzip: 471.15 kB
+✓ built in 12.40s
+</pre></td><td><pre>
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+</pre></td></tr></table>
+  <h2>未验证范围</h2>
+  <ul>
+    <li>未执行真实市场 provider 调用；没有合法凭据和用户确认，因此不能声明 Level 2。</li>
+    <li>未登录、抓取或联系 BOSS、猎聘、拉勾、LinkedIn 等招聘平台。</li>
+    <li>未启动长期爬虫、队列、ASR、MCP server、自动投递、自动沟通或 SaaS。</li>
+    <li>未存储 API Key、provider secret 或完整 raw provider response。</li>
+  </ul>
+  <p>完整结构化证据：<code>docs/reports/evidence/p11_market_provider/p11_market_provider_acceptance_evidence.json</code></p>
+</body>
+</html>

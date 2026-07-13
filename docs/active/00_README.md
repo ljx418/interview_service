@@ -1,13 +1,13 @@
 # JobPilot AI 当前阶段设计文档
 
-本目录是当前阶段的执行依据。原始文档包 `docs/jobpilot_ai_agent_docs_v1_0/` 保留为产品背景和 v1.0 资料；本目录文档用于记录 P5.5 Candidate Profile 自动化开发候选、P6/P7 自动化候选基线、P6-REAL / P7-post 真实验收准备、P8-JD Intake 与简历生成体验强化自动化候选、P8.1 Chatbox-first 自动化候选，以及当前 P9 Chatbox-native 求职情报与申请包工作台自动化候选。P4 已作为本地/mock Chatbox 体验冻结基线保留；P5/P5.5/P6/P7/P8/P8.1 自动化候选证据保留为后续基线。P9 已完成第一轮本地 UI 信息架构和求职态势可视化自动化候选，不得写成全网 JD 搜索已完成、ASR 已实现、BOSS/招聘平台自动接入、自动投递、真实个人资料路径、真实外部 provider 默认路径或 MCP/Skill 连通性已通过。
+本目录是当前阶段的执行依据。原始文档包 `docs/jobpilot_ai_agent_docs_v1_0/` 保留为产品背景和 v1.0 资料；本目录文档用于记录 P5.5 Candidate Profile 自动化开发候选、P6/P7 自动化候选基线、P6-REAL / P7-post 真实验收准备、P8-JD Intake 与简历生成体验强化自动化候选、P8.1 Chatbox-first 自动化候选、P9 Chatbox-native 求职情报与申请包工作台自动化候选、P9.1 行政区划下钻式市场地图与苏格拉底式资料补全本地自动化候选、P10-CLI 本地命令入口自动化候选，以及当前 P11 真实市场数据 Provider Opt-in Level1 自动化候选收口。P4 已作为本地/mock Chatbox 体验冻结基线保留；P5/P5.5/P6/P7/P8/P8.1/P9/P9.1/P10 自动化候选证据保留为后续基线。P10-CLI 已完成 `jobpilot` 本地命令入口、CLI eval 和中文 HTML 验收报告。P11 当前已完成本地/记录数据 market provider boundary、FastAPI API、SQLite market schema、JobSearchRun、JobMarketSnapshot、source refs、CLI/Chatbox 联动、P11 eval 和中文 HTML 验收报告；不得写成真实市场数据 provider Level2 已通过、全网 JD 搜索已完成、ASR 已实现、BOSS/招聘平台自动接入、自动投递、真实个人资料路径、真实外部 provider 默认路径、MCP/Skill 连通性或真实外呼已通过。
 
 ## 阅读顺序
 
-1. `01_STAGE_PRD.md`：P9 Chatbox-native 求职情报与申请包工作台 PRD、P8.1/P8 自动化候选结论、目标体验路径、非目标和历史阶段边界。
-2. `02_TARGET_ARCHITECTURE.md`：P9 顶部服务中心、左侧求职态势图、中央 Chatbox、右侧产物台目标架构、当前架构、具体代码实体职责和关联关系。
-3. `03_MILESTONES_AND_DELIVERY_PLAN.md`：P9 文档阶段和后续开发里程碑、P8.1/P8 历史计划、平台合规边界和出门条件。
-4. `04_ACCEPTANCE_GATES.md`：P9 Chatbox-native 求职工作台门槛、P8.1/P8 历史门槛，以及 P5.5/P6/P7 历史自动化候选门槛。
+1. `01_STAGE_PRD.md`：P11 真实市场数据 Provider Opt-in PRD、目标体验、非目标和 P10/P9.1/P9/P8.1/P8 自动化候选历史边界。
+2. `02_TARGET_ARCHITECTURE.md`：P11 目标架构、当前架构差异、具体 provider / normalizer / snapshot / evidence 代码实体职责和关联关系，以及 P10/P9.1/P9 历史架构基线。
+3. `03_MILESTONES_AND_DELIVERY_PLAN.md`：P11 Level1 实现收口、Level2 真实 provider 待授权里程碑、P10/P9.1/P9/P8.1/P8 历史计划、平台合规边界和出门条件。
+4. `04_ACCEPTANCE_GATES.md`：P11 Level1 验收门槛、Level2 真实 provider 待授权门槛、P10/P9.1/P9 历史门槛，以及 P5.5/P6/P7 历史自动化候选门槛。
 5. `05_IMPLEMENTATION_SPEC.md`：可直接交付工程实现的 P0 强化规格。
 6. `06_TRACEABILITY_MATRIX.md`：目标、模块、证据、测试、真实验收待办和验收门槛追踪矩阵。
 7. `07_REMAINING_DEVELOPMENT_AND_ACCEPTANCE_PLAN.md`：剩余开发工作包、验收证据和最终验收路径。
@@ -27,16 +27,42 @@
 21. `21_P8_JD_INTAKE_AND_RESUME_GENERATION_PLAN.md`：P8-JD Intake、资料准备向导、JD 手动导入中心、JD 定制简历和招聘平台合规边界。
 22. `22_P8_1_CHATBOX_FIRST_WORKSPACE_PLAN.md`：P8.1 Chatbox-first 工作台信息架构修正计划，定义“用户指导 - Chatbox - 工作台”和聊天优先验收门槛。
 23. `23_P9_CHATBOX_NATIVE_JOB_INTELLIGENCE_PLAN.md`：P9 Chatbox-native 求职情报与申请包工作台计划，定义顶部服务中心、左侧求职态势图、中央 Chatbox、右侧产物台和后续开发验收边界。
-24. `stage-reviews/`：阶段审计记录，包含 P5/P6/P7/P5.5/P8/P8.1/P9 审计；其中 `P9_DOCUMENTATION_DEVELOPMENT_AUDIT.md` 记录 P9 仍是文档阶段、不进入代码实现、不虚假声明高风险能力通过，`P9_DOCUMENTATION_COVERAGE_REAUDIT.md` 复审 P9 是否完整解决用户诉求、是否落盘到 Markdown/drawio、是否足以支撑 P9-M0 到 P9-M9，`P9_DETAILED_DEVELOPMENT_AND_ACCEPTANCE_PLAN.md` 定义 P9-M0 到 P9-M9 每阶段开发范围、验收标准、证据和打回条件，`P9_EXTERNAL_REVIEW_REVISION_AUDIT.md` 记录外部审计意见采纳并把 P9 锁定为 Chatbox-first UI/信息结构重构和求职情报可视化层。
-25. `jobpilot-stage-gap-and-acceptance.md`：drawio 图的文本镜像，方便审查和 diff。
-26. `jobpilot-stage-gap-and-acceptance.drawio`：P9 Chatbox-native 目标体验、当前差距、代码实体分层交互关系、开发验收计划、门槛和安全边界图。
-25. `../reports/P5_SYNTHETIC_PROFILE_REVIEW.html`：P5-REAL 前置合成简历、背景资料、目标 JD 和允许展示字段审核页。
-26. `../reports/P5_STAGE_SYNTHETIC_VISUAL_ACCEPTANCE_REPORT.html`：P5 三身份合成资料 Chrome/CDP 可视化验收聚合报告，不代表 P5-REAL 通过。
-27. `../gemini-frontend-review-package/`：给 Gemini 独立审查的前端页面方案和静态原型。
+24. `24_P9_1_MARKET_DATA_AND_SOCRATIC_PROTOTYPE_PLAN.md`：P9.1 本地自动化候选计划与实现记录，定义真实市场数据 opt-in provider 边界、行政区划下钻式市场地图和 Socratic Intake 资料补全路径。
+25. `25_P10_CLI_LOCAL_COMMAND_ENTRY_PLAN.md`：P10-CLI 本地命令入口计划和实现收口记录，定义命令契约、目标架构、实体状态、里程碑、验收门槛和打回条件。
+26. `26_P11_MARKET_PROVIDER_OPT_IN_PLAN.md`：P11 真实市场数据 Provider Opt-in Level1 开发与验收计划，定义 provider 状态、授权门、数据契约、source refs、调用日志、验收门槛、高风险边界和 Level2 待授权范围。
+27. `../p9_1_market_socratic_review/08_TARGET_PAGE_AND_MODULE_DESIGN.html`：P9.1 目标页面总体设计、前端模块详细设计、基线截图、用户路线和 false-green 自检主审查页。
+28. `stage-reviews/`：阶段审计记录，包含 P5/P6/P7/P5.5/P8/P8.1/P9/P9.1/P10-CLI/P11 审计；其中 `P11_MARKET_PROVIDER_OPT_IN_M0_START_AUDIT.md` 记录 P11 Level1 开发前风险冻结，`P11_MARKET_PROVIDER_OPT_IN_M1_M5_DEVELOPMENT_AUDIT.md` 记录 P11 Level1 自动化开发和验收结论。
+28. `jobpilot-stage-gap-and-acceptance.md`：P9 收口 drawio 图的文本镜像，方便审查和 diff。
+29. `jobpilot-stage-gap-and-acceptance.drawio`：P9 Chatbox-native 目标体验、当前差距、代码实体分层交互关系、开发验收计划、门槛和安全边界图。
+30. `jobpilot-p9-1-market-socratic-gap.md`：P9.1 本地自动化候选 drawio 文本镜像。
+31. `jobpilot-p9-1-market-socratic-gap.drawio`：P9.1 市场地图、真实数据 provider 边界和 Socratic Intake 本地候选图。
+32. `jobpilot-p10-cli-local-entry-gap.md`：P10-CLI 本地命令入口 drawio 文本镜像。
+33. `jobpilot-p10-cli-local-entry-gap.drawio`：P10-CLI 当前架构差异、目标架构、代码实体状态、命令流、开发验收计划和出门条件图。
+34. `jobpilot-p11-market-provider-optin-gap.md`：P11 真实市场数据 Provider Opt-in drawio 文本镜像。
+35. `jobpilot-p11-market-provider-optin-gap.drawio`：P11 当前架构差异、目标架构、代码实体状态、命令流/数据流、开发验收计划和出门条件图。
+31. `../reports/P5_SYNTHETIC_PROFILE_REVIEW.html`：P5-REAL 前置合成简历、背景资料、目标 JD 和允许展示字段审核页。
+32. `../reports/P5_STAGE_SYNTHETIC_VISUAL_ACCEPTANCE_REPORT.html`：P5 三身份合成资料 Chrome/CDP 可视化验收聚合报告，不代表 P5-REAL 通过。
+33. `../gemini-frontend-review-package/`：给 Gemini 独立审查的前端页面方案和静态原型。
 
 ## 当前阶段目标
 
-在已冻结 P0、已完成 P1 本地工程闭环、已完成 P2 examples-guided 端到端体验、完成 P3 自动化验收，并完成 P4 本地/mock Chatbox 体验冻结之后，P5 本地/mock + 脱敏 fixture 自动化候选已完成，P5.5 Candidate Profile 自动化候选已完成，P6+P7 本地 Beta 自动化候选也已完成。P8-JD Intake 与简历生成体验强化、P8.1 Chatbox-first 自动化候选均已作为基线保留。当前 P9 文档目标是重新定义下一阶段产品体验：以 Chatbox 为中心，顶部展示服务状态，左侧展示可交互求职态势，右侧展示申请包和事实产物。P9 不是继续堆叠向导卡片，而是让用户通过对话完成 JD 搜索/汇总、资料补全、申请包生成、产物调整和投递流程更新。
+当前阶段是 **P11 真实市场数据 Provider Opt-in Level1 自动化候选收口**。目标是审计并验收已实现的本地/记录数据 market provider boundary、授权拒绝、数据规范化、source refs、调用日志、CLI/Chatbox 联动、HTML 报告和 drawio 出门条件；不发起真实 API 调用。P11 只允许把 Adzuna、TheirStack、JSearch、Jooble 等合规公开职位 API 保留为后续 Level2 opt-in provider 候选；不得把 BOSS/猎聘/拉勾/LinkedIn 自动抓取、绕风控、长期爬虫、ASR、MCP、自动投递、真实 LLM provider 或 SaaS 写成本阶段默认能力。
+
+P11 目标路径：
+
+```text
+用户打开 Chatbox-native 工作台或本地 CLI
+→ 顶部看到 Market Provider: not_configured / configured / consented / called / failed / fallback
+→ 用户明确选择 provider、查询城市、岗位、薪资和技术栈
+→ 系统在调用前展示费用、隐私、数据类别、调用次数和来源边界
+→ 授权后只执行一次可审计 JobSearchRun
+→ 标准化为 NormalizedJobPost 和 JobMarketSnapshot
+→ 左侧市场地图、中央 Chatbox、右侧产物台同步显示真实来源、source refs、置信度和未验证范围
+```
+
+P11-M0 到 M5 Level1 自动化候选已执行：当前可以声明 Level1 本地实现通过；没有用户明确授权和合法 provider 凭据时，仍不能进入真实 provider Level2 外呼验收。
+
+在已冻结 P0、已完成 P1 本地工程闭环、已完成 P2 examples-guided 端到端体验、完成 P3 自动化验收，并完成 P4 本地/mock Chatbox 体验冻结之后，P5 本地/mock + 脱敏 fixture 自动化候选已完成，P5.5 Candidate Profile 自动化候选已完成，P6+P7 本地 Beta 自动化候选也已完成。P8-JD Intake 与简历生成体验强化、P8.1 Chatbox-first 自动化候选均已作为基线保留。P9 已完成本地自动化候选：以 Chatbox 为中心，顶部展示服务状态，左侧展示可交互求职态势，右侧展示申请包和事实产物。当前 P9.1 本地自动化候选已完成：在不接入真实外部平台的前提下，落地 ECharts 行政区划下钻式市场地图、Market Provider 未配置状态、Socratic Intake 和中文 HTML 截图验收报告。
 
 ```text
 用户打开 Chatbox-native 工作台

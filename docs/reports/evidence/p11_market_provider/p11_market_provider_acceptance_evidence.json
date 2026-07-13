@@ -1,0 +1,335 @@
+{
+  "commands": [
+    {
+      "command": "/usr/bin/python3 -m pytest tests/evals/test_p11_market_provider_optin_eval.py -q",
+      "exit_code": 0,
+      "stdout": ".......                                                                  [100%]\n=============================== warnings summary ===============================\n../../../../home/administrator/.local/lib/python3.12/site-packages/starlette/formparsers.py:12\n  /home/administrator/.local/lib/python3.12/site-packages/starlette/formparsers.py:12: PendingDeprecationWarning: Please use `import python_multipart` instead.\n    import multipart\n\n../../../../home/administrator/.local/lib/python3.12/site-packages/httpx/_client.py:680\n  /home/administrator/.local/lib/python3.12/site-packages/httpx/_client.py:680: DeprecationWarning: The 'app' shortcut is now deprecated. Use the explicit style 'transport=WSGITransport(app=...)' instead.\n    warnings.warn(message, DeprecationWarning)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n7 passed, 2 warnings in 2.42s\n",
+      "stderr": "",
+      "duration_ms": 2669
+    },
+    {
+      "command": "npm --prefix apps/chatbox run build",
+      "exit_code": 0,
+      "stdout": "\n> @jobpilot/chatbox@0.1.0 build\n> tsc && vite build\n\nvite v7.3.5 building client environment for production...\ntransforming...\n✓ 2171 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/index.html                     0.38 kB │ gzip:   0.27 kB\ndist/assets/index-DUJ03_8o.css     49.47 kB │ gzip:   9.77 kB\ndist/assets/index-vJrxq0Pe.js   1,416.99 kB │ gzip: 471.15 kB\n✓ built in 12.40s\n",
+      "stderr": "\n(!) Some chunks are larger than 500 kB after minification. Consider:\n- Using dynamic import() to code-split the application\n- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks\n- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.\n",
+      "duration_ms": 14624
+    }
+  ],
+  "drawio": {
+    "path": "docs/active/jobpilot-p11-market-provider-optin-gap.drawio",
+    "ok": true,
+    "page_count": 8,
+    "error": ""
+  },
+  "api": {
+    "workspace_id": "ws_7555ad4349bc",
+    "provider_status": {
+      "level": "Level 1",
+      "level_label": "Level 1 本地/记录数据路径",
+      "providers": [
+        {
+          "provider_id": "fixture_local",
+          "provider_name": "Local fixture market sample",
+          "provider_type": "fixture",
+          "configured_state": "connected",
+          "requires_key": false,
+          "rate_limit": "local only",
+          "license_note": "仓库内匿名样本和验收 fixture；不能声明真实市场。",
+          "last_checked_at": null,
+          "api_key_redacted": true,
+          "configured_is_called": false,
+          "called": false
+        },
+        {
+          "provider_id": "manual_paste",
+          "provider_name": "Manual pasted JD",
+          "provider_type": "manual_paste",
+          "configured_state": "connected",
+          "requires_key": false,
+          "rate_limit": "user supplied",
+          "license_note": "用户手动粘贴或导入的 JD；不读取网页。",
+          "last_checked_at": null,
+          "api_key_redacted": true,
+          "configured_is_called": false,
+          "called": false
+        },
+        {
+          "provider_id": "public_sample",
+          "provider_name": "Public sample source",
+          "provider_type": "public_source",
+          "configured_state": "connected",
+          "requires_key": false,
+          "rate_limit": "recorded sample",
+          "license_note": "公开来源的记录样本；不进行实时联网抓取。",
+          "last_checked_at": null,
+          "api_key_redacted": true,
+          "configured_is_called": false,
+          "called": false
+        },
+        {
+          "provider_id": "adzuna_opt_in",
+          "provider_name": "Adzuna opt-in API",
+          "provider_type": "opt_in_api",
+          "configured_state": "not_configured",
+          "requires_key": true,
+          "rate_limit": "provider account limit",
+          "license_note": "仅在用户提供合法凭据并确认后允许一次性检查；P11 默认不外呼。",
+          "last_checked_at": null,
+          "api_key_redacted": true,
+          "configured_is_called": false,
+          "called": false
+        },
+        {
+          "provider_id": "theirstack_opt_in",
+          "provider_name": "TheirStack opt-in API",
+          "provider_type": "opt_in_api",
+          "configured_state": "not_configured",
+          "requires_key": true,
+          "rate_limit": "provider account limit",
+          "license_note": "仅在用户提供合法凭据并确认后允许一次性检查；P11 默认不外呼。",
+          "last_checked_at": null,
+          "api_key_redacted": true,
+          "configured_is_called": false,
+          "called": false
+        },
+        {
+          "provider_id": "jsearch_opt_in",
+          "provider_name": "JSearch opt-in API",
+          "provider_type": "opt_in_api",
+          "configured_state": "not_configured",
+          "requires_key": true,
+          "rate_limit": "provider account limit",
+          "license_note": "仅在用户提供合法凭据并确认后允许一次性检查；P11 默认不外呼。",
+          "last_checked_at": null,
+          "api_key_redacted": true,
+          "configured_is_called": false,
+          "called": false
+        }
+      ],
+      "recent_invocations": [],
+      "default_policy": "fixture/manual/public/recorded only",
+      "external_call_enabled": false,
+      "can_claim_real_market": false,
+      "warnings": [
+        "当前默认不外呼真实市场 provider。",
+        "fixture/manual/public sample 不能声明全网搜索或真实市场验收通过。"
+      ]
+    },
+    "fixture_check": {
+      "provider_id": "fixture_local",
+      "provider_name": "Local fixture market sample",
+      "configured_state": "connected",
+      "checked": true,
+      "called": false,
+      "status": "checked",
+      "error_code": null,
+      "message": "本地 provider 可用；未发生真实外呼。",
+      "invocation_id": "market_inv_b4e0dd301f694d56bb34a9e3b234c9ea",
+      "api_key_redacted": true,
+      "raw_provider_response_included": false
+    },
+    "search_run": {
+      "run_id": "market_run_abbfbf428d264e81ac9c45cd79ec9d12",
+      "status": "fallback",
+      "result_count": 2,
+      "source_refs": [
+        "src_9a3b3d1c646347c198b86a90c6e461b0",
+        "src_a9cf1a832217446184668345331a6619"
+      ],
+      "boundary_note": "Level 1 fallback only: 本次 search run 使用本地/记录数据，不代表真实市场 provider 或全网搜索通过。",
+      "snapshot": {
+        "snapshot_id": "market_snapshot_68874b0ccfb14157825e04a3a55be465",
+        "workspace_id": "ws_7555ad4349bc",
+        "run_id": "market_run_abbfbf428d264e81ac9c45cd79ec9d12",
+        "query": "北京 上海 LLM 前端岗位薪资",
+        "city_stats": [
+          {
+            "city": "北京",
+            "region_code": "110000",
+            "job_count": 1,
+            "source_refs": [
+              "src_9a3b3d1c646347c198b86a90c6e461b0"
+            ],
+            "confidence": 0.72
+          },
+          {
+            "city": "上海",
+            "region_code": "310000",
+            "job_count": 1,
+            "source_refs": [
+              "src_a9cf1a832217446184668345331a6619"
+            ],
+            "confidence": 0.7
+          }
+        ],
+        "salary_histogram": [
+          {
+            "range": "15-25k",
+            "count": 0
+          },
+          {
+            "range": "25-35k",
+            "count": 0
+          },
+          {
+            "range": "35k+",
+            "count": 2
+          }
+        ],
+        "tech_heatmap": [
+          {
+            "tech": "React",
+            "count": 2
+          },
+          {
+            "tech": "TypeScript",
+            "count": 2
+          },
+          {
+            "tech": "LLM",
+            "count": 1
+          },
+          {
+            "tech": "ECharts",
+            "count": 1
+          },
+          {
+            "tech": "Node.js",
+            "count": 1
+          },
+          {
+            "tech": "Agent",
+            "count": 1
+          }
+        ],
+        "source_breakdown": {
+          "fixture": 2
+        },
+        "remote_ratio": 0.2,
+        "competition_level": "中等",
+        "trend_summary": "本地 Level 1 样本显示 LLM/Agent/可视化相关前端岗位集中在一线与新一线城市；该结论不能替代真实市场 provider。",
+        "low_confidence_notes": [
+          "当前 snapshot 来自 fixture/manual/public sample，不代表全网岗位量。",
+          "缺少真实 provider invocation log，因此不能声明 Level 2 通过。"
+        ],
+        "source_refs": [
+          "src_9a3b3d1c646347c198b86a90c6e461b0",
+          "src_a9cf1a832217446184668345331a6619"
+        ]
+      },
+      "raw_provider_response_included": false
+    },
+    "snapshot": {
+      "snapshot_id": "market_snapshot_68874b0ccfb14157825e04a3a55be465",
+      "workspace_id": "ws_7555ad4349bc",
+      "run_id": "market_run_abbfbf428d264e81ac9c45cd79ec9d12",
+      "city_stats": [
+        {
+          "city": "北京",
+          "region_code": "110000",
+          "job_count": 1,
+          "source_refs": [
+            "src_9a3b3d1c646347c198b86a90c6e461b0"
+          ],
+          "confidence": 0.72
+        },
+        {
+          "city": "上海",
+          "region_code": "310000",
+          "job_count": 1,
+          "source_refs": [
+            "src_a9cf1a832217446184668345331a6619"
+          ],
+          "confidence": 0.7
+        }
+      ],
+      "salary_histogram": [
+        {
+          "range": "15-25k",
+          "count": 0
+        },
+        {
+          "range": "25-35k",
+          "count": 0
+        },
+        {
+          "range": "35k+",
+          "count": 2
+        }
+      ],
+      "tech_heatmap": [
+        {
+          "tech": "React",
+          "count": 2
+        },
+        {
+          "tech": "TypeScript",
+          "count": 2
+        },
+        {
+          "tech": "LLM",
+          "count": 1
+        },
+        {
+          "tech": "ECharts",
+          "count": 1
+        },
+        {
+          "tech": "Node.js",
+          "count": 1
+        },
+        {
+          "tech": "Agent",
+          "count": 1
+        }
+      ],
+      "source_breakdown": {
+        "fixture": 2
+      },
+      "remote_ratio": 0.2,
+      "competition_level": "中等",
+      "trend_summary": "本地 Level 1 样本显示 LLM/Agent/可视化相关前端岗位集中在一线与新一线城市；该结论不能替代真实市场 provider。",
+      "low_confidence_notes": [
+        "当前 snapshot 来自 fixture/manual/public sample，不代表全网岗位量。",
+        "缺少真实 provider invocation log，因此不能声明 Level 2 通过。"
+      ],
+      "source_refs": [
+        "src_9a3b3d1c646347c198b86a90c6e461b0",
+        "src_a9cf1a832217446184668345331a6619"
+      ],
+      "created_at": "2026-07-13T13:35:33.429530+00:00",
+      "raw_provider_response_included": false
+    },
+    "source_ref": {
+      "source_ref_id": "src_9a3b3d1c646347c198b86a90c6e461b0",
+      "workspace_id": "ws_7555ad4349bc",
+      "run_id": "market_run_abbfbf428d264e81ac9c45cd79ec9d12",
+      "region_code": "110000",
+      "region_name": "北京",
+      "metric_name": "job_post",
+      "source_type": "fixture",
+      "source_ref_ids": [
+        "src_9a3b3d1c646347c198b86a90c6e461b0"
+      ],
+      "source_summary": "北京 · LLM 应用前端工程师 · 25-40k · 北辰智能",
+      "source_url": "examples/jds/llm_frontend_beijing.md",
+      "confidence": 0.72,
+      "fetched_at": "2026-07-13T13:35:33.429530+00:00",
+      "raw_provider_response_included": false,
+      "api_key_redacted": true
+    },
+    "opt_in_reject_status_code": 400,
+    "opt_in_reject": {
+      "ok": false,
+      "error_code": "CONSENT_REQUIRED",
+      "message": "opt-in market provider search requires explicit consent_id",
+      "recoverable": true
+    }
+  },
+  "screenshot": {
+    "ok": true,
+    "path": "docs/reports/evidence/p11_market_provider/p11_chatbox_market_panel.png",
+    "error": "",
+    "fallback": "windows_chrome_headless"
+  }
+}

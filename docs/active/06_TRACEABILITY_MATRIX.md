@@ -1,4 +1,151 @@
-# JobPilot AI P9 Chatbox-native 求职情报与申请包工作台追踪矩阵
+# JobPilot AI P11 / P10-CLI / P9.1 Chatbox-native 求职工作台追踪矩阵
+
+## -9. P11 真实市场数据 Provider Opt-in Level1 追踪矩阵
+
+| 当前目标 | 文档 / 实体边界 | 主要文件 / 模块 | 当前证据 | 验收门槛 |
+| --- | --- | --- | --- | --- |
+| 当前阶段口径 | P11 Level1 本地/记录数据实现通过，不做真实外呼 | README / TODO / active docs / `26_P11_MARKET_PROVIDER_OPT_IN_PLAN.md` | P11 stage review、HTML 报告、全量 pytest | P11 门槛 A/E |
+| provider 状态清楚 | `JobMarketProviderRegistry`, `MarketProviderPolicyGate` | `services/market/provider.py`, FastAPI routes, Chatbox, CLI | API/eval 定义并验证 not_configured / configured / connected / failed / fallback | P11 门槛 A/B |
+| 授权门和调用日志 | `MarketProviderClient`, `MarketProviderInvocationLog` | `services/market/provider.py`, SQLite migration | 未确认 opt-in provider 拒绝；脱敏 invocation log 写入 | P11 门槛 B/D/E |
+| 市场数据标准化 | `JobSearchRunService`, `MarketDataNormalizer`, `NormalizedJobPost` | `services/market/provider.py`, `services/storage/db.py` | P11 eval 验证 search run、normalized posts、snapshot | P11 门槛 B/D |
+| source refs 和置信度 | `SourceRefBinder`, `ConfidenceScorer`, `RegionSourceRef` | market service + SQLite + report evidence | P11 eval 验证 source refs、low confidence notes、raw response guard | P11 门槛 B/D |
+| 地图/Chatbox/产物联动 | `MarketIntelligenceMap`, `ConversationPlane`, `ArtifactWorkbench` | `apps/chatbox/src/main.tsx`, target architecture | Chatbox 调用 `/api/market/search-runs`；报告截图证明 UI 状态 | P11 门槛 D |
+| drawio 审查 | P11 状态颜色、实体关系、数据流、出门条件 | `docs/active/jobpilot-p11-market-provider-optin-gap.drawio`, `.md` | 8 页 drawio；XML parse 和人工打开审查 | P11 门槛 C |
+| false-green 边界 | 不把 configured/fixture/manual/public 写成真实市场通过 | README, TODO, active docs, stage review, HTML report | P11 报告明确 Level1 通过、Level2 未执行 | P11 门槛 A/E |
+
+P11 代码实体状态追踪：
+
+| 层级 | 实体 | 当前状态 | 关系 | 验收证据 |
+| --- | --- | --- | --- | --- |
+| UI | `TopServiceCenter` | Level1 已实现 | 读取 market provider 状态，展示 Level1、本地可用和真实市场未验收 | P11 报告截图 |
+| UI | `ConversationPlane` | Level1 已实现 | 发起 market query 到 FastAPI，不直接外呼 | P11 frontend static eval |
+| UI | `MarketIntelligenceMap` | Level1 已实现 | 读取 `JobMarketSnapshot`，区分 fallback/fixture/manual/public source | P11 报告截图 |
+| UI | `ArtifactWorkbench` | Level1 已实现 | 展示 Market Insight、source refs、低置信度和未验证范围 | P11 报告截图 |
+| API | `JobMarketProviderRegistry` | Level1 已实现 | 管理 Adzuna/TheirStack/JSearch/manual/public/fixture provider 状态 | provider status eval |
+| API | `MarketProviderPolicyGate` | Level1 已实现 | 校验授权、边界和真实调用禁用策略 | safety gate eval |
+| API | `MarketProviderClient` | Level2 待授权 | Level1 不执行真实 provider 调用 | opt-in reject eval |
+| API | `MarketProviderInvocationLog` | Level1 已实现 | 记录脱敏 provider、query、status、error、duration，不记录 API Key | redaction eval |
+| Domain | `JobSearchRunService` | Level1 已实现 | 创建、读取和失败保留 market search run | search run eval |
+| Domain | `MarketDataNormalizer` | Level1 已实现 | 将 provider/manual/public/fixture 归一化为 `NormalizedJobPost` | normalization eval |
+| Domain | `SourceRefBinder` | Level1 已实现 | 将岗位数、薪资、技术栈和可信度绑定到 source refs | source refs eval |
+| Domain | `ConfidenceScorer` | Level1 已实现 | 标记缺字段、低置信度、fallback 和待确认 | confidence eval |
+| Data | `NormalizedJobPost` | Level1 已实现 | 标准化职位标题、公司、城市、薪资、技术栈、来源和置信度 | schema/eval |
+| Data | `JobMarketSnapshot` | Level1 已实现 | 聚合城市岗位数、薪资分布、技术栈热度和来源可信度 | snapshot eval |
+| Evidence | `P11MarketAcceptanceReport` | Level1 已实现 | 证明 provider 调用边界、source refs、失败/fallback 和未验证范围 | 中文 HTML 报告 |
+
+P11 API、存储与验收级别追踪：
+
+| 追踪项 | 目标契约 | 对应实体 | 后续验收证据 |
+| --- | --- | --- | --- |
+| provider status | `GET /api/market/providers/status` 只返回脱敏状态和调用摘要 | `JobMarketProviderRegistry`, `MarketProviderInvocationLog` | status API eval、TopServiceCenter 截图、CLI 状态输出 |
+| provider check | `POST /api/market/providers/check` 必须带 `confirm=true` 和 consent preview | `MarketProviderPolicyGate`, `MarketProviderClient` | 未确认拒绝证据、成功/失败脱敏调用日志 |
+| market search run | `POST /api/market/search-runs` 创建一次性 run，不创建长期任务 | `JobSearchRunService`, `JobSearchRun` | run 状态 eval、错误/无结果/fallback 证据 |
+| market snapshot | `GET /api/market/snapshots/{run_id}` 返回 `JobMarketSnapshot` 和 source breakdown | `MarketDataNormalizer`, `SourceRefBinder`, `ConfidenceScorer` | 地图、Chatbox、产物台 source refs 截图 |
+| source refs | `GET /api/market/source-refs/{source_ref_id}` 只返回来源摘要 | `RegionSourceRef`, `NormalizedJobPost` | 聚合指标可追溯 eval |
+| storage boundary | SQLite 只存标准化数据、source refs、snapshot、脱敏 invocation log | `job_market_providers`, `job_search_runs`, `normalized_job_posts`, `job_market_snapshots`, `region_source_refs`, `market_provider_invocation_logs` | schema / redaction / raw response guard |
+| Level 1 验收 | 本地实现和 fixture/recorded/public/manual 路径通过 | policy gate + normalizer + UI linkage | 不声明真实 provider 已通过 |
+| Level 2 验收 | 用户授权配置后，至少一次真实 provider 调用成功 | provider client + invocation log + snapshot | 指定 provider opt-in 证据，不声明全网或招聘平台通过 |
+
+P11 当前不得用以下内容替代验收：
+
+- 不得写成：P11 Level1 本地实现等于真实 market provider 已接入；
+- 不得写成：provider configured 等于 connected、consented 或 called；
+- 不得写成：fixture/manual/public sample 等于真实全网市场；
+- 不得写成：Level 1 本地实现通过等于 Level 2 真实 provider opt-in 通过；
+- 不得写成：保存 `source_url` 等于网页已读取或招聘平台已抓取；
+- 不得写成：P11 完成等于 BOSS/猎聘/拉勾/LinkedIn 已接入；
+- 不得写成：P11 覆盖真实 LLM provider、真实个人资料、ASR、MCP、自动投递或 SaaS。
+
+## -8. P10-CLI 文档开发追踪矩阵
+
+| 当前目标 | 文档 / 实体边界 | 主要文件 / 模块 | 当前证据 | 验收门槛 |
+| --- | --- | --- | --- | --- |
+| 本地 CLI 命令入口 | `JobPilotCLI`, `CLICommandRouter` | `services/cli/main.py`, `jobpilot`, `tests/evals/test_p10_cli_eval.py` | P10-CLI 已实现本地命令入口，`jobpilot --help` 已有 eval 证据 | P10-CLI 门槛 A/B |
+| 本地状态检查 | `CLIConfigResolver`, `WorkspaceSelector`, `ApiClient` | `services/cli/main.py`, existing FastAPI boundary | 当前 FastAPI/workspace 基线已存在，CLI 已通过本地 API 查询 workspace 状态 | P10-CLI 门槛 B/D |
+| 高风险默认拒绝 | `CommandSafetyGate` | `services/cli/main.py`, active acceptance gates, P10 CLI eval | P10-CLI 已对高风险命令词返回安全拒绝，不执行外呼或不可逆动作 | P10-CLI 门槛 E |
+| 人类和 Agent 可读输出 | `OutputRenderer`, `ExitCodePolicy` | active PRD, `services/cli/main.py`, P10 CLI eval | 已实现中文输出、可选 JSON envelope 和稳定 exit code | P10-CLI 门槛 A/D |
+| 本地命令审计 | `CommandAuditLog` | `services/cli/main.py`, `.tmp/jobpilot-cli-audit.jsonl` 或 workspace-local audit log | 已实现本地脱敏命令审计，不记录 API Key 或真实资料全文 | P10-CLI 门槛 B/E |
+| 报告和证据入口 | `reports open`, existing `docs/reports/` | `docs/reports/`, `services/cli/main.py` | CLI 已实现列出/打开既有报告；不生成、不修复、不伪造验收报告 | P10-CLI 门槛 D |
+| 端口与适配器分层 | CLI Presentation / Application / Adapter / Existing Boundary | `docs/active/02_TARGET_ARCHITECTURE.md`, `25_P10_CLI_LOCAL_COMMAND_ENTRY_PLAN.md` | 已补齐分层、上游下游和禁止跨层规则 | P10-CLI 门槛 B |
+| API 映射与适配缺口 | `ApiClient`, `LocalReportLocator`, `BrowserOpenAdapter`, `JsonEnvelopeAdapter` | target architecture / drawio 第 7 页 | 已列出 CLI 命令到现有 FastAPI / 本地报告目录的映射 | P10-CLI 门槛 B/D |
+| 工作流树和 handoff contract | `ParsedCommand`, `CommandSafetyGate`, `ApiClient`, `OutputRenderer`, `CommandAuditLog` | target architecture / drawio 第 8 页 | 已定义 status、demo、artifact show 工作流和交接契约 | P10-CLI 门槛 D |
+| 输出 envelope 和错误码 | JSON envelope, stable exit codes | target architecture / acceptance gates / P10 CLI eval | 已实现 success/failure envelope 和 0/1/2/3/4/5/10 exit code | P10-CLI 门槛 D |
+| M0 工程冻结项 | FastAPI lifecycle, report locator scope, workspace resolution priority | target architecture / milestone / acceptance gates | 外部审计意见已落盘：不自动启动服务、不生成报告、workspace 解析优先级固定 | P10-CLI 门槛 B/D/E |
+| drawio 审查 | P10-CLI 状态颜色、实体关系、API 契约、工作流树 | `docs/active/jobpilot-p10-cli-local-entry-gap.drawio`, `.md` | 文本镜像和 8 页 drawio；XML parse 通过后作为证据 | P10-CLI 门槛 C |
+| false-green 边界 | 不把 CLI 文档写成实现通过，不混入 MCP/ASR/provider/platform | README, TODO, active docs, stage reviews | P10-CLI 审计文档 | P10-CLI 门槛 A/E |
+
+P10-CLI 代码实体状态追踪：
+
+| 层级 | 实体 | 当前状态 | 关系 | 验收证据 |
+| --- | --- | --- | --- | --- |
+| CLI | `JobPilotCLI` | P10-CLI 已实现 | 接收用户或 Agent 命令，下游路由到 command handlers | `jobpilot --help` eval |
+| CLI | `CLICommandRouter` | P10-CLI 已实现 | 解析 help/status/demo/jobs/artifacts/reports | CLI command eval |
+| CLI | `CLIConfigResolver` | P10-CLI 已实现 | 读取 API URL、workspace 参数和输出模式；不得打印 API Key | 配置和脱敏测试 |
+| CLI | `WorkspaceSelector` | P10-CLI 已实现 | 按 `--workspace` > `JOBPILOT_WORKSPACE` > 当前目录 `.jobpilot_workspace` > 失败解析 workspace；不得扫描个人目录 | workspace status eval |
+| CLI | `CommandSafetyGate` | P10-CLI 已实现 | 拦截真实外呼、平台抓取、ASR、自动投递和不可逆操作 | 安全拒绝 eval |
+| CLI | `ApiClient` | P10-CLI 已实现 | 调用本地 FastAPI；服务不可用时给启动建议，不自动启动服务 | service unavailable eval |
+| CLI Adapter | `LocalReportLocator` | P10-CLI 已实现 | 定位 `docs/reports/` 最新中文验收报告；`--no-browser` 只打印路径 | reports open eval |
+| CLI Adapter | `BrowserOpenAdapter` | P10-CLI 已实现 | 仅在用户未指定 `--no-browser` 时打开本地报告；失败时不得伪造成功；不得生成或修复报告 | WSL/Windows path eval |
+| CLI Adapter | `JsonEnvelopeAdapter` | P10-CLI 已实现 | 将 command result 统一为 success/failure JSON envelope | `--json` snapshot eval |
+| CLI | `OutputRenderer` | P10-CLI 已实现 | 输出中文表格、摘要、报告路径和可选 JSON | stdout snapshot / JSON eval |
+| CLI | `ExitCodePolicy` | P10-CLI 已实现 | 统一成功、参数错误、服务不可用、安全拒绝和内部错误 | exit code eval |
+| CLI | `CommandAuditLog` | P10-CLI 已实现 | 本地脱敏记录命令和结果，不记录敏感字段 | redaction eval |
+| API | FastAPI Agent Service | 已实现复用，可能需适配 | CLI 通过 API 获取 health、workspace、jobs、artifacts、reports | 现有 API 回归 + 后续 CLI eval |
+| Domain | Domain Tools | 已实现复用 | CLI 不重写业务逻辑，通过 API/Domain 复用 | 全量 pytest |
+| Storage | SQLite Workspace / Artifact | 已实现复用 | CLI 不直接写 DB；输出摘要和 source refs | artifact/job/resume 回归 |
+| Evidence | HTML reports / screenshots | 已实现复用 | CLI 可列出/打开报告，不生成虚假报告 | 后续 report command eval |
+
+P10-CLI 当前不得用以下内容替代验收：
+
+- 不得写成：新增 P10-CLI 文档等于 CLI 命令已实现；
+- 不得写成：CLI 能查看 provider 状态等于真实 provider 质量通过；
+- 不得写成：reports open 等于重新生成或通过验收报告；
+- 不得写成：CLI 可列出 jobs 等于招聘平台自动接入；
+- 不得写成：CLI 是 MCP server 或外部 Agent 执行平台；
+- 不得写成：examples/fixture/demo run 等于真实个人资料路径通过。
+- 不得写成：CLI 会自动启动 FastAPI、自动生成最新报告或自动发现用户 workspace。
+
+## -7. P9.1 本地自动化候选追踪矩阵
+
+| 当前目标 | 文档 / 实体边界 | 主要文件 / 模块 | 当前证据 | 验收门槛 |
+| --- | --- | --- | --- | --- |
+| 行政区划下钻式市场地图 | `MarketMapView`, `AdministrativeRegionNode`, `RegionDrilldownController`, `MarketSourceLegend`, `RegionInsightPanel` | `apps/chatbox/src/main.tsx`, `apps/chatbox/src/styles.css` | P9.1 HTML 报告 8 张真实截图、ECharts static guard | P9.1 门槛 A |
+| 真实市场数据 provider 边界 | `Market Provider: not_configured`, `JobSearchRun`, `RegionSourceRef` | `apps/chatbox/src/main.tsx`, `P9_1_MARKET_SOCRATIC_ACCEPTANCE_REPORT.html` | 顶部服务状态、source legend、未验证范围 | P9.1 门槛 B |
+| Socratic 资料补全 | `SocraticSession`, `SocraticIntakeSession`, `CandidateFactSummary`, `ProjectStoryDraft` | `apps/chatbox/src/main.tsx`, `tests/evals/test_p9_1_market_socratic_acceptance_eval.py` | Socratic 截图、两个技术背景 transcript、产物台摘要 | P9.1 门槛 C |
+| P9.1 drawio 审查 | P9 已实现 / P9.1 已实现 / 后续高风险状态颜色 | `docs/active/jobpilot-p9-1-market-socratic-gap.drawio`, `docs/active/jobpilot-p9-1-market-socratic-gap.md` | drawio XML parse、文本镜像 | P9.1 门槛 A/B/C |
+| false-green 边界 | 不把 fixture、provider 配置、Socratic 本地状态机写成真实外部能力通过 | active docs, report, stage reviews | forbidden claims guard、post report validation | P9.1 门槛 B/C |
+
+P9.1 代码实体状态追踪：
+
+| 层级 | 实体 | 当前状态 | 关系 | 验收证据 |
+| --- | --- | --- | --- | --- |
+| UI | `TopServiceCenter` | P9.1 已修改 | 上游读取 provider/search/workspace 状态；下游只打开设置或说明边界 | `Market Provider: not_configured` 截图和未授权不外呼证据 |
+| UI | `LeftIntelligencePanel` | P9.1 已修改 | 承载市场、匹配、流程三页签；市场页连接地图和 Chatbox | 三页签与市场地图截图 |
+| UI | `MarketMapView` / `MarketIntelligenceMap` | P9.1 已实现候选 | 替代低保真示意；下游触发城市/技术栈追问 | 多视口地图截图、下钻和图层证据 |
+| UI | `AdministrativeDrilldownMap` | P9.1 已以 ECharts map/geo + fixture GeoJSON 实现候选 | 承载全国/省/市/区县行政区划下钻；上游读取 layer/current region，触发 `RegionInsightPanel` 和 Chatbox 追问 | 下钻、面包屑返回、选区放大截图 |
+| UI/State | `RegionDrilldownController` | P9.1 已以 React state 实现候选 | 管理层级、selected、zoom、layer；连接 ECharts option 和 Chatbox prompt | click/restore/fallback 状态证据 |
+| UI/Data | `AdministrativeRegionLayer` | P9.1 已以 fixture-only GeoJSON 实现候选 | 将本地行政区划注册为 ECharts map/geo，按岗位数、薪资或来源可信度映射 visualMap | visualMap、tooltip 证据 |
+| UI | `MarketSourceLegend` | P9.1 已实现候选 | 区分 fixture/manual/public/opt-in API；连接 `RegionSourceRef` | 数据来源可见截图 |
+| UI | `MarketInsightDrilldown` | P9.1 已实现候选 | 城市点击后展示岗位、薪资、技术栈、远程比例和 source refs | 城市详情截图 |
+| UI | `ConversationPlane` | P9.1 已修改 | 承载市场查询、Socratic Intake 和用户历程状态 | Chatbox 一问一答截图 |
+| UI/Domain | `SocraticIntakeSession` / `SocraticSession` | P9.1 已实现候选 | 管理 role_alignment 到 boundary 的对话状态 | 两个技术背景 transcript 和截图 |
+| UI/Domain | `SocraticQuestionPlanner` | P9.1 已以本地阶段序列实现候选 | 选择下一轮最高价值问题，不一次问多个问题 | 对话日志和状态转移证据 |
+| UI | `FactConfirmationStrip` / `PendingConfirmations` | P9.1 已实现候选 | 展示待确认和不可声明 | 待确认项截图 |
+| Workbench | `CandidateFactSummary` / `ProjectStoryDraft` / `DoNotClaimList` | P9.1 已实现候选 | 下游进入申请包草稿，必须保留 source refs | 右侧产物台截图 |
+| API | `JobMarketProvider` | P9.1 已实现未配置状态；真实 provider 后续 opt-in | 上游配置，禁止未授权调用；下游生成 `JobSearchRun` | `Market Provider: not_configured`、configured/connected/called 区分证据 |
+| API/Data | `JobSearchRun` / `NormalizedJobPost` / `JobMarketSnapshot` | `JobSearchRun` 本地表达已实现；真实 provider 标准化后续 opt-in | 记录查询、职位、聚合快照和数据边界 | report 证据和未验证范围 |
+| Data | `AdministrativeRegionNode` / `RegionJobDistributionSnapshot` | P9.1 已以本地 fixture 实现候选 | 定义行政区划树、岗位量、薪资、技能热度、来源构成和置信度 | 数据契约、source refs 和图层映射证据 |
+| UI/Data | `MarketMapLayerState` / `MarketMapDrilldownState` | P9.1 已实现候选 | 驱动图层切换、下钻路径、选区状态、fallback 和证据提示 | 图层切换、breadcrumb 和 fallback 证据 |
+| Domain | `MarketDataNormalizer` / `ProjectStoryEvidenceGuard` | 本轮以 source legend 和 Socratic pending confirmations 实现候选；真实 normalizer 后续 opt-in | 归一化市场数据；拦截无证据故事事实 | P9.1 eval 和 PRD 规格检视 |
+| Evidence | P9.1 HTML report / screenshots | P9.1 已实现 | 证明真实界面，不证明真实平台或真实 ASR | 中文验收报告 |
+
+P9.1 当前不得用以下内容替代验收：
+
+- 不得写成：P9.1 HTML 原型等于生产代码实现；
+- 不得写成：Adzuna、TheirStack、JSearch、Jooble 被列入候选等于真实市场 provider 已经落地；
+- 不得写成：fixture 图表等于真实市场趋势；
+- 不得写成：Socratic 对话样例等于真实 provider 智能质量通过；
+- 不得写成：市场地图目标图样等于真实多视口截图验收。
 
 ## -6. 当前自动化候选收口阶段 P9 Chatbox-native 追踪矩阵
 

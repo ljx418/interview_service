@@ -1,0 +1,112 @@
+<mxfile host="app.diagrams.net" modified="2026-07-07T00:00:00.000Z" agent="Codex" version="24.7.17">
+  <diagram id="p9_1_page_1" name="1 P9.1目标体验边界">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="p1-title" value="P9.1 本地自动化候选完成&#10;行政区划下钻市场地图 + 真实市场数据边界 + Socratic Intake" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1f4f46;strokeColor=#0b2f2a;fontColor=#ffffff;fontStyle=1;spacing=8;arcSize=8;" vertex="1" parent="1"><mxGeometry x="80" y="50" width="620" height="90" as="geometry" /></mxCell>
+        <mxCell id="p1-p9" value="P9 已实现自动化候选&#10;TopServiceCenter&#10;LeftIntelligencePanel&#10;MarketMapView&#10;ConversationPlane&#10;Workbench" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5f5e3;strokeColor=#1e8449;fontColor=#10201d;spacing=8;arcSize=8;" vertex="1" parent="1"><mxGeometry x="80" y="190" width="320" height="180" as="geometry" /></mxCell>
+        <mxCell id="p1-plan" value="P9.1 已实现候选&#10;MarketMapView / ECharts map&#10;AdministrativeRegionNode&#10;Market Provider: not_configured&#10;SocraticIntakeSession&#10;CandidateFactSummary" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d6eaf8;strokeColor=#2874a6;fontColor=#10201d;spacing=8;arcSize=8;" vertex="1" parent="1"><mxGeometry x="460" y="190" width="340" height="180" as="geometry" /></mxCell>
+        <mxCell id="p1-risk" value="禁止默认声明&#10;真实全网搜索&#10;BOSS/猎聘/拉勾抓取&#10;真实 ASR / 真实 provider&#10;自动沟通 / 自动投递&#10;MCP/Skill 连通性通过" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fadbd8;strokeColor=#c0392b;fontColor=#10201d;spacing=8;arcSize=8;" vertex="1" parent="1"><mxGeometry x="860" y="190" width="430" height="180" as="geometry" /></mxCell>
+        <mxCell id="p1-flow" value="目标体验&#10;打开工作台 → 左侧看行政区划下钻招聘情报地图 → Chatbox 查询市场或补资料 → Socratic 一次只问一个问题 → 右侧产物台显示事实摘要、故事草稿、source refs、pending confirmations" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f7f9f8;strokeColor=#7f8c8d;fontColor=#10201d;spacing=10;arcSize=8;" vertex="1" parent="1"><mxGeometry x="80" y="440" width="1210" height="120" as="geometry" /></mxCell>
+        <mxCell id="p1-exit" value="本页结论&#10;P9.1 证明本地/fixture 自动化候选已落盘；不证明外部真实能力通过。" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f4f6f7;strokeColor=#95a5a6;fontColor=#10201d;spacing=10;arcSize=8;" vertex="1" parent="1"><mxGeometry x="80" y="610" width="1210" height="90" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="p9_1_page_2" name="2 当前差距">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="p2-title" value="当前 P9 基线与 P9.1 差距" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1f4f46;strokeColor=#0b2f2a;fontColor=#ffffff;fontStyle=1;spacing=8;arcSize=8;" vertex="1" parent="1"><mxGeometry x="80" y="50" width="460" height="70" as="geometry" /></mxCell>
+        <mxCell id="p2-base" value="P9 基线 绿色&#10;TopServiceCenter 已显示服务状态&#10;LeftIntelligencePanel 已有市场/匹配/流程&#10;MarketMapView 已有图钉/缩放/拖动/重置&#10;ConversationPlane 已是中央主路径&#10;Workbench 已展示 search run 和故事草稿" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5f5e3;strokeColor=#1e8449;fontColor=#10201d;spacing=8;arcSize=8;" vertex="1" parent="1"><mxGeometry x="80" y="170" width="430" height="290" as="geometry" /></mxCell>
+        <mxCell id="p2-gap" value="P9.1 差距 蓝色&#10;地图仍像低保真示意图&#10;缺少行政区划下钻 / breadcrumb / hover-click 反馈&#10;fixture / 手动 / 已导入 JD 边界不够显眼&#10;缺少真实市场 provider 的 opt-in 状态模型&#10;Chatbox 缺少 Socratic 一问一答事实采集&#10;产物台缺少稳定事实摘要和不可声明清单" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d6eaf8;strokeColor=#2874a6;fontColor=#10201d;spacing=8;arcSize=8;" vertex="1" parent="1"><mxGeometry x="590" y="170" width="460" height="290" as="geometry" /></mxCell>
+        <mxCell id="p2-risk" value="禁止混淆 红色&#10;不能把 fixture 写成真实市场&#10;不能把 provider configured 写成 connected 或 called&#10;不能把地图原型写成真实截图&#10;不能把 Socratic 样例写成真实 LLM 质量通过" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fadbd8;strokeColor=#c0392b;fontColor=#10201d;spacing=8;arcSize=8;" vertex="1" parent="1"><mxGeometry x="1130" y="170" width="360" height="290" as="geometry" /></mxCell>
+        <mxCell id="p2-action" value="P9.1 应解决&#10;1. 地图成为招聘情报视图&#10;2. 数据来源和可信度始终可见&#10;3. Chatbox 通过一问一答补事实&#10;4. 右侧产物可追溯、可确认、不可编造" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f7f9f8;strokeColor=#7f8c8d;fontColor=#10201d;spacing=10;arcSize=8;" vertex="1" parent="1"><mxGeometry x="80" y="540" width="1410" height="120" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="p9_1_page_3" name="3 架构差异">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="p3-title" value="目标架构与当前架构差异" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1f4f46;strokeColor=#0b2f2a;fontColor=#ffffff;fontStyle=1;spacing=8;arcSize=8;" vertex="1" parent="1"><mxGeometry x="80" y="50" width="430" height="70" as="geometry" /></mxCell>
+        <mxCell id="p3-current1" value="当前 P9&#10;MarketMapView&#10;图钉 / 缩放 / 拖动 / 重置&#10;数据多为 fixture 或本地 search run" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5f5e3;strokeColor=#1e8449;fontColor=#10201d;spacing=8;arcSize=8;" vertex="1" parent="1"><mxGeometry x="90" y="170" width="310" height="130" as="geometry" /></mxCell>
+        <mxCell id="p3-target1" value="P9.1 目标&#10;MarketIntelligenceMap&#10;AdministrativeDrilldownMap&#10;RegionDrilldownController&#10;AdministrativeRegionLayer&#10;城市、薪资、热度、来源可信度" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d6eaf8;strokeColor=#2874a6;fontColor=#10201d;spacing=8;arcSize=8;" vertex="1" parent="1"><mxGeometry x="530" y="170" width="360" height="150" as="geometry" /></mxCell>
+        <mxCell id="p3-current2" value="当前 P9&#10;handleP9Command&#10;本地命令式资料补全&#10;故事草稿较轻" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5f5e3;strokeColor=#1e8449;fontColor=#10201d;spacing=8;arcSize=8;" vertex="1" parent="1"><mxGeometry x="90" y="350" width="310" height="120" as="geometry" /></mxCell>
+        <mxCell id="p3-target2" value="P9.1 目标&#10;SocraticIntakeSession&#10;SocraticQuestionPlanner&#10;FactConfirmationStrip&#10;一问一答 + 事实摘要 + 待确认" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d6eaf8;strokeColor=#2874a6;fontColor=#10201d;spacing=8;arcSize=8;" vertex="1" parent="1"><mxGeometry x="530" y="350" width="360" height="120" as="geometry" /></mxCell>
+        <mxCell id="p3-target3" value="P9.1 数据规划&#10;JobMarketProvider&#10;JobSearchRun&#10;NormalizedJobPost&#10;JobMarketSnapshot&#10;AdministrativeRegionNode&#10;RegionJobDistributionSnapshot" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3cd;strokeColor=#b7791f;fontColor=#10201d;spacing=8;arcSize=8;" vertex="1" parent="1"><mxGeometry x="1010" y="170" width="370" height="170" as="geometry" /></mxCell>
+        <mxCell id="p3-risk" value="红色禁止关系&#10;UI 不直接抓平台&#10;source_url 不自动读取网页&#10;configured 不等于 called&#10;Socratic 不编造事实&#10;原型不替代真实截图" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fadbd8;strokeColor=#c0392b;fontColor=#10201d;spacing=8;arcSize=8;" vertex="1" parent="1"><mxGeometry x="1010" y="380" width="370" height="150" as="geometry" /></mxCell>
+        <mxCell id="p3-e1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2874a6;endArrow=block;endFill=1;" edge="1" parent="1" source="p3-current1" target="p3-target1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="p3-e2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2874a6;endArrow=block;endFill=1;" edge="1" parent="1" source="p3-current2" target="p3-target2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="p3-exit" value="验收判断&#10;后续实现必须证明行政区划下钻地图体验、数据边界、Socratic 对话和产物台联动均落地；任一项缺失不能声明 P9.1 全绿。" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f4f6f7;strokeColor=#95a5a6;fontColor=#10201d;spacing=10;arcSize=8;" vertex="1" parent="1"><mxGeometry x="90" y="620" width="1290" height="90" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="p9_1_page_4" name="4 代码实体分层">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="p4-title" value="代码实体与分层交互关系" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1f4f46;strokeColor=#0b2f2a;fontColor=#ffffff;fontStyle=1;spacing=8;arcSize=8;" vertex="1" parent="1"><mxGeometry x="80" y="40" width="430" height="70" as="geometry" /></mxCell>
+        <mxCell id="p4-ui" value="UI Layer&#10;TopServiceCenter 绿/需改&#10;LeftIntelligencePanel 绿/需改&#10;MarketIntelligenceMap 蓝&#10;AdministrativeDrilldownMap 蓝&#10;RegionDrilldownController 蓝&#10;AdministrativeRegionLayer 蓝&#10;ConversationPlane 绿/需改" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d6eaf8;strokeColor=#2874a6;fontColor=#10201d;spacing=8;arcSize=8;" vertex="1" parent="1"><mxGeometry x="80" y="150" width="330" height="230" as="geometry" /></mxCell>
+        <mxCell id="p4-chat" value="Chatbox Orchestration&#10;SocraticIntakeSession 蓝&#10;SocraticQuestionPlanner 蓝&#10;FactConfirmationStrip 蓝&#10;handleP9Command 绿/需改" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d6eaf8;strokeColor=#2874a6;fontColor=#10201d;spacing=8;arcSize=8;" vertex="1" parent="1"><mxGeometry x="500" y="150" width="330" height="210" as="geometry" /></mxCell>
+        <mxCell id="p4-workbench" value="Artifact Workbench&#10;Workbench / P9ArtifactOverview 绿/需改&#10;CandidateFactSummary 蓝&#10;ProjectStoryDraft 蓝&#10;JDKeywordMapping 蓝&#10;PendingConfirmations 绿/强化&#10;DoNotClaimList 蓝" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d6eaf8;strokeColor=#2874a6;fontColor=#10201d;spacing=8;arcSize=8;" vertex="1" parent="1"><mxGeometry x="920" y="150" width="360" height="210" as="geometry" /></mxCell>
+        <mxCell id="p4-api" value="API / Data Boundary 后续 opt-in&#10;JobMarketProvider 黄&#10;JobSearchRun 黄&#10;NormalizedJobPost 黄&#10;JobMarketSnapshot 黄&#10;AdministrativeRegionNode 黄&#10;MarketMapDrilldownState 黄&#10;未授权不得外呼" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3cd;strokeColor=#b7791f;fontColor=#10201d;spacing=8;arcSize=8;" vertex="1" parent="1"><mxGeometry x="290" y="470" width="350" height="190" as="geometry" /></mxCell>
+        <mxCell id="p4-domain" value="Domain Boundary&#10;MarketDataNormalizer 蓝&#10;ProjectStoryEvidenceGuard 蓝&#10;不补造公司/薪资/学历/指标&#10;不绕开 source refs" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d6eaf8;strokeColor=#2874a6;fontColor=#10201d;spacing=8;arcSize=8;" vertex="1" parent="1"><mxGeometry x="760" y="470" width="350" height="170" as="geometry" /></mxCell>
+        <mxCell id="p4-evidence" value="Evidence Layer 灰色&#10;HTML 审查页&#10;drawio / 文本镜像&#10;后续真实截图报告&#10;false-green 扫描" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f4f6f7;strokeColor=#95a5a6;fontColor=#10201d;spacing=8;arcSize=8;" vertex="1" parent="1"><mxGeometry x="1190" y="470" width="260" height="170" as="geometry" /></mxCell>
+        <mxCell id="p4-e1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#2874a6;endArrow=block;endFill=1;" edge="1" parent="1" source="p4-ui" target="p4-chat"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="p4-e2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#2874a6;endArrow=block;endFill=1;" edge="1" parent="1" source="p4-chat" target="p4-workbench"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="p4-e3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#b7791f;endArrow=block;endFill=1;" edge="1" parent="1" source="p4-ui" target="p4-api"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="p4-e4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#2874a6;endArrow=block;endFill=1;" edge="1" parent="1" source="p4-chat" target="p4-domain"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="p4-e5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#95a5a6;endArrow=block;endFill=1;" edge="1" parent="1" source="p4-workbench" target="p4-evidence"><mxGeometry relative="1" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="p9_1_page_5" name="5 行政区划地图与数据边界">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="p5-title" value="行政区划下钻市场地图原型与真实数据边界" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1f4f46;strokeColor=#0b2f2a;fontColor=#ffffff;fontStyle=1;spacing=8;arcSize=8;" vertex="1" parent="1"><mxGeometry x="80" y="50" width="640" height="70" as="geometry" /></mxCell>
+        <mxCell id="p5-map" value="AdministrativeDrilldownMap 蓝&#10;全国 → 省/直辖市 → 城市 → 区县&#10;行政区划颜色深浅=岗位量/薪资/匹配/来源可信度&#10;支持 hover、click、breadcrumb、zoom、pan、reset" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d6eaf8;strokeColor=#2874a6;fontColor=#10201d;spacing=8;arcSize=8;" vertex="1" parent="1"><mxGeometry x="80" y="170" width="410" height="210" as="geometry" /></mxCell>
+        <mxCell id="p5-insight" value="RegionInsightPanel 蓝&#10;选区详情&#10;薪资直方图&#10;技术栈热度&#10;远程比例 / 竞争强度&#10;source refs 展开&#10;Chatbox 追问草稿" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d6eaf8;strokeColor=#2874a6;fontColor=#10201d;spacing=8;arcSize=8;" vertex="1" parent="1"><mxGeometry x="540" y="170" width="330" height="210" as="geometry" /></mxCell>
+        <mxCell id="p5-source" value="ECharts + 合法 GeoJSON 蓝&#10;visualMap / tooltip / toolbox&#10;echarts.registerMap&#10;MarketSourceLegend：fixture / manual / public / opt-in API&#10;未配置=not_configured" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d6eaf8;strokeColor=#2874a6;fontColor=#10201d;spacing=8;arcSize=8;" vertex="1" parent="1"><mxGeometry x="930" y="170" width="360" height="210" as="geometry" /></mxCell>
+        <mxCell id="p5-provider" value="JobMarketProvider 黄&#10;Adzuna / TheirStack / JSearch / Jooble / 公司官网公开 JD&#10;只作为 opt-in 规划&#10;requires_key 和 license_note 必须可见" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3cd;strokeColor=#b7791f;fontColor=#10201d;spacing=8;arcSize=8;" vertex="1" parent="1"><mxGeometry x="80" y="450" width="400" height="160" as="geometry" /></mxCell>
+        <mxCell id="p5-contract" value="JobSearchRun → NormalizedJobPost → JobMarketSnapshot&#10;AdministrativeRegionNode → RegionJobDistributionSnapshot&#10;MarketMapLayerState / MarketMapDrilldownState&#10;source_refs / confidence / boundary_note" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3cd;strokeColor=#b7791f;fontColor=#10201d;spacing=8;arcSize=8;" vertex="1" parent="1"><mxGeometry x="570" y="450" width="420" height="170" as="geometry" /></mxCell>
+        <mxCell id="p5-risk" value="红色禁止&#10;默认抓取招聘平台&#10;source_url 自动读取网页&#10;无许可打包第三方 GeoJSON&#10;静默 fallback 成 fixture 后宣称真实市场&#10;无 source refs 的市场数字" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fadbd8;strokeColor=#c0392b;fontColor=#10201d;spacing=8;arcSize=8;" vertex="1" parent="1"><mxGeometry x="1080" y="450" width="350" height="170" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="p9_1_page_6" name="6 Socratic路线">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="p6-title" value="Socratic Intake 用户路线与产物台联动" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1f4f46;strokeColor=#0b2f2a;fontColor=#ffffff;fontStyle=1;spacing=8;arcSize=8;" vertex="1" parent="1"><mxGeometry x="80" y="50" width="540" height="70" as="geometry" /></mxCell>
+        <mxCell id="p6-flow" value="一次只问一个问题&#10;目标岗位 → 项目背景 → 本人职责 → 技术难点 → 行动过程 → 量化结果 → 证据来源 → 不可编造边界 → JD 映射 → STAR/CAR 草稿" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d6eaf8;strokeColor=#2874a6;fontColor=#10201d;spacing=10;arcSize=8;" vertex="1" parent="1"><mxGeometry x="80" y="170" width="1260" height="120" as="geometry" /></mxCell>
+        <mxCell id="p6-session" value="SocraticIntakeSession 蓝&#10;idle / role_alignment / project_context / personal_contribution / technical_depth / impact_metrics / evidence_check / boundary_check / jd_mapping / story_draft / confirmation" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d6eaf8;strokeColor=#2874a6;fontColor=#10201d;spacing=8;arcSize=8;" vertex="1" parent="1"><mxGeometry x="80" y="360" width="440" height="180" as="geometry" /></mxCell>
+        <mxCell id="p6-planner" value="SocraticQuestionPlanner 蓝&#10;选择下一轮最高价值问题&#10;不重复问已回答内容&#10;不一次抛多个问题&#10;每 3-5 轮总结缺口" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d6eaf8;strokeColor=#2874a6;fontColor=#10201d;spacing=8;arcSize=8;" vertex="1" parent="1"><mxGeometry x="590" y="360" width="350" height="180" as="geometry" /></mxCell>
+        <mxCell id="p6-artifact" value="Workbench 产物台&#10;CandidateFactSummary&#10;ProjectStoryDraft&#10;JDKeywordMapping&#10;PendingConfirmations&#10;DoNotClaimList&#10;SourceRefs" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d6eaf8;strokeColor=#2874a6;fontColor=#10201d;spacing=8;arcSize=8;" vertex="1" parent="1"><mxGeometry x="1010" y="360" width="330" height="180" as="geometry" /></mxCell>
+        <mxCell id="p6-risk" value="红色禁止&#10;编造学历/年限/公司/贡献/指标&#10;把团队贡献写成本人贡献&#10;无证据指标进入正式简历&#10;普通聊天静默覆盖产物版本" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fadbd8;strokeColor=#c0392b;fontColor=#10201d;spacing=8;arcSize=8;" vertex="1" parent="1"><mxGeometry x="80" y="620" width="1260" height="100" as="geometry" /></mxCell>
+        <mxCell id="p6-e1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#2874a6;endArrow=block;endFill=1;" edge="1" parent="1" source="p6-session" target="p6-planner"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="p6-e2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#2874a6;endArrow=block;endFill=1;" edge="1" parent="1" source="p6-planner" target="p6-artifact"><mxGeometry relative="1" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="p9_1_page_7" name="7 计划门槛出门">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="p7-title" value="开发计划、里程碑、验收门槛与出门条件" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1f4f46;strokeColor=#0b2f2a;fontColor=#ffffff;fontStyle=1;spacing=8;arcSize=8;" vertex="1" parent="1"><mxGeometry x="80" y="50" width="600" height="70" as="geometry" /></mxCell>
+        <mxCell id="p7-doc" value="文档阶段 蓝&#10;P9.1-DOC-M0 PRD/原型锁定&#10;P9.1-DOC-M1 active docs / roadmap / drawio 同步&#10;P9.1-DOC-M2 覆盖度复审和 false-green 扫描&#10;P9.1-DOC-M3 人工或外部审计认可" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d6eaf8;strokeColor=#2874a6;fontColor=#10201d;spacing=8;arcSize=8;" vertex="1" parent="1"><mxGeometry x="80" y="170" width="480" height="190" as="geometry" /></mxCell>
+        <mxCell id="p7-dev" value="后续开发阶段 黄&#10;M0 开发前审计&#10;M1 行政区划下钻市场地图&#10;M2 opt-in provider 状态&#10;M3 Socratic Intake&#10;M4 地图 / Chatbox / 产物台联动&#10;M5 中文自动化验收报告" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3cd;strokeColor=#b7791f;fontColor=#10201d;spacing=8;arcSize=8;" vertex="1" parent="1"><mxGeometry x="630" y="170" width="430" height="190" as="geometry" /></mxCell>
+        <mxCell id="p7-gate" value="出门门槛 灰色&#10;drawio 可解析且不超过 8 页&#10;HTML 审查页引用有效&#10;P9 stage closure eval 保持通过&#10;git diff --check 通过&#10;报告区分真实截图/原型图/fixture/未验证能力" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f4f6f7;strokeColor=#95a5a6;fontColor=#10201d;spacing=8;arcSize=8;" vertex="1" parent="1"><mxGeometry x="1130" y="170" width="340" height="190" as="geometry" /></mxCell>
+        <mxCell id="p7-risk" value="打回条件 红色&#10;架构图缺少具体实体或状态颜色&#10;承诺真实市场数据已接入&#10;默认平台抓取 / ASR / provider 外呼 / 自动投递&#10;Socratic Intake 变成一次性表单&#10;验收报告用原型图冒充真实截图" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fadbd8;strokeColor=#c0392b;fontColor=#10201d;spacing=8;arcSize=8;" vertex="1" parent="1"><mxGeometry x="80" y="460" width="1390" height="130" as="geometry" /></mxCell>
+        <mxCell id="p7-final" value="最终审计口径&#10;P9.1 本地自动化候选已完成并有 HTML 报告、截图、pytest 和 build 证据。当前 drawio 不代表真实市场数据、招聘平台接入、真实 ASR、真实 provider、自动投递或 MCP/Skill 连通性通过。" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f7f9f8;strokeColor=#7f8c8d;fontColor=#10201d;spacing=10;arcSize=8;" vertex="1" parent="1"><mxGeometry x="80" y="650" width="1390" height="100" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
